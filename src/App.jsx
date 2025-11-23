@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 
+// Define a breakpoint. Standard for most responsive designs.
+const MOBILE_BREAKPOINT = 900;
+
 function App() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // 1. New state to track if the screen is considered 'mobile'
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= MOBILE_BREAKPOINT);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // --- Utility Functions ---
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -20,6 +19,53 @@ function App() {
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
   };
+
+  // Function to scroll to the top of the app
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Makes the scroll smooth
+    });
+    closeMobileMenu(); // Close the menu after clicking (good practice)
+  };
+
+  // ⭐️ 2. NEW LOGIC: Conditional Logo Click Handler ⭐️
+  const handleLogoClick = () => {
+    if (isMobile) {
+      // Mobile user: Open the menu
+      toggleMobileMenu();
+    } else {
+      // Desktop user: Refresh/Scroll to top
+      scrollToTop();
+    }
+  };
+
+  // --- Effects ---
+
+  // Scroll effect (existing)
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // 3. Effect to track window size for responsive logo behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
+    };
+
+    window.addEventListener("resize", handleResize);
+    // Initial check in case the component mounts on a small screen
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []); // Empty dependency array ensures it runs once on mount and cleanup on unmount
+
+
+  // --- Render ---
 
   return (
     <div className="app">
@@ -30,7 +76,8 @@ function App() {
             src="logode.png"
             alt="MedHive Logo"
             className="nav-logo-image"
-            onClick={toggleMobileMenu}
+            // ⭐️ 4. Use the new conditional handler ⭐️
+            onClick={handleLogoClick}
           />
           <div className="nav-links">
             <a href="#problems">Problems</a>
@@ -54,6 +101,12 @@ function App() {
       {/* Note: I added 'glass-card' class here for styling consistency */}
       <div className={`mobile-menu glass-card ${mobileMenuOpen ? "active" : ""}`}>
         <div className="mobile-menu-links">
+          {/* ⭐️ NEW HOME LINK ADDED HERE ⭐️
+            It uses the new scrollToTop function to go to the app's top.
+          */}
+          <a onClick={scrollToTop} style={{ cursor: 'pointer' }}>
+            Home
+          </a>
           <a href="#problems" onClick={closeMobileMenu}>
             Problems
           </a>
