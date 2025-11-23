@@ -5,13 +5,13 @@
   padding: 0;
   box-sizing: border-box;
   /* Explicitly set borders and outlines to prevent system color changes */
-  border-color: inherit; 
+  border-color: inherit;
   outline-color: inherit;
 }
 
 /* Ensuring mode-agnostic colors:
-  The use of fixed hex codes (e.g., #000000, #ffffff, #dca349) and 
-  fixed RGBA values prevents the browser from using system color variables 
+  The use of fixed hex codes (e.g., #000000, #ffffff, #dca349) and
+  fixed RGBA values prevents the browser from using system color variables
   that switch between light and dark mode defaults.
 */
 
@@ -44,14 +44,14 @@ body {
 
 .nav-content {
   max-width: 700px;
-  border-radius: 50px; 
+  border-radius: 50px;
   margin: 0 auto;
-  padding: 10px 40px; 
+  padding: 10px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   /* Fixed semi-transparent dark background */
-  background: rgba(0, 0, 0, 0.5); 
+  background: rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
 }
 
@@ -64,8 +64,8 @@ body {
 }
 
 .nav-logo-image {
-  height: 40px; 
-  object-fit: contain; 
+  height: 40px;
+  object-fit: contain;
   flex-shrink: 0;
   cursor: pointer;
   transition: transform 0.3s ease;
@@ -85,8 +85,8 @@ body {
 
 .nav-links {
   display: flex;
-  gap: 25px; 
-  margin-left: 30px; 
+  gap: 25px;
+  margin-left: 30px;
 }
 
 .nav-links a {
@@ -123,25 +123,25 @@ body {
 /* 🌟 CORRECTED Mobile Menu (Modal Style) 🌟 */
 .mobile-menu {
   position: fixed;
-  top: 90px; 
+  top: 90px;
   left: 50%;
-  
+
   transform-origin: top center;
-  
+
   transform: translate(-50%, -20px) scale(0.95);
   width: 90%;
   max-width: 300px;
   max-height: 0;
   opacity: 0;
   overflow: hidden;
-  
+
   /* Fixed dark background */
-  background: rgba(0, 0, 0, 0.95); 
+  background: rgba(0, 0, 0, 0.95);
   border-radius: 20px;
-  
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1.2); 
+
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1.2);
   z-index: 999;
-  
+
   padding: 0 20px;
 }
 
@@ -155,7 +155,7 @@ body {
 .mobile-menu-links {
   display: flex;
   flex-direction: column;
-  gap: 10px; 
+  gap: 10px;
   padding: 0;
 }
 
@@ -848,11 +848,11 @@ body {
 /* ===================================== */
 @media (max-width: 900px) {
   .nav-links {
-    display: none; 
+    display: none;
   }
 
   .nav-content {
-    justify-content: space-between; 
+    justify-content: space-between;
     padding: 10px 20px;
     max-width: 95%;
   }
@@ -860,7 +860,7 @@ body {
   .nav-logo-image {
     height: 45px;
   }
-  
+
   .navbar.scrolled .nav-content {
     margin: 0 20px;
   }
@@ -898,7 +898,7 @@ body {
   .cta-card h2 {
     font-size: 32px;
   }
-  
+
   .cta-card {
     padding: 50px 30px;
   }
