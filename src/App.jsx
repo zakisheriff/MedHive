@@ -3,6 +3,7 @@ import "./App.css";
 
 function App() {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -12,18 +13,25 @@ function App() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
   return (
     <div className="app">
       {/* Navigation */}
       <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
         <div className="nav-content">
-          <a href="/">
-            <img
-              src="logode.png"
-              alt="MedHive Logo"
-              className="nav-logo-image"
-            />
-          </a>
+          <img
+            src="logode.png"
+            alt="MedHive Logo"
+            className="nav-logo-image"
+            onClick={toggleMobileMenu}
+          />
           <div className="nav-links">
             <a href="#problems">Problems</a>
             <a href="#ai">Solutions</a>
@@ -31,10 +39,35 @@ function App() {
             <a href="#contact">Contact</a>
           </div>
           {/* New Profile Circle */}
-          
+
           {/* End New Profile Circle */}
         </div>
       </nav>
+
+      {/* Mobile Menu Overlay - Still useful for closing on outside click */}
+      <div
+        className={`mobile-menu-overlay ${mobileMenuOpen ? "active" : ""}`}
+        onClick={closeMobileMenu}
+      ></div>
+
+      {/* Mobile Menu - THIS WILL BE STYLED AS A MODAL */}
+      {/* Note: I added 'glass-card' class here for styling consistency */}
+      <div className={`mobile-menu glass-card ${mobileMenuOpen ? "active" : ""}`}>
+        <div className="mobile-menu-links">
+          <a href="#problems" onClick={closeMobileMenu}>
+            Problems
+          </a>
+          <a href="#ai" onClick={closeMobileMenu}>
+            Solutions
+          </a>
+          <a href="#features" onClick={closeMobileMenu}>
+            Features
+          </a>
+          <a href="#contact" onClick={closeMobileMenu}>
+            Contact
+          </a>
+        </div>
+      </div>
 
       {/* Hero Section */}
       <section className="hero">
@@ -484,7 +517,7 @@ function App() {
               <p>
                 The clinic pharmacy prepares the order, and once dispensed, the
                 new prescription details and any doctor's clinical notes are
-                automatically saved to the patient’s MedHive account.
+                automatically saved to the patient's MedHive account.
               </p>
             </div>
           </div>
