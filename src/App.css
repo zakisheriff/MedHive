@@ -72,7 +72,12 @@ body {
 }
 
 .nav-logo-image:hover {
+  /* Kept scale for hover, as this is a distinct interaction point */
   transform: scale(1.05);
+}
+.nav-logo-image:active {
+  /* Added active state for touch/press feedback */
+  transform: scale(0.95);
 }
 
 .logo {
@@ -104,6 +109,12 @@ body {
   color: #dca349;
 }
 
+/* Added active state for nav links */
+.nav-links a:active {
+  color: #dca349;
+  opacity: 0.8;
+}
+
 .nav-links a::after {
   content: '';
   position: absolute;
@@ -125,10 +136,7 @@ body {
   position: fixed;
   top: 90px;
   left: 50%;
-
   transform-origin: top center;
-
-  transform: translate(-50%, -20px) scale(0.95);
   width: 90%;
   max-width: 300px;
   max-height: 0;
@@ -138,12 +146,12 @@ body {
   /* Fixed dark background */
   background: rgba(0, 0, 0, 0.95);
   border-radius: 20px;
-
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.5, 1.2);
+  transform: scale(0.95);
   z-index: 999;
-
   padding: 0 20px;
 }
+
 
 .mobile-menu.active {
   opacity: 1;
@@ -173,11 +181,20 @@ body {
 }
 
 .mobile-menu-links a:hover {
-  /* Fixed hover colors */
+  /* Retained hover for mouse-enabled devices */
   color: #dca349;
   background: rgba(220, 163, 73, 0.1);
   border-color: rgba(220, 163, 73, 0.3);
 }
+
+/* Added explicit active state for better touch response */
+.mobile-menu-links a:active {
+  color: #dca349;
+  background: rgba(220, 163, 73, 0.2);
+  border-color: rgba(220, 163, 73, 0.5);
+  transform: scale(0.98); /* Subtle press effect */
+}
+
 
 /* Mobile Menu Overlay */
 .mobile-menu-overlay {
@@ -222,11 +239,17 @@ body {
 }
 
 .profile-circle:hover {
-  /* Fixed hover colors */
+  /* Fixed hover colors - REMOVED transform: scale(1.05); */
   background: #dca349;
   box-shadow: 0 4px 15px rgba(220, 163, 73, 0.5);
-  transform: scale(1.05);
 }
+
+/* Added active state for profile circle */
+.profile-circle:active {
+  background: #b8873d; /* Slightly darker gold on press */
+  transform: scale(0.95);
+}
+
 
 .profile-circle svg {
   width: 24px;
@@ -276,13 +299,25 @@ body {
   font-size: 72px;
   font-weight: 800;
   line-height: 1.1;
-  margin-bottom: 30px;
   /* Fixed gradient for text fill */
   background: linear-gradient(135deg, #ffffff 0%, #dca349 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: -2px;
+}
+
+.hero-moto {
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.1;
+  margin-bottom: 30px;
+  /* Fixed gradient for text fill */
+  background: linear-gradient(135deg, #ffffff 0%, #dca349 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
 }
 
 .hero-subtitle {
@@ -315,10 +350,14 @@ body {
 }
 
 .glass-card:hover {
-  transform: translateY(-5px);
+  /* REMOVED transform: translateY(-5px); */
   /* Fixed shadow and border colors */
   box-shadow: 0 12px 40px rgba(220, 163, 73, 0.2);
   border-color: rgba(220, 163, 73, 0.3);
+}
+
+.glass-card:active {
+  transform: scale(0.99); /* Subtle press for card interaction */
 }
 
 /* Buttons */
@@ -342,12 +381,18 @@ body {
 }
 
 .btn-primary:hover {
-  /* Fixed hover colors */
+  /* Fixed hover colors - REMOVED transform: translateY(-2px); */
   background: #dca349;
   color: #000000;
-  transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(220, 163, 73, 0.4);
 }
+
+.btn-primary:active {
+  /* Added active state for touch/press feedback */
+  background: #b8873d; /* Slightly darker gold on press */
+  transform: scale(0.98);
+}
+
 
 .btn-secondary {
   /* Fixed colors */
@@ -356,11 +401,41 @@ body {
 }
 
 .btn-secondary:hover {
-  /* Fixed hover colors */
+  /* Fixed hover colors - REMOVED transform: translateY(-2px); */
   background: rgba(255, 255, 255, 0.2);
   border-color: #dca349;
-  transform: translateY(-2px);
 }
+
+.btn-secondary:active {
+  /* Added active state for touch/press feedback */
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(0.98);
+}
+
+
+/* CTA Button */
+.btn-cta {
+  /* Fixed gradient and color */
+  background: linear-gradient(135deg, #dca349 0%, #b8873d 100%);
+  color: #000000;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 20px 50px;
+  border: none;
+  box-shadow: 0 8px 30px rgba(220, 163, 73, 0.4);
+}
+
+.btn-cta:hover {
+  /* REMOVED transform: translateY(-3px); */
+  box-shadow: 0 12px 40px rgba(220, 163, 73, 0.6);
+}
+
+.btn-cta:active {
+  /* Added active state for touch/press feedback */
+  background: #b8873d;
+  transform: scale(0.98);
+}
+
 
 /* Wave Divider */
 .wave-divider {
@@ -672,21 +747,6 @@ body {
   line-height: 1.6;
 }
 
-.btn-cta {
-  /* Fixed gradient and color */
-  background: linear-gradient(135deg, #dca349 0%, #b8873d 100%);
-  color: #000000;
-  font-size: 20px;
-  font-weight: 700;
-  padding: 20px 50px;
-  border: none;
-  box-shadow: 0 8px 30px rgba(220, 163, 73, 0.4);
-}
-
-.btn-cta:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(220, 163, 73, 0.6);
-}
 
 /* Footer */
 .footer {
@@ -741,11 +801,17 @@ body {
 }
 
 .footer-email:hover {
-  /* Fixed hover colors */
+  /* Fixed hover colors - REMOVED transform: translateY(-2px); */
   color: #dca349;
   background: rgba(220, 163, 73, 0.15);
   border-color: rgba(220, 163, 73, 0.4);
-  transform: translateY(-2px);
+}
+
+.footer-email:active {
+  /* Added active state for touch/press feedback */
+  transform: scale(0.98);
+  color: #dca349;
+  background: rgba(220, 163, 73, 0.2);
 }
 
 .footer-social {
@@ -775,13 +841,20 @@ body {
 }
 
 .social-link:hover {
-  /* Fixed hover colors */
+  /* Fixed hover colors - REMOVED transform: translateY(-3px); */
   background: rgba(220, 163, 73, 0.2);
   border-color: #dca349;
   color: #dca349;
-  transform: translateY(-3px);
   box-shadow: 0 4px 15px rgba(220, 163, 73, 0.3);
 }
+
+.social-link:active {
+  /* Added active state for touch/press feedback */
+  transform: scale(0.9);
+  background: rgba(220, 163, 73, 0.3);
+  box-shadow: 0 0 10px rgba(220, 163, 73, 0.4);
+}
+
 
 .footer-links {
   display: flex;
@@ -800,6 +873,13 @@ body {
   /* Fixed hover color */
   color: #dca349;
 }
+
+/* Added active state for footer links */
+.footer-links a:active {
+  color: #dca349;
+  opacity: 0.8;
+}
+
 
 .footer-copy {
   /* Fixed color */

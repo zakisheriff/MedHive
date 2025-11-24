@@ -128,8 +128,10 @@ function App() {
         <div className="hero-content">
           <div className="hero-card glass-card">
             <h1 className="hero-title animate-fade-in">
-              MedHive <br />
-              Your Health, Completed. <br />
+              MedHive
+            </h1>
+            <h1 className="hero-moto animate-fade-in">
+              Your Health, Unified. <br />
             </h1>
             <p className="hero-subtitle animate-fade-in-delay">
               MedHive breaks down clinic walls. Instantly connect any doctor in
