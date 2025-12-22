@@ -330,7 +330,7 @@ MIT License — Free and Open Source
 ---
 
 <p align="center">
-Made with ❤️ by the <strong>MedHive Team</strong>
+Made by the <strong>MedHive Team</strong>
 </p>
 
 <p align="center">
