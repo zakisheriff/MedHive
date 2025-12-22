@@ -1,0 +1,66 @@
+/* Features Section Styles */
+.features-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 0;
+    position: relative;
+    background: linear-gradient(180deg, rgba(220, 163, 73, 0.03) 0%, transparent 50%);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.feature-card {
+    padding: 40px;
+}
+
+.feature-icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-md);
+    background: rgba(220, 163, 73, 0.1);
+    border: 2px solid var(--color-border-accent);
+}
+
+.feature-icon svg {
+    width: 35px;
+    height: 35px;
+    color: var(--color-primary);
+    stroke-width: 2;
+}
+
+.feature-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--color-text-primary);
+}
+
+.feature-card p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .features-section {
+        padding: 80px 0;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .feature-card {
+        padding: 30px 25px;
+    }
+}

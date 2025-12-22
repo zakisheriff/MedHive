@@ -1,0 +1,50 @@
+/* CTA Section Styles */
+.cta-section {
+    min-height: 60vh;
+    padding: 100px 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cta-card {
+    padding: 80px 60px;
+    text-align: center;
+    max-width: 900px;
+    background: linear-gradient(135deg, rgba(220, 163, 73, 0.15) 0%, rgba(220, 163, 73, 0.05) 100%);
+}
+
+.cta-card h2 {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: var(--color-text-primary);
+    letter-spacing: -1px;
+}
+
+.cta-card p {
+    font-size: 20px;
+    margin-bottom: 40px;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .cta-section {
+        padding: 60px 20px;
+        min-height: 50vh;
+    }
+
+    .cta-card {
+        padding: 50px 30px;
+    }
+
+    .cta-card h2 {
+        font-size: 32px;
+    }
+
+    .cta-card p {
+        font-size: 18px;
+    }
+}
