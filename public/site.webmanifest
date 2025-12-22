@@ -1,0 +1,31 @@
+{
+    "name": "MedHive",
+    "short_name": "MedHive",
+    "description": "AI-Powered Healthcare Platform for Sri Lanka",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#000000",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "lang": "en",
+    "categories": [
+        "medical",
+        "health",
+        "healthcare"
+    ],
+    "icons": [
+        {
+            "src": "/logode.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/logode.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

@@ -128,11 +128,11 @@ function App() {
         <div className="hero-content">
           <div className="hero-card glass-card">
             <h1 className="hero-title animate-fade-in">
-              MedHive
+              MedHive – AI-Powered Healthcare Platform for Sri Lanka
             </h1>
-            <h1 className="hero-moto animate-fade-in">
-              Your Health, Unified. <br />
-            </h1>
+            <h2 className="hero-moto animate-fade-in">
+              Your Health, Unified. Intelligent Care Through AI.
+            </h2>
             <p className="hero-subtitle animate-fade-in-delay">
               MedHive breaks down clinic walls. Instantly connect any doctor in
               any partner clinic to your secure, unified medical timeline using
