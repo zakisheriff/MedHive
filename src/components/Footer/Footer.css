@@ -2,6 +2,8 @@
 .footer {
     background: transparent;
     padding: 80px 40px 40px;
+    padding-top: 100px;
+    /* Extra padding to account for navbar when scrolling to #contact */
     border-top: 1px solid rgba(220, 163, 73, 0.2);
 }
 
