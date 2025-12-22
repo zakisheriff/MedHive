@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './ProblemSection.css';
 
 const problems = [
@@ -59,13 +59,38 @@ const problems = [
 ];
 
 const ProblemSection = () => {
+    const sectionRef = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                }
+            },
+            { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+        );
+
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
     return (
-        <section className="problem-section" id="problems">
+        <section className="problem-section" id="problems" ref={sectionRef}>
             <div className="container">
-                <h2 className="section-title">Healthcare Challenges in Sri Lanka</h2>
+                <h2 className={`section-title scroll-fade-in ${isVisible ? 'visible' : ''}`}>
+                    Healthcare Challenges in Sri Lanka
+                </h2>
                 <div className="problem-grid">
                     {problems.map((problem, index) => (
-                        <div key={index} className="problem-card glass-card animate-slide-up">
+                        <div
+                            key={index}
+                            className={`problem-card glass-card scroll-slide-up stagger-${index + 1} ${isVisible ? 'visible' : ''}`}
+                        >
                             <div className="icon-placeholder">
                                 {problem.icon}
                             </div>

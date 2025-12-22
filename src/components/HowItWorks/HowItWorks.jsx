@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './HowItWorks.css';
 
 const steps = [
@@ -45,13 +45,38 @@ const steps = [
 ];
 
 const HowItWorks = () => {
+    const sectionRef = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                }
+            },
+            { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+        );
+
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
     return (
-        <section className="how-it-works" id="clinics">
+        <section className="how-it-works" id="clinics" ref={sectionRef}>
             <div className="container">
-                <h2 className="section-title">MedHive Patient Journey</h2>
+                <h2 className={`section-title scroll-fade-in ${isVisible ? 'visible' : ''}`}>
+                    MedHive Patient Journey
+                </h2>
                 <div className="steps-grid">
                     {steps.map((step) => (
-                        <div key={step.number} className="step-card glass-card">
+                        <div
+                            key={step.number}
+                            className={`step-card glass-card scroll-slide-up stagger-${step.number} ${isVisible ? 'visible' : ''}`}
+                        >
                             <div className="step-number">{step.number}</div>
                             <div className="step-icon">
                                 {step.icon}

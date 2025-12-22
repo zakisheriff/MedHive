@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './FeaturesSection.css';
 
 const features = [
@@ -61,13 +61,38 @@ const features = [
 ];
 
 const FeaturesSection = () => {
+    const sectionRef = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                }
+            },
+            { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+        );
+
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
     return (
-        <section className="features-section" id="features">
+        <section className="features-section" id="features" ref={sectionRef}>
             <div className="container">
-                <h2 className="section-title">Key Features</h2>
+                <h2 className={`section-title scroll-fade-in ${isVisible ? 'visible' : ''}`}>
+                    Key Features
+                </h2>
                 <div className="features-grid">
                     {features.map((feature, index) => (
-                        <div key={index} className="feature-card glass-card">
+                        <div
+                            key={index}
+                            className={`feature-card glass-card scroll-slide-up stagger-${index + 1} ${isVisible ? 'visible' : ''}`}
+                        >
                             <div className="feature-icon">
                                 {feature.icon}
                             </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './SolutionSection.css';
 
 const solutions = [
@@ -77,13 +77,38 @@ const solutions = [
 ];
 
 const SolutionSection = () => {
+    const sectionRef = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                }
+            },
+            { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+        );
+
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
     return (
-        <section className="solution-section" id="ai">
+        <section className="solution-section" id="ai" ref={sectionRef}>
             <div className="container">
-                <h2 className="section-title">The MedHive Ecosystem</h2>
+                <h2 className={`section-title scroll-fade-in ${isVisible ? 'visible' : ''}`}>
+                    The MedHive Ecosystem
+                </h2>
                 <div className="solution-grid">
                     {solutions.map((solution, index) => (
-                        <div key={index} className="solution-card glass-card">
+                        <div
+                            key={index}
+                            className={`solution-card glass-card scroll-scale-in stagger-${index + 1} ${isVisible ? 'visible' : ''}`}
+                        >
                             <div className="solution-icon">
                                 {solution.icon}
                             </div>
