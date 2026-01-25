@@ -678,6 +678,10 @@
 
     .hero-left {
         padding: 0 20px;
+        min-height: 75vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     .hero-buttons {
@@ -708,12 +712,19 @@
 
 
     .hero-right {
-        display: none;
-        /* Hide iPhone on mobile as requested */
+        display: flex;
+        justify-content: center;
+        margin-top: 100px;
+        width: 100%;
+        height: auto;
+        /* Ensure it takes space */
     }
 
     .iphone-mockup {
-        display: none;
+        display: block;
+        transform: scale(0.9);
+        transform-origin: top center;
+        margin: 0 auto;
     }
 }
 

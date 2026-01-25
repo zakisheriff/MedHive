@@ -96,7 +96,6 @@ const Navbar = ({ scrolled, onLogoClick }) => {
                         <a href="#problems" onClick={(e) => handleNavClick(e, 'problems')}>Problems</a>
                         <a href="#ai" onClick={(e) => handleNavClick(e, 'ai')}>Solutions</a>
                         <a href="#features" onClick={(e) => handleNavClick(e, 'features')}>Features</a>
-                        <a href="#clinics" onClick={(e) => handleNavClick(e, 'clinics')}>Patient Journey</a>
                     </div>
                     <div className="nav-actions mobile-hidden">
                         <button className="btn-primary glass-btn nav-btn">Join Now</button>

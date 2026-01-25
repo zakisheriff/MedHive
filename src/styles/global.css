@@ -112,8 +112,7 @@ html {
 }
 
 .btn-primary:hover {
-    background: var(--color-primary);
-    color: var(--color-bg-dark);
+    color: var(--color-text-primary);
     box-shadow: 0 8px 20px rgba(220, 163, 73, 0.4);
 }
 
