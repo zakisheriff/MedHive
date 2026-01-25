@@ -131,8 +131,15 @@ const Hero = () => {
                                 <div className="status-bar">
                                     <span>9:41</span>
                                     <div className="status-icons">
-                                        <i className="fas fa-wifi"></i>
-                                        <i className="fas fa-battery-full"></i>
+                                        <div className="ios-signal">
+                                            <div className="bar"></div>
+                                            <div className="bar"></div>
+                                            <div className="bar"></div>
+                                            <div className="bar"></div>
+                                        </div>
+                                        <div className="ios-battery">
+                                            <div className="battery-level"></div>
+                                        </div>
                                     </div>
                                 </div>
 
