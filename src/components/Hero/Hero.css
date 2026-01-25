@@ -708,14 +708,12 @@
 
 
     .hero-right {
-        justify-content: center;
-        perspective: none;
+        display: none;
+        /* Hide iPhone on mobile as requested */
     }
 
     .iphone-mockup {
-        transform: none;
-        width: 280px;
-        height: 580px;
+        display: none;
     }
 }
 
@@ -933,7 +931,7 @@
 }
 
 .search-bar {
-    background: #dadcdf;
+    background: transparent;
     border-radius: 12px;
     padding: 8px 12px;
     display: flex;
