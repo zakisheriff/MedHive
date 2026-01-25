@@ -1,24 +1,35 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './styles/global.css';
 
 // Components
 import Navbar from './components/Navbar/Navbar';
 import MobileMenu from './components/MobileMenu/MobileMenu';
-import Hero from './components/Hero/Hero';
-import ProblemSection from './components/ProblemSection/ProblemSection';
-import SolutionSection from './components/SolutionSection/SolutionSection';
-import FeaturesSection from './components/FeaturesSection/FeaturesSection';
-import HowItWorks from './components/HowItWorks/HowItWorks';
-import TeamSection from './components/TeamSection/TeamSection';
-import CTASection from './components/CTASection/CTASection';
 import Footer from './components/Footer/Footer';
+
+// Pages
+import LandingPage from './pages/LandingPage';
+import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
+import TermsOfService from './pages/Legal/TermsOfService';
+import AboutUs from './pages/AboutUs/AboutUs';
 
 const MOBILE_BREAKPOINT = 900;
 
-function App() {
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
+function AppContent() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= MOBILE_BREAKPOINT);
+  const location = useLocation();
 
   // Scroll to top function
   const scrollToTop = () => {
@@ -29,8 +40,13 @@ function App() {
     setMobileMenuOpen(false);
   };
 
-  // Logo click handler - toggle menu on mobile, scroll to top on desktop
+  // Logo click handler
   const handleLogoClick = () => {
+    if (location.pathname !== '/') {
+      window.location.href = '/';
+      return;
+    }
+
     if (isMobile) {
       setMobileMenuOpen(!mobileMenuOpen);
     } else {
@@ -52,7 +68,7 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Resize effect for mobile detection
+  // Resize effect
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
@@ -64,6 +80,7 @@ function App() {
 
   return (
     <div className="app">
+      <ScrollToTop />
       <Navbar scrolled={scrolled} onLogoClick={handleLogoClick} />
 
       <MobileMenu
@@ -72,15 +89,23 @@ function App() {
         onScrollToTop={scrollToTop}
       />
 
-      <Hero />
-      <ProblemSection />
-      <SolutionSection />
-      <FeaturesSection />
-      <HowItWorks />
-      <TeamSection />
-      <CTASection />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/about-us" element={<AboutUs />} />
+      </Routes>
+
       <Footer onScrollToTop={scrollToTop} />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 }
 

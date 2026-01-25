@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Footer.css';
 
 const Footer = ({ onScrollToTop }) => {
@@ -41,9 +42,9 @@ const Footer = ({ onScrollToTop }) => {
                     <div className="footer-column">
                         <h4>Legal</h4>
                         <nav className="footer-nav">
-                            <a href="/privacy.html">Privacy Policy</a>
-                            <a href="/terms.html">Terms of Service</a>
-                            <a href="/about.html">About Us</a>
+                            <Link to="/privacy-policy">Privacy Policy</Link>
+                            <Link to="/terms-of-service">Terms of Service</Link>
+                            <Link to="/about-us">About Us</Link>
                         </nav>
                     </div>
 

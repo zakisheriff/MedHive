@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = ({ scrolled, onLogoClick }) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const navContentRef = useRef(null);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     // Close menu when clicking outside the nav-content specifically
     useEffect(() => {
@@ -27,13 +30,23 @@ const Navbar = ({ scrolled, onLogoClick }) => {
         setMobileMenuOpen(false);
 
         if (sectionId === 'home') {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (location.pathname !== '/') {
+                navigate('/');
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
             return;
         }
 
+        // If not on home page, navigate to home with hash
+        if (location.pathname !== '/') {
+            window.location.href = `/#${sectionId}`;
+            return;
+        }
+
+        // On home page, smooth scroll
         const element = document.getElementById(sectionId);
         if (element) {
-            // Smaller offset for navbar height
             const navbarHeight = 20;
             const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
             window.scrollTo({
@@ -71,7 +84,6 @@ const Navbar = ({ scrolled, onLogoClick }) => {
                         alt="MedHive Logo"
                         className="nav-logo-image"
                         onClick={(e) => {
-                            // On mobile, toggle menu. On desktop, scroll to top
                             if (window.innerWidth <= 900) {
                                 toggleMobileMenu();
                             } else {
@@ -80,7 +92,7 @@ const Navbar = ({ scrolled, onLogoClick }) => {
                         }}
                     />
                     <div className={`nav-links ${mobileMenuOpen ? 'show' : ''}`}>
-                        <a href="#" className="mobile-only" onClick={(e) => handleNavClick(e, 'home')}>Home</a>
+                        <a href="/" onClick={(e) => handleNavClick(e, 'home')}>Home</a>
                         <a href="#problems" onClick={(e) => handleNavClick(e, 'problems')}>Problems</a>
                         <a href="#ai" onClick={(e) => handleNavClick(e, 'ai')}>Solutions</a>
                         <a href="#features" onClick={(e) => handleNavClick(e, 'features')}>Features</a>
