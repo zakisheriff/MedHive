@@ -5,8 +5,12 @@ const Hero = () => {
     // iPhone State: 'upload', 'history', 'details', 'profile', 'access'
     const [screen, setScreen] = useState('upload');
     const [selectedItem, setSelectedItem] = useState(null);
-    const [uploadStatus, setUploadStatus] = useState('idle'); // idle, uploading, processing, completed
+    const [uploadStatus, setUploadStatus] = useState('idle');
     const fileInputRef = useRef(null);
+
+    // History Navigation State
+    const [selectedYear, setSelectedYear] = useState(null);
+    const [selectedMonth, setSelectedMonth] = useState(null);
 
     const handleUploadClick = () => {
         fileInputRef.current.click();
@@ -15,66 +19,77 @@ const Hero = () => {
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             setUploadStatus('uploading');
-
-            // Simulate Step 1
-            setTimeout(() => {
-                setUploadStatus('processing');
-            }, 2000);
-
-            // Simulate Step 2 -> Completion
+            setTimeout(() => { setUploadStatus('processing'); }, 2000);
             setTimeout(() => {
                 setUploadStatus('completed');
-
-                // Reset after showing "Coming Soon" for a bit? Or keep it? 
-                setTimeout(() => {
-                    setUploadStatus('idle');
-                }, 5000);
+                setTimeout(() => { setUploadStatus('idle'); }, 5000);
             }, 4500);
         }
     };
 
-    const historyItems = [
-        {
-            id: 1,
-            type: 'hospital',
-            icon: '🏥',
-            title: 'General Checkup',
-            subtitle: 'City Hospital • May 12, 2025',
-            status: 'Passed',
-            statusClass: 'check',
-            details: 'Routine annual physical examination. Vitals stable. Blood pressure 120/80. No significant findings.'
+    // Mock Hierarchical Data
+    const historyData = {
+        '2025': {
+            'May': [
+                {
+                    id: 1,
+                    type: 'hospital',
+                    icon: '🏥',
+                    title: 'General Checkup',
+                    subtitle: 'City Hospital • May 12, 2025',
+                    status: 'Passed',
+                    statusClass: 'check',
+                    details: 'Routine annual physical examination. Vitals stable. Blood pressure 120/80. No significant findings.'
+                }
+            ],
+            'April': [
+                {
+                    id: 2,
+                    type: 'lab',
+                    icon: '🧪',
+                    title: 'Blood Test Results',
+                    subtitle: 'Metro Labs • Apr 28, 2025',
+                    status: 'Review',
+                    statusClass: 'alert',
+                    details: 'Complete Blood Count (CBC). Hemoglobin slightly low. Vitamin D deficiency detected. Supplement recommended.'
+                },
+                {
+                    id: 3,
+                    type: 'pharmacy',
+                    icon: '💊',
+                    title: 'Prescription Filled',
+                    subtitle: 'MediCare Pharmacy • Apr 15, 2025',
+                    status: 'Active',
+                    statusClass: 'success',
+                    details: 'Amoxicillin 500mg. Take 3 times daily for 7 days. Finished course on Apr 22, 2025.'
+                }
+            ]
         },
-        {
-            id: 2,
-            type: 'lab',
-            icon: '🧪',
-            title: 'Blood Test Results',
-            subtitle: 'Metro Labs • Apr 28, 2025',
-            status: 'Review',
-            statusClass: 'alert',
-            details: 'Complete Blood Count (CBC). Hemoglobin slightly low. Vitamin D deficiency detected. Supplement recommended.'
-        },
-        {
-            id: 3,
-            type: 'pharmacy',
-            icon: '💊',
-            title: 'Prescription Filled',
-            subtitle: 'MediCare Pharmacy • Apr 15, 2025',
-            status: 'Active',
-            statusClass: 'success',
-            details: 'Amoxicillin 500mg. Take 3 times daily for 7 days. Finished course on Apr 22, 2025.'
-        },
-        {
-            id: 4,
-            type: 'vaccine',
-            icon: '💉',
-            title: 'Annual Vaccination',
-            subtitle: 'Community Clinic • Jan 10, 2025',
-            status: 'Done',
-            statusClass: 'check',
-            details: 'Influenza Vaccine (Flu Shot). Batch #4492-B. Next due: Jan 2026.'
+        '2024': {
+            'January': [
+                {
+                    id: 4,
+                    type: 'vaccine',
+                    icon: '💉',
+                    title: 'Annual Vaccination',
+                    subtitle: 'Community Clinic • Jan 10, 2024',
+                    status: 'Done',
+                    statusClass: 'check',
+                    details: 'Influenza Vaccine (Flu Shot). Batch #4492-B. Next due: Jan 2025.'
+                }
+            ]
         }
-    ];
+    };
+
+    const handleYearClick = (year) => {
+        setSelectedYear(year);
+        setScreen('history-months');
+    };
+
+    const handleMonthClick = (month) => {
+        setSelectedMonth(month);
+        setScreen('history-clinics');
+    };
 
     const handleItemClick = (item) => {
         setSelectedItem(item);
@@ -83,15 +98,26 @@ const Hero = () => {
 
     const handleBackClick = () => {
         if (screen === 'details') {
-            setScreen('history');
+            setScreen('history-clinics');
             setSelectedItem(null);
-        } else if (screen === 'history') {
+        } else if (screen === 'history-clinics') {
+            setScreen('history-months');
+            setSelectedMonth(null);
+        } else if (screen === 'history-months') {
+            setScreen('history-years');
+            setSelectedYear(null);
+        } else if (screen === 'history-years') {
             setScreen('home');
         }
     };
 
-    const handleHomeClick = () => {
-        setScreen('history');
+    // Main bottom nav click handler
+    const handleHistoryNavClick = () => {
+        // Reset to top level when clicking bottom nav
+        setScreen('history-years');
+        setSelectedYear(null);
+        setSelectedMonth(null);
+        setSelectedItem(null);
     };
 
     return (
@@ -144,9 +170,8 @@ const Hero = () => {
                                 </div>
 
 
-
                                 <div className="app-content-container">
-                                    {/* UPLOAD SCREEN (HOME) - Prescription Reader */}
+                                    {/* UPLOAD SCREEN (HOME) */}
                                     {screen === 'upload' && (
                                         <div className="screen-home animate-scale-in">
                                             <div className="main-honey-card">
@@ -191,10 +216,60 @@ const Hero = () => {
                                         </div>
                                     )}
 
-                                    {/* HISTORY SCREEN */}
-                                    {screen === 'history' && (
+                                    {/* HISTORY - LEVEL 1: YEARS */}
+                                    {screen === 'history-years' && (
                                         <div className="screen-history animate-slide-in-right">
-                                            {historyItems.map((item) => (
+                                            <div className="list-header">
+                                                <h3>Timeline</h3>
+                                            </div>
+                                            {Object.keys(historyData).sort((a, b) => b - a).map((year) => (
+                                                <div
+                                                    key={year}
+                                                    className="history-simple-item"
+                                                    onClick={() => handleYearClick(year)}
+                                                >
+                                                    <div className="simple-item-label">{year}</div>
+                                                    <i className="fas fa-chevron-right arrow-icon"></i>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {/* HISTORY - LEVEL 2: MONTHS */}
+                                    {screen === 'history-months' && (
+                                        <div className="screen-history animate-slide-in-right">
+                                            <div className="list-header-row">
+                                                <button className="back-btn-small" onClick={handleBackClick}>
+                                                    <i className="fas fa-chevron-left"></i>
+                                                </button>
+                                                <h3>{selectedYear}</h3>
+                                            </div>
+                                            {historyData[selectedYear] && Object.keys(historyData[selectedYear]).map((month) => (
+                                                <div
+                                                    key={month}
+                                                    className="history-simple-item"
+                                                    onClick={() => handleMonthClick(month)}
+                                                >
+                                                    <div className="simple-item-label">{month}</div>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                        <span className="count-badge">{historyData[selectedYear][month].length}</span>
+                                                        <i className="fas fa-chevron-right arrow-icon"></i>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {/* HISTORY - LEVEL 3: CLINICS (ITEMS) */}
+                                    {screen === 'history-clinics' && (
+                                        <div className="screen-history animate-slide-in-right">
+                                            <div className="list-header-row">
+                                                <button className="back-btn-small" onClick={handleBackClick}>
+                                                    <i className="fas fa-chevron-left"></i>
+                                                </button>
+                                                <h3>{selectedMonth} {selectedYear}</h3>
+                                            </div>
+                                            {historyData[selectedYear] && historyData[selectedYear][selectedMonth] && historyData[selectedYear][selectedMonth].map((item) => (
                                                 <div
                                                     key={item.id}
                                                     className="history-item-card"
@@ -214,6 +289,7 @@ const Hero = () => {
                                             ))}
                                         </div>
                                     )}
+
 
                                     {/* DETAILS SCREEN */}
                                     {screen === 'details' && selectedItem && (
@@ -235,8 +311,12 @@ const Hero = () => {
                                                     <span className="dv-label">Date</span>
                                                     <span className="dv-value">{selectedItem.subtitle.split('•')[1]}</span>
                                                 </div>
+                                                <div className="dv-row" style={{ display: 'block', borderBottom: 'none', paddingTop: '15px' }}>
+                                                    <span className="dv-label" style={{ display: 'block', marginBottom: '8px' }}>Medical Notes</span>
+                                                    <p style={{ fontSize: '13px', lineHeight: '1.5', color: '#555' }}>{selectedItem.details}</p>
+                                                </div>
                                             </div>
-                                            <button className="section-btn-primary" style={{ width: '100%', marginTop: '20px', padding: '15px', borderRadius: '15px' }} onClick={() => setScreen('history')}>
+                                            <button className="section-btn-primary" style={{ width: '100%', marginTop: '20px', padding: '15px', borderRadius: '15px' }} onClick={handleBackClick}>
                                                 Back
                                             </button>
                                         </div>
@@ -248,7 +328,6 @@ const Hero = () => {
                                             <div className="profile-header-bg">
                                                 <div className="profile-avatar-wrapper">
                                                     <div className="profile-avatar-large">JD</div>
-                                                    <div className="online-indicator"></div>
                                                 </div>
                                             </div>
 
@@ -396,7 +475,7 @@ const Hero = () => {
                                         <i className="fas fa-upload"></i>
                                         <span>Upload</span>
                                     </div>
-                                    <div className={`nav-item ${screen === 'history' || screen === 'details' ? 'active' : ''}`} onClick={() => setScreen('history')}>
+                                    <div className={`nav-item ${screen.includes('history') || screen === 'details' ? 'active' : ''}`} onClick={handleHistoryNavClick}>
                                         <i className="fas fa-history"></i>
                                         <span>History</span>
                                     </div>
