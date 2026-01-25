@@ -23,7 +23,7 @@ const CTASection = () => {
     }, []);
 
     return (
-        <section className="cta-section" id="pharma" ref={sectionRef}>
+        <section className="cta-section" id="join" ref={sectionRef}>
             <div className={`cta-card glass-card scroll-scale-in ${isVisible ? 'visible' : ''}`}>
                 <h2>Join the future of connected healthcare.</h2>
                 <p>Be among the first to experience the power of AI-driven health management</p>

@@ -95,8 +95,10 @@
     filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.15));
 }
 
-.iphone-mockup:hover {
-    transform: rotateY(0) rotateX(0);
+@media (min-width: 901px) {
+    .iphone-mockup:hover {
+        transform: rotateY(0) rotateX(0);
+    }
 }
 
 .iphone-bezel {

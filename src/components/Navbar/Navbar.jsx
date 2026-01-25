@@ -98,7 +98,6 @@ const Navbar = ({ scrolled, onLogoClick }) => {
                         <a href="#features" onClick={(e) => handleNavClick(e, 'features')}>Features</a>
                     </div>
                     <div className="nav-actions mobile-hidden">
-                        <button className="btn-primary glass-btn nav-btn">Join Now</button>
                     </div>
                 </div>
             </nav>

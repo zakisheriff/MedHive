@@ -113,11 +113,11 @@ const Hero = () => {
                         MedHive is Sri Lanka's AI-Powered Healthcare Platform. Unify Medical Records, Digitize Prescriptions, and Access Intelligent Health Insights with Your Med ID.
                     </p>
                     <div className="hero-buttons">
-                        <a href="#pharma">
+                        <a href="#join">
                             <button className="btn-primary glass-btn">Get Started</button>
                         </a>
-                        <a href="#clinics">
-                            <button className="btn-secondary glass-btn">How It Works</button>
+                        <a href="#ai">
+                            <button className="btn-secondary glass-btn">Learn More</button>
                         </a>
                     </div>
                 </div>
