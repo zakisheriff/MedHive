@@ -160,7 +160,7 @@ const Hero = () => {
                                                             </p>
                                                             <div className="honey-card-actions">
                                                                 <button className="action-btn" onClick={handleUploadClick}>Upload Prescription</button>
-                                                                <button className="action-btn secondary" onClick={handleUploadClick}>Upload Lab Report</button>
+                                                                <button className="action-btn" onClick={handleUploadClick}>Upload Lab Report</button>
                                                             </div>
                                                         </>
                                                     )}
