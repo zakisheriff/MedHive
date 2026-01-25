@@ -1,10 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './Hero.css';
 
 const Hero = () => {
     // iPhone State: 'upload', 'history', 'details', 'profile', 'access'
     const [screen, setScreen] = useState('upload');
     const [selectedItem, setSelectedItem] = useState(null);
+    const [uploadStatus, setUploadStatus] = useState('idle'); // idle, uploading, processing, completed
+    const fileInputRef = useRef(null);
+
+    const handleUploadClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setUploadStatus('uploading');
+
+            // Simulate Step 1
+            setTimeout(() => {
+                setUploadStatus('processing');
+            }, 2000);
+
+            // Simulate Step 2 -> Completion
+            setTimeout(() => {
+                setUploadStatus('completed');
+
+                // Reset after showing "Coming Soon" for a bit? Or keep it? 
+                setTimeout(() => {
+                    setUploadStatus('idle');
+                }, 5000);
+            }, 4500);
+        }
+    };
 
     const historyItems = [
         {
@@ -69,6 +96,13 @@ const Hero = () => {
 
     return (
         <section className="hero">
+            <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                accept="image/*,.pdf"
+                onChange={handleFileChange}
+            />
             <div className="hero-gradient" />
 
             <div className="container hero-container">
@@ -96,6 +130,10 @@ const Hero = () => {
                                 <div className="dynamic-island"></div>
                                 <div className="status-bar">
                                     <span>9:41</span>
+                                    <div className="status-icons">
+                                        <i className="fas fa-wifi"></i>
+                                        <i className="fas fa-battery-full"></i>
+                                    </div>
                                 </div>
 
 
@@ -107,14 +145,40 @@ const Hero = () => {
                                             <div className="main-honey-card">
                                                 <div className="honey-card-pattern"></div>
                                                 <div className="honey-card-content">
-                                                    <h2 className="honey-card-title">Prescription<br />Reader</h2>
-                                                    <p className="honey-card-subtitle">
-                                                        Upload an image to extract Medicine Name, Dosage, and Duration automatically.
-                                                    </p>
-                                                    <div className="honey-card-actions">
-                                                        <button className="action-btn" onClick={() => setScreen('history')}>Upload Prescription</button>
-                                                        <button className="action-btn" onClick={() => setScreen('history')}>Upload Lab</button>
-                                                    </div>
+                                                    {uploadStatus === 'idle' && (
+                                                        <>
+                                                            <h2 className="honey-card-title">Upload Your<br />Health Records</h2>
+                                                            <p className="honey-card-subtitle">
+                                                                Upload an image to extract Medicine Name, Dosage, and Duration.
+                                                            </p>
+                                                            <div className="honey-card-actions">
+                                                                <button className="action-btn" onClick={handleUploadClick}>Upload Prescription</button>
+                                                                <button className="action-btn secondary" onClick={handleUploadClick}>Upload Lab Report</button>
+                                                            </div>
+                                                        </>
+                                                    )}
+
+                                                    {uploadStatus === 'uploading' && (
+                                                        <div className="upload-state">
+                                                            <div className="spinner"></div>
+                                                            <p>Step 1/2: Checking Document Type...</p>
+                                                        </div>
+                                                    )}
+
+                                                    {uploadStatus === 'processing' && (
+                                                        <div className="upload-state">
+                                                            <div className="spinner"></div>
+                                                            <p>Step 2/2: Extracting Medicine Names...</p>
+                                                        </div>
+                                                    )}
+
+                                                    {uploadStatus === 'completed' && (
+                                                        <div className="upload-state">
+                                                            <i className="fas fa-clock" style={{ fontSize: '40px', marginBottom: '15px' }}></i>
+                                                            <h3>Coming Soon</h3>
+                                                            <p>This AI feature is rolling out soon!</p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -200,7 +264,7 @@ const Hero = () => {
                                                 <div className="profile-section-title">Personal Details</div>
                                                 <div className="profile-details-group">
                                                     <div className="profile-row-item">
-                                                        <div className="p-icon-box">👤</div>
+                                                        <div className="p-icon-box"><i className="fas fa-user"></i></div>
                                                         <div className="p-row-content">
                                                             <span className="p-label">Full Name</span>
                                                             <span className="p-value">Johnathan Elias Doe</span>
@@ -208,7 +272,7 @@ const Hero = () => {
                                                     </div>
                                                     <div className="profile-row-separator"></div>
                                                     <div className="profile-row-item">
-                                                        <div className="p-icon-box">🎂</div>
+                                                        <div className="p-icon-box"><i className="fas fa-birthday-cake"></i></div>
                                                         <div className="p-row-content">
                                                             <span className="p-label">Date of Birth</span>
                                                             <span className="p-value">Sept 14, 1985</span>
@@ -216,7 +280,7 @@ const Hero = () => {
                                                     </div>
                                                     <div className="profile-row-separator"></div>
                                                     <div className="profile-row-item">
-                                                        <div className="p-icon-box">🩸</div>
+                                                        <div className="p-icon-box"><i className="fas fa-tint"></i></div>
                                                         <div className="p-row-content">
                                                             <span className="p-label">Blood Type</span>
                                                             <span className="p-value">O+ (Positive)</span>
@@ -227,7 +291,7 @@ const Hero = () => {
                                                 <div className="profile-section-title">Settings</div>
                                                 <div className="profile-details-group">
                                                     <div className="profile-row-item">
-                                                        <div className="p-icon-box">🔔</div>
+                                                        <div className="p-icon-box"><i className="fas fa-bell"></i></div>
                                                         <div className="p-row-content">
                                                             <span className="p-label">Notifications</span>
                                                             <span className="p-value">On</span>
@@ -236,7 +300,7 @@ const Hero = () => {
                                                     </div>
                                                     <div className="profile-row-separator"></div>
                                                     <div className="profile-row-item">
-                                                        <div className="p-icon-box">🛡️</div>
+                                                        <div className="p-icon-box"><i className="fas fa-shield-alt"></i></div>
                                                         <div className="p-row-content">
                                                             <span className="p-label">Privacy & Security</span>
                                                         </div>
@@ -343,7 +407,7 @@ const Hero = () => {
 
                 </div>
             </div>
-        </section>
+        </section >
     );
 };
 

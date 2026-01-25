@@ -323,15 +323,26 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
     width: 100%;
 }
 
 .action-btn:hover {
     transform: translateY(-2px);
-    background: #404040;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+
+.action-btn.secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: #5d4037;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.action-btn.secondary:hover {
+    background: #fff;
+}
+
+
 
 /* HISTORY SCREEN - List Style */
 .screen-history {
@@ -916,4 +927,43 @@
     color: #fff;
     width: 24px;
     height: 24px;
+}
+
+.upload-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: white;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+.upload-state h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.upload-state p {
+    font-size: 16px;
+    opacity: 0.9;
+    color: white;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
