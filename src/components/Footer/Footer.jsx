@@ -1,10 +1,28 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Footer.css';
 
 const Footer = ({ onScrollToTop }) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const handleScrollTo = (e, sectionId) => {
         e.preventDefault();
+
+        // If not on home page, navigate to home with hash
+        if (location.pathname !== '/') {
+            if (sectionId === 'top') {
+                navigate('/');
+            } else {
+                navigate('/', { state: { scrollTo: sectionId } });
+                // Fallback for simple hash navigation
+                setTimeout(() => {
+                    window.location.hash = sectionId;
+                }, 100);
+            }
+            return;
+        }
+
         if (sectionId === 'top') {
             onScrollToTop();
         } else {
@@ -30,11 +48,11 @@ const Footer = ({ onScrollToTop }) => {
                     <div className="footer-column">
                         <h4>Quick Links</h4>
                         <nav className="footer-nav">
-                            <a href="#top" onClick={(e) => handleScrollTo(e, 'top')}>Home</a>
-                            <a href="#problems" onClick={(e) => handleScrollTo(e, 'problems')}>Problems</a>
-                            <a href="#ai" onClick={(e) => handleScrollTo(e, 'ai')}>Solutions</a>
-                            <a href="#features" onClick={(e) => handleScrollTo(e, 'features')}>Features</a>
-                            <a href="#clinics" onClick={(e) => handleScrollTo(e, 'clinics')}>How It Works</a>
+                            <a href="/" onClick={(e) => handleScrollTo(e, 'top')}>Home</a>
+                            <a href="/#problems" onClick={(e) => handleScrollTo(e, 'problems')}>Problems</a>
+                            <a href="/#ai" onClick={(e) => handleScrollTo(e, 'ai')}>Solutions</a>
+                            <a href="/#features" onClick={(e) => handleScrollTo(e, 'features')}>Features</a>
+                            <a href="/#clinics" onClick={(e) => handleScrollTo(e, 'clinics')}>How It Works</a>
                         </nav>
                     </div>
 
