@@ -52,7 +52,6 @@ const Footer = ({ onScrollToTop }) => {
                             <a href="/#problems" onClick={(e) => handleScrollTo(e, 'problems')}>Problems</a>
                             <a href="/#ai" onClick={(e) => handleScrollTo(e, 'ai')}>Solutions</a>
                             <a href="/#features" onClick={(e) => handleScrollTo(e, 'features')}>Features</a>
-                            <a href="/#clinics" onClick={(e) => handleScrollTo(e, 'clinics')}>How It Works</a>
                         </nav>
                     </div>
 
