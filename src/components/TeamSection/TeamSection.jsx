@@ -18,8 +18,8 @@ const teamMembers = [
         role: 'Frontend and Backend',
         image: '/Team/Zaki.png',
         social: {
-            linkedin: '#',
-            github: '#'
+            linkedin: 'https://www.linkedin.com/in/zakisheriff',
+            github: 'https://github.com/zakisheriff'
         }
     },
 
@@ -50,7 +50,7 @@ const teamMembers = [
         role: 'Backend Developer',
         image: '/Team/Kausian.png',
         social: {
-            linkedin: 'https://www.linkedin.com/in/kausian-senthan',
+            linkedin: 'https://www.linkedin.com/in/kausian-senthan-6268963a7/',
             github: 'https://github.com/Kausian'
         }
     },
