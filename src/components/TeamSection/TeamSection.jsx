@@ -50,7 +50,7 @@ const teamMembers = [
         role: 'Backend Developer',
         image: '/Team/Kausian.png',
         social: {
-            linkedin: 'https://www.linkedin.com/in/kausian-senthan-6268963a7/',
+            linkedin: 'https://www.linkedin.com/in/kausian-senthan',
             github: 'https://github.com/Kausian'
         }
     },
