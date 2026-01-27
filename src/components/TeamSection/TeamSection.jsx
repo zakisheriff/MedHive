@@ -50,8 +50,8 @@ const teamMembers = [
         role: 'Backend Developer',
         image: '/Team/Kausian.png',
         social: {
-            linkedin: '#',
-            github: '#'
+            linkedin: 'https://www.linkedin.com/in/kausian-senthan',
+            github: 'https://github.com/Kausian'
         }
     },
     {
@@ -98,6 +98,7 @@ const TeamSection = () => {
                                             href={member.social[platform]}
                                             className="social-link"
                                             aria-label={`${member.name}'s ${platform}`}
+                                            target='_blank'
                                         >
                                             <i className={`fab fa-${platform}`}></i>
                                         </a>
