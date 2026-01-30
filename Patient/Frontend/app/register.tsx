@@ -93,7 +93,7 @@ export default function RegisterScreen() {
 
                         {medId ? (
                             <Input
-                                label="Med ID (Auto-generated)"
+                                label="Med-ID (Auto-Generated)"
                                 value={medId}
                                 editable={false}
                                 iconName="id-card-outline"

@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { View, TextInput, StyleSheet, Text, TextInputProps } from 'react-native';
+import { View, TextInput, StyleSheet, Text } from 'react-native';
 import { Colors } from '../constants/theme';
+import { Ionicons } from '@expo/vector-icons';
 
 interface DOBInputProps {
     onDateChange: (day: string, month: string, year: string) => void;
@@ -38,48 +39,55 @@ export function DOBInput({ onDateChange }: DOBInputProps) {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={styles.wrapper}>
             <Text style={styles.label}>Date of Birth</Text>
-            <View style={styles.row}>
-                <TextInput
-                    ref={dayRef}
-                    style={[styles.input, styles.dayMonth]}
-                    placeholder="DD"
-                    placeholderTextColor="#999"
-                    keyboardType="number-pad"
-                    maxLength={2}
-                    value={day}
-                    onChangeText={handleDayChange}
-                />
-                <TextInput
-                    ref={monthRef}
-                    style={[styles.input, styles.dayMonth]}
-                    placeholder="MM"
-                    placeholderTextColor="#999"
-                    keyboardType="number-pad"
-                    maxLength={2}
-                    value={month}
-                    onChangeText={handleMonthChange}
-                />
-                <TextInput
-                    ref={yearRef}
-                    style={[styles.input, styles.year]}
-                    placeholder="YYYY"
-                    placeholderTextColor="#999"
-                    keyboardType="number-pad"
-                    maxLength={4}
-                    value={year}
-                    onChangeText={handleYearChange}
-                />
+            <View style={styles.container}>
+                <View style={styles.iconContainer}>
+                    <Ionicons name="calendar-outline" size={20} color={Colors.light.icon} />
+                </View>
+                <View style={styles.inputsRow}>
+                    <TextInput
+                        ref={dayRef}
+                        style={[styles.inputPiece, { flex: 1 }]}
+                        placeholder="DD"
+                        placeholderTextColor="#999"
+                        keyboardType="number-pad"
+                        maxLength={2}
+                        value={day}
+                        onChangeText={handleDayChange}
+                    />
+                    <Text style={styles.separator}>/</Text>
+                    <TextInput
+                        ref={monthRef}
+                        style={[styles.inputPiece, { flex: 1 }]}
+                        placeholder="MM"
+                        placeholderTextColor="#999"
+                        keyboardType="number-pad"
+                        maxLength={2}
+                        value={month}
+                        onChangeText={handleMonthChange}
+                    />
+                    <Text style={styles.separator}>/</Text>
+                    <TextInput
+                        ref={yearRef}
+                        style={[styles.inputPiece, { flex: 1.5 }]}
+                        placeholder="YYYY"
+                        placeholderTextColor="#999"
+                        keyboardType="number-pad"
+                        maxLength={4}
+                        value={year}
+                        onChangeText={handleYearChange}
+                    />
+                </View>
             </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        marginBottom: 16,
+    wrapper: {
         width: '100%',
+        marginBottom: 16,
     },
     label: {
         fontSize: 14,
@@ -88,25 +96,33 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginLeft: 4,
     },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        gap: 10,
-    },
-    input: {
+    container: {
         backgroundColor: '#fff',
         borderWidth: 1,
         borderColor: '#e5e5e5',
         borderRadius: 30, // Pill shape
-        padding: 16,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingRight: 16,
+    },
+    iconContainer: {
+        paddingLeft: 16,
+        paddingRight: 8,
+    },
+    inputsRow: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    inputPiece: {
+        paddingVertical: 16,
         fontSize: 16,
         color: Colors.light.text,
         textAlign: 'center',
     },
-    dayMonth: {
-        flex: 1,
-    },
-    year: {
-        flex: 1.5,
+    separator: {
+        fontSize: 16,
+        color: '#999',
+        marginHorizontal: 4,
     },
 });
