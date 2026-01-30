@@ -102,11 +102,11 @@ We follow a strict **Team-Based Workflow**.
 ## MedHive Team
 
 *   **Zaki Sheriff** (Lead & Patient Team)
-*   **Rahman** (Patient Team)
-*   **Raheem** (Clinic Team)
-*   **Hanaa** (Clinic Team)
-*   **Afker** (Pharma Team)
-*   **Kausian** (Pharma Team)
+*   **Abdul Rahman** (Patient Team)
+*   **Abdul Raheem** (Clinic Team)
+*   **Hanaa Ajuward** (Clinic Team)
+*   **Afker Thowfeek** (Pharma Team)
+*   **Kausian Senthan** (Pharma Team)
 
 ---
 
