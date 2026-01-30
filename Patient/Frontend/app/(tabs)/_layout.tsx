@@ -1,20 +1,25 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { CurvedTabBar } from '../../components/CurvedTabBar';
-import { Platform } from 'react-native';
+import { GlassmorphicTabBar } from '../../components/GlassmorphicTabBar';
 import { Colors } from '../../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 
+/**
+ * Android & Web Tab Layout
+ * 
+ * Uses a custom GlassmorphicTabBar component for a premium floating dock design.
+ * iOS uses a separate _layout.ios.tsx with native tabs for the Liquid Glass effect.
+ */
 export default function TabLayout() {
     return (
         <Tabs
-            tabBar={Platform.OS === 'ios' ? undefined : (props) => <CurvedTabBar {...props} />}
+            tabBar={(props) => <GlassmorphicTabBar {...props} />}
             screenOptions={{
                 headerShown: false,
                 tabBarActiveTintColor: Colors.light.primary,
-                // iOS: Native look (system default)
-                // Android/Web: Custom tab bar handles rendered content, but we ensure default is hidden/ignored
-                tabBarStyle: Platform.OS === 'ios' ? undefined : { display: 'none' },
+                tabBarInactiveTintColor: Colors.light.icon,
+                // Hide default tab bar since we use custom GlassmorphicTabBar
+                tabBarStyle: { display: 'none' },
             }}
         >
             <Tabs.Screen
