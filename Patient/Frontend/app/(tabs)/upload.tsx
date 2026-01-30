@@ -127,7 +127,7 @@ export default function UploadScreen() {
                     </View>
                 </View>
 
-                {/* Tips */}
+                {/* Tips placed BELOW card as usual */}
                 <View style={styles.tipsRow}>
                     <View style={styles.tipChip}>
                         <Ionicons name="sunny" size={16} color={Colors.light.primary} />
@@ -171,10 +171,10 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         paddingHorizontal: 20,
-        paddingTop: 20,
+        paddingTop: 10,
         paddingBottom: 40,
     },
-
+    // Optional: add decorative styles here if needed later
     uploadCard: {
         backgroundColor: Colors.light.primary,
         borderRadius: 32,
