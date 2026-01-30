@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import { Link, router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../constants/theme';
 import { HoneyContainer } from '../components/HoneyContainer';
 import { Input } from '../components/Input';
@@ -19,7 +20,10 @@ export default function LoginScreen() {
     };
 
     return (
-        <View style={styles.background}>
+        <LinearGradient
+            colors={['#FFFBF0', '#FFFFFF', '#FFFBF0']}
+            style={styles.background}
+        >
             <StatusBar style="dark" />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -43,6 +47,7 @@ export default function LoginScreen() {
                             autoCapitalize="none"
                             value={email}
                             onChangeText={setEmail}
+                            iconName="mail-outline"
                         />
 
                         <Input
@@ -50,6 +55,7 @@ export default function LoginScreen() {
                             placeholder="Enter your password"
                             value={password}
                             onChangeText={setPassword}
+                            iconName="lock-closed-outline"
                         />
 
                         <View style={styles.forgotPassword}>
@@ -81,7 +87,7 @@ export default function LoginScreen() {
                     </HoneyContainer>
                 </ScrollView>
             </KeyboardAvoidingView>
-        </View>
+        </LinearGradient>
     );
 }
 

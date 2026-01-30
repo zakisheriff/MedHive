@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import { Link, router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../constants/theme';
 import { HoneyContainer } from '../components/HoneyContainer';
 import { Input } from '../components/Input';
@@ -20,7 +21,10 @@ export default function RegisterScreen() {
     };
 
     return (
-        <View style={styles.background}>
+        <LinearGradient
+            colors={['#FFFBF0', '#FFFFFF', '#FFFBF0']}
+            style={styles.background}
+        >
             <StatusBar style="dark" />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -46,6 +50,7 @@ export default function RegisterScreen() {
                             placeholder="John Doe"
                             value={name}
                             onChangeText={setName}
+                            iconName="person-outline"
                         />
 
                         <Input
@@ -55,6 +60,7 @@ export default function RegisterScreen() {
                             autoCapitalize="none"
                             value={email}
                             onChangeText={setEmail}
+                            iconName="mail-outline"
                         />
 
                         <Input
@@ -62,6 +68,7 @@ export default function RegisterScreen() {
                             placeholder="Create a password"
                             value={password}
                             onChangeText={setPassword}
+                            iconName="lock-closed-outline"
                         />
 
                         <Input
@@ -69,6 +76,7 @@ export default function RegisterScreen() {
                             placeholder="Confirm your password"
                             value={confirmPassword}
                             onChangeText={setConfirmPassword}
+                            iconName="lock-closed-outline"
                         />
 
                         <PrimaryButton
@@ -90,7 +98,7 @@ export default function RegisterScreen() {
                     </HoneyContainer>
                 </ScrollView>
             </KeyboardAvoidingView>
-        </View>
+        </LinearGradient>
     );
 }
 
