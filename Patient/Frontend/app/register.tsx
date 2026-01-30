@@ -135,7 +135,7 @@ export default function RegisterScreen() {
 
                         <View style={styles.dividerContainer}>
                             <View style={styles.dividerLine} />
-                            <Text style={styles.dividerText}>Or</Text>
+                            <Text style={styles.dividerText}>or</Text>
                             <View style={styles.dividerLine} />
                         </View>
 
