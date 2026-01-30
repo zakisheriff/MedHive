@@ -1,80 +1,75 @@
-# MedHive Team Workflow & Rules
+# 🏥 MedHive Team Cheatsheet
 
-**Read this before writing a single line of code.**
-
-We run this project like a professional IT company. To prevent crashes and conflicts, you must follow these rules strictly.
-
-## 🚨 The Golden Rule
-**NEVER PUSH DIRECTLY TO `main`.**
-The `main` branch is our production server. If you break `main`, you break the product for everyone.
+**Your Golden Rule:** Work ONLY in your branch (`zaki`, `raheem`, etc). NEVER touch `main`.
 
 ---
 
-## 1. Know Your Lane (Branching)
-You have been assigned a specific component. You are **only** allowed to work in your dedicated branch and folder.
+## 1️⃣ One-Time Setup (Do this once)
 
-| Branch Name | Assigned User | Allowed Folder |
-| :--- | :--- | :--- |
-| `zaki` | Zaki | `Patient/` |
-| `rahman` | Rahman | `Patient/` |
-| `raheem` | Raheem | `Clinic/` |
-| `hanaa` | Hanaa | `Clinic/` |
-| `afker` | Afker | `PharmaCompany/` |
-| `kausian` | Kausian | `PharmaCompany/` |
+1.  **Clone the Repo**:
+    ```bash
+    git clone https://github.com/zakisheriff/MedHive.git
+    cd MedHive
+    ```
 
-### How to Start Working
-1.  **Switch to your branch**:
+2.  **Switch to YOUR Branch**:
+    *   **Zaki**: `git checkout zaki`
+    *   **Rahman**: `git checkout rahman`
+    *   **Raheem**: `git checkout raheem`
+    *   **Hanaa**: `git checkout hanaa`
+    *   **Afker**: `git checkout afker`
+    *   **Kausian**: `git checkout kausian`
+
+3.  **Hide Other Folders (Focus Mode)**:
+    *Run these 2 commands to see ONLY your work:*
     ```bash
-    git checktout <your-branch-name>
-    # Example: git checkout patient
+    git sparse-checkout init --cone
+    git sparse-checkout set <Your-Folder-Name>
+    # Example: git sparse-checkout set Patient
     ```
-2.  **Verify you are safe**:
-    ```bash
-    git branch
-    # It should show * patient (or your branch)
-    ```
+    *(See table below for your folder)*
+
+| User | Folder Name |
+| :--- | :--- |
+| **Zaki, Rahman** | `Patient` |
+| **Raheem, Hanaa** | `Clinic` |
+| **Afker, Kausian** | `PharmaCompany` |
 
 ---
 
-## 2. The Daily Workflow
-You have total freedom in your own branch.
+## 2️⃣ Daily Routine (Every Day)
 
-1.  **Code & Save**: Write your code in your folder.
-2.  **Commit Often**:
-    ```bash
-    git add .
-    git commit -m "Fixed login button color"
-    ```
-3.  **Push Freely**:
-    ```bash
-    git push origin <your-branch-name>
-    ```
-    *You can push 100 times a day to your branch. It will not affect the main website.*
+**Step 1: Start your day**
+```bash
+git pull origin <your-name>   # specific branch update
+```
 
----
+**Step 2: Do your work**
+*   Write code, save files, have fun.
 
-## 3. Going Live (Merging to Main)
-When your feature is 100% complete and bug-free, you request to merge it into the main project.
-
-1.  **Go to GitHub**: Open the repository page.
-2.  **Click "Compare & pull request"**.
-3.  **Set the Direction**:
-    *   **base**: `main`
-    *   **compare**: `<your-branch-name>`
-4.  **Request Review**:
-    *   Add **@zakisheriff** as the reviewer.
-    *   Click "Create Pull Request".
-
-**⛔ STOP HERE. You cannot do anything else.**
-*   The system will block you from merging.
-*   (@zakisheriff) will review your code.
-*   If perfectly safe, he will approve and merge it.
-*   If there are bugs, he will request changes. Fix them and push again.
+**Step 3: Save your work**
+```bash
+git add .
+git commit -m "Describe what you did"
+git push origin <your-name>
+```
+*   ✅ **Done!** Your code is safe on GitHub.
+*   *Repeat this as many times as you want.*
 
 ---
 
-## 4. Emergency Fixes
-If `main` is broken, **DO NOT PANIC AND PUSH**.
-1.  Create a fix in your branch.
-2.  Push to your branch.
-3.  Open a Pull Request immediately.
+## 3️⃣ Sending to Production (When Finished)
+
+**Only do this when your feature is 100% complete.**
+
+1.  Go to **GitHub.com**.
+2.  Click **"Compare & pull request"**.
+3.  Set **Base: `main`** ⬅️ **Compare: `<your-name>`**.
+4.  Click **Create Pull Request**.
+5.  **Wait for Zaki to approve.**
+
+---
+
+### 🆘 Emergency Commands
+*   **"I messed up!"**: `git checkout .` (Undoes unsaved changes)
+*   **"Where am I?"**: `git branch` (Check you are NOT on main)
