@@ -1,11 +1,7 @@
-# <div align="center">
-  <img src="Landing/public/logode.png" width="120" alt="MedHive Logo" />
-  <br />
-  MedHive Ecosystem
-</div>
+# <div align="center">MedHive</div>
 
 <div align="center">
-<strong>Your Health, Unified. AI-Powered Healthcare Platform for Sri Lanka</strong>
+<strong>Your Health, Unified.</strong>
 </div>
 
 <br />
@@ -45,7 +41,7 @@ This repository hosts the entire ecosystem, divided into specialized components:
     *   **In-House Pharmacy Link**: Instant digital order transmission to the clinic's pharmacy.
     *   **Analytics**: Daily patient throughput and diagnosis trends.
 
-### 2. � The Patient App
+### 2. 📱 The Patient App
 **Folder**: `Patient/`
 *   **Purpose**: A unified personal health record for every citizen.
 *   **Key Features**:
