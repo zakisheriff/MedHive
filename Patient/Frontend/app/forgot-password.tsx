@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Link, router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,13 +9,13 @@ import { Input } from '../components/Input';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { StatusBar } from 'expo-status-bar';
 
-export default function LoginScreen() {
+export default function ForgotPasswordScreen() {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
 
-    const handleLogin = () => {
-        // TODO: Implement actual login logic
-        console.log('Login with:', email, password);
+    const handleReset = () => {
+        // TODO: Implement password reset logic
+        console.log('Reset password for:', email);
+        router.back();
     };
 
     return (
@@ -40,7 +39,10 @@ export default function LoginScreen() {
 
                     <HoneyContainer style={styles.formContainer}>
                         <View style={styles.formHeader}>
-                            <Text style={styles.cardTitle}>Login</Text>
+                            <Text style={styles.cardTitle}>Reset Password</Text>
+                            <Text style={styles.cardSubtitle}>
+                                Enter your email address to receive a password reset link.
+                            </Text>
                         </View>
 
                         <Input
@@ -53,38 +55,19 @@ export default function LoginScreen() {
                             iconName="mail-outline"
                         />
 
-                        <Input
-                            label="Password"
-                            placeholder="Enter your password"
-                            value={password}
-                            onChangeText={setPassword}
-                            iconName="lock-closed-outline"
-                        />
-
-                        <View style={styles.forgotPassword}>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                    router.push('/forgot-password');
-                                }}>
-                                <Text style={styles.forgotText}>Forgot Password?</Text>
-                            </TouchableOpacity>
-                        </View>
-
                         <PrimaryButton
-                            title="Sign In"
-                            onPress={handleLogin}
-                            style={styles.loginBtn}
+                            title="Send Reset Link"
+                            onPress={handleReset}
+                            style={styles.resetBtn}
                         />
 
                         <View style={styles.footer}>
-                            <Text style={styles.footerText}>Don't have an account? </Text>
                             <TouchableOpacity
                                 onPress={() => {
                                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                    router.push('/register');
+                                    router.back();
                                 }}>
-                                <Text style={styles.linkText}>Sign Up</Text>
+                                <Text style={styles.linkText}>Back to Sign In</Text>
                             </TouchableOpacity>
                         </View>
                     </HoneyContainer>
@@ -117,34 +100,29 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     formHeader: {
-        marginBottom: 20,
+        marginBottom: 24,
         alignItems: 'center',
     },
     cardTitle: {
         fontSize: 20,
         fontWeight: '700',
         color: Colors.light.text,
+        marginBottom: 8,
     },
-    forgotPassword: {
-        alignItems: 'flex-end',
-        marginBottom: 24,
-    },
-    forgotText: {
-        color: Colors.light.primary,
+    cardSubtitle: {
         fontSize: 14,
-        fontWeight: '600',
+        color: '#666',
+        textAlign: 'center',
+        lineHeight: 20,
     },
-    loginBtn: {
+    resetBtn: {
+        marginTop: 8,
         marginBottom: 20,
     },
     footer: {
         flexDirection: 'row',
         justifyContent: 'center',
         marginTop: 10,
-    },
-    footerText: {
-        color: '#666',
-        fontSize: 14,
     },
     linkText: {
         color: Colors.light.primary,
