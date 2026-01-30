@@ -12,28 +12,38 @@
     cd MedHive
     ```
 
-2.  **Switch to YOUR Branch**:
-    *   **Zaki**: `git checkout zaki`
-    *   **Rahman**: `git checkout rahman`
-    *   **Raheem**: `git checkout raheem`
-    *   **Hanaa**: `git checkout hanaa`
-    *   **Afker**: `git checkout afker`
-    *   **Kausian**: `git checkout kausian`
+2.  **Switch
+### 3. Focus Your Workspace (Manual Setup)
+To ensure you don’t accidentally touch other files, you can run this command to **hide everything else** on your computer.
 
-3.  **Hide Other Folders (Focus Mode)**:
-    *Run these 2 commands to see ONLY your work:*
+*   **For Patient Team:**
     ```bash
     git sparse-checkout init --cone
-    git sparse-checkout set <Your-Folder-Name>
-    # Example: git sparse-checkout set Patient
+    git sparse-checkout set Patient
     ```
-    *(See table below for your folder)*
+    *Now you will ONLY see the `Patient` folder.*
 
-| User | Folder Name |
-| :--- | :--- |
-| **Zaki, Rahman** | `Patient` |
-| **Raheem, Hanaa** | `Clinic` |
-| **Afker, Kausian** | `PharmaCompany` |
+*   **For Clinic Team:**
+    ```bash
+    git sparse-checkout init --cone
+    git sparse-checkout set Clinic
+    ```
+    *Now you will ONLY see the `Clinic` folder.*
+
+*   **For Pharma Team:**
+    ```bash
+    git sparse-checkout init --cone
+    git sparse-checkout set PharmaCompany
+    ```
+    *Now you will ONLY see the `PharmaCompany` folder.*
+
+*(See table below for your folder)*
+
+| Team | Your Shared Branch | Allowed Folder |
+| :--- | :--- | :--- |
+| **Patient Team** | `patient` | `Patient/` |
+| **Clinic Team** | `clinic` | `Clinic/` |
+| **Pharma Team** | `pharma` | `PharmaCompany/` |
 
 ---
 
