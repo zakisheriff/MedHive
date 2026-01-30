@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderWidth: 1,
         borderColor: '#e5e5e5',
-        borderRadius: 12,
+        borderRadius: 30, // Pill shape
         flexDirection: 'row',
         alignItems: 'center',
     },
