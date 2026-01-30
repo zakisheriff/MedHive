@@ -8,8 +8,8 @@ const teamMembers = [
         role: 'Frontend and ML',
         image: '/Team/Raheem.jpeg',
         social: {
-            linkedin: '#',
-            github: '#'
+            linkedin: 'https://www.linkedin.com/in/abdul-raheem-aouffan',
+            github: 'https://github.com/abdulraheem05'
         }
     },
     {
