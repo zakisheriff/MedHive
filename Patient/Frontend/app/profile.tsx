@@ -88,17 +88,21 @@ export default function ProfileScreen() {
                 style={StyleSheet.absoluteFill}
             />
 
-            {/* Close Button Header (Stable Absolute Centering for Web) */}
-            <View style={[styles.closeHeader, { top: insets.top + 10 }]}>
-                <View style={styles.closeHeaderInner}>
-                    <BlurView intensity={60} tint="light" style={styles.blurWrapper}>
-                        <TouchableOpacity
-                            style={styles.doneBtn}
-                            onPress={() => router.back()}
-                        >
-                            <Text style={styles.doneText}>Close</Text>
-                        </TouchableOpacity>
-                    </BlurView>
+            {/* Sticky "Close" Button Unit */}
+            <View style={[styles.closeHeader, { top: insets.top - 20, pointerEvents: 'box-none' }]}>
+                <View style={[styles.closeHeaderInner, { pointerEvents: 'box-none' }]}>
+                    <View style={styles.headerSpacer} />
+                    {/* Account Title moved to ScrollView to be non-sticky */}
+                    <View style={styles.closeButtonCenterer}>
+                        <BlurView intensity={60} tint="light" style={styles.blurWrapper}>
+                            <TouchableOpacity
+                                style={styles.doneBtn}
+                                onPress={() => router.back()}
+                            >
+                                <Text style={styles.doneText}>Close</Text>
+                            </TouchableOpacity>
+                        </BlurView>
+                    </View>
                 </View>
             </View>
 
@@ -106,55 +110,62 @@ export default function ProfileScreen() {
                 style={styles.scrollView}
                 contentContainerStyle={[
                     styles.scrollContent,
-                    { paddingTop: insets.top + 70, paddingBottom: 40 } // Increased top padding for content to scroll under
+                    { paddingTop: insets.top - 20, paddingBottom: 40 }
                 ]}
                 showsVerticalScrollIndicator={false}
             >
-                {/* Profile Header */}
-                <View style={styles.header}>
-                    <View style={styles.avatarContainer}>
-                        {USER.avatar ? (
-                            <Image source={{ uri: USER.avatar }} style={styles.avatar} />
-                        ) : (
-                            <LinearGradient
-                                colors={[Colors.light.primary, '#E8A849']}
-                                style={styles.avatarPlaceholder}
+                <View style={styles.scrollHeader}>
+                    <Text style={styles.headerTitleCentered}>Account</Text>
+                </View>
+                {/* User Identity Card (App Store Style) */}
+                <View style={styles.identityCard}>
+                    <View style={styles.identityTop}>
+                        <View style={styles.avatarContainer}>
+                            {USER.avatar ? (
+                                <Image source={{ uri: USER.avatar }} style={styles.avatar} />
+                            ) : (
+                                <LinearGradient
+                                    colors={[Colors.light.primary, '#E8A849']}
+                                    style={styles.avatarPlaceholder}
+                                >
+                                    <Text style={styles.avatarInitials}>
+                                        {USER.name.split(' ').map(n => n[0]).join('')}
+                                    </Text>
+                                </LinearGradient>
+                            )}
+                            <TouchableOpacity
+                                style={styles.editAvatarBtn}
+                                onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
                             >
-                                <Text style={styles.avatarInitials}>
-                                    {USER.name.split(' ').map(n => n[0]).join('')}
-                                </Text>
-                            </LinearGradient>
-                        )}
-                        <TouchableOpacity
-                            style={styles.editAvatarBtn}
-                            onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
-                        >
-                            <Ionicons name="camera" size={14} color="#fff" />
-                        </TouchableOpacity>
+                                <Ionicons name="camera" size={12} color="#fff" />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.identityText}>
+                            <Text style={styles.userName}>{USER.name}</Text>
+                            <Text style={styles.userEmail}>{USER.email}</Text>
+                        </View>
                     </View>
 
-                    <Text style={styles.userName}>{USER.name}</Text>
-                    <Text style={styles.userEmail}>{USER.email}</Text>
+                    <View style={styles.identityDivider} />
 
-                    {/* Med ID Card */}
-                    <View style={styles.medIdCard}>
-                        <View style={styles.medIdLeft}>
+                    {/* Med ID integrated into Card */}
+                    <TouchableOpacity
+                        style={styles.identityFooter}
+                        onPress={() => {
+                            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                            Alert.alert('Copied!', 'Med-ID copied to clipboard');
+                        }}
+                    >
+                        <View>
                             <Text style={styles.medIdLabel}>Med-ID</Text>
                             <Text style={styles.medIdValue}>{USER.medId}</Text>
                         </View>
-                        <TouchableOpacity
-                            style={styles.copyBtn}
-                            onPress={() => {
-                                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                                Alert.alert('Copied!', 'Med-ID copied to clipboard');
-                            }}
-                        >
-                            <Ionicons name="copy-outline" size={18} color={Colors.light.primary} />
-                        </TouchableOpacity>
-                    </View>
+                        <Ionicons name="copy-outline" size={18} color={Colors.light.primary} />
+                    </TouchableOpacity>
                 </View>
 
-                {/* Quick Stats */}
+                {/* Quick Stats Section */}
+                <Text style={styles.sectionTitle}>Statistics</Text>
                 <View style={styles.statsContainer}>
                     <View style={styles.statItem}>
                         <Text style={styles.statValue}>12</Text>
@@ -292,7 +303,29 @@ const styles = StyleSheet.create({
         width: '100%',
         maxWidth: 500,
         paddingHorizontal: 20,
-        alignItems: 'flex-end', // Keeps "Close" on the right
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    headerSpacer: {
+        flex: 1,
+    },
+    scrollHeader: {
+        height: 52,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
+    },
+    headerTitleCentered: {
+        fontSize: 17,
+        fontWeight: '700',
+        color: '#1C1C1E',
+    },
+    closeButtonCenterer: {
+        flex: 1,
+        alignItems: 'flex-end',
     },
     blurWrapper: {
         borderRadius: 22,
@@ -320,85 +353,89 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
 
-    // Header
-    header: {
-        alignItems: 'center',
+    // Identity Card (App Store style)
+    identityCard: {
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        padding: 20,
         marginBottom: 24,
         width: '100%',
         maxWidth: 500,
         alignSelf: 'center',
     },
+    identityTop: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     avatarContainer: {
         position: 'relative',
-        marginBottom: 16,
-        marginTop: 20,
+        marginRight: 16,
     },
     avatar: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
+        width: 72, // Slightly smaller Apple-style
+        height: 72,
+        borderRadius: 36,
     },
     avatarPlaceholder: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
+        width: 72,
+        height: 72,
+        borderRadius: 36,
         alignItems: 'center',
         justifyContent: 'center',
     },
     avatarInitials: {
-        fontSize: 36,
+        fontSize: 28,
         fontWeight: '700',
         color: '#fff',
     },
     editAvatarBtn: {
         position: 'absolute',
-        bottom: 0,
-        right: 0,
-        width: 32,
-        height: 32,
-        borderRadius: 16,
+        bottom: -2,
+        right: -2,
+        width: 24,
+        height: 24,
+        borderRadius: 12,
         backgroundColor: Colors.light.primary,
         alignItems: 'center',
         justifyContent: 'center',
-        borderWidth: 3,
+        borderWidth: 2,
         borderColor: '#fff',
     },
+    identityText: {
+        flex: 1,
+    },
     userName: {
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: '700',
         color: '#1C1C1E',
-        marginBottom: 4,
+        marginBottom: 2,
     },
     userEmail: {
         fontSize: 15,
         color: '#8E8E93',
-        marginBottom: 24, // Added more space above the Med-ID card
     },
-    medIdCard: {
+    identityDivider: {
+        height: 1,
+        backgroundColor: '#F2F2F7',
+        marginVertical: 16,
+    },
+    identityFooter: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#fff',
-        paddingHorizontal: 28,
-        paddingVertical: 22,
-        borderRadius: 24,
-        gap: 16,
-    },
-    medIdLeft: {
-        flex: 1,
+        justifyContent: 'space-between',
     },
     medIdLabel: {
-        fontSize: 12,
+        fontSize: 11,
         color: '#8E8E93',
-        marginBottom: 4,
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+        marginBottom: 2,
     },
     medIdValue: {
-        fontSize: 20,
-        fontWeight: '700',
+        fontSize: 17,
+        fontWeight: '600',
         color: Colors.light.primary,
-        letterSpacing: 1.5,
-    },
-    copyBtn: {
-        padding: 8,
+        letterSpacing: 1,
     },
 
     // Stats
@@ -435,12 +472,10 @@ const styles = StyleSheet.create({
 
     // Sections
     sectionTitle: {
-        fontSize: 13,
-        fontWeight: '600',
-        color: '#8E8E93',
-        textTransform: 'uppercase',
-        letterSpacing: 0.8,
-        marginBottom: 16, // More air above sections
+        fontSize: 18, // Bigger App Store style category titles
+        fontWeight: '700',
+        color: '#1C1C1E',
+        marginBottom: 12,
         marginLeft: 4,
         width: '100%',
         maxWidth: 500,
