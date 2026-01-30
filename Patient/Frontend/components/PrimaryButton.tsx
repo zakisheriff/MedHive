@@ -29,8 +29,8 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: Colors.light.primary,
         paddingVertical: 16,
-        paddingHorizontal: 32,
-        borderRadius: 50, // Pill shape
+        paddingHorizontal: 24,
+        borderRadius: 30,
         alignItems: 'center',
         justifyContent: 'center',
         shadowColor: Colors.light.shadow,
