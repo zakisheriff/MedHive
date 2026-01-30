@@ -31,6 +31,11 @@ export default function LoginScreen() {
             >
                 <ScrollView contentContainerStyle={styles.scrollContent}>
                     <View style={styles.header}>
+                        <Image
+                            source={require('../assets/images/logode.png')}
+                            style={styles.logo}
+                            resizeMode="contain"
+                        />
                         <Text style={styles.appName}>MedHive</Text>
                         <Text style={styles.welcomeText}>Welcome Back!</Text>
                     </View>
@@ -104,18 +109,23 @@ const styles = StyleSheet.create({
     },
     header: {
         alignItems: 'center',
-        marginBottom: 40,
+        marginBottom: 32,
+    },
+    logo: {
+        width: 70,
+        height: 70,
+        marginBottom: 16,
     },
     appName: {
-        fontSize: 32,
-        fontWeight: '900',
+        fontSize: 28,
+        fontWeight: 'bold',
         color: Colors.light.primary,
-        marginBottom: 10,
+        marginBottom: 8,
     },
     welcomeText: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: Colors.light.text,
+        fontSize: 18,
+        fontWeight: '500',
+        color: '#666',
     },
     formContainer: {
         width: '100%',

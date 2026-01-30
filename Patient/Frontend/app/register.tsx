@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Link, router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -33,11 +33,15 @@ export default function RegisterScreen() {
                 <ScrollView
                     contentContainerStyle={styles.scrollContent}
                     keyboardShouldPersistTaps="handled"
-                    showsVerticalScrollIndicator={false}
                 >
                     <View style={styles.header}>
+                        <Image
+                            source={require('../assets/images/logode.png')}
+                            style={styles.logo}
+                            resizeMode="contain"
+                        />
                         <Text style={styles.appName}>MedHive</Text>
-                        <Text style={styles.subtitle}>Join the Hive</Text>
+                        <Text style={styles.welcomeText}>Create Account</Text>
                     </View>
 
                     <HoneyContainer style={styles.formContainer}>
@@ -115,17 +119,22 @@ const styles = StyleSheet.create({
     },
     header: {
         alignItems: 'center',
-        marginBottom: 30,
-        marginTop: 20,
+        marginBottom: 32,
+    },
+    logo: {
+        width: 70,
+        height: 70,
+        marginBottom: 16,
     },
     appName: {
-        fontSize: 32,
-        fontWeight: '900',
+        fontSize: 28,
+        fontWeight: 'bold',
         color: Colors.light.primary,
-        marginBottom: 5,
+        marginBottom: 8,
     },
-    subtitle: {
+    welcomeText: {
         fontSize: 18,
+        fontWeight: '500',
         color: '#666',
     },
     formContainer: {
