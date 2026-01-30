@@ -106,8 +106,18 @@ If you need a high commit count for grading, follow these 2 rules:
     *   Fixed typo? `git commit`
     *   *This is valid and professional.*
 
-2.  **CRITICAL: Merge Correctly**:
-    *   When merging on GitHub, check the dropdown button.
-    *   ✅ Use **"Create a merge commit"**. (Keeps all your 50 tiny commits).
-    *   ❌ **DO NOT use "Squash and merge"**. (Combines everything into 1 commit -> You lose 49 points).
+
+2.  **CRITICAL: How to Merge (Don't lose your points!)**:
+    When you move your code to `main` on GitHub, you will see a big green button.
+    **You MUST click the arrow and select "Create a merge commit".**
+
+    *   ✅ **Create a merge commit**:
+        *   GitHub keeps ALL 50 of your commits.
+        *   Your contribution graph goes UP. 📈
+        *   You get credit for all 50 changes.
+
+    *   ❌ **Squash and merge** (DANGER!):
+        *   GitHub deletes your 50 commits and makes just 1 big one.
+        *   **You literally lose 49 commits from your stats.**
+        *   DO NOT CLICK THIS.
 
