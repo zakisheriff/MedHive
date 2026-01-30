@@ -12,7 +12,7 @@
     cd MedHive
     ```
 
-2.  **Switch
+
 ### 3. Focus Your Workspace (Manual Setup)
 To ensure you don’t accidentally touch other files, you can run this command to **hide everything else** on your computer.
 
@@ -37,6 +37,13 @@ To ensure you don’t accidentally touch other files, you can run this command t
     ```
     *Now you will ONLY see the `PharmaCompany` folder.*
 
+### 4. How to See Everything Again (Disable Focus Mode)
+If you are confused or can't see files you need:
+```bash
+git sparse-checkout disable
+```
+*This brings back all folders (`Landing`, `Clinic`, etc).*
+
 *(See table below for your folder)*
 
 | Team | Your Shared Branch | Allowed Folder |
@@ -51,7 +58,7 @@ To ensure you don’t accidentally touch other files, you can run this command t
 
 **Step 1: Start your day**
 ```bash
-git pull origin <your-name>   # specific branch update
+git pull origin <your-branch-name>   # specific branch update
 ```
 
 **Step 2: Do your work**
@@ -61,7 +68,7 @@ git pull origin <your-name>   # specific branch update
 ```bash
 git add .
 git commit -m "Describe what you did"
-git push origin <your-name>
+git push origin <your-branch-name>
 ```
 *   ✅ **Done!** Your code is safe on GitHub.
 *   *Repeat this as many times as you want.*
