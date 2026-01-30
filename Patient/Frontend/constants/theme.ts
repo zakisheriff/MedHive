@@ -6,28 +6,28 @@ const honeyDark = '#b8873d';
 
 export const Colors = {
   light: {
-    text: '#111111',
-    background: '#f9f9f9', // Whiteish bg from landing
+    text: '#111827', // Gray-900 (Softer than pure black)
+    background: '#F8FAFC', // Slate-50 (Cool, premium white-gray)
     tint: honeyPrimary,
-    icon: '#687076',
+    icon: '#6B7280', // Gray-500
     primary: honeyPrimary,
     primaryDark: honeyDark,
-    cardBg: '#ffffff',
-    border: 'rgba(0, 0, 0, 0.1)',
-    shadow: 'rgba(220, 163, 73, 0.3)',
+    cardBg: '#FFFFFF',
+    border: '#E2E8F0', // Slate-200
+    shadow: '#000000', // Neutral shadow, NO gold tint
   },
   dark: {
     // keeping dark mode same as light for now to match specific landing page request "whiteish bg"
     // or we can implement true dark mode later. For now, matching the requested landing style.
-    text: '#111111',
-    background: '#f9f9f9',
+    text: '#111827',
+    background: '#F8FAFC',
     tint: honeyPrimary,
-    icon: '#687076',
+    icon: '#6B7280',
     primary: honeyPrimary,
     primaryDark: honeyDark,
-    cardBg: '#ffffff',
-    border: 'rgba(0, 0, 0, 0.1)',
-    shadow: 'rgba(220, 163, 73, 0.3)',
+    cardBg: '#FFFFFF',
+    border: '#E2E8F0',
+    shadow: '#000000',
   },
 };
 

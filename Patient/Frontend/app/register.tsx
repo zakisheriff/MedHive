@@ -52,7 +52,7 @@ export default function RegisterScreen() {
 
     return (
         <LinearGradient
-            colors={['#FFFBF0', '#FFFFFF', '#FFFBF0']}
+            colors={['#F8FAFC', '#FFFFFF', '#F8FAFC']} // Premium Cool Gray -> White -> Gray
             style={styles.background}
         >
             <StatusBar style="dark" />
