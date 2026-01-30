@@ -88,16 +88,18 @@ export default function ProfileScreen() {
                 style={StyleSheet.absoluteFill}
             />
 
-            {/* Close Button Header (Stable for Web Resizing) */}
-            <View style={[styles.closeHeader, { paddingTop: insets.top + 10 }]}>
-                <BlurView intensity={60} tint="light" style={styles.blurWrapper}>
-                    <TouchableOpacity
-                        style={styles.doneBtn}
-                        onPress={() => router.back()}
-                    >
-                        <Text style={styles.doneText}>Close</Text>
-                    </TouchableOpacity>
-                </BlurView>
+            {/* Close Button Header (Stable Absolute Centering for Web) */}
+            <View style={[styles.closeHeader, { top: insets.top + 10 }]}>
+                <View style={styles.closeHeaderInner}>
+                    <BlurView intensity={60} tint="light" style={styles.blurWrapper}>
+                        <TouchableOpacity
+                            style={styles.doneBtn}
+                            onPress={() => router.back()}
+                        >
+                            <Text style={styles.doneText}>Close</Text>
+                        </TouchableOpacity>
+                    </BlurView>
+                </View>
             </View>
 
             <ScrollView
@@ -280,15 +282,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#F8FAFC',
     },
     closeHeader: {
-        position: 'absolute', // Content must scroll under for blur to be visible
+        position: 'absolute',
         left: 0,
         right: 0,
         zIndex: 10,
+        alignItems: 'center', // Centers the inner container
+    },
+    closeHeaderInner: {
         width: '100%',
         maxWidth: 500,
-        alignSelf: 'center',
-        alignItems: 'flex-end',
         paddingHorizontal: 20,
+        alignItems: 'flex-end', // Keeps "Close" on the right
     },
     blurWrapper: {
         borderRadius: 22,
@@ -368,15 +372,16 @@ const styles = StyleSheet.create({
     userEmail: {
         fontSize: 15,
         color: '#8E8E93',
-        marginBottom: 16,
+        marginBottom: 24, // Added more space above the Med-ID card
     },
     medIdCard: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#fff',
-        paddingHorizontal: 20,
-        paddingVertical: 14,
-        borderRadius: 16,
+        paddingHorizontal: 28,
+        paddingVertical: 22,
+        borderRadius: 24,
+        gap: 16,
     },
     medIdLeft: {
         flex: 1,
@@ -384,13 +389,13 @@ const styles = StyleSheet.create({
     medIdLabel: {
         fontSize: 12,
         color: '#8E8E93',
-        marginBottom: 2,
+        marginBottom: 4,
     },
     medIdValue: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: '700',
         color: Colors.light.primary,
-        letterSpacing: 1,
+        letterSpacing: 1.5,
     },
     copyBtn: {
         padding: 8,
@@ -400,9 +405,10 @@ const styles = StyleSheet.create({
     statsContainer: {
         flexDirection: 'row',
         backgroundColor: '#fff',
-        borderRadius: 20,
-        padding: 20,
-        marginBottom: 32,
+        borderRadius: 24,
+        paddingHorizontal: 28,
+        paddingVertical: 24,
+        marginBottom: 40, // Increased margin for more air
         width: '100%',
         maxWidth: 500,
         alignSelf: 'center',
@@ -433,8 +439,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#8E8E93',
         textTransform: 'uppercase',
-        letterSpacing: 0.5,
-        marginBottom: 12,
+        letterSpacing: 0.8,
+        marginBottom: 16, // More air above sections
         marginLeft: 4,
         width: '100%',
         maxWidth: 500,
@@ -452,8 +458,8 @@ const styles = StyleSheet.create({
     menuItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: 14,
-        paddingHorizontal: 16,
+        paddingVertical: 16,
+        paddingHorizontal: 20,
         borderBottomWidth: 1,
         borderBottomColor: '#F2F2F7',
     },
