@@ -18,19 +18,24 @@ export function HoneyContainer({ children, style }: HoneyContainerProps) {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         width: '100%',
         maxWidth: 450,
         alignSelf: 'center',
-        backgroundColor: '#FFFFFF', // Pure, solid white for max contrast
-        borderRadius: 24, // Slightly smoother curve
+        backgroundColor: '#FFFFFF',
+        borderRadius: 24,
         padding: 24,
+        marginTop: 60,
+        marginBottom: 100,
+        marginHorizontal: 16,
         // Premium diffused shadow (Apple Style)
-        shadowColor: 'rgba(0, 0, 0, 0.05)', // Extremely subtle black
+        shadowColor: 'rgba(0, 0, 0, 0.05)',
         shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 1, // Handled by rgba above
-        shadowRadius: 20, // Huge blur for softness
+        shadowOpacity: 1,
+        shadowRadius: 20,
         elevation: 2,
         borderWidth: 1,
-        borderColor: '#F1F5F9', // Subtle stroke
+        borderColor: '#F1F5F9',
     },
 });
+
