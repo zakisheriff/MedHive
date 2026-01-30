@@ -99,7 +99,7 @@ We follow a strict **Team-Based Workflow**.
 
 ---
 
-## � MedHive Team
+## MedHive Team
 
 *   **Zaki Sheriff** (Lead & Patient Team)
 *   **Rahman** (Patient Team)
