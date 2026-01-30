@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingRight: 16,
+        overflow: 'hidden', // Ensure pill shape is maintained
     },
     iconContainer: {
         paddingLeft: 16,
@@ -113,16 +114,18 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between', // More robust distribution
     },
     inputPiece: {
         paddingVertical: 16,
         fontSize: 16,
         color: Colors.light.text,
         textAlign: 'center',
+        minWidth: 0, // CRITICAL: Allows flex items to shrink on Web
     },
     separator: {
         fontSize: 16,
         color: '#999',
-        marginHorizontal: 4,
+        marginHorizontal: 2, // Tighter spacing
     },
 });
