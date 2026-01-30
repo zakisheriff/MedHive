@@ -40,8 +40,6 @@ export default function RegisterScreen() {
                             style={styles.logo}
                             resizeMode="contain"
                         />
-                        <Text style={styles.appName}>MedHive</Text>
-                        <Text style={styles.welcomeText}>Create Account</Text>
                     </View>
 
                     <HoneyContainer style={styles.formContainer}>
@@ -119,23 +117,11 @@ const styles = StyleSheet.create({
     },
     header: {
         alignItems: 'center',
-        marginBottom: 32,
+        marginBottom: 24,
     },
     logo: {
         width: 70,
         height: 70,
-        marginBottom: 16,
-    },
-    appName: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: Colors.light.primary,
-        marginBottom: 8,
-    },
-    welcomeText: {
-        fontSize: 18,
-        fontWeight: '500',
-        color: '#666',
     },
     formContainer: {
         width: '100%',
