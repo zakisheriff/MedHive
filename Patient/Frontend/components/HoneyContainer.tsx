@@ -18,6 +18,9 @@ export function HoneyContainer({ children, style }: HoneyContainerProps) {
 
 const styles = StyleSheet.create({
     container: {
+        width: '100%',
+        maxWidth: 450,
+        alignSelf: 'center',
         backgroundColor: 'rgba(255, 255, 255, 0.9)', // Glass-ish
         borderRadius: 20,
         padding: 20,
