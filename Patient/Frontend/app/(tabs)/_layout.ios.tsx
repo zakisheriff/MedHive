@@ -24,14 +24,6 @@ export default function IOSTabLayout() {
             }}
         >
             <NativeTabs.Trigger
-                name="profile"
-                options={{
-                    title: 'Profile',
-                    icon: { sf: 'person.fill' },
-                    selectedIcon: { sf: 'person.fill' },
-                }}
-            />
-            <NativeTabs.Trigger
                 name="upload"
                 options={{
                     title: 'Upload',

@@ -118,29 +118,6 @@ export default function UploadScreen() {
                             <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.5)" />
                         </TouchableOpacity>
                     </View>
-
-                    {/* Divider */}
-                    <View style={styles.cardDivider} />
-
-                    {/* Quick Actions */}
-                    <View style={styles.quickActions}>
-                        <TouchableOpacity
-                            style={styles.quickActionBtn}
-                            onPress={() => handleUpload('prescription')}
-                            activeOpacity={0.7}
-                        >
-                            <Ionicons name="camera" size={20} color="#fff" />
-                            <Text style={styles.quickActionText}>Camera</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.quickActionBtn}
-                            onPress={() => handleUpload('prescription')}
-                            activeOpacity={0.7}
-                        >
-                            <Ionicons name="images" size={20} color="#fff" />
-                            <Text style={styles.quickActionText}>Gallery</Text>
-                        </TouchableOpacity>
-                    </View>
                 </View>
 
                 {/* Tips Card */}
