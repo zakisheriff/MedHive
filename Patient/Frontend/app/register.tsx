@@ -9,6 +9,7 @@ import { HoneyContainer } from '../components/HoneyContainer';
 import { Input } from '../components/Input';
 import { DOBInput } from '../components/DOBInput';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { SocialButton } from '../components/SocialButton';
 import { StatusBar } from 'expo-status-bar';
 
 export default function RegisterScreen() {
@@ -132,6 +133,17 @@ export default function RegisterScreen() {
                             style={styles.registerBtn}
                         />
 
+                        <View style={styles.dividerContainer}>
+                            <View style={styles.dividerLine} />
+                            <Text style={styles.dividerText}>Or</Text>
+                            <View style={styles.dividerLine} />
+                        </View>
+
+                        <SocialButton
+                            title="Continue with Google"
+                            onPress={() => console.log('Google Sign-Up')}
+                        />
+
                         <View style={styles.footer}>
                             <Text style={styles.footerText}>Already have an account? </Text>
                             <TouchableOpacity
@@ -188,8 +200,24 @@ const styles = StyleSheet.create({
         color: Colors.light.text,
     },
     registerBtn: {
-        marginTop: 10,
+        marginTop: 8,
         marginBottom: 20,
+    },
+    dividerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    dividerLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: '#E5E5E5',
+    },
+    dividerText: {
+        marginHorizontal: 12,
+        color: '#999',
+        fontSize: 14,
+        fontWeight: '500',
     },
     footer: {
         flexDirection: 'row',

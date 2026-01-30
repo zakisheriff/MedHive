@@ -8,6 +8,7 @@ import { Colors } from '../constants/theme';
 import { HoneyContainer } from '../components/HoneyContainer';
 import { Input } from '../components/Input';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { SocialButton } from '../components/SocialButton';
 import { StatusBar } from 'expo-status-bar';
 
 export default function LoginScreen() {
@@ -77,6 +78,17 @@ export default function LoginScreen() {
                             style={styles.loginBtn}
                         />
 
+                        <View style={styles.dividerContainer}>
+                            <View style={styles.dividerLine} />
+                            <Text style={styles.dividerText}>Or</Text>
+                            <View style={styles.dividerLine} />
+                        </View>
+
+                        <SocialButton
+                            title="Continue with Google"
+                            onPress={() => console.log('Google Sign-In')}
+                        />
+
                         <View style={styles.footer}>
                             <Text style={styles.footerText}>Don't have an account? </Text>
                             <TouchableOpacity
@@ -135,7 +147,24 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     loginBtn: {
+        marginTop: 8,
         marginBottom: 20,
+    },
+    dividerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    dividerLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: '#E5E5E5',
+    },
+    dividerText: {
+        marginHorizontal: 12,
+        color: '#999',
+        fontSize: 14,
+        fontWeight: '500',
     },
     footer: {
         flexDirection: 'row',
