@@ -26,7 +26,11 @@ export default function RegisterScreen() {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
-                <ScrollView contentContainerStyle={styles.scrollContent}>
+                <ScrollView
+                    contentContainerStyle={styles.scrollContent}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                >
                     <View style={styles.header}>
                         <Text style={styles.appName}>MedHive</Text>
                         <Text style={styles.subtitle}>Join the Hive</Text>
