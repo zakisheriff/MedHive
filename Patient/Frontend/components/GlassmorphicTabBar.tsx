@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Platform, Animated } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Platform, Text } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { BlurView } from 'expo-blur';
 import { Colors } from '../constants/theme';
@@ -7,13 +7,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /**
- * Premium Glassmorphic Tab Bar for Android & Web
+ * Premium Pill Tab Bar for Android & Web
  * 
- * A floating dock-style navigation bar with:
- * - Glassmorphism effect using BlurView (native) or backdrop-filter (web)
- * - Premium Apple-style floating dock design
- * - Subtle borders, shadows, and active state indicators
- * - Ionicons for cross-platform icon support
+ * A floating pill-style navigation bar with:
+ * - Clean white background with soft shadows
+ * - Active tab shows horizontal pill with icon + label
+ * - Inactive tabs show icon only
+ * - Matches the reference "One Atom" design
  */
 
 type IconName = keyof typeof Ionicons.glyphMap;
@@ -21,13 +21,14 @@ type IconName = keyof typeof Ionicons.glyphMap;
 interface TabConfig {
     focused: IconName;
     unfocused: IconName;
+    label: string;
 }
 
 const TAB_ICONS: Record<string, TabConfig> = {
-    profile: { focused: 'person', unfocused: 'person-outline' },
-    upload: { focused: 'cloud-upload', unfocused: 'cloud-upload-outline' },
-    history: { focused: 'time', unfocused: 'time-outline' },
-    access: { focused: 'key', unfocused: 'key-outline' },
+    profile: { focused: 'person', unfocused: 'person-outline', label: 'Profile' },
+    upload: { focused: 'cloud-upload', unfocused: 'cloud-upload-outline', label: 'Upload' },
+    history: { focused: 'time', unfocused: 'time-outline', label: 'History' },
+    access: { focused: 'key', unfocused: 'key-outline', label: 'Access' },
 };
 
 export function GlassmorphicTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -36,7 +37,7 @@ export function GlassmorphicTabBar({ state, descriptors, navigation }: BottomTab
     const renderTabItem = (route: typeof state.routes[0], index: number) => {
         const { options } = descriptors[route.key];
         const isFocused = state.index === index;
-        const iconConfig = TAB_ICONS[route.name] || { focused: 'help-circle', unfocused: 'help-circle-outline' };
+        const iconConfig = TAB_ICONS[route.name] || { focused: 'help-circle', unfocused: 'help-circle-outline', label: 'Tab' };
         const iconName = isFocused ? iconConfig.focused : iconConfig.unfocused;
 
         const onPress = () => {
@@ -66,47 +67,48 @@ export function GlassmorphicTabBar({ state, descriptors, navigation }: BottomTab
                 accessibilityLabel={options.tabBarAccessibilityLabel}
                 onPress={onPress}
                 onLongPress={onLongPress}
-                style={styles.tabItem}
+                style={[
+                    styles.tabItem,
+                    isFocused && styles.tabItemActive
+                ]}
                 activeOpacity={0.7}
             >
-                <View style={[
-                    styles.iconContainer,
-                    isFocused && styles.iconContainerActive
-                ]}>
-                    <Ionicons
-                        name={iconName}
-                        size={22}
-                        color={isFocused ? Colors.light.primary : Colors.light.icon}
-                    />
-                </View>
+                <Ionicons
+                    name={iconName}
+                    size={22}
+                    color={isFocused ? Colors.light.primary : '#1C1C1E'}
+                />
+                {isFocused && (
+                    <Text style={styles.activeLabel}>{iconConfig.label}</Text>
+                )}
             </TouchableOpacity>
         );
     };
 
-    // For web, we use CSS backdrop-filter; for native, we use BlurView
     const isWeb = Platform.OS === 'web';
 
+    const TabContent = () => (
+        <View style={styles.pillInner}>
+            {state.routes.map(renderTabItem)}
+        </View>
+    );
+
     return (
-        <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 16) }]}>
-            <View style={styles.dockWrapper}>
-                {isWeb ? (
-                    // Web: Use CSS backdrop-filter for glassmorphism
-                    <View style={[styles.dock, styles.dockWeb]}>
-                        {state.routes.map(renderTabItem)}
-                    </View>
-                ) : (
-                    // Native (Android): Use BlurView for glassmorphism
-                    <BlurView
-                        intensity={80}
-                        tint="light"
-                        style={styles.dock}
-                    >
-                        <View style={styles.dockInner}>
-                            {state.routes.map(renderTabItem)}
-                        </View>
-                    </BlurView>
-                )}
-            </View>
+        <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 20) }]}>
+            {isWeb ? (
+                <View style={[styles.pill, styles.pillWeb]}>
+                    <TabContent />
+                </View>
+            ) : (
+                <BlurView
+                    intensity={50}
+                    tint="light"
+                    style={styles.pill}
+                >
+                    <View style={styles.pillBackground} />
+                    <TabContent />
+                </BlurView>
+            )}
         </View>
     );
 }
@@ -121,63 +123,52 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         pointerEvents: 'box-none',
     },
-    dockWrapper: {
-        width: '88%',
-        maxWidth: 400,
-        marginBottom: 4,
-    },
-    dock: {
-        flexDirection: 'row',
-        borderRadius: 32,
-        paddingVertical: 12,
-        paddingHorizontal: 8,
-        justifyContent: 'space-around',
-        alignItems: 'center',
+    pill: {
+        borderRadius: 40,
         overflow: 'hidden',
-        // Subtle border for glass effect
-        borderWidth: 0.5,
-        borderColor: 'rgba(255, 255, 255, 0.35)',
-        // Premium shadow
+        // Subtle shadow
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.12,
-        shadowRadius: 24,
-        elevation: 12,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+        elevation: 4,
     },
-    dockWeb: {
-        // Web-specific glassmorphism using backdrop-filter
-        backgroundColor: 'rgba(255, 255, 255, 0.72)',
-        // @ts-ignore - Web-only property
-        backdropFilter: 'blur(20px) saturate(180%)',
-        // @ts-ignore - Safari fallback
-        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+    pillBackground: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: '#FFFFFF',
     },
-    dockInner: {
+    pillWeb: {
+        backgroundColor: '#FFFFFF',
+        // @ts-ignore - Web-only properties
+        backdropFilter: 'blur(16px)',
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.06)',
+    },
+    pillInner: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        paddingVertical: 12,
+        paddingHorizontal: 12,
         alignItems: 'center',
-        width: '100%',
+        justifyContent: 'center',
+        gap: 4,
     },
     tabItem: {
-        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 30,
+        flexDirection: 'row',
+        gap: 6,
     },
-    iconContainer: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'transparent',
+    tabItemActive: {
+        backgroundColor: 'rgba(0, 0, 0, 0.06)',
+        paddingHorizontal: 20,
     },
-    iconContainerActive: {
-        backgroundColor: 'rgba(220, 163, 73, 0.15)', // Honey primary with 15% opacity
-        // Subtle inner glow effect
-        shadowColor: Colors.light.primary,
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
+    activeLabel: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: Colors.light.primary,
+        marginLeft: 4,
     },
 });
