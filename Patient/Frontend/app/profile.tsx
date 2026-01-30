@@ -6,9 +6,9 @@ import {
     TouchableOpacity,
     ScrollView,
     Image,
-    Switch,
-    Alert
+    Switch
 } from 'react-native';
+import { useAlert } from '../context/AlertContext';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -63,11 +63,13 @@ export default function ProfileScreen() {
     const [notifications, setNotifications] = useState(true);
     const [biometrics, setBiometrics] = useState(false);
 
+    const { showAlert } = useAlert();
+
     const handleLogout = () => {
-        Alert.alert(
-            'Log Out',
-            'Are you sure you want to log out?',
-            [
+        showAlert({
+            title: 'Log Out',
+            message: 'Are you sure you want to log out?',
+            buttons: [
                 { text: 'Cancel', style: 'cancel' },
                 {
                     text: 'Log Out',
@@ -78,7 +80,7 @@ export default function ProfileScreen() {
                     }
                 },
             ]
-        );
+        });
     };
 
     return (
@@ -153,7 +155,11 @@ export default function ProfileScreen() {
                         style={styles.identityFooter}
                         onPress={() => {
                             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                            Alert.alert('Copied!', 'Med-ID copied to clipboard');
+                            showAlert({
+                                title: 'Copied!',
+                                message: 'Med-ID copied to clipboard',
+                                buttons: [{ text: 'OK' }]
+                            });
                         }}
                     >
                         <View>
