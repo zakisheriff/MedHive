@@ -1,41 +1,41 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const honeyPrimary = '#dca349';
+const honeyDark = '#b8873d';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
+    text: '#111111',
+    background: '#f9f9f9', // Whiteish bg from landing
+    tint: honeyPrimary,
     icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    primary: honeyPrimary,
+    primaryDark: honeyDark,
+    cardBg: '#ffffff',
+    border: 'rgba(0, 0, 0, 0.1)',
+    shadow: 'rgba(220, 163, 73, 0.3)',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    // keeping dark mode same as light for now to match specific landing page request "whiteish bg"
+    // or we can implement true dark mode later. For now, matching the requested landing style.
+    text: '#111111',
+    background: '#f9f9f9',
+    tint: honeyPrimary,
+    icon: '#687076',
+    primary: honeyPrimary,
+    primaryDark: honeyDark,
+    cardBg: '#ffffff',
+    border: 'rgba(0, 0, 0, 0.1)',
+    shadow: 'rgba(220, 163, 73, 0.3)',
   },
 };
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
     sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
     serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
     rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
     mono: 'ui-monospace',
   },
   default: {
