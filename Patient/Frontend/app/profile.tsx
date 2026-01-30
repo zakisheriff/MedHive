@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { router } from 'expo-router';
 import { Colors } from '../constants/theme';
 
@@ -87,19 +88,23 @@ export default function ProfileScreen() {
                 style={StyleSheet.absoluteFill}
             />
 
-            {/* Close Button (Done) */}
-            <TouchableOpacity
-                style={[styles.doneBtn, { top: insets.top + 10 }]}
-                onPress={() => router.back()}
-            >
-                <Text style={styles.doneText}>Close</Text>
-            </TouchableOpacity>
+            {/* Close Button Header (Stable for Web Resizing) */}
+            <View style={[styles.closeHeader, { paddingTop: insets.top + 10 }]}>
+                <BlurView intensity={60} tint="light" style={styles.blurWrapper}>
+                    <TouchableOpacity
+                        style={styles.doneBtn}
+                        onPress={() => router.back()}
+                    >
+                        <Text style={styles.doneText}>Close</Text>
+                    </TouchableOpacity>
+                </BlurView>
+            </View>
 
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={[
                     styles.scrollContent,
-                    { paddingTop: insets.top + 16, paddingBottom: 40 }
+                    { paddingTop: insets.top + 70, paddingBottom: 40 } // Increased top padding for content to scroll under
                 ]}
                 showsVerticalScrollIndicator={false}
             >
@@ -274,13 +279,30 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F8FAFC',
     },
-    doneBtn: {
-        position: 'absolute',
-        right: 20,
+    closeHeader: {
+        position: 'absolute', // Content must scroll under for blur to be visible
+        left: 0,
+        right: 0,
         zIndex: 10,
-        padding: 8,
-        backgroundColor: 'rgba(255,255,255,0.8)',
-        borderRadius: 20,
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
+        alignItems: 'flex-end',
+        paddingHorizontal: 20,
+    },
+    blurWrapper: {
+        borderRadius: 22,
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.4)',
+        // @ts-ignore - Web-only blurring
+        backdropFilter: 'blur(12px) saturate(180%)',
+    },
+    doneBtn: {
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        backgroundColor: 'rgba(255,255,255,0.15)', // More translucent
+        borderRadius: 22,
     },
     doneText: {
         fontSize: 17,
@@ -298,6 +320,9 @@ const styles = StyleSheet.create({
     header: {
         alignItems: 'center',
         marginBottom: 24,
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
     },
     avatarContainer: {
         position: 'relative',
@@ -352,11 +377,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 14,
         borderRadius: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-        elevation: 2,
     },
     medIdLeft: {
         flex: 1,
@@ -383,11 +403,9 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 20,
         marginBottom: 32,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-        elevation: 2,
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
     },
     statItem: {
         flex: 1,
@@ -418,17 +436,18 @@ const styles = StyleSheet.create({
         letterSpacing: 0.5,
         marginBottom: 12,
         marginLeft: 4,
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
     },
     menuCard: {
         backgroundColor: '#fff',
         borderRadius: 16,
         marginBottom: 24,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.04,
-        shadowRadius: 8,
-        elevation: 1,
         overflow: 'hidden',
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
     },
     menuItem: {
         flexDirection: 'row',
@@ -470,5 +489,8 @@ const styles = StyleSheet.create({
         color: '#C7C7CC',
         marginTop: 8,
         marginBottom: 20,
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
     },
 });
