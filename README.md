@@ -1,7 +1,11 @@
-# <div align="center">MedHive</div>
+# <div align="center">
+  <img src="Landing/public/logode.png" width="120" alt="MedHive Logo" />
+  <br />
+  MedHive Ecosystem
+</div>
 
 <div align="center">
-<strong>Your Health, Unified.</strong>
+<strong>Your Health, Unified. AI-Powered Healthcare Platform for Sri Lanka</strong>
 </div>
 
 <br />
@@ -32,7 +36,7 @@ We connect **Patients**, **Doctors via Clinics**, and **Pharmaceutical Companies
 
 This repository hosts the entire ecosystem, divided into specialized components:
 
-### 1. � The Clinic (Doctor's Hub)
+### 1. 🩺 The Clinic (Doctor's Hub)
 **Folder**: `Clinic/`
 *   **Purpose**: Connectivity for Doctors and Pharmacies.
 *   **Key Features**:
@@ -41,7 +45,7 @@ This repository hosts the entire ecosystem, divided into specialized components:
     *   **In-House Pharmacy Link**: Instant digital order transmission to the clinic's pharmacy.
     *   **Analytics**: Daily patient throughput and diagnosis trends.
 
-### 2. 📱 The Patient App
+### 2. � The Patient App
 **Folder**: `Patient/`
 *   **Purpose**: A unified personal health record for every citizen.
 *   **Key Features**:
@@ -50,7 +54,7 @@ This repository hosts the entire ecosystem, divided into specialized components:
     *   **QR Check-in**: Scan to grant temporary record access to doctors.
     *   **Medicine Reminders**: Automated scheduling based on prescriptions.
 
-### 3. � Pharma Company (Enterprise)
+### 3. 🏭 Pharma Company (Enterprise)
 **Folder**: `PharmaCompany/`
 *   **Purpose**: Nationwide insights and supply chain optimization.
 *   **Key Features**:
