@@ -148,8 +148,8 @@ export default function RegisterScreen() {
                             <Text style={styles.footerText}>Already have an account? </Text>
                             <TouchableOpacity
                                 onPress={() => {
-                                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                                    router.push('/(tabs)/upload'); // Should probably be history or upload, default to upload for now
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                    router.push('/login');
                                 }}>
                                 <Text style={styles.linkText}>Sign In</Text>
                             </TouchableOpacity>
@@ -169,12 +169,12 @@ const styles = StyleSheet.create({
     scrollContent: {
         flexGrow: 1,
         padding: 20,
-        paddingTop: 80, // Push content down from the top
+        paddingTop: 60,
         paddingBottom: 40,
     },
     header: {
         alignItems: 'center',
-        marginBottom: 24,
+        marginBottom: 16,
     },
     logo: {
         width: 70,

@@ -18,16 +18,12 @@ export function HoneyContainer({ children, style }: HoneyContainerProps) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         width: '100%',
         maxWidth: 450,
         alignSelf: 'center',
         backgroundColor: '#FFFFFF',
         borderRadius: 24,
         padding: 24,
-        marginTop: 60,
-        marginBottom: 100,
-        marginHorizontal: 16,
         // Premium diffused shadow (Apple Style)
         shadowColor: 'rgba(0, 0, 0, 0.05)',
         shadowOffset: { width: 0, height: 10 },
