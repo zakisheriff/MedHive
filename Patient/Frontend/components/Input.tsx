@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { TextInput, StyleSheet, View, Text, TextInputProps, TouchableOpacity, StyleProp, ViewStyle, TextStyle } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { TextInput, StyleSheet, View, Text, TextInputProps, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { Colors } from '../constants/theme';
 
 interface InputProps extends Omit<TextInputProps, 'style'> {
@@ -10,9 +9,6 @@ interface InputProps extends Omit<TextInputProps, 'style'> {
 }
 
 export function Input({ label, style, inputStyle, ...props }: InputProps) {
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-    const isPassword = props.secureTextEntry;
-
     return (
         <View style={styles.wrapper}>
             {label && <Text style={styles.label}>{label}</Text>}
@@ -21,20 +17,7 @@ export function Input({ label, style, inputStyle, ...props }: InputProps) {
                     style={[styles.inputField, inputStyle]}
                     placeholderTextColor="#999"
                     {...props}
-                    secureTextEntry={isPassword && !isPasswordVisible}
                 />
-                {isPassword && (
-                    <TouchableOpacity
-                        onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                        style={styles.iconContainer}
-                    >
-                        <Ionicons
-                            name={isPasswordVisible ? 'eye-off' : 'eye'}
-                            size={24}
-                            color="#999"
-                        />
-                    </TouchableOpacity>
-                )}
             </View>
         </View>
     );

@@ -48,7 +48,6 @@ export default function LoginScreen() {
                         <Input
                             label="Password"
                             placeholder="Enter your password"
-                            secureTextEntry
                             value={password}
                             onChangeText={setPassword}
                         />

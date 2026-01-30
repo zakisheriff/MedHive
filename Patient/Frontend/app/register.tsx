@@ -60,7 +60,6 @@ export default function RegisterScreen() {
                         <Input
                             label="Password"
                             placeholder="Create a password"
-                            secureTextEntry
                             value={password}
                             onChangeText={setPassword}
                         />
@@ -68,7 +67,6 @@ export default function RegisterScreen() {
                         <Input
                             label="Confirm Password"
                             placeholder="Confirm your password"
-                            secureTextEntry
                             value={confirmPassword}
                             onChangeText={setConfirmPassword}
                         />
