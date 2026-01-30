@@ -126,12 +126,8 @@ const styles = StyleSheet.create({
     pill: {
         borderRadius: 40,
         overflow: 'hidden',
-        // Subtle shadow
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-        elevation: 4,
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.05)', // Added subtle border for definition instead of shadow
     },
     pillBackground: {
         ...StyleSheet.absoluteFillObject,

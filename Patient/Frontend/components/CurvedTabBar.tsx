@@ -5,15 +5,6 @@ import { Colors } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-/* 
-  Floating Pill Design (Android Only)
-  - Floating container at the bottom
-  - Rounded corners (Pill shape)
-  - Cream/Off-white background
-  - Icons only (no labels for cleaner look, or small labels if fit)
-  - Centered icons
-*/
-
 export function CurvedTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     const insets = useSafeAreaInsets();
 
@@ -93,16 +84,8 @@ const styles = StyleSheet.create({
         width: '85%', // Float with margins
         justifyContent: 'space-between',
         alignItems: 'center',
-
-        // Shadow
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-        elevation: 8,
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.05)',
     },
     tabItem: {
         alignItems: 'center',
