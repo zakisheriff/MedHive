@@ -4,9 +4,9 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    ScrollView,
-    Alert
+    ScrollView
 } from 'react-native';
+import { useAlert } from '../../context/AlertContext';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
@@ -17,21 +17,26 @@ import { ProfileAvatar } from '../../components/ProfileAvatar';
 
 export default function UploadScreen() {
     const insets = useSafeAreaInsets();
+    const { showAlert } = useAlert();
 
     const handleUpload = async (type: 'prescription' | 'labReport') => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
         // Show options
-        Alert.alert(
-            type === 'prescription' ? 'Upload Prescription' : 'Upload Lab Report',
-            'Choose how you want to upload',
-            [
+        showAlert({
+            title: type === 'prescription' ? 'Upload Prescription' : 'Upload Lab Report',
+            message: 'Choose how you want to upload',
+            buttons: [
                 {
                     text: 'Camera',
                     onPress: async () => {
                         const { status } = await ImagePicker.requestCameraPermissionsAsync();
                         if (status !== 'granted') {
-                            Alert.alert('Permission Required', 'Please allow camera access.');
+                            showAlert({
+                                title: 'Permission Required',
+                                message: 'Please allow camera access.',
+                                buttons: [{ text: 'OK' }]
+                            });
                             return;
                         }
                         const result = await ImagePicker.launchCameraAsync({
@@ -49,7 +54,11 @@ export default function UploadScreen() {
                     onPress: async () => {
                         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
                         if (status !== 'granted') {
-                            Alert.alert('Permission Required', 'Please allow photo library access.');
+                            showAlert({
+                                title: 'Permission Required',
+                                message: 'Please allow photo library access.',
+                                buttons: [{ text: 'OK' }]
+                            });
                             return;
                         }
                         const result = await ImagePicker.launchImageLibraryAsync({
@@ -64,7 +73,7 @@ export default function UploadScreen() {
                 },
                 { text: 'Cancel', style: 'cancel' }
             ]
-        );
+        });
     };
 
     return (

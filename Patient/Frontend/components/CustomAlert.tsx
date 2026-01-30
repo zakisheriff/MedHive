@@ -93,64 +93,66 @@ const styles = StyleSheet.create({
     },
     alertContainer: {
         backgroundColor: '#FFFFFF',
-        borderRadius: 28,
-        width: Math.min(width * 0.8, 400),
+        borderRadius: 24,
+        width: Math.min(width * 0.85, 360), // Slightly more compact
         overflow: 'hidden',
-        // Material/Apple hybrid shadow
+        // Smoother shadow
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 20,
-        elevation: 10,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.12,
+        shadowRadius: 16,
+        elevation: 8,
     },
     alertContent: {
-        padding: 24,
-        alignItems: 'center',
+        paddingTop: 32,
+        paddingHorizontal: 24,
+        paddingBottom: 16,
+        alignItems: 'flex-start', // Standard material alignment
     },
     title: {
-        fontSize: 19,
+        fontSize: 20,
         fontWeight: '700',
         color: '#1C1C1E',
-        textAlign: 'center',
-        marginBottom: 8,
+        textAlign: 'left',
+        marginBottom: 12,
     },
     message: {
-        fontSize: 15,
+        fontSize: 16,
         color: '#636366',
-        textAlign: 'center',
+        textAlign: 'left',
         lineHeight: 22,
     },
     buttonContainer: {
-        borderTopWidth: 1,
-        borderTopColor: '#F2F2F7',
         flexDirection: 'row',
-        flexWrap: 'wrap',
+        justifyContent: 'flex-end', // Align buttons to right
+        paddingHorizontal: 16,
+        paddingBottom: 16,
+        gap: 8,
     },
     button: {
-        flex: 1,
-        paddingVertical: 16,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
         alignItems: 'center',
         justifyContent: 'center',
-        minWidth: '50%',
+        borderRadius: 8,
     },
     flexButton: {
-        flex: 1,
-        minWidth: 0,
+        // No longer flexing to full width
     },
     buttonBorder: {
-        borderRightWidth: 1,
-        borderRightColor: '#F2F2F7',
+        // Removed lines
     },
     buttonText: {
-        fontSize: 17,
-        fontWeight: '600',
+        fontSize: 14,
+        fontWeight: '700',
         color: Colors.light.primary,
+        textTransform: 'uppercase', // Material style labels
+        letterSpacing: 0.5,
     },
     destructiveText: {
         color: '#FF3B30',
     },
     cancelText: {
         color: '#8E8E93',
-        fontWeight: '500',
     },
 });
