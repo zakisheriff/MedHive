@@ -35,8 +35,8 @@ export default function IOSTabLayout() {
                 name="upload"
                 options={{
                     title: 'Upload',
-                    icon: { sf: 'arrow.up.doc' },
-                    selectedIcon: { sf: 'arrow.up.doc.fill' },
+                    icon: { sf: 'doc' },
+                    selectedIcon: { sf: 'doc.fill' },
                 }}
             />
             <NativeTabs.Trigger

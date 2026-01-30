@@ -94,9 +94,12 @@ export default function UploadScreen() {
                             activeOpacity={0.8}
                         >
                             <View style={styles.optionIcon}>
-                                <Ionicons name="medical" size={22} color={Colors.light.primary} />
+                                <Ionicons name="receipt-outline" size={22} color={Colors.light.primary} />
                             </View>
-                            <Text style={styles.optionText}>Prescription Reader</Text>
+                            <View style={styles.optionContent}>
+                                <Text style={styles.optionText}>Prescription Reader</Text>
+                                <Text style={styles.optionSubtext}>Extract medicine details</Text>
+                            </View>
                             <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.5)" />
                         </TouchableOpacity>
 
@@ -108,34 +111,53 @@ export default function UploadScreen() {
                             <View style={styles.optionIcon}>
                                 <Ionicons name="flask" size={22} color={Colors.light.primary} />
                             </View>
-                            <Text style={styles.optionText}>Lab Report Analyzer</Text>
+                            <View style={styles.optionContent}>
+                                <Text style={styles.optionText}>Lab Report Analyzer</Text>
+                                <Text style={styles.optionSubtext}>Analyze test results</Text>
+                            </View>
                             <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.5)" />
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Divider */}
+                    <View style={styles.cardDivider} />
+
+                    {/* Quick Actions */}
+                    <View style={styles.quickActions}>
+                        <TouchableOpacity
+                            style={styles.quickActionBtn}
+                            onPress={() => handleUpload('prescription')}
+                            activeOpacity={0.7}
+                        >
+                            <Ionicons name="camera" size={20} color="#fff" />
+                            <Text style={styles.quickActionText}>Camera</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.quickActionBtn}
+                            onPress={() => handleUpload('prescription')}
+                            activeOpacity={0.7}
+                        >
+                            <Ionicons name="images" size={20} color="#fff" />
+                            <Text style={styles.quickActionText}>Gallery</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
 
-                {/* Tips Section */}
-                <View style={styles.tipsSection}>
-                    <Text style={styles.sectionTitle}>Tips for Best Results</Text>
-                    <View style={styles.tipsRow}>
-                        <View style={styles.tipItem}>
-                            <View style={styles.tipIcon}>
-                                <Ionicons name="sunny-outline" size={20} color={Colors.light.primary} />
-                            </View>
-                            <Text style={styles.tipText}>Good lighting</Text>
-                        </View>
-                        <View style={styles.tipItem}>
-                            <View style={styles.tipIcon}>
-                                <Ionicons name="scan-outline" size={20} color={Colors.light.primary} />
-                            </View>
-                            <Text style={styles.tipText}>Keep flat</Text>
-                        </View>
-                        <View style={styles.tipItem}>
-                            <View style={styles.tipIcon}>
-                                <Ionicons name="text-outline" size={20} color={Colors.light.primary} />
-                            </View>
-                            <Text style={styles.tipText}>Clear text</Text>
-                        </View>
+                {/* Tips Card */}
+                <View style={styles.tipsCard}>
+                    <View style={styles.tipItem}>
+                        <Ionicons name="sunny" size={18} color={Colors.light.primary} />
+                        <Text style={styles.tipText}>Good lighting</Text>
+                    </View>
+                    <View style={styles.tipDivider} />
+                    <View style={styles.tipItem}>
+                        <Ionicons name="phone-portrait-outline" size={18} color={Colors.light.primary} />
+                        <Text style={styles.tipText}>Keep steady</Text>
+                    </View>
+                    <View style={styles.tipDivider} />
+                    <View style={styles.tipItem}>
+                        <Ionicons name="eye-outline" size={18} color={Colors.light.primary} />
+                        <Text style={styles.tipText}>Clear text</Text>
                     </View>
                 </View>
             </ScrollView>
@@ -216,48 +238,73 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginRight: 14,
     },
-    optionText: {
+    optionContent: {
         flex: 1,
+    },
+    optionText: {
         fontSize: 16,
         fontWeight: '600',
         color: '#fff',
     },
+    optionSubtext: {
+        fontSize: 12,
+        color: 'rgba(255,255,255,0.7)',
+        marginTop: 2,
+    },
 
-    // Tips Section
-    tipsSection: {
-        marginTop: 32,
+    // Card Divider
+    cardDivider: {
+        height: 1,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        marginVertical: 20,
     },
-    sectionTitle: {
-        fontSize: 13,
-        fontWeight: '600',
-        color: '#8E8E93',
-        textTransform: 'uppercase',
-        letterSpacing: 0.5,
-        marginBottom: 16,
-        textAlign: 'center',
-    },
-    tipsRow: {
+
+    // Quick Actions
+    quickActions: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-    },
-    tipItem: {
-        alignItems: 'center',
-        flex: 1,
-    },
-    tipIcon: {
-        width: 44,
-        height: 44,
-        borderRadius: 12,
-        backgroundColor: 'rgba(220,163,73,0.12)',
-        alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 8,
+        gap: 24,
     },
-    tipText: {
+    quickActionBtn: {
+        alignItems: 'center',
+        gap: 6,
+    },
+    quickActionText: {
         fontSize: 12,
         fontWeight: '500',
-        color: '#8E8E93',
-        textAlign: 'center',
+        color: 'rgba(255,255,255,0.9)',
+    },
+
+    // Tips Card
+    tipsCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#fff',
+        marginTop: 24,
+        paddingVertical: 16,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.04,
+        shadowRadius: 8,
+        elevation: 1,
+    },
+    tipItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    tipDivider: {
+        width: 1,
+        height: 20,
+        backgroundColor: '#E5E5EA',
+    },
+    tipText: {
+        fontSize: 13,
+        fontWeight: '500',
+        color: '#6B7280',
     },
 });
 
