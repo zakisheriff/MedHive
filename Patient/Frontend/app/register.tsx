@@ -148,8 +148,8 @@ export default function RegisterScreen() {
                             <Text style={styles.footerText}>Already have an account? </Text>
                             <TouchableOpacity
                                 onPress={() => {
-                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                    router.push('/login');
+                                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                                    router.push('/(tabs)/upload'); // Should probably be history or upload, default to upload for now
                                 }}>
                                 <Text style={styles.linkText}>Sign In</Text>
                             </TouchableOpacity>

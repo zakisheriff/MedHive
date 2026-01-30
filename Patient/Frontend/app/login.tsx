@@ -17,7 +17,8 @@ export default function LoginScreen() {
 
     const handleLogin = () => {
         // TODO: Implement actual login logic
-        console.log('Login with:', email, password);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        router.push('/(tabs)/upload');
     };
 
     return (
