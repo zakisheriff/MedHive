@@ -26,7 +26,7 @@ interface TabConfig {
 
 const TAB_ICONS: Record<string, TabConfig> = {
     profile: { focused: 'person', unfocused: 'person-outline', label: 'Profile' },
-    upload: { focused: 'cloud-upload', unfocused: 'cloud-upload-outline', label: 'Upload' },
+    upload: { focused: 'document-text', unfocused: 'document-text-outline', label: 'Upload' },
     history: { focused: 'time', unfocused: 'time-outline', label: 'History' },
     access: { focused: 'key', unfocused: 'key-outline', label: 'Access' },
 };
