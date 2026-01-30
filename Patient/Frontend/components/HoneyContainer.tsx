@@ -24,12 +24,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         borderRadius: 24,
         padding: 24,
-        // Premium diffused shadow (Apple Style)
-        shadowColor: 'rgba(0, 0, 0, 0.05)',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 1,
-        shadowRadius: 20,
-        elevation: 2,
         borderWidth: 1,
         borderColor: '#F1F5F9',
     },

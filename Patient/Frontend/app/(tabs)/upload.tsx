@@ -127,19 +127,39 @@ export default function UploadScreen() {
                     </View>
                 </View>
 
-                {/* Tips placed BELOW card as usual */}
-                <View style={styles.tipsRow}>
-                    <View style={styles.tipChip}>
-                        <Ionicons name="sunny" size={16} color={Colors.light.primary} />
-                        <Text style={styles.tipText}>Good Lighting</Text>
+                {/* Single Requirement Note for better results */}
+                <View style={styles.tipsNote}>
+                    <Ionicons name="alert-circle" size={18} color={Colors.light.primary} />
+                    <Text style={styles.tipsNoteText}>
+                        For better result, ensure good lighting and steady scan.
+                    </Text>
+                </View>
+
+                {/* Scan Process Guide (Individual pill icons, moved below !) */}
+                <View style={styles.processContainer}>
+                    <View style={styles.processItem}>
+                        <View style={styles.processIcon}>
+                            <Ionicons name="camera" size={18} color={Colors.light.primary} />
+                        </View>
+                        <Text style={styles.processText}>Snap It</Text>
                     </View>
-                    <View style={styles.tipChip}>
-                        <Ionicons name="phone-portrait-outline" size={16} color={Colors.light.primary} />
-                        <Text style={styles.tipText}>Keep Steady</Text>
+                    <View style={styles.arrowWrapper}>
+                        <Ionicons name="arrow-forward" size={14} color="#C7C7CC" />
                     </View>
-                    <View style={styles.tipChip}>
-                        <Ionicons name="eye-outline" size={16} color={Colors.light.primary} />
-                        <Text style={styles.tipText}>Clear Text</Text>
+                    <View style={styles.processItem}>
+                        <View style={styles.processIcon}>
+                            <Ionicons name="scan" size={18} color={Colors.light.primary} />
+                        </View>
+                        <Text style={styles.processText}>AI Scan</Text>
+                    </View>
+                    <View style={styles.arrowWrapper}>
+                        <Ionicons name="arrow-forward" size={14} color="#C7C7CC" />
+                    </View>
+                    <View style={styles.processItem}>
+                        <View style={styles.processIcon}>
+                            <Ionicons name="save-outline" size={18} color={Colors.light.primary} />
+                        </View>
+                        <Text style={styles.processText}>Save</Text>
                     </View>
                 </View>
             </ScrollView>
@@ -172,18 +192,41 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 20,
         paddingTop: 10,
-        paddingBottom: 40,
+        paddingBottom: 60,
+    },
+    processContainer: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        gap: 12,
+        marginTop: 16, // Space below the ! note
+    },
+    processItem: {
+        alignItems: 'center',
+        gap: 8,
+    },
+    processIcon: {
+        width: 44,
+        height: 44,
+        borderRadius: 22, // Full pill/circle
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    arrowWrapper: {
+        height: 44, // Match icon height for perfect vertical centering
+        justifyContent: 'center',
+    },
+    processText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#8E8E93',
     },
     // Optional: add decorative styles here if needed later
     uploadCard: {
         backgroundColor: Colors.light.primary,
         borderRadius: 32,
         padding: 32,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.1,
-        shadowRadius: 16,
-        elevation: 4,
     },
     cardHeader: {
         alignItems: 'center',
@@ -271,28 +314,19 @@ const styles = StyleSheet.create({
     },
 
     // Tips
-    tipsRow: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        gap: 10,
-        marginTop: 24,
-    },
-    tipChip: {
+    tipsNote: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 6,
+        justifyContent: 'center',
         backgroundColor: '#fff',
-        paddingVertical: 10,
-        paddingHorizontal: 14,
+        paddingVertical: 12,
+        paddingHorizontal: 20,
         borderRadius: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.04,
-        shadowRadius: 4,
-        elevation: 1,
+        gap: 10,
+        marginTop: 24,
+        alignSelf: 'center',
     },
-    tipText: {
+    tipsNoteText: {
         fontSize: 13,
         fontWeight: '500',
         color: '#6B7280',
