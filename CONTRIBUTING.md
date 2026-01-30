@@ -1,6 +1,6 @@
 # 🏥 MedHive Team Cheatsheet
 
-**Your Golden Rule:** Work ONLY in your branch (`zaki`, `raheem`, etc). NEVER touch `main`.
+**Your Golden Rule:** Work ONLY in your branch (`patient`, `clinic`, etc). NEVER touch `main`.
 
 ---
 
@@ -12,6 +12,12 @@
     cd MedHive
     ```
 
+
+2.  **Switch to your Team Branch**:
+    ```bash
+    git checkout <your-team-branch>
+    # Example: git checkout patient
+    ```
 
 ### 3. Focus Your Workspace (Manual Setup)
 To ensure you don’t accidentally touch other files, you can run this command to **hide everything else** on your computer.
@@ -56,9 +62,9 @@ git sparse-checkout disable
 
 ## 2️⃣ Daily Routine (Every Day)
 
-**Step 1: Start your day**
+**Step 1: Start your day (Get latest changes)**
 ```bash
-git pull origin <your-branch-name>   # specific branch update
+git pull origin <your-team-branch>   # Example: git pull origin patient
 ```
 
 **Step 2: Do your work**
@@ -68,7 +74,7 @@ git pull origin <your-branch-name>   # specific branch update
 ```bash
 git add .
 git commit -m "Describe what you did"
-git push origin <your-branch-name>
+git push origin <your-team-branch>
 ```
 *   ✅ **Done!** Your code is safe on GitHub.
 *   *Repeat this as many times as you want.*
@@ -81,7 +87,7 @@ git push origin <your-branch-name>
 
 1.  Go to **GitHub.com**.
 2.  Click **"Compare & pull request"**.
-3.  Set **Base: `main`** ⬅️ **Compare: `<your-name>`**.
+3.  Set **Base: `main`** ⬅️ **Compare: `<your-team-branch>`**.
 4.  Click **Create Pull Request**.
 5.  **Wait for Zaki to approve.**
 
