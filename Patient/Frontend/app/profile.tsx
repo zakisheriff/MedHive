@@ -89,7 +89,7 @@ export default function ProfileScreen() {
             />
 
             {/* Sticky "Close" Button Unit */}
-            <View style={[styles.closeHeader, { top: insets.top - 20, pointerEvents: 'box-none' }]}>
+            <View style={[styles.closeHeader, { top: insets.top + 10, pointerEvents: 'box-none' }]}>
                 <View style={[styles.closeHeaderInner, { pointerEvents: 'box-none' }]}>
                     <View style={styles.headerSpacer} />
                     {/* Account Title moved to ScrollView to be non-sticky */}
@@ -110,7 +110,7 @@ export default function ProfileScreen() {
                 style={styles.scrollView}
                 contentContainerStyle={[
                     styles.scrollContent,
-                    { paddingTop: insets.top - 20, paddingBottom: 40 }
+                    { paddingTop: insets.top + 10, paddingBottom: 40 }
                 ]}
                 showsVerticalScrollIndicator={false}
             >
