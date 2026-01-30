@@ -127,20 +127,18 @@ export default function UploadScreen() {
                     </View>
                 </View>
 
-                {/* Tips Card */}
-                <View style={styles.tipsCard}>
-                    <View style={styles.tipItem}>
-                        <Ionicons name="sunny" size={18} color={Colors.light.primary} />
+                {/* Tips */}
+                <View style={styles.tipsRow}>
+                    <View style={styles.tipChip}>
+                        <Ionicons name="sunny" size={16} color={Colors.light.primary} />
                         <Text style={styles.tipText}>Good Lighting</Text>
                     </View>
-                    <View style={styles.tipDivider} />
-                    <View style={styles.tipItem}>
-                        <Ionicons name="phone-portrait-outline" size={18} color={Colors.light.primary} />
+                    <View style={styles.tipChip}>
+                        <Ionicons name="phone-portrait-outline" size={16} color={Colors.light.primary} />
                         <Text style={styles.tipText}>Keep Steady</Text>
                     </View>
-                    <View style={styles.tipDivider} />
-                    <View style={styles.tipItem}>
-                        <Ionicons name="eye-outline" size={18} color={Colors.light.primary} />
+                    <View style={styles.tipChip}>
+                        <Ionicons name="eye-outline" size={16} color={Colors.light.primary} />
                         <Text style={styles.tipText}>Clear Text</Text>
                     </View>
                 </View>
@@ -272,31 +270,27 @@ const styles = StyleSheet.create({
         color: 'rgba(255,255,255,0.9)',
     },
 
-    // Tips Card
-    tipsCard: {
+    // Tips
+    tipsRow: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: 10,
+        marginTop: 24,
+    },
+    tipChip: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        gap: 6,
         backgroundColor: '#fff',
-        marginTop: 24,
-        paddingVertical: 16,
-        paddingHorizontal: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 14,
         borderRadius: 20,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.04,
-        shadowRadius: 8,
+        shadowRadius: 4,
         elevation: 1,
-    },
-    tipItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    tipDivider: {
-        width: 1,
-        height: 20,
-        backgroundColor: '#E5E5EA',
     },
     tipText: {
         fontSize: 13,

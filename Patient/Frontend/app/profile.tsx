@@ -14,7 +14,7 @@ import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { Colors } from '../../constants/theme';
+import { Colors } from '../constants/theme';
 
 // Mock user data
 const USER = {
@@ -87,11 +87,19 @@ export default function ProfileScreen() {
                 style={StyleSheet.absoluteFill}
             />
 
+            {/* Close Button (Done) */}
+            <TouchableOpacity
+                style={[styles.doneBtn, { top: insets.top + 10 }]}
+                onPress={() => router.back()}
+            >
+                <Text style={styles.doneText}>Close</Text>
+            </TouchableOpacity>
+
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={[
                     styles.scrollContent,
-                    { paddingTop: insets.top + 16, paddingBottom: 140 }
+                    { paddingTop: insets.top + 16, paddingBottom: 40 }
                 ]}
                 showsVerticalScrollIndicator={false}
             >
@@ -266,6 +274,19 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F8FAFC',
     },
+    doneBtn: {
+        position: 'absolute',
+        right: 20,
+        zIndex: 10,
+        padding: 8,
+        backgroundColor: 'rgba(255,255,255,0.8)',
+        borderRadius: 20,
+    },
+    doneText: {
+        fontSize: 17,
+        fontWeight: '600',
+        color: Colors.light.primary,
+    },
     scrollView: {
         flex: 1,
     },
@@ -281,6 +302,7 @@ const styles = StyleSheet.create({
     avatarContainer: {
         position: 'relative',
         marginBottom: 16,
+        marginTop: 20,
     },
     avatar: {
         width: 100,
