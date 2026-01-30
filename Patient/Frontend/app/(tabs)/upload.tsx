@@ -13,6 +13,7 @@ import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/theme';
+import { ProfileAvatar } from '../../components/ProfileAvatar';
 
 export default function UploadScreen() {
     const insets = useSafeAreaInsets();
@@ -68,6 +69,12 @@ export default function UploadScreen() {
 
     return (
         <View style={styles.container}>
+            {/* Header with Profile Avatar */}
+            <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
+                <Text style={styles.headerTitle}>Upload</Text>
+                <ProfileAvatar size={34} />
+            </View>
+
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
@@ -82,7 +89,7 @@ export default function UploadScreen() {
                         </View>
                         <Text style={styles.cardTitle}>Upload Your Health Record</Text>
                         <Text style={styles.cardSubtitle}>
-                            Upload an image to extract medicine name, dosage, and duration
+                            Upload an Image to Extract Medicine Name, Dosage, and Duration
                         </Text>
                     </View>
 
@@ -98,7 +105,7 @@ export default function UploadScreen() {
                             </View>
                             <View style={styles.optionContent}>
                                 <Text style={styles.optionText}>Prescription Reader</Text>
-                                <Text style={styles.optionSubtext}>Extract medicine details</Text>
+                                <Text style={styles.optionSubtext}>Extract Medicine Details</Text>
                             </View>
                             <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.5)" />
                         </TouchableOpacity>
@@ -113,7 +120,7 @@ export default function UploadScreen() {
                             </View>
                             <View style={styles.optionContent}>
                                 <Text style={styles.optionText}>Lab Report Analyzer</Text>
-                                <Text style={styles.optionSubtext}>Analyze test results</Text>
+                                <Text style={styles.optionSubtext}>Analyze Test Results</Text>
                             </View>
                             <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.5)" />
                         </TouchableOpacity>
@@ -124,17 +131,17 @@ export default function UploadScreen() {
                 <View style={styles.tipsCard}>
                     <View style={styles.tipItem}>
                         <Ionicons name="sunny" size={18} color={Colors.light.primary} />
-                        <Text style={styles.tipText}>Good lighting</Text>
+                        <Text style={styles.tipText}>Good Lighting</Text>
                     </View>
                     <View style={styles.tipDivider} />
                     <View style={styles.tipItem}>
                         <Ionicons name="phone-portrait-outline" size={18} color={Colors.light.primary} />
-                        <Text style={styles.tipText}>Keep steady</Text>
+                        <Text style={styles.tipText}>Keep Steady</Text>
                     </View>
                     <View style={styles.tipDivider} />
                     <View style={styles.tipItem}>
                         <Ionicons name="eye-outline" size={18} color={Colors.light.primary} />
-                        <Text style={styles.tipText}>Clear text</Text>
+                        <Text style={styles.tipText}>Clear Text</Text>
                     </View>
                 </View>
             </ScrollView>
@@ -147,6 +154,18 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F8FAFC',
     },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingBottom: 8,
+    },
+    headerTitle: {
+        fontSize: 32,
+        fontWeight: '700',
+        color: Colors.light.text,
+    },
     scrollView: {
         flex: 1,
     },
@@ -154,7 +173,8 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         paddingHorizontal: 20,
-        paddingVertical: 40,
+        paddingTop: 20,
+        paddingBottom: 40,
     },
 
     uploadCard: {

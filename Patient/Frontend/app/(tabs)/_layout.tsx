@@ -23,17 +23,17 @@ export default function TabLayout() {
             }}
         >
             <Tabs.Screen
-                name="upload"
-                options={{
-                    title: 'Upload',
-                    tabBarIcon: ({ color, size }) => <Ionicons name="cloud-upload-outline" size={size} color={color} />,
-                }}
-            />
-            <Tabs.Screen
                 name="history"
                 options={{
                     title: 'History',
                     tabBarIcon: ({ color, size }) => <Ionicons name="time-outline" size={size} color={color} />,
+                }}
+            />
+            <Tabs.Screen
+                name="upload"
+                options={{
+                    title: 'Upload',
+                    tabBarIcon: ({ color, size }) => <Ionicons name="cloud-upload-outline" size={size} color={color} />,
                 }}
             />
             <Tabs.Screen

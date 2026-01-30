@@ -24,19 +24,19 @@ export default function IOSTabLayout() {
             }}
         >
             <NativeTabs.Trigger
-                name="upload"
-                options={{
-                    title: 'Upload',
-                    icon: { sf: 'doc' },
-                    selectedIcon: { sf: 'doc.fill' },
-                }}
-            />
-            <NativeTabs.Trigger
                 name="history"
                 options={{
                     title: 'History',
                     icon: { sf: 'clock' },
                     selectedIcon: { sf: 'clock.fill' },
+                }}
+            />
+            <NativeTabs.Trigger
+                name="upload"
+                options={{
+                    title: 'Upload',
+                    icon: { sf: 'doc' },
+                    selectedIcon: { sf: 'doc.fill' },
                 }}
             />
             <NativeTabs.Trigger
