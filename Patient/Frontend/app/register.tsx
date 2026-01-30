@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     scrollContent: {
         flexGrow: 1,
         padding: 20,
-        justifyContent: 'center',
+        paddingTop: 80, // Push content down from the top
         paddingBottom: 40,
     },
     header: {

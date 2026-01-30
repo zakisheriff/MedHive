@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     scrollContent: {
         flexGrow: 1,
         padding: 20,
-        justifyContent: 'center',
+        paddingTop: 100, // Slightly more padding for login since form is shorter
         paddingBottom: 40,
     },
     header: {
