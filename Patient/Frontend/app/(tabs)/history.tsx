@@ -59,6 +59,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
         paddingBottom: 8,
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
     },
     headerTitle: {
         fontSize: 32,
@@ -68,6 +71,9 @@ const styles = StyleSheet.create({
     searchContainer: {
         paddingHorizontal: 20,
         paddingBottom: 16,
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
     },
     searchBar: {
         flexDirection: 'row',
@@ -93,6 +99,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingTop: 10,
         paddingBottom: 120,
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
     },
     content: {
         justifyContent: 'center',

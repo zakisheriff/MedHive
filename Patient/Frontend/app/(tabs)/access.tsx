@@ -42,6 +42,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
         paddingBottom: 8,
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
     },
     headerTitle: {
         fontSize: 32,
@@ -56,6 +59,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 20,
         paddingBottom: 120,
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
     },
     content: {
         justifyContent: 'center',
