@@ -70,6 +70,21 @@ git push origin <your-name>
 
 ---
 
-### 🆘 Emergency Commands
-*   **"I messed up!"**: `git checkout .` (Undoes unsaved changes)
-*   **"Where am I?"**: `git branch` (Check you are NOT on main)
+
+---
+
+## 4️⃣ How to get 200+ Commits (University Stats) 🎓
+
+If you need a high commit count for grading, follow these 2 rules:
+
+1.  **Commit Small & Often**: Don't wait to finish the whole login page.
+    *   Added a button? `git commit`
+    *   Changed color? `git commit`
+    *   Fixed typo? `git commit`
+    *   *This is valid and professional.*
+
+2.  **CRITICAL: Merge Correctly**:
+    *   When merging on GitHub, check the dropdown button.
+    *   ✅ Use **"Create a merge commit"**. (Keeps all your 50 tiny commits).
+    *   ❌ **DO NOT use "Squash and merge"**. (Combines everything into 1 commit -> You lose 49 points).
+
