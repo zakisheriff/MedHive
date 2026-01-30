@@ -43,6 +43,13 @@ To ensure you don’t accidentally touch other files, you can run this command t
     ```
     *Now you will ONLY see the `PharmaCompany` folder.*
 
+*   **For Landing Team:**
+    ```bash
+    git sparse-checkout init --cone
+    git sparse-checkout set Landing
+    ```
+    *Now you will ONLY see the `Landing` folder.*
+
 ### 4. How to See Everything Again (Disable Focus Mode)
 If you are confused or can't see files you need:
 ```bash
@@ -57,6 +64,7 @@ git sparse-checkout disable
 | **Patient Team** | `patient` | `Patient/` |
 | **Clinic Team** | `clinic` | `Clinic/` |
 | **Pharma Team** | `pharma` | `PharmaCompany/` |
+| **Landing Team** | `landing` | `Landing/` |
 
 ---
 
