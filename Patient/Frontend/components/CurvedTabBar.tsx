@@ -1,36 +1,27 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Platform, Animated } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import Svg, { Path } from 'react-native-svg';
 import { Colors } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const { width } = Dimensions.get('window');
-const TAB_HEIGHT = 80;
+/* 
+  Floating Pill Design (Android Only)
+  - Floating container at the bottom
+  - Rounded corners (Pill shape)
+  - Cream/Off-white background
+  - Icons only (no labels for cleaner look, or small labels if fit)
+  - Centered icons
+*/
 
 export function CurvedTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     const insets = useSafeAreaInsets();
-    const height = TAB_HEIGHT + insets.bottom;
 
-    const curvePath = `
-    M 0 20
-    Q ${width / 2} -20 ${width} 20
-    V ${height}
-    H 0
-    Z
-  `;
+    // Note: Tab order in _layout.tsx is Profile, Upload, History, Access.
 
     return (
-        <View style={[styles.container, { height }]}>
-            <Svg width={width} height={height} style={styles.svg}>
-                {/* Shadow path could go here if needed, but simple filter is easier or just elevation */}
-                <Path d={curvePath} fill="#FFFFFF"
-                // Add a subtle shadow manually if needed, or rely on View shadow
-                />
-            </Svg>
-
-            <View style={[styles.content, { paddingBottom: insets.bottom }]}>
+        <View style={[styles.container, { paddingBottom: insets.bottom + 20 }]}>
+            <View style={styles.pillContainer}>
                 {state.routes.map((route, index) => {
                     const { options } = descriptors[route.key];
                     const isFocused = state.index === index;
@@ -47,16 +38,15 @@ export function CurvedTabBar({ state, descriptors, navigation }: BottomTabBarPro
                         }
                     };
 
-                    let iconName: keyof typeof Ionicons.glyphMap = 'help-circle-outline';
-                    if (route.name === 'upload') iconName = isFocused ? 'cloud-upload' : 'cloud-upload-outline';
-                    if (route.name === 'access') iconName = isFocused ? 'key' : 'key-outline';
-                    if (route.name === 'history') iconName = isFocused ? 'time' : 'time-outline';
+                    let iconName: keyof typeof Ionicons.glyphMap = 'help-circle';
+                    // Icons mapping based on the reference or logical choice
+                    // Reference: Person, Plus (Upload), Clock (History), Lock (Access)
                     if (route.name === 'profile') iconName = isFocused ? 'person' : 'person-outline';
+                    if (route.name === 'upload') iconName = isFocused ? 'add-circle' : 'add-outline'; // Plus icon for upload
+                    if (route.name === 'history') iconName = isFocused ? 'time' : 'time-outline';
+                    if (route.name === 'access') iconName = isFocused ? 'lock-closed' : 'lock-closed-outline';
 
-                    // Optional: Special 'Upload' button prominence?
-                    // For now, keep them equal as per request unless "Upload" needs to be special.
-                    // User list: Profile, Upload, History, Access.
-                    // My Plan order: History, Upload, Access, Profile.
+                    const isUpload = route.name === 'upload';
 
                     return (
                         <TouchableOpacity
@@ -65,18 +55,19 @@ export function CurvedTabBar({ state, descriptors, navigation }: BottomTabBarPro
                             accessibilityState={isFocused ? { selected: true } : {}}
                             accessibilityLabel={options.tabBarAccessibilityLabel}
                             onPress={onPress}
-                            style={styles.tabItem}
+                            style={[styles.tabItem, isFocused && styles.tabItemFocused]}
                         >
-                            <View style={[styles.iconWrapper, isFocused && styles.activeIconWrapper]}>
+                            <View style={[
+                                styles.iconWrapper,
+                                isFocused && styles.activeIconWrapper,
+                                isUpload && styles.uploadWrapper // Optional special styling for +
+                            ]}>
                                 <Ionicons
                                     name={iconName}
                                     size={24}
-                                    color={isFocused ? Colors.light.primary : '#999'}
+                                    color={isFocused ? Colors.light.text : '#000'} // Reference uses black icons
                                 />
                             </View>
-                            <Text style={[styles.label, { color: isFocused ? Colors.light.primary : '#999' }]}>
-                                {options.title || route.name}
-                            </Text>
                         </TouchableOpacity>
                     );
                 })}
@@ -89,49 +80,52 @@ const styles = StyleSheet.create({
     container: {
         position: 'absolute',
         bottom: 0,
-        width: width,
-        elevation: 8, // Android shadow
-        shadowColor: '#000', // iOS shadow
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        width: '100%',
+        alignItems: 'center',
         backgroundColor: 'transparent',
     },
-    svg: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
+    pillContainer: {
+        flexDirection: 'row',
+        backgroundColor: '#FFF8F0', // Creamy white
+        borderRadius: 40,
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        width: '85%', // Float with margins
+        justifyContent: 'space-between',
+        alignItems: 'center',
+
+        // Shadow
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: -3,
+            height: 4,
         },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 5,
-    },
-    content: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-around',
+        shadowOpacity: 0.15,
+        shadowRadius: 10,
+        elevation: 8,
     },
     tabItem: {
-        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingTop: 10,
+        padding: 8,
+    },
+    tabItemFocused: {
+        // scale transform could go here
     },
     iconWrapper: {
-        marginBottom: 4,
-        padding: 8,
-        borderRadius: 20,
+        padding: 10,
+        borderRadius: 30,
     },
     activeIconWrapper: {
-        backgroundColor: '#FFF8E1', // Very light honey/gold tint optional
+        backgroundColor: '#FFFFFF', // White highlight bubble for active
+        // Make it subtle shadow?
+        shadowColor: "#dca349",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 2,
     },
-    label: {
-        fontSize: 10,
-        fontWeight: '600',
+    uploadWrapper: {
+        // If we want the plus to look special
     }
 });
