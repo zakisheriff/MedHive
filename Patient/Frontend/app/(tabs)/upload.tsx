@@ -70,10 +70,7 @@ export default function UploadScreen() {
         <View style={styles.container}>
             <ScrollView
                 style={styles.scrollView}
-                contentContainerStyle={[
-                    styles.scrollContent,
-                    { paddingTop: insets.top + 20, paddingBottom: 140 }
-                ]}
+                contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
                 {/* Main Upload Card */}
@@ -120,25 +117,24 @@ export default function UploadScreen() {
                 {/* Tips Section */}
                 <View style={styles.tipsSection}>
                     <Text style={styles.sectionTitle}>Tips for Best Results</Text>
-
-                    <View style={styles.tipsCard}>
+                    <View style={styles.tipsRow}>
                         <View style={styles.tipItem}>
                             <View style={styles.tipIcon}>
-                                <Ionicons name="sunny" size={16} color={Colors.light.primary} />
+                                <Ionicons name="sunny-outline" size={20} color={Colors.light.primary} />
                             </View>
-                            <Text style={styles.tipText}>Ensure good lighting</Text>
+                            <Text style={styles.tipText}>Good lighting</Text>
                         </View>
                         <View style={styles.tipItem}>
                             <View style={styles.tipIcon}>
-                                <Ionicons name="scan" size={16} color={Colors.light.primary} />
+                                <Ionicons name="scan-outline" size={20} color={Colors.light.primary} />
                             </View>
-                            <Text style={styles.tipText}>Keep document flat</Text>
+                            <Text style={styles.tipText}>Keep flat</Text>
                         </View>
                         <View style={styles.tipItem}>
                             <View style={styles.tipIcon}>
-                                <Ionicons name="eye" size={16} color={Colors.light.primary} />
+                                <Ionicons name="text-outline" size={20} color={Colors.light.primary} />
                             </View>
-                            <Text style={styles.tipText}>Text should be readable</Text>
+                            <Text style={styles.tipText}>Clear text</Text>
                         </View>
                     </View>
                 </View>
@@ -156,20 +152,21 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollContent: {
+        flexGrow: 1,
+        justifyContent: 'center',
         paddingHorizontal: 20,
+        paddingVertical: 40,
     },
 
-    // Upload Card
     uploadCard: {
         backgroundColor: Colors.light.primary,
-        borderRadius: 28,
-        padding: 28,
-        marginBottom: 28,
-        shadowColor: Colors.light.primary,
-        shadowOffset: { width: 0, height: 12 },
-        shadowOpacity: 0.3,
-        shadowRadius: 20,
-        elevation: 8,
+        borderRadius: 32,
+        padding: 32,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.1,
+        shadowRadius: 16,
+        elevation: 4,
     },
     cardHeader: {
         alignItems: 'center',
@@ -178,8 +175,8 @@ const styles = StyleSheet.create({
     iconWrapper: {
         width: 56,
         height: 56,
-        borderRadius: 16,
-        backgroundColor: 'rgba(255,255,255,0.2)',
+        borderRadius: 20,
+        backgroundColor: 'rgba(255,255,255,0.25)',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 16,
@@ -193,7 +190,7 @@ const styles = StyleSheet.create({
     },
     cardSubtitle: {
         fontSize: 14,
-        color: 'rgba(255,255,255,0.8)',
+        color: 'rgba(255,255,255,0.85)',
         textAlign: 'center',
         lineHeight: 20,
     },
@@ -205,15 +202,15 @@ const styles = StyleSheet.create({
     optionButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.15)',
+        backgroundColor: 'rgba(0,0,0,0.12)',
         paddingVertical: 16,
         paddingHorizontal: 18,
-        borderRadius: 16,
+        borderRadius: 24,
     },
     optionIcon: {
         width: 40,
         height: 40,
-        borderRadius: 12,
+        borderRadius: 14,
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
@@ -226,51 +223,42 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
 
-    // Section Titles
+    // Tips Section
+    tipsSection: {
+        marginTop: 32,
+    },
     sectionTitle: {
         fontSize: 13,
         fontWeight: '600',
         color: '#8E8E93',
         textTransform: 'uppercase',
         letterSpacing: 0.5,
-        marginBottom: 12,
-        marginLeft: 4,
+        marginBottom: 16,
+        textAlign: 'center',
     },
-
-    // Tips Section
-    tipsSection: {
-        marginBottom: 24,
-    },
-    tipsCard: {
-        backgroundColor: '#fff',
-        borderRadius: 20,
-        padding: 18,
+    tipsRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.04,
-        shadowRadius: 8,
-        elevation: 1,
+        justifyContent: 'space-around',
     },
     tipItem: {
         alignItems: 'center',
         flex: 1,
     },
     tipIcon: {
-        width: 36,
-        height: 36,
-        borderRadius: 10,
-        backgroundColor: 'rgba(220,163,73,0.1)',
+        width: 44,
+        height: 44,
+        borderRadius: 12,
+        backgroundColor: 'rgba(220,163,73,0.12)',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 8,
     },
     tipText: {
-        fontSize: 11,
+        fontSize: 12,
         fontWeight: '500',
         color: '#8E8E93',
         textAlign: 'center',
     },
 });
+
 
