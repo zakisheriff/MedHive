@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import { Link, router } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import { Colors } from '../constants/theme';
 import { HoneyContainer } from '../components/HoneyContainer';
 import { Input } from '../components/Input';
@@ -53,7 +54,13 @@ export default function LoginScreen() {
                         />
 
                         <View style={styles.forgotPassword}>
-                            <Text style={styles.forgotText}>Forgot Password?</Text>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                    // TODO: Navigate to forgot password
+                                }}>
+                                <Text style={styles.forgotText}>Forgot Password?</Text>
+                            </TouchableOpacity>
                         </View>
 
                         <PrimaryButton
@@ -64,9 +71,13 @@ export default function LoginScreen() {
 
                         <View style={styles.footer}>
                             <Text style={styles.footerText}>Don't have an account? </Text>
-                            <Link href="/register" asChild>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                    router.push('/register');
+                                }}>
                                 <Text style={styles.linkText}>Sign Up</Text>
-                            </Link>
+                            </TouchableOpacity>
                         </View>
                     </HoneyContainer>
                 </ScrollView>

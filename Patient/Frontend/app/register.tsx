@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import { Link, router } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import { Colors } from '../constants/theme';
 import { HoneyContainer } from '../components/HoneyContainer';
 import { Input } from '../components/Input';
@@ -76,9 +77,13 @@ export default function RegisterScreen() {
 
                         <View style={styles.footer}>
                             <Text style={styles.footerText}>Already have an account? </Text>
-                            <Link href="/login" asChild>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                    router.push('/login');
+                                }}>
                                 <Text style={styles.linkText}>Sign In</Text>
-                            </Link>
+                            </TouchableOpacity>
                         </View>
                     </HoneyContainer>
                 </ScrollView>

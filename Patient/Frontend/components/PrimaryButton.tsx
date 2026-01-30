@@ -3,6 +3,8 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { Colors } from '../constants/theme';
 
+import * as Haptics from 'expo-haptics';
+
 interface PrimaryButtonProps {
     title: string;
     onPress: () => void;
@@ -11,8 +13,13 @@ interface PrimaryButtonProps {
 }
 
 export function PrimaryButton({ title, onPress, style, textStyle }: PrimaryButtonProps) {
+    const handlePress = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        onPress();
+    };
+
     return (
-        <TouchableOpacity style={[styles.button, style]} onPress={onPress} activeOpacity={0.8}>
+        <TouchableOpacity style={[styles.button, style]} onPress={handlePress} activeOpacity={0.8}>
             <Text style={[styles.text, textStyle]}>{title}</Text>
         </TouchableOpacity>
     );
