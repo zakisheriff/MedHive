@@ -7,17 +7,46 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../constants/theme';
 import { HoneyContainer } from '../components/HoneyContainer';
 import { Input } from '../components/Input';
+import { DOBInput } from '../components/DOBInput';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { StatusBar } from 'expo-status-bar';
 
 export default function RegisterScreen() {
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState(''); // Keeping email for now as per user instruction
+    const [dob, setDob] = useState({ day: '', month: '', year: '' });
+    const [medId, setMedId] = useState('');
+    const [dobError, setDobError] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
+    // Generate Med ID when year changes
+    React.useEffect(() => {
+        const yearInt = parseInt(dob.year);
+        const currentYear = new Date().getFullYear();
+
+        if (dob.year.length === 4) {
+            if (yearInt >= 1900 && yearInt <= currentYear) {
+                const randomSuffix = Math.floor(10000 + Math.random() * 90000).toString(); // 5 random digits
+                const newMedId = `${dob.year}${randomSuffix}`;
+                setMedId(newMedId);
+                setDobError('');
+            } else {
+                setMedId('');
+                setDobError('Please enter a valid birth year (1900-Present)');
+            }
+        } else {
+            setMedId('');
+            setDobError('');
+        }
+    }, [dob.year]);
+
     const handleRegister = () => {
-        console.log('Register with:', name, email);
+        console.log('Register with:', name, medId, email);
+    };
+
+    const handleDateChange = (day: string, month: string, year: string) => {
+        setDob({ day, month, year });
     };
 
     return (
@@ -54,6 +83,22 @@ export default function RegisterScreen() {
                             onChangeText={setName}
                             iconName="person-outline"
                         />
+
+                        <DOBInput onDateChange={handleDateChange} />
+
+                        {dobError ? (
+                            <Text style={styles.errorText}>{dobError}</Text>
+                        ) : null}
+
+                        {medId ? (
+                            <Input
+                                label="Med ID (Auto-generated)"
+                                value={medId}
+                                editable={false}
+                                iconName="id-card-outline"
+                                style={{ backgroundColor: '#f9f9f9', opacity: 0.8 }}
+                            />
+                        ) : null}
 
                         <Input
                             label="Email"
@@ -125,6 +170,13 @@ const styles = StyleSheet.create({
     },
     formContainer: {
         width: '100%',
+    },
+    errorText: {
+        color: '#FF3B30',
+        fontSize: 12,
+        marginTop: -8,
+        marginBottom: 16,
+        marginLeft: 4,
     },
     formHeader: {
         marginBottom: 20,
