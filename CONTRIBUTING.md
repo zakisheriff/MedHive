@@ -13,11 +13,14 @@ The `main` branch is our production server. If you break `main`, you break the p
 ## 1. Know Your Lane (Branching)
 You have been assigned a specific component. You are **only** allowed to work in your dedicated branch and folder.
 
-| Team | Branch Name | Allowed Folder |
+| Branch Name | Assigned User | Allowed Folder |
 | :--- | :--- | :--- |
-| **Patient Team** | `patient` | `Patient/` |
-| **Clinic Team** | `clinic` | `Clinic/` |
-| **Pharma Team** | `pharma-company` | `PharmaCompany/` |
+| `zaki` | Zaki | `Patient/` |
+| `rahman` | Rahman | `Patient/` |
+| `raheem` | Raheem | `Clinic/` |
+| `hanaa` | Hanaa | `Clinic/` |
+| `afker` | Afker | `PharmaCompany/` |
+| `kausian` | Kausian | `PharmaCompany/` |
 
 ### How to Start Working
 1.  **Switch to your branch**:
@@ -64,7 +67,7 @@ When your feature is 100% complete and bug-free, you request to merge it into th
 
 **⛔ STOP HERE. You cannot do anything else.**
 *   The system will block you from merging.
-*   The Team Lead (@zakisheriff) will review your code.
+*   (@zakisheriff) will review your code.
 *   If perfectly safe, he will approve and merge it.
 *   If there are bugs, he will request changes. Fix them and push again.
 
