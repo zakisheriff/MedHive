@@ -4,13 +4,14 @@ import './Auth.css';
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
 
-  // Use the image you provided for the 3D side
-  const sideImage = "/Medhive slide.png"; 
-  const logo = "/MedHive Logo.png"; // Your MedHive logo icon
+  // New constants for your two separate files
+  const leftImage = "/medhive-slide-login.png"; 
+  const rightImage = "/medhive-slide-register.png"; 
+  const logo = "/MedHiveLogo.png"; 
 
   return (
     <div className="auth-container">
-      {/* Fixed Branding Header */}
+      {/* Branding Header stays fixed */}
       <div className="branding">
         <img src={logo} alt="Logo" className="logo-icon" />
         <div className="branding-text">
@@ -20,7 +21,7 @@ const AuthPage = () => {
 
       <div className={`auth-slider ${!isLogin ? 'show-signup' : ''}`}>
         
-        {/* SCENE 1: LOGIN (Details Left, Image Right) */}
+        {/* SCENE 1: LOGIN (Details Left, Left Image Right) */}
         <div className="auth-section">
           <div className="form-half">
             <div className="auth-form-box">
@@ -33,23 +34,21 @@ const AuthPage = () => {
               </form>
               <div className="toggle-text">
                 Don't have an account?{' '}
-                <span className="toggle-link" onClick={() => setIsLogin(false)}>
-                  Register
-                </span>
+                <span className="toggle-link" onClick={() => setIsLogin(false)}>Register</span>
               </div>
             </div>
           </div>
           <div 
-            className="image-half" 
-            style={{ backgroundImage: `url(${sideImage})` }}
+            className="image-half login-image-half" 
+            style={{ backgroundImage: `url("${leftImage}")` }}
           />
         </div>
 
-        {/* SCENE 2: SIGNUP (Image Left, Details Right) */}
+        {/* SCENE 2: SIGNUP (Right Image Left, Details Right) */}
         <div className="auth-section">
           <div 
-            className="image-half" 
-            style={{ backgroundImage: `url(${sideImage})` }}
+            className="image-half signup-image-half" 
+            style={{ backgroundImage: `url("${rightImage}")` }}
           />
           <div className="form-half">
             <div className="auth-form-box">
@@ -64,9 +63,7 @@ const AuthPage = () => {
               </form>
               <div className="toggle-text">
                 Already have an account?{' '}
-                <span className="toggle-link" onClick={() => setIsLogin(true)}>
-                  Login
-                </span>
+                <span className="toggle-link" onClick={() => setIsLogin(true)}>Login</span>
               </div>
             </div>
           </div>
