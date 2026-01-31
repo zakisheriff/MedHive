@@ -56,13 +56,13 @@ input {
 }
 
 .orange-container {
-  width: 100%;
+  width: 70%;
   height: 90vh;
-  background-color: #FF8C00; /* Dark Orange */
+  background-color: #ffffff; /* Dark Orange */
   border-radius: 15px;
-  position: relative;
+  position:absolute;
   overflow: hidden;
-  display: flex;
+  display:flex;
   flex-direction: column;
   padding: 60px;
 }
@@ -102,7 +102,7 @@ input {
   position: absolute;
   width: 280px;
   height: auto;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+ 
   border-radius: 10px;
 }
 

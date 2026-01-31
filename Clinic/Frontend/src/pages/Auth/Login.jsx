@@ -38,9 +38,9 @@ const Login = () => {
                 transition={{ 
                   duration: 1.2, 
                   delay: 0.5 + (index * 0.3), // Staggered entry
-                  ease: [0.22, 1, 0.36, 1] // Professional smooth curve
+                 
                 }}
-                whileHover={{ scale: 1.05, zIndex: 100 }}
+                
               />
             ))}
           </div>
