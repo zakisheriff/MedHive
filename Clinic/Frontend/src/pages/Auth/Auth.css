@@ -1,20 +1,20 @@
 /* Auth.css */
+
 .auth-container {
   width: 100vw;
   height: 100vh;
-  overflow: hidden; /* Hides the part not currently in view */
+  overflow: hidden;
   background-color: #ffffff;
   font-family: "Helvetica", Arial, sans-serif;
 }
 
 .auth-slider {
   display: flex;
-  width: 200vw; /* Two full screens side-by-side */
+  width: 200vw;
   height: 100vh;
-  transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1); /* Smooth carousel feel */
+  transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-/* Slide to the second half when signup is active */
 .auth-slider.show-signup {
   transform: translateX(-100vw);
 }
@@ -25,69 +25,41 @@
   height: 100vh;
 }
 
-/* Common Layout Parts */
+/* Centering Logic */
 .form-half {
   width: 50%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 0 8%;
+  justify-content: center; /* Vertical center */
+  align-items: center;     /* Horizontal center */
   background-color: #ffffff;
 }
 
-.image-half {
-  width: 50%;
-  height: 100%;
-  background-size: cover; /* Fits the image perfectly to the 50% half */
-  background-position: center;
-  background-repeat: no-repeat;
-  transition: all 0.5s ease;
-}
-
-.login-image-half {
-  /* This will hold your Left Side Image */
-  border-radius: 0 15px 15px 0; /* Optional: curves only the inside edge */
-}
-
-.signup-image-half {
-  /* This will hold your Right Side Image */
-  border-radius: 15px 0 0 15px; /* Optional: curves only the inside edge */
-}
-
-
-/* Top Left Branding */
-.branding {
-  position: absolute;
-  top: 40px;
-  left: 40px;
+/* Container for Logo + Form to prevent them being too wide */
+.auth-content-wrapper {
+  width: 100%;
+  max-width: 400px; 
   display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 10;
+  flex-direction: column;
+  align-items: flex-start; /* Keeps text left-aligned inside centered box */
 }
 
-.logo-icon {
-  height: 65px;
+.form-logo {
+  height: 90px;
+  margin-bottom: 40px; /* Space between logo and "Login" title */
+  object-fit: contain;
 }
 
-.branding-text {
-  font-size: 1.5rem;
-  color: #000;
-}
-
-.branding-text span {
-  font-weight: bold;
-}
-
-/* The Login/Signup Card Styling */
 .auth-form-box {
-  max-width: 400px;
+  width: 100%;
 }
 
 .auth-form-box h2 {
   font-size: 2.5rem;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  color: #000;
 }
 
 .auth-form-box p {
@@ -95,7 +67,17 @@
   margin-bottom: 30px;
 }
 
-input {
+/* Image styles */
+.image-half {
+  width: 50%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Input & Button styling from your reference */
+.auth-input {
   width: 100%;
   padding: 14px;
   margin-bottom: 15px;
@@ -107,26 +89,17 @@ input {
 .btn-main {
   width: 100%;
   padding: 15px;
-  background-color: #f1a63b; /* MedHive Orange */
+  background-color: #f1a63b;
   color: white;
   border: none;
   border-radius: 8px;
   font-weight: bold;
-  font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(241, 166, 59, 0.3);
-}
-
-.toggle-text {
-  margin-top: 20px;
-  font-size: 0.9rem;
-  color: #666;
-  text-align: center;
+  box-shadow: 0 4px 15px rgba(241, 166, 59, 0.2);
 }
 
 .toggle-link {
   color: #f1a63b;
   font-weight: bold;
   cursor: pointer;
-  text-decoration: none;
 }
