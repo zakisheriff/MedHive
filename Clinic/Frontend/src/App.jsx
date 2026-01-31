@@ -15,9 +15,9 @@ function App() {
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<Navigate to="home" replace />} />
           <Route path="home" element={<Home />} />
-          <Route path="search" element={<div>Search Page</div>} />
-          <Route path="prescription" element={<div>Prescription Page</div>} />
-          <Route path="history" element={<div>History Page</div>} />
+          <Route path="search" element={<div></div>} />
+          <Route path="prescription" element={<div></div>} />
+          <Route path="history" element={<div></div>} />
         </Route>
       </Routes>
     </Router>
