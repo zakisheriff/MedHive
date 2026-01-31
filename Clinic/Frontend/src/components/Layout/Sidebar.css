@@ -1,25 +1,43 @@
 .sidebar {
-  height: 100vh;
-  background-color: #f1a63b; /* MedHive Orange */
-  position: fixed;
-  left: 0; top: 0;
+  height: calc(100vh - 40px);
+  margin: 20px;
+  background-color: #f8f9fa; /* Off-white rectangle */
+  border-radius: 24px;
   display: flex;
   flex-direction: column;
-  padding: 20px 0px 20px 12px; /* Open on the right side to "join" the page */
+  padding: 24px 10px;
+  position: fixed;
+  left: 0;
+  top: 0;
   z-index: 1000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Slight drop shadow */
   font-family: "Helvetica", sans-serif;
-  transition: background-color 0.3s ease;
 }
 
-/* Dark Mode Overrides */
-.sidebar.dark { background-color: #1e1f20; }
-.sidebar.dark .active-pill { background-color: #131314; }
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  margin-bottom: 45px;
+}
 
-.logo-container { display: flex; align-items: center; gap: 12px; padding: 0 10px; }
-.logo-icon { height: 35px; filter: brightness(0) invert(1); }
-.brand-name { font-size: 1.3rem; font-weight: bold; color: white; }
+.logo-container { display: flex; align-items: center; gap: 12px; }
+.logo-icon { height: 32px; width: 32px; object-fit: contain; }
+.brand-name { font-size: 1.2rem; font-weight: bold; color: #000; }
 
-.sidebar-nav { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; margin-top: 40px; }
+.expand-toggle {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+}
+
+.expand-toggle img { width: 18px; transition: transform 0.3s; }
+
+.sidebar-nav { flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
 
 .nav-item {
   position: relative;
@@ -27,43 +45,51 @@
   align-items: center;
   height: 52px;
   text-decoration: none;
-  color: white; /* Inactive text is white on orange */
-  border-radius: 26px 0 0 26px; /* Joins the main page */
-  transition: color 0.3s ease;
+  color: #666;
+  transition: color 0.3s;
 }
 
 .icon-box {
-  min-width: 56px;
-  display: flex; justify-content: center; align-items: center;
+  min-width: 64px; /* Centers icon in the circle area */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 2;
 }
 
-.nav-custom-icon {
-  width: 22px;
-  height: 22px;
-  filter: brightness(0) invert(1); /* Icons white by default */
+.nav-custom-icon { width: 22px; height: 22px; }
+
+.link-label {
+  z-index: 2;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 0.95rem;
 }
 
-.link-label { z-index: 2; font-weight: 600; white-space: nowrap; }
-
-/* ACTIVE STATE: The White Pill joining the page */
-.active-pill {
+/* THE EXPANDING INDICATOR */
+.active-bg-indicator {
   position: absolute;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background-color: #ffffff; /* Matches your white page background */
-  border-radius: 26px 0 0 26px;
+  left: 6px; /* Spacing from left edge */
+  height: 52px;
+  width: 52px; /* Starts as a circle */
+  background-color: #f1a63b; /* MedHive Orange */
+  border-radius: 26px; /* Makes it circular */
   z-index: 1;
 }
 
-.nav-item.active { color: #000000; } /* Text turns black on the white pill */
-
-.nav-item.active .nav-custom-icon {
-  filter: brightness(0); /* Icons turn black on the white pill */
+/* When sidebar expands, the indicator naturally follows the .nav-item width */
+.sidebar[style*="width: 260px"] .active-bg-indicator {
+  width: calc(100% - 12px); /* Stretches into a capsule pill */
 }
+
+.nav-item.active { color: #000; }
+.nav-item.active .nav-custom-icon { filter: brightness(0); }
 
 .sidebar-footer {
   margin-top: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid #eee;
   padding-top: 15px;
 }
+
+.logout-item { color: #888; cursor: pointer; }
+.logout-item:hover { color: #ff4444; }
