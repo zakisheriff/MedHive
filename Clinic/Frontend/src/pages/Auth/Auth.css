@@ -1,0 +1,174 @@
+/* Auth.css */
+
+.auth-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #ffffff;
+  font-family: "Helvetica", Arial, sans-serif;
+}
+
+.auth-slider {
+  display: flex;
+  width: 200vw;
+  height: 100vh;
+  transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.auth-slider.show-signup {
+  transform: translateX(-100vw);
+}
+
+.auth-section {
+  width: 100vw;
+  display: flex;
+  height: 100vh;
+}
+
+/* Centering Logic */
+.form-half {
+  width: 50%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Vertical center */
+  align-items: center;     /* Horizontal center */
+  background-color: #ffffff;
+}
+
+/* Container for Logo + Form to prevent them being too wide */
+.auth-content-wrapper {
+  width: 100%;
+  max-width: 400px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Keeps text left-aligned inside centered box */
+}
+
+.form-logo {
+  height: 90px;
+  margin-bottom: 10px; /* Space between logo and "Login" title */
+  object-fit: contain;
+}
+
+.auth-form-box {
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-form-box h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #000;
+  text-align: center;
+}
+
+.auth-form-box p {
+  color: #666;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* Image styles */
+.image-half {
+  width: 50%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Input & Button styling from your reference */
+.auth-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+/* Base Button State */
+.btn-main {
+  width: 100%;
+  padding: 15px;
+  background-color: #f1a63b; /* Your MedHive Orange */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  
+  transition: all 0.3s ease-in-out; 
+  
+  /* Initial shadow */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover State */
+.btn-main:hover {
+  background-color: #ff9501;
+  
+  /* STEP 2: Subtle lift and stronger glow */
+  transform: translateY(-4px); 
+  box-shadow: 0 8px 15px rgba(255, 149, 1, 0.3);
+}
+
+/* Active State (When clicked) */
+.btn-main:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-link {
+  color: #f1a63b;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.toggle-text{
+  text-align: center;
+  padding-top: 20px;
+}
+
+/* Styling for the new file upload group */
+.file-upload-group {
+  width: 100%;
+  text-align: left; /* Keeps the label left-aligned above the button */
+  margin-bottom: 20px;
+}
+
+.file-upload-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+/* Customizing the file input look */
+.file-input {
+  padding: 10px 14px; /* Slightly different padding for the file button */
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+/* Designing the 'Choose File' button color inside the input */
+.file-input::-webkit-file-upload-button {
+  background: #f1a63b; /* MedHive Orange */
+  border: none;
+  border-radius: 4px;
+  color: white;
+  padding: 6px 12px;
+  margin-right: 15px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.file-input::-webkit-file-upload-button:hover {
+  background: #ff9501;
+}
