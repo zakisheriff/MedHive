@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
 import './Auth.css';
+import { useNavigate } from 'react-router-dom';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
+
+  const handleAuthSubmit = (e) => {
+    e.preventDefault();
+    console.log("Authenticating...");
+
+    navigate('/dashboard/home'); 
+  };
 
   const leftImage = "/medhive-slide-login.png"; 
   const rightImage = "/medhive-slide-register.png"; 
@@ -23,7 +32,7 @@ const AuthPage = () => {
               <div className="auth-form-box">
                 <h2>Login</h2>
                 <p>Please login to continue to your account.</p>
-                <form>
+                <form onSubmit={handleAuthSubmit}>
                   <input type="email" placeholder="Clinic Email" required className="auth-input" />
                   <input type="password" placeholder="Password" required className="auth-input" />
                   <button type="submit" className="btn-main">Login</button>
@@ -53,7 +62,7 @@ const AuthPage = () => {
               <div className="auth-form-box">
                 <h2>Sign up</h2>
                 <p>Register your clinic to get started.</p>
-                <form>
+                <form onSubmit={handleAuthSubmit}>
                   <input type="text" placeholder="Clinic Name" required className="auth-input" />
                   <input type="text" placeholder="Registration No" required className="auth-input" />
                   <input type="email" placeholder="Email Address" required className="auth-input" />
