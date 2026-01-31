@@ -17,8 +17,13 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
       animate={{ width: isExpanded ? 260 : 100 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
-      {/* 1. Header: Logo + Toggle */}
-      <div className="sidebar-header">
+      {/* 1. Header: Clicking the logo group now toggles the sidebar */}
+      <div 
+        className="sidebar-header" 
+        onClick={() => setIsExpanded(!isExpanded)}
+        style={{ cursor: 'pointer' }}
+        title={!isExpanded ? "Expand menu" : "Collapse menu"}
+      >
         <div className="logo-group">
           <img src="/MedHiveLogo.png" alt="M" className="sidebar-logo" />
           <AnimatePresence>
@@ -34,16 +39,19 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
             )}
           </AnimatePresence>
         </div>
-        
       </div>
 
       {/* 2. Navigation Items */}
       <nav className="sidebar-nav">
         {menuItems.map((item) => (
-          <NavLink key={item.name} to={item.path} className="nav-item">
+          <NavLink 
+            key={item.name} 
+            to={item.path} 
+            className="nav-item"
+            title={!isExpanded ? item.name : ""}
+          >
             {({ isActive }) => (
               <>
-                {/* The "Stick" Indicator on the far left */}
                 {isActive && (
                   <motion.div 
                     layoutId="activeStick"
@@ -71,9 +79,9 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
         ))}
       </nav>
 
-      {/* 3. Footer: Logout (Pinned to bottom) */}
+      {/* 3. Footer: Logout */}
       <div className="sidebar-footer">
-        <div className="nav-item logout-link">
+        <div className="nav-item logout-link" title={!isExpanded ? "Logout" : ""}>
           <div className="icon-box">
             <img src="/icons/logout.png" className="custom-icon" alt="Logout" />
           </div>
