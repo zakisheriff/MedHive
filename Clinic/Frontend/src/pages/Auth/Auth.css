@@ -42,7 +42,7 @@
   max-width: 400px; 
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Keeps text left-aligned inside centered box */
+  align-items: center; /* Keeps text left-aligned inside centered box */
 }
 
 .form-logo {
@@ -53,6 +53,8 @@
 
 .auth-form-box {
   width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .auth-form-box h2 {
@@ -60,11 +62,13 @@
   font-weight: bold;
   margin-bottom: 8px;
   color: #000;
+  text-align: center;
 }
 
 .auth-form-box p {
   color: #666;
   margin-bottom: 30px;
+  text-align: center;
 }
 
 /* Image styles */
@@ -86,20 +90,46 @@
   font-size: 1rem;
 }
 
+/* Base Button State */
 .btn-main {
   width: 100%;
   padding: 15px;
-  background-color: #f1a63b;
+  background-color: #f1a63b; /* Your MedHive Orange */
   color: white;
   border: none;
   border-radius: 8px;
   font-weight: bold;
+  font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(241, 166, 59, 0.2);
+  
+  transition: all 0.3s ease-in-out; 
+  
+  /* Initial shadow */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover State */
+.btn-main:hover {
+  background-color: #ff9501; /* Your requested hover color */
+  
+  /* STEP 2: Subtle lift and stronger glow */
+  transform: translateY(-2px); 
+  box-shadow: 0 8px 15px rgba(255, 149, 1, 0.3);
+}
+
+/* Active State (When clicked) */
+.btn-main:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .toggle-link {
   color: #f1a63b;
   font-weight: bold;
   cursor: pointer;
+}
+
+.toggle-text{
+  text-align: center;
+  padding-top: 20px;
 }
