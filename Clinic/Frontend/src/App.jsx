@@ -1,19 +1,24 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './pages/Auth/Login';
-import Signup from './pages/Auth/Signup';
-//import DashboardLayout from './pages/Dashboard/Layout';
-import './styles/global.css';
-import { useEffect, useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AuthPage from './pages/Auth/AuthPage';
+import DashboardLayout from './pages/Dashboard/Layout';
+import Home from './pages/Dashboard/Home';
 
 function App() {
-
   return (
     <Router>
-
       <Routes>
-        <Route path='/home' element={<DashboardLayout/>} />
-        <Route path='/' element={<AuthPage/>} />
+        {/* Auth Route: No Sidebar here */}
+        <Route path="/" element={<AuthPage />} />
+
+        {/* Dashboard Routes: Sidebar is automatically included via Layout */}
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route index element={<Navigate to="home" replace />} />
+          <Route path="home" element={<Home />} />
+          <Route path="search" element={<div>Search Page</div>} />
+          <Route path="prescription" element={<div>Prescription Page</div>} />
+          <Route path="history" element={<div>History Page</div>} />
+        </Route>
       </Routes>
     </Router>
   );
