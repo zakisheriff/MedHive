@@ -25,17 +25,10 @@
   gap: 12px;
 }
 
-.sidebar-logo { height: 32px; }
+.sidebar-logo { height: 52px; padding-left: 4px;}
 .logo-text { font-weight: bold; font-size: 1.2rem; color: #000; }
 
-.toggle-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-}
 
-.toggle-btn img { width: 22px; opacity: 0.6; }
 
 .sidebar-nav { flex-grow: 1; }
 
@@ -46,7 +39,7 @@
   height: 62px;
   text-decoration: none;
   color: #444746;
-  margin-bottom: 20px;
+  margin-bottom: 7px;
   transition: background 0.2s;
 }
 
@@ -59,7 +52,7 @@
   align-items: center;
 }
 
-.custom-icon { width: 44px; height: 44px; opacity: 0.8; }
+.custom-icon { width: 34px; height: 34px; opacity: 0.8; padding-left: 18px; }
 
 .nav-label { font-weight: 500; font-size: 0.95rem; white-space: nowrap; }
 

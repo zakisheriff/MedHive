@@ -14,7 +14,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
   return (
     <motion.aside 
       className="gemini-sidebar"
-      animate={{ width: isExpanded ? 260 : 80 }}
+      animate={{ width: isExpanded ? 260 : 100 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
       {/* 1. Header: Logo + Toggle */}
@@ -34,13 +34,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
             )}
           </AnimatePresence>
         </div>
-        <button className="toggle-btn" onClick={() => setIsExpanded(!isExpanded)}>
-          <motion.img 
-            src="/icons/toggle.png" 
-            animate={{ rotate: isExpanded ? 180 : 0 }}
-            alt="Toggle" 
-          />
-        </button>
+        
       </div>
 
       {/* 2. Navigation Items */}
