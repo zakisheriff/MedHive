@@ -1,9 +1,8 @@
 .auth-page {
-  min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
+  min-height: 100vh;
+  background-color: var(--bg-primary); /* #ffffff per your latest setting */
+  overflow: hidden;
 }
 
 .glass-card {
@@ -38,3 +37,85 @@ input {
   font-weight: bold;
   cursor: pointer;
 }
+
+.auth-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-primary); /* #ffffff per your latest setting */
+  overflow: hidden;
+}
+
+/* Left Section: Animation Area */
+.animation-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  position: relative;
+}
+
+.orange-container {
+  width: 100%;
+  height: 90vh;
+  background-color: #FF8C00; /* Dark Orange */
+  border-radius: 15px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 60px;
+}
+
+.welcome-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 5px;
+}
+
+.welcome-text {
+  font-family: "Helvetica", sans-serif;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #000;
+}
+
+.dashboard-subtext {
+  font-family: "Helvetica", sans-serif;
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #000;
+  margin-top: -10px;
+}
+
+/* Prescription Floating Styles */
+.prescription-stack {
+  position: absolute;
+  bottom: -100px;
+  right: 50px;
+  width: 400px;
+  height: 500px;
+}
+
+.prescription-card {
+  position: absolute;
+  width: 280px;
+  height: auto;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  border-radius: 10px;
+}
+
+/* Right Section: Form Area */
+.form-section {
+  width: 450px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  z-index: 10;
+}
+
+.login-card {
+  width: 80%;
+}   
