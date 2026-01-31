@@ -63,23 +63,22 @@ const AuthPage = () => {
                 <h2>Sign up</h2>
                 <p>Register your clinic to get started.</p>
                 <form onSubmit={handleAuthSubmit}>
-                  <input type="text" placeholder="Clinic Name" required className="auth-input" />
-                  <input type="text" placeholder="Registration No" required className="auth-input" />
-                  <input type="email" placeholder="Email Address" required className="auth-input" />
-                  <input type="password" placeholder="Password" required className="auth-input" />
+                  <input type="text" placeholder="Clinic Name"  className="auth-input" />
+                  <input type="text" placeholder="Registration No"  className="auth-input" />
+                  <input type="email" placeholder="Email Address"  className="auth-input" />
+                  <input type="password" placeholder="Password"  className="auth-input" />
                   
                   <div className="file-upload-group">
                     <label htmlFor="certificate">Upload PHSRC Certificate (PDF/Image)</label>
                     <input 
                     type="file" 
                     id="certificate" 
-                    accept=".pdf, image/*" 
-                    required 
+                    accept=".pdf, image/*"  
                     className="auth-input file-input" 
                     />
                 </div>
                 
-                  <button type="submit" className="btn-main" onClick={home} >Sign up</button>
+                  <button type="submit" className="btn-main">Sign up</button>
                 </form>
                 <div className="toggle-text">
                   Already have an account?{' '}
