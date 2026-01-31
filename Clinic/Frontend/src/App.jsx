@@ -4,6 +4,7 @@ import Signup from './pages/Auth/Signup';
 //import Home from './pages/Dashboard/Home';
 import './styles/global.css';
 import { useEffect, useState } from 'react';
+import AuthPage from './pages/Auth/AuthPage';
 
 function App() {
 
@@ -11,8 +12,7 @@ function App() {
     <Router>
 
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path='/' element={<AuthPage/>} />
         
       </Routes>
     </Router>

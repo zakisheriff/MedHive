@@ -1,22 +1,50 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Auth.css';
 
 const Signup = () => {
   return (
-    <div className="auth-page">
-      <div className="glass-card">
-        <h2 className="golden-text">Clinic Registration</h2>
+    <div className="auth-container">
+      <div className="auth-card">
+        <img src="/MedHive text-1.png" alt="MedHive Logo" className="auth-logo" />
+        
+        <div className="auth-header">
+          <h1>Clinic Registration</h1>
+          <p>Apply for institutional access to MedHive.</p>
+        </div>
+
         <form>
-          <input type="text" placeholder="Clinic Name" required />
-          <input type="text" placeholder="PHSRC Number" required />
-          <input type="email" placeholder="Official Email" required />
-          <input type="password" placeholder="Create Password" required />
-          <div style={{ marginBottom: '20px' }}>
-             <label style={{ fontSize: '12px', display: 'block', marginBottom: '5px' }}>Upload PHSRC Certificate</label>
-             <input type="file" required style={{ fontSize: '12px' }} />
+          <div className="form-group">
+            <label>Clinic Name</label>
+            <input type="text" placeholder="e.g., City Medical Center" className="auth-input" required />
           </div>
-          <button type="submit" className="btn-primary">Apply for Access</button>
+
+          <div className="form-group">
+            <label>PHSRC Number</label>
+            <input type="text" placeholder="Official Registration No" className="auth-input" required />
+          </div>
+
+          <div className="form-group">
+            <label>Official Email</label>
+            <input type="email" placeholder="admin@clinic.com" className="auth-input" required />
+          </div>
+
+          <div className="form-group">
+            <label>Password</label>
+            <input type="password" placeholder="Create a secure password" className="auth-input" required />
+          </div>
+
+          <div className="form-group">
+            <label>PHSRC Certificate (Image/PDF)</label>
+            <input type="file" className="auth-input" style={{ padding: '10px' }} required />
+          </div>
+
+          <button type="submit" className="btn-submit">Apply for Access</button>
         </form>
+
+        <div className="auth-footer">
+          Already registered? <Link to="/" className="auth-link">Login</Link>
+        </div>
       </div>
     </div>
   );

@@ -1,121 +1,118 @@
-.auth-page {
+/* Auth.css */
+.auth-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* Hides the part not currently in view */
+  background-color: #ffffff;
+  font-family: "Helvetica", Arial, sans-serif;
+}
+
+.auth-slider {
   display: flex;
-  min-height: 100vh;
-  background-color: var(--bg-primary); /* #ffffff per your latest setting */
-  overflow: hidden;
+  width: 200vw; /* Two full screens side-by-side */
+  height: 100vh;
+  transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1); /* Smooth carousel feel */
 }
 
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  padding: 40px;
-  border-radius: 24px;
-  width: 100%;
-  max-width: 450px;
+/* Slide to the second half when signup is active */
+.auth-slider.show-signup {
+  transform: translateX(-100vw);
 }
 
-.golden-text { color: var(--accent-gold); text-align: center; margin-bottom: 30px; }
+.auth-section {
+  width: 100vw;
+  display: flex;
+  height: 100vh;
+}
+
+/* Common Layout Parts */
+.form-half {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 10%;
+  justify-content: center;
+}
+
+.image-half {
+  width: 50%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Top Left Branding */
+.branding {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10;
+}
+
+.logo-icon {
+  height: 65px;
+}
+
+.branding-text {
+  font-size: 1.5rem;
+  color: #000;
+}
+
+.branding-text span {
+  font-weight: bold;
+}
+
+/* The Login/Signup Card Styling */
+.auth-form-box {
+  max-width: 400px;
+}
+
+.auth-form-box h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.auth-form-box p {
+  color: #666;
+  margin-bottom: 30px;
+}
 
 input {
   width: 100%;
   padding: 14px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--glass-border);
-  color: white;
-  border-radius: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
 }
 
-.btn-primary {
+.btn-main {
   width: 100%;
-  background: var(--accent-gold);
-  color: black;
-  padding: 14px;
+  padding: 15px;
+  background-color: #f1a63b; /* MedHive Orange */
+  color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(241, 166, 59, 0.3);
+}
+
+.toggle-text {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+}
+
+.toggle-link {
+  color: #f1a63b;
   font-weight: bold;
   cursor: pointer;
+  text-decoration: none;
 }
-
-.auth-page {
-  display: flex;
-  min-height: 100vh;
-  background-color: var(--bg-primary); /* #ffffff per your latest setting */
-  overflow: hidden;
-}
-
-/* Left Section: Animation Area */
-.animation-section {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
-  position: relative;
-}
-
-.orange-container {
-  width: 70%;
-  height: 90vh;
-  background-color: #ffffff; /* Dark Orange */
-  border-radius: 15px;
-  position:absolute;
-  overflow: hidden;
-  display:flex;
-  flex-direction: column;
-  padding: 60px;
-}
-
-.welcome-header {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 5px;
-}
-
-.welcome-text {
-  font-family: "Helvetica", sans-serif;
-  font-size: 3rem;
-  font-weight: bold;
-  color: #000;
-}
-
-.dashboard-subtext {
-  font-family: "Helvetica", sans-serif;
-  font-size: 2.5rem;
-  font-weight: 300;
-  color: #000;
-  margin-top: -10px;
-}
-
-/* Prescription Floating Styles */
-.prescription-stack {
-  position: absolute;
-  bottom: -100px;
-  right: 50px;
-  width: 400px;
-  height: 500px;
-}
-
-.prescription-card {
-  position: absolute;
-  width: 280px;
-  height: auto;
- 
-  border-radius: 10px;
-}
-
-/* Right Section: Form Area */
-.form-section {
-  width: 450px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #fff;
-  z-index: 10;
-}
-
-.login-card {
-  width: 80%;
-}   
