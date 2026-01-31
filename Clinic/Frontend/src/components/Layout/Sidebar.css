@@ -1,95 +1,90 @@
-.sidebar {
-  height: calc(100vh - 40px);
-  margin: 20px;
-  background-color: #f8f9fa; /* Off-white rectangle */
-  border-radius: 24px;
-  display: flex;
-  flex-direction: column;
-  padding: 24px 10px;
+.gemini-sidebar {
+  height: 100vh;
+  background-color: #f0f4f9; /* Gemini off-white/light-grey */
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 1000;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Slight drop shadow */
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  z-index: 100;
   font-family: "Helvetica", sans-serif;
 }
 
 .sidebar-header {
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 10px;
-  margin-bottom: 45px;
+  margin-bottom: 40px;
 }
 
-.logo-container { display: flex; align-items: center; gap: 12px; }
-.logo-icon { height: 32px; width: 32px; object-fit: contain; }
-.brand-name { font-size: 1.2rem; font-weight: bold; color: #000; }
+.sidebar-logo { height: 32px; }
 
-.expand-toggle {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 8px;
+.toggle-arrow {
+  background: none;
+  border: none;
   cursor: pointer;
-  padding: 5px;
-  display: flex;
 }
 
-.expand-toggle img { width: 18px; transition: transform 0.3s; }
+.toggle-arrow img { width: 20px; opacity: 0.6; }
 
-.sidebar-nav { flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
+.sidebar-nav { flex-grow: 1; }
 
 .nav-item {
   position: relative;
   display: flex;
   align-items: center;
-  height: 52px;
+  height: 50px;
   text-decoration: none;
-  color: #666;
-  transition: color 0.3s;
+  color: #444746;
+  margin-bottom: 5px;
+  transition: background 0.2s;
 }
 
-.icon-box {
-  min-width: 64px; /* Centers icon in the circle area */
+.nav-item:hover { background-color: #e1e5ea; }
+
+.icon-wrapper {
+  min-width: 80px; /* Centers icons in collapsed state */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2;
 }
 
-.nav-custom-icon { width: 22px; height: 22px; }
+.custom-icon { width: 22px; height: 22px; opacity: 0.8; }
 
-.link-label {
-  z-index: 2;
-  font-weight: 600;
-  white-space: nowrap;
-  font-size: 0.95rem;
-}
+.link-text { font-weight: 500; font-size: 0.95rem; white-space: nowrap; }
 
-/* THE EXPANDING INDICATOR */
-.active-bg-indicator {
+/* THE LEFT STICK INDICATOR */
+.active-stick {
   position: absolute;
-  left: 6px; /* Spacing from left edge */
-  height: 52px;
-  width: 52px; /* Starts as a circle */
+  left: 0;
+  width: 4px;
+  height: 24px; /* Matches icon height */
   background-color: #f1a63b; /* MedHive Orange */
-  border-radius: 26px; /* Makes it circular */
-  z-index: 1;
+  border-radius: 0 4px 4px 0;
 }
 
-/* When sidebar expands, the indicator naturally follows the .nav-item width */
-.sidebar[style*="width: 260px"] .active-bg-indicator {
-  width: calc(100% - 12px); /* Stretches into a capsule pill */
+/* Persistent Profile Styling */
+.top-nav-profile {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  z-index: 1001;
 }
 
-.nav-item.active { color: #000; }
-.nav-item.active .nav-custom-icon { filter: brightness(0); }
+.profile-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #f0f4f9;
+  cursor: pointer;
+  object-fit: cover;
+}
 
 .sidebar-footer {
-  margin-top: auto;
-  border-top: 1px solid #eee;
-  padding-top: 15px;
+  border-top: 1px solid #e1e5ea;
+  padding-top: 10px;
 }
 
-.logout-item { color: #888; cursor: pointer; }
-.logout-item:hover { color: #ff4444; }
+.logout { color: #d93025; }
