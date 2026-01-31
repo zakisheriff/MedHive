@@ -70,7 +70,7 @@ const AuthPage = () => {
                     />
                 </div>
                 
-                  <button type="submit" className="btn-main">Sign up</button>
+                  <button type="submit" className="btn-main" onClick={home} >Sign up</button>
                 </form>
                 <div className="toggle-text">
                   Already have an account?{' '}
