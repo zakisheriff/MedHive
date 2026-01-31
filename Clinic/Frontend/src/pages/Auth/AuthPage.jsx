@@ -58,6 +58,18 @@ const AuthPage = () => {
                   <input type="text" placeholder="Registration No" required className="auth-input" />
                   <input type="email" placeholder="Email Address" required className="auth-input" />
                   <input type="password" placeholder="Password" required className="auth-input" />
+                  
+                  <div className="file-upload-group">
+                    <label htmlFor="certificate">Upload PHSRC Certificate (PDF/Image)</label>
+                    <input 
+                    type="file" 
+                    id="certificate" 
+                    accept=".pdf, image/*" 
+                    required 
+                    className="auth-input file-input" 
+                    />
+                </div>
+                
                   <button type="submit" className="btn-main">Sign up</button>
                 </form>
                 <div className="toggle-text">
