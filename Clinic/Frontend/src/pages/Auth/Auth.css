@@ -1,4 +1,11 @@
-/* 1. Scoped Reset: Fixes the white space without breaking your sidebar */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* Keeps the horizontal scroll locked */
+}
+
 .auth-container, 
 .auth-container * {
   margin: 0;
@@ -7,11 +14,12 @@
 }
 
 .auth-container {
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   overflow: hidden;
   background-color: #ffffff;
   font-family: "Helvetica", Arial, sans-serif;
+  
 }
 
 .auth-slider {
@@ -26,7 +34,7 @@
 }
 
 .auth-section {
-  width: 50%; /* Half of the 200% slider */
+  flex: 0 0 50%; /* Half of the 200% slider */
   display: flex;
   height: 100vh;
 }
