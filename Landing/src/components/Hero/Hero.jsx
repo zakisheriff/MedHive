@@ -409,54 +409,106 @@ const Hero = () => {
                                             <button className="btn-done" onClick={() => setScreen('upload')}>Close</button>
                                         </div>
 
-                                        <div className="id-card-apple">
-                                            <div className="ica-top">
-                                                <div className="ica-avatar">JD</div>
-                                                <div className="ica-text">
-                                                    <h2>Johnathan Doe</h2>
-                                                    <p>john.doe@email.com</p>
+                                        <div className="profile-scroll-content">
+                                            <div className="profile-main-card">
+                                                <div className="pmc-top">
+                                                    <div className="pmc-avatar-wrapper">
+                                                        <div className="pmc-avatar">JD</div>
+                                                        <div className="pmc-camera-badge"><i className="fa-solid fa-camera"></i></div>
+                                                    </div>
+                                                    <div className="pmc-info">
+                                                        <h2>John Doe</h2>
+                                                        <p>john.doe@email.com</p>
+                                                    </div>
+                                                </div>
+                                                <div className="pmc-divider"></div>
+                                                <div className="pmc-med-id-row">
+                                                    <div className="pmc-med-label">MED-ID</div>
+                                                    <div className="pmc-med-value-group">
+                                                        <span className="pmc-med-value">2000154823</span>
+                                                        <i className="fa-regular fa-copy"></i>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="ica-divider"></div>
-                                            <div className="ica-footer">
-                                                <div className="ica-med-label">MED-ID</div>
-                                                <div className="ica-med-value">2000154823</div>
-                                            </div>
-                                        </div>
 
-                                        <div className="stats-card-apple">
-                                            <div className="stat-unit"><strong>12</strong><span>Uploads</span></div>
-                                            <div className="stat-v-divider"></div>
-                                            <div className="stat-unit"><strong>3</strong><span>Shared</span></div>
-                                            <div className="stat-v-divider"></div>
-                                            <div className="stat-unit"><strong>8</strong><span>Months</span></div>
-                                        </div>
+                                            <h3 className="profile-section-title">Statistics</h3>
+                                            <div className="profile-stats-card">
+                                                <div className="stat-col"><strong>12</strong><span>Uploads</span></div>
+                                                <div className="stat-col-divider"></div>
+                                                <div className="stat-col"><strong>3</strong><span>Shared</span></div>
+                                                <div className="stat-col-divider"></div>
+                                                <div className="stat-col"><strong>8</strong><span>Months</span></div>
+                                            </div>
 
-                                        <h4 className="pref-section-title">Account</h4>
-                                        <div className="menu-card-apple">
-                                            <div className="mca-item">
-                                                <div className="mca-icon"><i className="fas fa-user-circle"></i></div>
-                                                <span>Edit Profile</span>
-                                                <i className="fas fa-chevron-right mca-chevron"></i>
+                                            <h3 className="profile-section-title">Account</h3>
+                                            <div className="profile-list-group">
+                                                <div className="pl-item">
+                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-regular fa-user"></i></div><span>Edit Profile</span></div>
+                                                    <i className="fa-solid fa-chevron-right pl-arrow"></i>
+                                                </div>
+                                                <div className="pl-item">
+                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-solid fa-shield-halved"></i></div><span>Privacy & Security</span></div>
+                                                    <i className="fa-solid fa-chevron-right pl-arrow"></i>
+                                                </div>
+                                                <div className="pl-item">
+                                                    <div className="pl-left">
+                                                        <div className="pl-icon-bg"><i className="fa-regular fa-credit-card"></i></div>
+                                                        <div className="pl-text-stack">
+                                                            <span>Subscription</span>
+                                                            <small>Free Plan</small>
+                                                        </div>
+                                                    </div>
+                                                    <i className="fa-solid fa-chevron-right pl-arrow"></i>
+                                                </div>
                                             </div>
-                                            <div className="mca-item">
-                                                <div className="mca-icon"><i className="fas fa-shield-alt"></i></div>
-                                                <span>Privacy & Security</span>
-                                                <i className="fas fa-chevron-right mca-chevron"></i>
-                                            </div>
-                                        </div>
 
-                                        <h4 className="pref-section-title">Support</h4>
-                                        <div className="menu-card-apple">
-                                            <div className="mca-item">
-                                                <div className="mca-icon"><i className="fas fa-question-circle"></i></div>
-                                                <span>Help Center</span>
-                                                <i className="fas fa-chevron-right mca-chevron"></i>
+                                            <div className="profile-section-header">
+                                                <h3 className="profile-section-title">Preferences</h3>
+                                                <span className="psh-link">Close</span>
                                             </div>
-                                            <div className="mca-item destructive">
-                                                <div className="mca-icon"><i className="fas fa-sign-out-alt"></i></div>
+                                            <div className="profile-list-group">
+                                                <div className="pl-item">
+                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-regular fa-bell"></i></div><span>Notifications</span></div>
+                                                    <div className="pl-toggle active"></div>
+                                                </div>
+                                                <div className="pl-item">
+                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-solid fa-fingerprint"></i></div><span>Face ID / Touch ID</span></div>
+                                                    <div className="pl-toggle"></div>
+                                                </div>
+                                                <div className="pl-item">
+                                                    <div className="pl-left">
+                                                        <div className="pl-icon-bg"><i className="fa-solid fa-language"></i></div>
+                                                        <div className="pl-text-stack">
+                                                            <span>Language</span>
+                                                            <small>English</small>
+                                                        </div>
+                                                    </div>
+                                                    <i className="fa-solid fa-chevron-right pl-arrow"></i>
+                                                </div>
+                                            </div>
+
+                                            <h3 className="profile-section-title">Support</h3>
+                                            <div className="profile-list-group">
+                                                <div className="pl-item">
+                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-regular fa-circle-question"></i></div><span>Help Center</span></div>
+                                                    <i className="fa-solid fa-chevron-right pl-arrow"></i>
+                                                </div>
+                                                <div className="pl-item">
+                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-regular fa-comment-dots"></i></div><span>Contact Us</span></div>
+                                                    <i className="fa-solid fa-chevron-right pl-arrow"></i>
+                                                </div>
+                                                <div className="pl-item">
+                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-regular fa-star"></i></div><span>Rate App</span></div>
+                                                    <i className="fa-solid fa-chevron-right pl-arrow"></i>
+                                                </div>
+                                            </div>
+
+                                            <div className="logout-btn-mockup" onClick={() => setScreen('login')}>
+                                                <div className="pl-icon-bg logout-icon"><i className="fa-solid fa-arrow-right-from-bracket"></i></div>
                                                 <span>Log Out</span>
                                             </div>
+
+                                            <div className="profile-version">MedHive v1.0.0</div>
                                         </div>
                                     </div>
                                 )}
