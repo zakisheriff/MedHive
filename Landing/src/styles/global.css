@@ -111,7 +111,7 @@ html {
 
 .btn-primary:hover {
     color: var(--color-text-primary);
-    box-shadow: 0 8px 20px rgba(220, 163, 73, 0.4);
+    box-shadow: 0 0px 8px rgba(220, 163, 73, 0.4);
 }
 
 .btn-primary:active {

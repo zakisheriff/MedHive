@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import './Hero.css';
 
 const Hero = ({ focusTrigger }) => {
@@ -77,6 +77,29 @@ const Hero = ({ focusTrigger }) => {
             ]
         }
     ];
+
+    // Memoized filtered history
+    const filteredHistory = useMemo(() => {
+        return historyGroups.map(yearGroup => ({
+            ...yearGroup,
+            months: yearGroup.months.map(month => ({
+                ...month,
+                items: month.items.filter(item => {
+                    // Type Filter
+                    const matchesType = selectedFilter === 'all' || item.type === selectedFilter;
+
+                    // Search Filter
+                    const query = searchQuery.toLowerCase().trim();
+                    const matchesSearch = !query ||
+                        item.clinicName.toLowerCase().includes(query) ||
+                        item.title.toLowerCase().includes(query) ||
+                        (item.medicines && item.medicines.some(m => m.name.toLowerCase().includes(query)));
+
+                    return matchesType && matchesSearch;
+                })
+            })).filter(month => month.items.length > 0)
+        })).filter(yearGroup => yearGroup.months.length > 0);
+    }, [searchQuery, selectedFilter]);
 
     const handleUploadClick = () => { fileInputRef.current.click(); };
     const handleFileChange = (e) => {
@@ -164,6 +187,12 @@ const Hero = ({ focusTrigger }) => {
                     )}
 
                     <div className={`iphone-mockup ${highlightMockup ? 'focused-mockup' : ''}`}>
+                        {/* Hardware Buttons */}
+                        <div className="iphone-hw-button action-btn"></div>
+                        <div className="iphone-hw-button vol-up"></div>
+                        <div className="iphone-hw-button vol-down"></div>
+                        <div className="iphone-hw-button side-btn"></div>
+
                         <div className="iphone-bezel">
                             <div className="iphone-screen">
                                 <div className="dynamic-island"></div>
@@ -255,46 +284,80 @@ const Hero = ({ focusTrigger }) => {
 
                                             <div className="search-bar-pill">
                                                 <i className="fas fa-search"></i>
-                                                <input type="text" placeholder="Search by medicine, doctor, clinic..." disabled />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search by medicine, doctor, clinic..."
+                                                    value={searchQuery}
+                                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                                />
+                                                {searchQuery && (
+                                                    <i
+                                                        className="fas fa-times-circle clear-search"
+                                                        onClick={() => setSearchQuery('')}
+                                                        style={{ cursor: 'pointer', opacity: 0.6 }}
+                                                    ></i>
+                                                )}
                                             </div>
 
                                             <div className="filter-chips-row">
-                                                <div className="f-chip active"><i className="fa-solid fa-border-all"></i> All</div>
-                                                <div className="f-chip"><i className="fa-regular fa-file-lines"></i> Prescriptions</div>
-                                                <div className="f-chip"><i className="fa-solid fa-flask"></i> Lab Reports</div>
+                                                <div
+                                                    className={`f-chip ${selectedFilter === 'all' ? 'active' : ''}`}
+                                                    onClick={() => setSelectedFilter('all')}
+                                                >
+                                                    <i className="fa-solid fa-border-all"></i> All
+                                                </div>
+                                                <div
+                                                    className={`f-chip ${selectedFilter === 'prescription' ? 'active' : ''}`}
+                                                    onClick={() => setSelectedFilter('prescription')}
+                                                >
+                                                    <i className="fa-regular fa-file-lines"></i> Prescriptions
+                                                </div>
+                                                <div
+                                                    className={`f-chip ${selectedFilter === 'lab' ? 'active' : ''}`}
+                                                    onClick={() => setSelectedFilter('lab')}
+                                                >
+                                                    <i className="fa-solid fa-flask"></i> Lab Reports
+                                                </div>
                                             </div>
 
-                                            {historyGroups.map(yearGroup => (
-                                                <div key={yearGroup.year} className="year-container">
-                                                    <h3 className="year-title">{yearGroup.year}</h3>
-                                                    {yearGroup.months.map(month => (
-                                                        <div key={month.monthLabel} className="month-group">
-                                                            <div className="month-divider">
-                                                                <span className="line"></span>
-                                                                <span className="month-label">{month.monthLabel}</span>
-                                                                <span className="line"></span>
-                                                            </div>
-                                                            <div className="history-list">
-                                                                {month.items.map(item => (
-                                                                    <div key={item.id} className="history-card" onClick={() => handleHistoryClick(item)}>
-                                                                        <div className="hc-left-icon">
-                                                                            <i className={`fas ${item.type === 'prescription' ? 'fa-file-invoice' : 'fa-flask'}`}></i>
-                                                                        </div>
-                                                                        <div className="hc-main-content">
-                                                                            <h4>{item.clinicName}</h4>
-                                                                            <p>{item.title}</p>
-                                                                            {item.medicines && <div className="hc-pill-preview">
-                                                                                <i className="fa-solid fa-asterisk"></i> {item.medicines[0].name} {item.medicines.length > 1 ? `+${item.medicines.length - 1} more` : ''}
-                                                                            </div>}
-                                                                        </div>
-                                                                        <div className="hc-right-date">{item.date}</div>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    ))}
+                                            {filteredHistory.length === 0 ? (
+                                                <div className="empty-history-mockup">
+                                                    <i className="fas fa-search"></i>
+                                                    <p>No records found for "{searchQuery}"</p>
                                                 </div>
-                                            ))}
+                                            ) : (
+                                                filteredHistory.map(yearGroup => (
+                                                    <div key={yearGroup.year} className="year-container">
+                                                        <h3 className="year-title">{yearGroup.year}</h3>
+                                                        {yearGroup.months.map(month => (
+                                                            <div key={month.monthLabel} className="month-group">
+                                                                <div className="month-divider">
+                                                                    <span className="line"></span>
+                                                                    <span className="month-label">{month.monthLabel}</span>
+                                                                    <span className="line"></span>
+                                                                </div>
+                                                                <div className="history-list">
+                                                                    {month.items.map(item => (
+                                                                        <div key={item.id} className="history-card" onClick={() => handleHistoryClick(item)}>
+                                                                            <div className="hc-left-icon">
+                                                                                <i className={`fas ${item.type === 'prescription' ? 'fa-file-invoice' : 'fa-flask'}`}></i>
+                                                                            </div>
+                                                                            <div className="hc-main-content">
+                                                                                <h4>{item.clinicName}</h4>
+                                                                                <p>{item.title}</p>
+                                                                                {item.medicines && <div className="hc-pill-preview">
+                                                                                    <i className="fa-solid fa-asterisk"></i> {item.medicines[0].name} {item.medicines.length > 1 ? `+${item.medicines.length - 1} more` : ''}
+                                                                                </div>}
+                                                                            </div>
+                                                                            <div className="hc-right-date">{item.date}</div>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ))
+                                            )}
                                         </div>
                                     )}
 

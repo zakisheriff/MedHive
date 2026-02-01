@@ -85,8 +85,8 @@
     transform: rotateY(-10deg) rotateX(5deg);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     background: transparent !important;
-    border-radius: 55px;
-    /* Match bezel to fix rectangular residues */
+    border-radius: 65px;
+    /* Synchronized with refined bezel curvature */
 }
 
 .iphone-mockup.focused-mockup {
@@ -154,11 +154,57 @@
     }
 }
 
+/* Hardware Buttons */
+.iphone-hw-button {
+    position: absolute;
+    background: linear-gradient(to bottom, #050505, #111);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 5;
+    border-radius: 2px;
+}
+
+.action-btn {
+    width: 3px;
+    height: 25px;
+    left: -3px;
+    top: 100px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.vol-up {
+    width: 3px;
+    height: 50px;
+    left: -3px;
+    top: 150px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.vol-down {
+    width: 3px;
+    height: 50px;
+    left: -3px;
+    top: 210px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.side-btn {
+    width: 3px;
+    height: 80px;
+    right: -3px;
+    top: 180px;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
 .iphone-bezel {
     width: 100%;
     height: 100%;
     background: #1f1f1f;
-    border-radius: 55px;
+    border-radius: 65px;
+    /* Refined to match iPhone's organic curves */
     padding: 12px;
     position: relative;
     box-shadow: inset 0 0 0 2px #444, inset 0 0 0 6px #000;
@@ -170,7 +216,8 @@
     height: 100%;
     background: #F8FAFC;
     /* Unified background color */
-    border-radius: 40px;
+    border-radius: 48px;
+    /* Proportionally curved for a seamless look */
     overflow: hidden;
     position: relative;
     display: flex;
@@ -723,6 +770,31 @@
     flex: 1;
     font-size: 13px;
     outline: none;
+}
+
+.search-bar-pill .clear-search:hover {
+    color: #ef4444;
+}
+
+.empty-history-mockup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    color: #94a3b8;
+}
+
+.empty-history-mockup i {
+    font-size: 40px;
+    margin-bottom: 15px;
+    opacity: 0.3;
+}
+
+.empty-history-mockup p {
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .filter-chips-row {
@@ -1939,11 +2011,11 @@
     }
 
     .iphone-bezel {
-        border-radius: 45px;
+        border-radius: 65px;
     }
 
     .iphone-screen {
-        border-radius: 35px;
+        border-radius: 48px;
     }
 
 

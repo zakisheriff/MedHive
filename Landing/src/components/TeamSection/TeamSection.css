@@ -35,6 +35,8 @@
     -ms-overflow-style: none;
     /* IE and Edge */
     cursor: default;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
 }
 
 .team-scroll-container::-webkit-scrollbar {
@@ -60,6 +62,13 @@
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     position: relative;
     cursor: default;
+    scroll-snap-align: center;
+}
+
+.team-premium-card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 30px 60px rgba(220, 163, 73, 0.12);
+    border-color: rgba(220, 163, 73, 0.2);
 }
 
 .team-premium-card:hover {
@@ -165,7 +174,36 @@
     width: 80px;
 }
 
-/* Mobile Responsiveness */
+/* Pagination Dots */
+.team-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 40px;
+    align-items: center;
+}
+
+.pagination-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.pagination-dot.active {
+    background: #DCA349;
+    transform: scale(1.3);
+    box-shadow: 0 0 15px rgba(220, 163, 73, 0.4);
+}
+
+.pagination-dot:hover:not(.active) {
+    background: #cbd5e1;
+}
+
 @media (max-width: 992px) {
     .team-scroll-container {
         padding-left: 20px;
@@ -178,6 +216,38 @@
     .team-section .section-title {
         font-size: 40px;
     }
+}
+
+/* Premium Scroll Indicator (Desktop Only) */
+.team-scroll-indicator-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 40px auto 0;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.team-scroll-indicator-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.team-scroll-indicator-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #DCA349, #F5D391);
+    border-radius: 10px;
+    transition: width 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 0 15px rgba(220, 163, 73, 0.4);
 }
 
 @media (max-width: 768px) {
