@@ -95,7 +95,7 @@ export function generateMockHistory(): HistoryItem[] {
         {
             id: '1',
             type: 'prescription',
-            title: 'General Checkup Prescription',
+            title: 'Digital Prescription',
             date: new Date(now.getTime() - 2 * 60 * 60 * 1000), // Today
             clinicName: 'City Medical Center',
             medicines: [
@@ -119,7 +119,7 @@ export function generateMockHistory(): HistoryItem[] {
         {
             id: '2',
             type: 'labReport',
-            title: 'Complete Blood Count',
+            title: 'Electronic Lab Report',
             date: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
             clinicName: 'Health Diagnostics Lab',
             labTests: [
@@ -136,7 +136,7 @@ export function generateMockHistory(): HistoryItem[] {
         {
             id: '3',
             type: 'prescription',
-            title: 'Diabetes Management',
+            title: 'Digital Prescription',
             date: new Date(currentYear, now.getMonth() - 1, 15),
             clinicName: 'Endocrine Care Clinic',
             medicines: [
@@ -152,7 +152,7 @@ export function generateMockHistory(): HistoryItem[] {
         {
             id: '4',
             type: 'labReport',
-            title: 'Annual Physical Results',
+            title: 'Electronic Lab Report',
             date: new Date(lastYear, 10, 20), // Nov 20th last year
             clinicName: 'Cardiac Health Lab',
             labTests: [
@@ -168,7 +168,7 @@ export function generateMockHistory(): HistoryItem[] {
         {
             id: '5',
             type: 'prescription',
-            title: 'Antibiotic Course',
+            title: 'Digital Prescription',
             date: new Date(lastYear, 10, 25), // Nov 25th last year
             clinicName: 'Family Care Clinic',
             medicines: [

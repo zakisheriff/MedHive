@@ -113,7 +113,7 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                             </Text>
                         )}
                         <Text style={styles.recordSubtitle} numberOfLines={1}>
-                            {item.title || (item.type === 'prescription' ? 'Medical Prescription' : 'Diagnostic Lab Report')}
+                            {item.type === 'prescription' ? 'Prescription' : 'Lab Report'}
                         </Text>
                     </View>
                 </View>
