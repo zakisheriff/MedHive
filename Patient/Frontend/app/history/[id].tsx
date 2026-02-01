@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
@@ -16,10 +16,12 @@ import * as Haptics from 'expo-haptics';
 import { Colors } from '../../constants/theme';
 import { generateMockHistory } from '../../utils/historyUtils';
 import { HistoryItem, Medicine, LabTest } from '../../types/history';
+import { ImagePreviewModal } from '../../components/ImagePreviewModal';
 
 export default function HistoryDetailScreen() {
     const { id } = useLocalSearchParams();
     const insets = useSafeAreaInsets();
+    const [previewVisible, setPreviewVisible] = useState(false);
 
     const item = generateMockHistory().find((i: HistoryItem) => i.id === id);
 
@@ -139,14 +141,25 @@ export default function HistoryDetailScreen() {
                 {item.imageUri && (
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Original Document</Text>
-                        <Image
-                            source={{ uri: item.imageUri }}
-                            style={styles.documentImage}
-                            contentFit="contain"
-                        />
+                        <TouchableOpacity
+                            activeOpacity={0.9}
+                            onPress={() => setPreviewVisible(true)}
+                        >
+                            <Image
+                                source={{ uri: item.imageUri }}
+                                style={styles.documentImage}
+                                contentFit="contain"
+                            />
+                        </TouchableOpacity>
                     </View>
                 )}
             </ScrollView>
+
+            <ImagePreviewModal
+                isVisible={previewVisible}
+                imageUri={item?.imageUri || null}
+                onClose={() => setPreviewVisible(false)}
+            />
         </View>
     );
 }

@@ -16,6 +16,7 @@ import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
 import { Colors } from '../constants/theme';
 import { HistoryItem, Medicine, LabTest } from '../types/history';
+import { ImagePreviewModal } from './ImagePreviewModal';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -28,6 +29,7 @@ interface HistoryCardProps {
 
 export function HistoryCard({ item, onPress }: HistoryCardProps) {
     const [expanded, setExpanded] = useState(false);
+    const [previewVisible, setPreviewVisible] = useState(false);
     const [animation] = useState(new Animated.Value(0));
 
     const toggleExpand = () => {
@@ -175,12 +177,24 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                     {isPrescription && item.imageUri && (
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Prescription</Text>
-                            <Image
-                                source={{ uri: item.imageUri }}
-                                style={styles.prescriptionImage}
-                                contentFit="cover"
-                                transition={1000}
-                            />
+                            <TouchableOpacity
+                                activeOpacity={0.9}
+                                onPress={() => {
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                                    setPreviewVisible(true);
+                                }}
+                            >
+                                <Image
+                                    source={{ uri: item.imageUri }}
+                                    style={styles.prescriptionImage}
+                                    contentFit="cover"
+                                    transition={1000}
+                                />
+                                <View style={styles.imgExpandHint}>
+                                    <Ionicons name="expand" size={14} color="#fff" />
+                                    <Text style={styles.imgExpandText}>Tap to enlarge</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
                     )}
 
@@ -225,6 +239,12 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                     />
                 </Animated.View>
             </View>
+
+            <ImagePreviewModal
+                isVisible={previewVisible}
+                imageUri={item.imageUri || null}
+                onClose={() => setPreviewVisible(false)}
+            />
         </TouchableOpacity>
     );
 }
@@ -541,5 +561,22 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         marginTop: 8,
         backgroundColor: '#F1F5F9',
+    },
+    imgExpandHint: {
+        position: 'absolute',
+        bottom: 12,
+        right: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 20,
+        gap: 6,
+    },
+    imgExpandText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: '600',
     },
 });
