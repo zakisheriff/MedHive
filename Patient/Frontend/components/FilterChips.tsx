@@ -16,8 +16,6 @@ const filters: { id: FilterType; label: string; icon: keyof typeof Ionicons.glyp
     { id: 'all', label: 'All', icon: 'grid-outline' },
     { id: 'prescription', label: 'Prescriptions', icon: 'receipt-outline' },
     { id: 'labReport', label: 'Lab Reports', icon: 'flask-outline' },
-    { id: 'active', label: 'Active', icon: 'checkmark-circle-outline' },
-    { id: 'completed', label: 'Completed', icon: 'checkmark-done-outline' },
 ];
 
 export function FilterChips({ selectedFilter, onFilterChange }: FilterChipsProps) {

@@ -29,7 +29,12 @@ export interface HistoryItem {
     status: 'active' | 'completed' | 'expired';
 }
 
-export interface GroupedHistory {
-    dateLabel: string;
+export interface MonthGroup {
+    monthLabel: string;
     items: HistoryItem[];
+}
+
+export interface YearGroup {
+    year: number;
+    months: MonthGroup[];
 }
