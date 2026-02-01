@@ -44,8 +44,10 @@ export default function UploadScreen() {
                             quality: 0.8,
                         });
                         if (!result.canceled) {
-                            // Navigate to results or process
-                            console.log('Image captured:', result.assets[0].uri);
+                            router.push({
+                                pathname: '/prescription-result',
+                                params: { imageUri: result.assets[0].uri }
+                            } as any);
                         }
                     }
                 },
@@ -67,7 +69,10 @@ export default function UploadScreen() {
                             quality: 0.8,
                         });
                         if (!result.canceled) {
-                            console.log('Image selected:', result.assets[0].uri);
+                            router.push({
+                                pathname: '/prescription-result',
+                                params: { imageUri: result.assets[0].uri }
+                            } as any);
                         }
                     }
                 },

@@ -93,7 +93,7 @@ export function generateMockHistory(): HistoryItem[] {
 
     // Demo images provided by user
     const demoPres = require('../assets/images/demo-pres.jpg');
-    const demoLab = require('../assets/images/demo-lab.jpeg');
+    const demoLab = demoPres; // Use prescription image as placeholder for lab demo
 
     return [
         {
