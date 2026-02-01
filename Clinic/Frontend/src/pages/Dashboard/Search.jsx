@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import './Search.css';
+import { useNavigate } from 'react-router-dom';
+import './css/Search.css';
 import PatientProfile from './PatientProfile'; // We will create this next
 
 const SearchPage = () => {

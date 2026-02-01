@@ -4,7 +4,8 @@ import AuthPage from './pages/Auth/AuthPage';
 import DashboardLayout from './pages/Dashboard/Layout';
 import Home from './pages/Dashboard/Home';
 import Prescriptions from './pages/Dashboard/Prescriptions';
-import 
+import SearchPage from './pages/Dashboard/Search';
+import PatientProfile from './pages/Dashboard/PatientProfile';
 
 function App() {
   return (
@@ -17,7 +18,8 @@ function App() {
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<Navigate to="home" replace />} />
           <Route path="home" element={<Home />} />
-          <Route path="search" element={<div></div>} />
+          <Route path="search" element={<SearchPage />} />
+          <Route path="patientProfile" element={<PatientProfile />} />
           <Route path="prescription" element={<Prescriptions/>} />
           <Route path="history" element={<div></div>} />
         </Route>
