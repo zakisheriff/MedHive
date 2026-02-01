@@ -51,9 +51,9 @@ const Prescriptions = () => {
             <motion.div 
               key={order.id}
               layout
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 1.0 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, x: -50 }}
+              exit={{ opacity: 0, y: 0 }}
               className="order-card"
             >
               <div className="order-header">{order.patientName}</div>
