@@ -10,6 +10,17 @@ const Hero = () => {
     const [selectedFilter, setSelectedFilter] = useState('all');
     const fileInputRef = useRef(null);
 
+    // History Detail State
+    const [activeHistoryItem, setActiveHistoryItem] = useState(null);
+
+    const handleHistoryClick = (item) => {
+        setActiveHistoryItem(item);
+    };
+
+    const handleBackFromHistory = () => {
+        setActiveHistoryItem(null);
+    };
+
     // Mock Access Data (Matches access.tsx / generateMockAccess)
     const [accessRecords, setAccessRecords] = useState([
         { id: '1', clinicName: 'City Medical Center', doctorName: 'Dr. Sarah Wilson', status: 'pending', icon: '🏥' },
@@ -18,21 +29,32 @@ const Hero = () => {
     ]);
 
     // Mock History Data (Matches historyUtils.ts / generateMockHistory)
+    // Mock History Data (Matches historyUtils.ts / generateMockHistory)
     const historyGroups = [
         {
-            year: 2025,
+            year: 2026,
             months: [
                 {
-                    monthLabel: 'May',
+                    monthLabel: 'February',
                     items: [
-                        { id: '1', type: 'prescription', title: 'Digital Prescription', date: 'Today', clinicName: 'City Medical Center', medicines: [{ name: 'Amoxicillin' }, { name: 'Ibuprofen' }], status: 'active' }
+                        {
+                            id: '1',
+                            type: 'prescription',
+                            title: 'Digital Prescription',
+                            date: '6:05 AM',
+                            clinicName: 'City Medical Center',
+                            medicines: [{ name: 'Amoxicillin', dosage: '500mg', freq: 'Twice daily', duration: '7 days' }, { name: 'Ibuprofen', dosage: '400mg', freq: 'Every 6 hours', duration: '5 days' }],
+                            status: 'active',
+                            fullDate: 'Sunday, February 1, 2026',
+                            notes: 'Take with food. Complete the full course.'
+                        }
                     ]
                 },
                 {
-                    monthLabel: 'April',
+                    monthLabel: 'January',
                     items: [
-                        { id: '2', type: 'labReport', title: 'Electronic Lab Report', date: 'Apr 28', clinicName: 'Health Diagnostics Lab', labTests: [{ name: 'Hemoglobin' }, { name: 'WBC Count' }], status: 'completed' },
-                        { id: '3', type: 'prescription', title: 'Digital Prescription', date: 'Apr 15', clinicName: 'Endocrine Care Clinic', medicines: [{ name: 'Metformin' }], status: 'active' }
+                        { id: '2', type: 'lab', title: 'Electronic Lab Report', date: 'Fri', clinicName: 'Health Diagnostics Lab', medicines: [{ name: 'Hemoglobin' }, { name: 'RBC' }, { name: 'WBC' }], status: 'completed', fullDate: 'Friday, January 24, 2026' },
+                        { id: '3', type: 'prescription', title: 'Digital Prescription', date: 'Jan 15', clinicName: 'Endocrine Care Clinic', medicines: [{ name: 'Metformin' }], status: 'active', fullDate: 'Wednesday, January 15, 2026' }
                     ]
                 }
             ]
@@ -148,13 +170,11 @@ const Hero = () => {
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            
                                         </div>
                                     )}
 
                                     {/* HISTORY SCREEN */}
-                                    {screen === 'history' && (
+                                    {screen === 'history' && !activeHistoryItem && (
                                         <div className="screen-history animate-fade-in">
                                             <div className="home-header">
                                                 <h1>History</h1>
@@ -163,44 +183,39 @@ const Hero = () => {
 
                                             <div className="search-bar-pill">
                                                 <i className="fas fa-search"></i>
-                                                <input type="text" placeholder="Search by medicine, doctor..." disabled />
+                                                <input type="text" placeholder="Search by medicine, doctor, clinic..." disabled />
                                             </div>
 
                                             <div className="filter-chips-row">
-                                                <div className="f-chip active">All</div>
-                                                <div className="f-chip">Prescriptions</div>
-                                                <div className="f-chip">Lab Reports</div>
+                                                <div className="f-chip active"><i className="fa-solid fa-border-all"></i> All</div>
+                                                <div className="f-chip"><i className="fa-regular fa-file-lines"></i> Prescriptions</div>
+                                                <div className="f-chip"><i className="fa-solid fa-flask"></i> Lab Reports</div>
                                             </div>
 
                                             {historyGroups.map(yearGroup => (
                                                 <div key={yearGroup.year} className="year-container">
+                                                    <h3 className="year-title">{yearGroup.year}</h3>
                                                     {yearGroup.months.map(month => (
                                                         <div key={month.monthLabel} className="month-group">
-                                                            <div className="month-label">{month.monthLabel} {yearGroup.year}</div>
+                                                            <div className="month-divider">
+                                                                <span className="line"></span>
+                                                                <span className="month-label">{month.monthLabel}</span>
+                                                                <span className="line"></span>
+                                                            </div>
                                                             <div className="history-list">
                                                                 {month.items.map(item => (
-                                                                    <div key={item.id} className="history-card" onClick={() => setActiveAlert(item)}>
-                                                                        <div className="hc-top">
-                                                                            <div className="hc-icon-box" style={{ background: item.type === 'prescription' ? 'rgba(220, 163, 73, 0.1)' : 'rgba(59, 130, 246, 0.1)', color: item.type === 'prescription' ? '#dca349' : '#3b82f6' }}>
-                                                                                <i className={`fas ${item.type === 'prescription' ? 'fa-file-prescription' : 'fa-flask'}`}></i>
-                                                                            </div>
-                                                                            <div className="hc-main">
-                                                                                <h4>{item.title}</h4>
-                                                                                <p>By {item.clinicName}</p>
-                                                                            </div>
-                                                                            <div className="hc-date">{item.date}</div>
+                                                                    <div key={item.id} className="history-card" onClick={() => handleHistoryClick(item)}>
+                                                                        <div className="hc-left-icon">
+                                                                            <i className={`fas ${item.type === 'prescription' ? 'fa-file-invoice' : 'fa-flask'}`}></i>
                                                                         </div>
-                                                                        <div className="hc-badges">
-                                                                            {item.medicines && item.medicines.slice(0, 2).map((med, idx) => (
-                                                                                <div key={idx} className="hc-badge">
-                                                                                    <i className="fas fa-pills"></i>
-                                                                                    <span>{med.name}</span>
-                                                                                </div>
-                                                                            ))}
-                                                                            {item.medicines && item.medicines.length > 2 && (
-                                                                                <div className="hc-badge-more">+{item.medicines.length - 2} more</div>
-                                                                            )}
+                                                                        <div className="hc-main-content">
+                                                                            <h4>{item.clinicName}</h4>
+                                                                            <p>{item.title}</p>
+                                                                            {item.medicines && <div className="hc-pill-preview">
+                                                                                <i className="fa-solid fa-asterisk"></i> {item.medicines[0].name} {item.medicines.length > 1 ? `+${item.medicines.length - 1} more` : ''}
+                                                                            </div>}
                                                                         </div>
+                                                                        <div className="hc-right-date">{item.date}</div>
                                                                     </div>
                                                                 ))}
                                                             </div>
@@ -208,6 +223,61 @@ const Hero = () => {
                                                     ))}
                                                 </div>
                                             ))}
+                                        </div>
+                                    )}
+
+                                    {/* HISTORY DETAILS SCREEN */}
+                                    {screen === 'history' && activeHistoryItem && (
+                                        <div className="screen-history-details animate-slide-in">
+                                            <div className="hd-header">
+                                                <button className="hd-back-btn" onClick={handleBackFromHistory}>
+                                                    <i className="fa-solid fa-chevron-left"></i>
+                                                </button>
+                                                <h3>Details</h3>
+                                                <div style={{ width: 40 }}></div> {/* Spacer for center alignment */}
+                                            </div>
+
+                                            <div className="hd-content">
+                                                <div className="hd-main-icon-circle">
+                                                    <i className={`fas ${activeHistoryItem.type === 'prescription' ? 'fa-file-invoice' : 'fa-flask'}`}></i>
+                                                </div>
+
+                                                <h2 className="hd-title">Prescription</h2>
+                                                <p className="hd-date">{activeHistoryItem.fullDate}</p>
+
+                                                <div className="hd-facility-card">
+                                                    <div className="hd-fc-icon">
+                                                        <i className="fa-solid fa-asterisk"></i>
+                                                    </div>
+                                                    <div className="hd-fc-info">
+                                                        <span className="hd-fc-label">FACILITY / CLINIC</span>
+                                                        <h4 className="hd-fc-name">{activeHistoryItem.clinicName}</h4>
+                                                    </div>
+                                                </div>
+
+                                                <h3 className="hd-section-title">Medications</h3>
+                                                <div className="hd-medication-list">
+                                                    {activeHistoryItem.medicines.map((med, idx) => (
+                                                        <div key={idx} className="hd-med-card">
+                                                            <div className="hd-med-top">
+                                                                <h4>{med.name}</h4>
+                                                                {med.dosage && <span className="hd-dosage-badge">{med.dosage}</span>}
+                                                            </div>
+                                                            {med.freq && (
+                                                                <div className="hd-med-details">
+                                                                    <div className="hd-md-item">
+                                                                        <i className="fa-regular fa-clock"></i> {med.freq}
+                                                                    </div>
+                                                                    <div className="hd-md-item">
+                                                                        <i className="fa-regular fa-calendar"></i> {med.duration}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                            </div>
                                         </div>
                                     )}
 

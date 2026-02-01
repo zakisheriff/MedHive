@@ -102,29 +102,17 @@
     box-shadow: inset 0 0 0 2px #444, inset 0 0 0 6px #000;
 }
 
+/* iPhone Screen Container */
 .iphone-screen {
     width: 100%;
     height: 100%;
-    background: #f2f2f7;
+    background: #F8FAFC;
+    /* Unified background color */
     border-radius: 40px;
     overflow: hidden;
     position: relative;
     display: flex;
     flex-direction: column;
-}
-
-/* Blue blur glow in background */
-.iphone-screen::before {
-    content: '';
-    position: absolute;
-    top: -20%;
-    right: -20%;
-    width: 80%;
-    height: 80%;
-    background: radial-gradient(circle, rgba(66, 135, 245, 0.15) 0%, transparent 70%);
-    filter: blur(40px);
-    z-index: 0;
-    pointer-events: none;
 }
 
 /* Top Status Bar */
@@ -223,7 +211,8 @@
     flex: 1;
     position: relative;
     overflow: hidden;
-    background: #f8fafc;
+    background: #F8FAFC;
+    /* Consistently matched background */
     display: flex;
     flex-direction: column;
     /* Global scaling to match mobile look */
@@ -515,21 +504,27 @@
 
 .filter-chips-row {
     display: flex;
-    gap: 8px;
+    gap: 6px;
+    /* Reduced gap */
     margin-bottom: 25px;
     overflow-x: auto;
     padding-bottom: 5px;
+    flex-wrap: nowrap;
+    /* Ensure they stay in row but shrink/fit */
 }
 
 .f-chip {
-    padding: 6px 14px;
+    padding: 6px 10px;
+    /* Reduced padding */
     background: #fff;
     border: 1.5px solid #dca349;
     color: #dca349;
     border-radius: 35px;
-    font-size: 12px;
+    font-size: 11px;
+    /* Slightly smaller font */
     font-weight: 700;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .f-chip.active {
@@ -537,19 +532,28 @@
     color: #fff;
 }
 
-.year-title {
-    font-size: 28px;
-    font-weight: 800;
-    color: #1e293b;
-    margin: 30px 0 20px;
-    letter-spacing: -1px;
+/* HISTORY SCREEN - REFINED */
+.screen-history {
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: block;
 }
 
+.history-count {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+/* Month Divider */
 .month-divider {
     display: flex;
     align-items: center;
     gap: 15px;
-    margin: 20px 0 15px;
+    margin: 25px 0 15px;
 }
 
 .month-divider .line {
@@ -559,44 +563,315 @@
 }
 
 .month-divider .month-label {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
-    color: #94a3b8;
+    color: #dca349;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-.history-card-real {
+.year-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+/* History Card Refined */
+.history-card {
     background: #fff;
-    border-radius: 32px;
-    padding: 18px;
-    margin-bottom: 12px;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-}
-
-.hc-top {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    border-radius: 24px;
+    padding: 20px;
     margin-bottom: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    cursor: pointer;
+    transition: transform 0.2s;
 }
 
-.hc-icon-gradient {
+.history-card:active {
+    transform: scale(0.98);
+}
+
+.hc-left-icon {
     width: 48px;
     height: 48px;
-    background: linear-gradient(135deg, #dca349, #f3e5c2);
-    border-radius: 35px;
+    background: #dca349;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #fff;
     font-size: 20px;
-    box-shadow: 0 8px 15px rgba(220, 163, 73, 0.2);
+    flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(220, 163, 73, 0.25);
 }
 
-.hc-main {
+.hc-main-content {
     flex: 1;
+}
+
+.hc-main-content h4 {
+    font-size: 15px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.hc-main-content p {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+.hc-pill-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f8fafc;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #334155;
+    font-weight: 600;
+}
+
+.hc-pill-preview i {
+    color: #dca349;
+    font-size: 10px;
+}
+
+.hc-right-date {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* HISTORY DETAILS SCREEN */
+.screen-history-details {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #FAFAFA;
+    /* Slightly off-white background */
+    z-index: 50;
+    /* Above regular content */
+    display: flex;
+    flex-direction: column;
+    padding: 60px 20px 20px;
+    /* Safe area for notch */
+    overflow-y: auto;
+}
+
+.hd-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.hd-back-btn {
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    color: #1e293b;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.hd-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.hd-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.hd-main-icon-circle {
+    width: 80px;
+    height: 80px;
+    background: #dca349;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 32px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px rgba(220, 163, 73, 0.25);
+}
+
+.hd-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.hd-date {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.hd-facility-card {
+    background: #fff;
+    border-radius: 50px;
+    /* Fully rounded pill shape */
+    padding: 15px 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.hd-fc-icon {
+    width: 40px;
+    height: 40px;
+    background: #fefce8;
+    /* Very light yellow */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #dca349;
+    font-size: 16px;
+}
+
+.hd-fc-info {
+    text-align: left;
+}
+
+.hd-fc-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.hd-fc-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.hd-section-title {
+    width: 100%;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 15px;
+}
+
+.hd-medication-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.hd-med-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    text-align: left;
+}
+
+.hd-med-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.hd-med-top h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.hd-dosage-badge {
+    background: #f1f5f9;
+    color: #dca349;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.hd-med-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.hd-md-item {
+    font-size: 13px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hd-md-item i {
+    font-size: 12px;
+    opacity: 0.7;
+    width: 14px;
+}
+
+.hd-notes-card {
+    background: #FFFBF2;
+    /* Light creamy yellow */
+    border-left: 4px solid #dca349;
+    border-radius: 20px;
+    /* Only round right side mostly */
+    border-radius: 0 20px 20px 20px;
+    padding: 20px;
+    width: 100%;
+    text-align: left;
+    position: relative;
+}
+
+.hd-note-pill {
+    /* Decorative curve if needed, simplified for now */
+    display: none;
+}
+
+.hd-notes-card p {
+    font-size: 14px;
+    color: #854d0e;
+    font-weight: 500;
+    line-height: 1.5;
 }
 
 .hc-main h4 {
