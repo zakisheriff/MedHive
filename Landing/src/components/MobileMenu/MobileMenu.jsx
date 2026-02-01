@@ -16,16 +16,48 @@ const MobileMenu = ({ isOpen, onClose, onScrollToTop }) => {
                     <a onClick={onScrollToTop} style={{ cursor: 'pointer' }}>
                         Home
                     </a>
-                    <a href="#problems" onClick={onClose}>
+                    <a
+                        onClick={(e) => {
+                            e.preventDefault();
+                            const el = document.getElementById('problems');
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            onClose();
+                        }}
+                        style={{ cursor: 'pointer' }}
+                    >
                         Problems
                     </a>
-                    <a href="#ai" onClick={onClose}>
+                    <a
+                        onClick={(e) => {
+                            e.preventDefault();
+                            const el = document.getElementById('ai');
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            onClose();
+                        }}
+                        style={{ cursor: 'pointer' }}
+                    >
                         Solutions
                     </a>
-                    <a href="#features" onClick={onClose}>
+                    <a
+                        onClick={(e) => {
+                            e.preventDefault();
+                            const el = document.getElementById('features');
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            onClose();
+                        }}
+                        style={{ cursor: 'pointer' }}
+                    >
                         Features
                     </a>
-                    <a href="#contact" onClick={onClose}>
+                    <a
+                        onClick={(e) => {
+                            e.preventDefault();
+                            const el = document.getElementById('contact');
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            onClose();
+                        }}
+                        style={{ cursor: 'pointer' }}
+                    >
                         Contact
                     </a>
                 </div>

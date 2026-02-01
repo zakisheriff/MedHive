@@ -205,7 +205,19 @@ const Hero = ({ focusTrigger }) => {
                     </p>
                     <div className="hero-buttons">
                         <button className="btn-primary glass-btn" onClick={handleGetStartedClick}>Experience MedHive</button>
-                        <a href="#ai"><button className="btn-secondary glass-btn">Learn More</button></a>
+                        <button
+                            className="btn-secondary glass-btn"
+                            onClick={() => {
+                                const element = document.getElementById('ai');
+                                if (element) {
+                                    const yOffset = -20;
+                                    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                                    window.scrollTo({ top: y, behavior: 'smooth' });
+                                }
+                            }}
+                        >
+                            Learn More
+                        </button>
                     </div>
                 </div>
 
