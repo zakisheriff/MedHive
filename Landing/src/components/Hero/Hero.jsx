@@ -125,6 +125,11 @@ const Hero = ({ focusTrigger }) => {
                             setActiveAlert(null);
                             setUploadStatus('idle');
                             setUploadPreview(null);
+                        },
+                        onCancel: () => { 
+                            setActiveAlert(null);
+                            setUploadStatus('idle');
+                            setUploadPreview(null);
                         }
                     });
                 }, 5000);
@@ -232,8 +237,10 @@ const Hero = ({ focusTrigger }) => {
                                         <div className="upload-progress-overlay animate-fade-in">
                                             {uploadPreview && (
                                                 <div className="preview-container">
-                                                    <img src={uploadPreview} alt="Preview" className="upload-preview-img" />
-                                                    <div className="scan-line"></div>
+                                                    <div className="preview-pill-wrapper">
+                                                        <img src={uploadPreview} alt="Preview" className="upload-preview-img" />
+                                                        <div className="scan-line"></div>
+                                                    </div>
                                                 </div>
                                             )}
                                             <div className="upload-status-box">
@@ -511,7 +518,10 @@ const Hero = ({ focusTrigger }) => {
                                                 <p>{activeAlert.message}</p>
                                                 <div className="alert-actions">
                                                     <button className="alert-btn-confirm" onClick={activeAlert.onConfirm}>{activeAlert.confirmText}</button>
-                                                    <button className="alert-btn-cancel" onClick={() => setActiveAlert(null)}>Cancel</button>
+                                                    <button className="alert-btn-cancel" onClick={() => {
+                                                        if (activeAlert.onCancel) activeAlert.onCancel();
+                                                        setActiveAlert(null);
+                                                    }}>Cancel</button>
                                                 </div>
                                             </div>
                                         </div>

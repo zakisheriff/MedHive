@@ -1748,7 +1748,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: #fff;
+    background: transparent;
     z-index: 50;
     display: flex;
     flex-direction: column;
@@ -1757,54 +1757,82 @@
 .preview-container {
     flex: 1;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F8FAFC;
+    /* Matches native app background */
+    padding: 25px;
+    padding-top: 50px;
+}
+
+.preview-pill-wrapper {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: 35px;
     overflow: hidden;
-    background: #000;
+    /* CRITICAL: Clips the scan line */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    border: 4px solid #fff;
 }
 
 .upload-preview-img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    opacity: 0.7;
+    object-fit: cover;
+    opacity: 1;
 }
 
 .scan-line {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    right: 0;
     height: 4px;
     background: linear-gradient(to bottom, transparent, #dca349, transparent);
-    box-shadow: 0 0 15px #dca349;
+    box-shadow: 0 0 20px #dca349;
     z-index: 2;
-    animation: scanAnimation 2s linear infinite;
+    animation: scanAnimationInside 2.5s ease-in-out infinite;
 }
 
-@keyframes scanAnimation {
+@keyframes scanAnimationInside {
     0% {
-        top: 0;
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(200px);
     }
 
     100% {
-        top: 100%;
+        transform: translateY(0);
     }
 }
 
 .upload-status-box {
-    padding: 30px 20px 40px;
+    padding: 40px 24px 70px;
+    /* More bottom padding to push content above floating nav */
     text-align: center;
     background: #fff;
-    border-top: 1px solid #f1f5f9;
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
+    margin-top: -35px;
+    /* Pull up to create the overlap effect */
+    position: relative;
+    z-index: 3;
+    box-shadow: 0 -15px 40px rgba(13, 13, 13, 0.08);
 }
 
 .status-spinner {
-    width: 30px;
-    height: 30px;
-    border: 3px solid #f1f5f9;
+    width: 36px;
+    height: 36px;
+    border: 3.5px solid #f1f5f9;
     border-top-color: #dca349;
     border-radius: 50%;
-    margin: 0 auto 15px;
-    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+    animation: spin 1s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+    box-shadow: 0 4px 10px rgba(220, 163, 73, 0.15);
 }
 
 @keyframes spin {
