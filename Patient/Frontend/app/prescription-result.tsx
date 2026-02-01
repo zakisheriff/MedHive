@@ -9,9 +9,9 @@ import {
     ActivityIndicator,
     Alert,
     Dimensions,
-    SafeAreaView,
     Platform
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/theme';
@@ -151,10 +151,6 @@ export default function PrescriptionResultScreen() {
     return (
         <View style={styles.mainContainer}>
             <Stack.Screen options={{ headerShown: false }} />
-            <LinearGradient
-                colors={['#F5B25F', '#dca349']}
-                style={StyleSheet.absoluteFill}
-            />
 
             <SafeAreaView style={styles.safeArea}>
                 <View style={styles.contentPill}>
@@ -260,6 +256,7 @@ export default function PrescriptionResultScreen() {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
+        backgroundColor: '#F8FAFC', // Whitish background
     },
     safeArea: {
         flex: 1,
@@ -269,6 +266,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#F8FAFC',
     },
     loadingText: {
         marginTop: 20,
@@ -280,12 +278,12 @@ const styles = StyleSheet.create({
     contentPill: {
         width: width * 0.92,
         height: height * 0.78,
-        backgroundColor: '#fff',
+        backgroundColor: '#F5B25F', // Honey/Peach container
         borderRadius: 40,
         padding: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.15,
         shadowRadius: 20,
         elevation: 15,
         marginTop: 20,
@@ -296,6 +294,7 @@ const styles = StyleSheet.create({
         borderRadius: 32,
         overflow: 'hidden',
         position: 'relative',
+        backgroundColor: '#fff',
     },
     mainImage: {
         width: '100%',
@@ -324,7 +323,7 @@ const styles = StyleSheet.create({
     },
     tabSwitcher: {
         flexDirection: 'row',
-        backgroundColor: '#F1F5F9',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)', // Translucent on honey
         borderRadius: 20,
         padding: 4,
         marginBottom: 20,
@@ -345,10 +344,10 @@ const styles = StyleSheet.create({
     tabText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#64748B',
+        color: '#fff', // White text on honey tabs
     },
     activeTabText: {
-        color: '#1E293B',
+        color: '#dca349', // Honey color for active text on white bg
     },
     scrollContent: {
         paddingBottom: 20,
@@ -358,11 +357,9 @@ const styles = StyleSheet.create({
         borderRadius: 24,
         padding: 18,
         marginBottom: 12,
-        borderWidth: 1,
-        borderColor: '#E2E8F0',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.03,
+        shadowOpacity: 0.05,
         shadowRadius: 5,
     },
     medHeader: {
@@ -400,7 +397,9 @@ const styles = StyleSheet.create({
         borderTopColor: '#F1F5F9',
     },
     summaryBox: {
-        padding: 5,
+        padding: 15,
+        backgroundColor: '#fff',
+        borderRadius: 24,
     },
     summaryBodyText: {
         fontSize: 15,
@@ -410,8 +409,9 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         textAlign: 'center',
-        color: '#94A3B8',
+        color: '#fff',
         marginTop: 40,
+        fontWeight: '600',
     },
     actionGrid: {
         gap: 10,
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     btnSecondary: {
-        shadowColor: Colors.light.primary,
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 8,
@@ -455,9 +455,12 @@ const styles = StyleSheet.create({
         height: 68,
         borderRadius: 34,
         overflow: 'hidden',
+        backgroundColor: '#dca349', // Solid honey for close button on white bg
+        alignItems: 'center',
+        justifyContent: 'center',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.2,
         shadowRadius: 8,
         elevation: 10,
     },
@@ -465,6 +468,5 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.15)',
     },
 });
