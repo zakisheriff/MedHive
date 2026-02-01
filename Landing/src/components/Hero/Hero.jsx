@@ -5,6 +5,7 @@ const Hero = ({ focusTrigger }) => {
     // iPhone State: 'upload', 'history', 'access', 'profile', 'login'
     const [screen, setScreen] = useState('login');
     const [uploadStatus, setUploadStatus] = useState('idle');
+    const [uploadPreview, setUploadPreview] = useState(null);
     const [activeAlert, setActiveAlert] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('all');
@@ -104,12 +105,31 @@ const Hero = ({ focusTrigger }) => {
     const handleUploadClick = () => { fileInputRef.current.click(); };
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
-            setUploadStatus('uploading');
-            setTimeout(() => { setUploadStatus('processing'); }, 2000);
-            setTimeout(() => {
-                setUploadStatus('completed');
-                setTimeout(() => { setUploadStatus('idle'); }, 5000);
-            }, 4500);
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setUploadPreview(reader.result);
+                setUploadStatus('uploading');
+
+                setTimeout(() => {
+                    setUploadStatus('processing');
+                }, 2000);
+
+                setTimeout(() => {
+                    setUploadStatus('completed');
+                    setActiveAlert({
+                        title: "Coming Soon!",
+                        message: "The AI Prescription Reader is currently in private beta. We're refining the model to ensure 99.9% accuracy before public release.",
+                        confirmText: "Notify Me When Ready",
+                        onConfirm: () => {
+                            setActiveAlert(null);
+                            setUploadStatus('idle');
+                            setUploadPreview(null);
+                        }
+                    });
+                }, 5000);
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -207,6 +227,23 @@ const Hero = ({ focusTrigger }) => {
                                 { /* App Header removed - now individual per screen */}
 
                                 <div className="app-content-container">
+                                    {/* UPLOAD PROGRESS OVERLAY */}
+                                    {uploadStatus !== 'idle' && (
+                                        <div className="upload-progress-overlay animate-fade-in">
+                                            {uploadPreview && (
+                                                <div className="preview-container">
+                                                    <img src={uploadPreview} alt="Preview" className="upload-preview-img" />
+                                                    <div className="scan-line"></div>
+                                                </div>
+                                            )}
+                                            <div className="upload-status-box">
+                                                <div className="status-spinner"></div>
+                                                <h3>{uploadStatus === 'uploading' ? 'Uploading...' : 'Analyzing with AI...'}</h3>
+                                                <p>Extracting medical details from your image</p>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {/* LOGIN SCREEN */}
                                     {screen === 'login' && (
                                         <div className="screen-login animate-fade-in">
