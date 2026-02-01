@@ -128,7 +128,7 @@ const Prescriptions = () => {
               key="empty"
             >
               <div className="empty-icon-container">
-                <img src="/icons/no-prescriptions.png" alt="Done" className="empty-icon" />
+                <img src="/icons/no-pres.png" alt="Done" className="empty-icon" />
               </div>
               <h2>No prescriptions yet</h2>
               <p>New orders from patients will appear here in real-time.</p>
@@ -146,7 +146,9 @@ const Prescriptions = () => {
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }}
           >
-            <button className="close-modal" onClick={() => setSelectedImage(null)}>&times;</button>
+            <button className="close-modal" onClick={() => setSelectedImage(null)}>
+              <img src="/icons/cross.png" alt="" className='close-icon-img'/>
+            </button>
             <img src={selectedImage} alt="Full View" />
           </motion.div>
         )}

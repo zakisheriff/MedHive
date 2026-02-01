@@ -26,9 +26,9 @@
 .order-card {
   background: #ffffff;
   border-radius: 28px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+  
   margin-bottom: 40px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #33333337;
   overflow: hidden;
 }
 
@@ -175,11 +175,68 @@
 
 .close-modal {
   position: absolute;
-  top: 40px;
-  right: 40px;
+  top: 30px;
+  right: 50px;
   background: none;
   border: none;
-  color: white;
-  font-size: 3rem;
   cursor: pointer;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.close-icon-img {
+  width: 20px; 
+  height: 20px;
+  opacity: 0.8; 
+}
+
+.close-modal:hover {
+  background-color: rgba(51, 51, 51, 0.366); 
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  /* Ensuring no Times New Roman fallbacks */
+  font-family: 'Helvetica', sans-serif; 
+}
+
+.empty-icon-container {
+  width: 120px;
+  height: 120px;
+  background-color: #fcfcfc;
+  border: 2px dashed #eee; /* Professional technical look */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.empty-icon {
+  width: 160px;
+  opacity: 0.3; /* Muted for a clean look */
+}
+
+.empty-state h2 {
+  font-size: 1.8rem;
+  color: #1a1a1a;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #757575;
+  font-size: 1.1rem;
+  max-width: 300px;
+  line-height: 1.5;
 }
