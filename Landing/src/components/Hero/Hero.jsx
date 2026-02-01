@@ -2,8 +2,8 @@ import React, { useState, useRef } from 'react';
 import './Hero.css';
 
 const Hero = () => {
-    // iPhone State: 'upload', 'history', 'access', 'profile'
-    const [screen, setScreen] = useState('upload');
+    // iPhone State: 'upload', 'history', 'access', 'profile', 'login'
+    const [screen, setScreen] = useState('login');
     const [uploadStatus, setUploadStatus] = useState('idle');
     const [activeAlert, setActiveAlert] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -19,6 +19,10 @@ const Hero = () => {
 
     const handleBackFromHistory = () => {
         setActiveHistoryItem(null);
+    };
+
+    const handleLogin = () => {
+        setScreen('upload');
     };
 
     // Mock Access Data (Matches access.tsx / generateMockAccess)
@@ -138,6 +142,38 @@ const Hero = () => {
                                 { /* App Header removed - now individual per screen */}
 
                                 <div className="app-content-container">
+                                    {/* LOGIN SCREEN */}
+                                    {screen === 'login' && (
+                                        <div className="screen-login animate-fade-in">
+                                            <div className="login-logo-container">
+                                                <img src="/logode.png" alt="MedHive Logo" className="login-logo-img" />
+                                            </div>
+
+                                            <h2 className="login-title">Login</h2>
+
+                                            <div className="login-form">
+                                                <div className="login-field">
+                                                    <label>Email</label>
+                                                    <div className="login-input-wrapper">
+                                                        <i className="fa-regular fa-envelope"></i>
+                                                        <input type="email" placeholder="Enter your email" />
+                                                    </div>
+                                                </div>
+
+                                                <div className="login-field">
+                                                    <label>Password</label>
+                                                    <div className="login-input-wrapper">
+                                                        <i className="fa-solid fa-lock"></i>
+                                                        <input type="password" placeholder="Enter your password" />
+                                                    </div>
+                                                </div>
+
+                                                <div className="login-forgot">Forgot Password?</div>
+
+                                                <button className="btn-login-mockup" onClick={handleLogin}>Sign In</button>
+                                            </div>
+                                        </div>
+                                    )}
                                     {/* UPLOAD SCREEN */}
                                     {screen === 'upload' && (
                                         <div className="screen-home animate-fade-in">
@@ -346,22 +382,24 @@ const Hero = () => {
                                     )}
                                 </div>
 
-                                {/* BOTTOM NAV */}
-                                <div className="floating-nav">
-                                    <div className="nav-indicator" style={{
-                                        left: screen === 'history' ? '10px' : (screen === 'upload' || screen === 'profile') ? 'calc(33.33% + 5px)' : 'calc(66.66% + 5px)',
-                                        width: 'calc(33.33% - 15px)'
-                                    }}></div>
-                                    <div className={`nav-item ${screen === 'history' ? 'active' : ''}`} onClick={() => setScreen('history')}>
-                                        <i className="fas fa-history"></i>
+                                {/* BOTTOM NAV - HIDDEN ON LOGIN */}
+                                {screen !== 'login' && (
+                                    <div className="floating-nav">
+                                        <div className="nav-indicator" style={{
+                                            left: screen === 'history' ? '10px' : (screen === 'upload' || screen === 'profile') ? 'calc(33.33% + 5px)' : 'calc(66.66% + 5px)',
+                                            width: 'calc(33.33% - 15px)'
+                                        }}></div>
+                                        <div className={`nav-item ${screen === 'history' ? 'active' : ''}`} onClick={() => setScreen('history')}>
+                                            <i className="fas fa-history"></i>
+                                        </div>
+                                        <div className={`nav-item ${(screen === 'upload' || screen === 'profile') ? 'active' : ''}`} onClick={() => setScreen('upload')}>
+                                            <i className="fas fa-upload"></i>
+                                        </div>
+                                        <div className={`nav-item ${screen === 'access' ? 'active' : ''}`} onClick={() => setScreen('access')}>
+                                            <i className="fas fa-key"></i>
+                                        </div>
                                     </div>
-                                    <div className={`nav-item ${(screen === 'upload' || screen === 'profile') ? 'active' : ''}`} onClick={() => setScreen('upload')}>
-                                        <i className="fas fa-upload"></i>
-                                    </div>
-                                    <div className={`nav-item ${screen === 'access' ? 'active' : ''}`} onClick={() => setScreen('access')}>
-                                        <i className="fas fa-key"></i>
-                                    </div>
-                                </div>
+                                )}
 
                                 {/* PROFILE SCREEN (OVERLAY STYLE) */}
                                 {screen === 'profile' && (
