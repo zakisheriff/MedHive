@@ -67,21 +67,21 @@ export function AccessCard({ record, onUpdateStatus }: AccessCardProps) {
                             style={[styles.button, styles.approveBtn]}
                             onPress={() => handleAction('approve_1h')}
                         >
-                            <Ionicons name="time-outline" size={18} color="#fff" />
+                            <Ionicons name="time-outline" size={16} color="#fff" />
                             <Text style={styles.buttonText}>1 Hour</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.button, styles.approveBtn]}
                             onPress={() => handleAction('approve_full')}
                         >
-                            <Ionicons name="shield-checkmark-outline" size={18} color="#fff" />
+                            <Ionicons name="shield-checkmark-outline" size={16} color="#fff" />
                             <Text style={styles.buttonText}>Full Access</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.button, styles.rejectBtn]}
                             onPress={() => handleAction('revoke')}
                         >
-                            <Ionicons name="close-outline" size={18} color="#EF4444" />
+                            <Ionicons name="close-outline" size={16} color="#EF4444" />
                             <Text style={[styles.buttonText, styles.rejectText]}>Decline</Text>
                         </TouchableOpacity>
                     </>
@@ -90,7 +90,7 @@ export function AccessCard({ record, onUpdateStatus }: AccessCardProps) {
                         style={[styles.button, styles.revokeBtn]}
                         onPress={() => handleAction('revoke')}
                     >
-                        <Ionicons name="stop-circle-outline" size={18} color="#EF4444" />
+                        <Ionicons name="stop-circle-outline" size={16} color="#EF4444" />
                         <Text style={[styles.buttonText, styles.rejectText]}>Revoke Access</Text>
                     </TouchableOpacity>
                 )}
@@ -103,15 +103,11 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: '#fff',
         borderRadius: 24,
-        padding: 20,
+        padding: 16,
         marginBottom: 16,
         borderWidth: 1,
         borderColor: '#F1F5F9',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.03,
-        shadowRadius: 12,
-        elevation: 2,
+
     },
     header: {
         flexDirection: 'row',
@@ -192,16 +188,19 @@ const styles = StyleSheet.create({
     },
     actionRow: {
         flexDirection: 'row',
-        gap: 10,
+        gap: 8,
+        flexWrap: 'wrap',
     },
     button: {
         flex: 1,
-        height: 44,
-        borderRadius: 14,
+        minWidth: '28%', // Ensure buttons don't get too small
+        height: 40,
+        borderRadius: 12,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 6,
+        gap: 4,
+        paddingHorizontal: 4, // More compact
     },
     approveBtn: {
         backgroundColor: Colors.light.primary,
@@ -215,9 +214,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#FEF2F2',
         borderWidth: 1,
         borderColor: '#FEE2E2',
+        flex: 0,
+        width: '100%',
     },
     buttonText: {
-        fontSize: 13,
+        fontSize: 12, // Smaller font to fit better
         fontWeight: '700',
         color: '#fff',
     },
