@@ -126,12 +126,12 @@ export default function ProfileScreen() {
 
     const handleContactUs = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        Linking.openURL('mailto:support@medhive.ai?subject=Support%20Request');
+        Linking.openURL('mailto:reachmedhive@gmail.com?subject=Support%20Request');
     };
 
     const handleHelpCenter = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        Linking.openURL('https://medhive.ai/support');
+        Linking.openURL('https://medhive.lk');
     };
 
     const handleRateApp = () => {
@@ -255,13 +255,13 @@ export default function ProfileScreen() {
                     <MenuItem
                         icon="shield-checkmark-outline"
                         label="Security & Privacy"
-                        onPress={() => Linking.openURL('https://medhive.ai/privacy')}
+                        onPress={() => Linking.openURL('https://medhive.lk')}
                     />
                     <MenuItem
                         icon="card-outline"
                         label="Subscription"
                         value="Premium AI Plan"
-                        onPress={() => Alert.alert('MedHive Premium', 'You are currently on the Early Adopter plan. 🚀')}
+                        onPress={() => Alert.alert('MedHive Premium', 'You are Currently on The Early Adopter Plan.')}
                     />
                 </View>
 
