@@ -69,7 +69,7 @@ export function filterHistory(
     if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         filtered = filtered.filter((item) => {
-            const matchesTitle = item.title.toLowerCase().includes(query);
+            const matchesTitle = (item.title || '').toLowerCase().includes(query);
             const matchesClinic = item.clinicName?.toLowerCase().includes(query) ?? false;
             const matchesMedicines = item.medicines?.some((m) =>
                 m.name.toLowerCase().includes(query)
@@ -130,6 +130,20 @@ export function generateMockHistory(): HistoryItem[] {
                     status: 'normal',
                     referenceRange: '13.5-17.5 g/dL',
                 },
+                {
+                    name: 'WBC Count',
+                    value: '7.5',
+                    unit: 'x10^3/uL',
+                    status: 'normal',
+                    referenceRange: '4.5-11.0 x10^3/uL',
+                },
+                {
+                    name: 'Platelets',
+                    value: '250',
+                    unit: 'x10^3/uL',
+                    status: 'normal',
+                    referenceRange: '150-450 x10^3/uL',
+                },
             ],
             status: 'completed',
             imageUri: 'https://via.placeholder.com/300x400.png?text=Lab+Report+Image',
@@ -158,10 +172,25 @@ export function generateMockHistory(): HistoryItem[] {
             clinicName: 'Cardiac Health Lab',
             labTests: [
                 {
-                    name: 'Cholesterol',
+                    name: 'Total Cholesterol',
                     value: '185',
                     unit: 'mg/dL',
                     status: 'normal',
+                    referenceRange: '< 200 mg/dL',
+                },
+                {
+                    name: 'LDL Cholesterol',
+                    value: '110',
+                    unit: 'mg/dL',
+                    status: 'normal',
+                    referenceRange: '< 130 mg/dL',
+                },
+                {
+                    name: 'HDL Cholesterol',
+                    value: '55',
+                    unit: 'mg/dL',
+                    status: 'normal',
+                    referenceRange: '> 40 mg/dL',
                 },
             ],
             status: 'completed',

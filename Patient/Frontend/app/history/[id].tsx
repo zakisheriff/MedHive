@@ -119,11 +119,11 @@ export default function HistoryDetailScreen() {
                             <View key={index} style={styles.detailCard}>
                                 <View style={styles.detailCardHeader}>
                                     <Text style={styles.detailCardTitle}>{test.name}</Text>
-                                    <Text style={[styles.resultValue, { color: test.status === 'normal' ? '#10B981' : '#EF4444' }]}>
+                                    <Text style={styles.resultValue}>
                                         {test.value} {test.unit}
                                     </Text>
                                 </View>
-                                <Text style={styles.referenceRange}>Ref: {test.referenceRange}</Text>
+                                <Text style={styles.referenceRange}>Reference Range: {test.referenceRange}</Text>
                             </View>
                         ))
                     )}

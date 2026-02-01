@@ -275,27 +275,19 @@ function MedicineItem({ medicine }: { medicine: Medicine }) {
 }
 
 function LabTestItem({ test }: { test: LabTest }) {
-    const statusColor =
-        test.status === 'normal' ? '#10B981' :
-            test.status === 'critical' ? '#EF4444' : '#F59E0B';
-
     return (
         <View style={styles.labTestCard}>
             <View style={styles.labTestHeader}>
                 <Text style={styles.labTestName}>{test.name}</Text>
-                <View style={[styles.statusIndicator, { backgroundColor: `${statusColor}15` }]}>
-                    <View style={[styles.statusDotSmall, { backgroundColor: statusColor }]} />
-                    <Text style={[styles.statusTextSmall, { color: statusColor }]}>
-                        {test.status}
-                    </Text>
+                <View style={styles.labTestValue}>
+                    <Text style={styles.valueText}>{test.value}</Text>
+                    <Text style={styles.unitText}>{test.unit}</Text>
                 </View>
             </View>
-            <View style={styles.labTestValue}>
-                <Text style={styles.valueText}>{test.value}</Text>
-                <Text style={styles.unitText}>{test.unit}</Text>
-            </View>
             {test.referenceRange && (
-                <Text style={styles.referenceText}>Ref: {test.referenceRange}</Text>
+                <View style={styles.referenceRow}>
+                    <Text style={styles.referenceText}>Reference Range: {test.referenceRange}</Text>
+                </View>
             )}
         </View>
     );
@@ -457,13 +449,13 @@ const styles = StyleSheet.create({
         padding: 14,
         marginBottom: 10,
         borderLeftWidth: 3,
-        borderLeftColor: '#10B981',
+        borderLeftColor: Colors.light.primary,
     },
     labTestHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 8,
+        marginBottom: 6,
     },
     labTestName: {
         fontSize: 15,
@@ -471,29 +463,16 @@ const styles = StyleSheet.create({
         color: Colors.light.text,
         flex: 1,
     },
-    statusIndicator: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 8,
-        height: 24,
-        borderRadius: 12,
-        gap: 4,
-    },
-    statusDotSmall: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-    },
-    statusTextSmall: {
-        fontSize: 11,
-        fontWeight: '600',
-        textTransform: 'capitalize',
+    referenceRow: {
+        marginTop: 6,
+        paddingTop: 6,
+        borderTopWidth: 1,
+        borderTopColor: '#E2E8F0',
     },
     labTestValue: {
         flexDirection: 'row',
         alignItems: 'baseline',
         gap: 6,
-        marginBottom: 4,
     },
     valueText: {
         fontSize: 18,
