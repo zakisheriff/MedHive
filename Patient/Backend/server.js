@@ -48,15 +48,19 @@ app.post('/api/extract', upload.single('image'), async (req, res) => {
             return res.status(400).json({ error: 'No image uploaded' });
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         // Convert image to base64
         const imageBuffer = fs.readFileSync(req.file.path);
         const imageBase64 = imageBuffer.toString('base64');
 
         const prompt = `
-            Analyze this prescription or lab report image. 
-            Extract the following information in JSON format:
+            Analyze this image. 
+            FIRST: Determine if this is a medical prescription or a lab report.
+            If it is NOT a prescription and NOT a lab report (e.g., if it's a flower, a person, a landscape, etc.), 
+            return EXACTLY this JSON and nothing else: {"error": "not_medical_record"}.
+
+            If it IS a medical record, extract the following information in JSON format:
             {
                 "type": "prescription" | "lab_report",
                 "medicines": [
@@ -71,7 +75,7 @@ app.post('/api/extract', upload.single('image'), async (req, res) => {
                 "patient_name": "string",
                 "date": "string"
             }
-            If it's a lab report, extract key findings instead.
+            If it's a lab report, extract key findings in the medicines array with name as the test name and dosage as the result.
             Return ONLY the raw JSON.
         `;
 
@@ -111,7 +115,7 @@ app.post('/api/summary', async (req, res) => {
             return res.status(400).json({ error: 'Medicine name is required' });
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const prompt = `Provide a professional, concise summary for the medicine: ${medicineName}. Include what it is used for, common side effects, and important precautions. Format it with clear headings.`;
 
         const result = await model.generateContent(prompt);
