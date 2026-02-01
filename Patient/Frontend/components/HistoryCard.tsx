@@ -187,7 +187,7 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                                 }}
                             >
                                 <Image
-                                    source={{ uri: item.imageUri }}
+                                    source={item.imageUri}
                                     style={styles.prescriptionImage}
                                     contentFit="cover"
                                     transition={1000}

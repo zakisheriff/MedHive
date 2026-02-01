@@ -146,7 +146,7 @@ export default function HistoryDetailScreen() {
                             onPress={() => setPreviewVisible(true)}
                         >
                             <Image
-                                source={{ uri: item.imageUri }}
+                                source={item.imageUri}
                                 style={styles.documentImage}
                                 contentFit="contain"
                             />

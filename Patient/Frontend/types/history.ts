@@ -23,7 +23,7 @@ export interface HistoryItem {
     clinicName?: string;
     medicines?: Medicine[];
     labTests?: LabTest[];
-    imageUri?: string;
+    imageUri?: any;
     notes?: string;
     status: 'active' | 'completed' | 'expired';
 }

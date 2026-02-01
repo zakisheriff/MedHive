@@ -17,7 +17,7 @@ const { width, height } = Dimensions.get('window');
 
 interface ImagePreviewModalProps {
     isVisible: boolean;
-    imageUri: string | null;
+    imageUri: any;
     onClose: () => void;
 }
 
@@ -53,7 +53,7 @@ export function ImagePreviewModal({ isVisible, imageUri, onClose }: ImagePreview
 
                     <View style={styles.imageContainer}>
                         <Image
-                            source={{ uri: imageUri }}
+                            source={imageUri}
                             style={styles.image}
                             contentFit="contain"
                             transition={200}

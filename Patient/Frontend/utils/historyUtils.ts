@@ -91,6 +91,10 @@ export function generateMockHistory(): HistoryItem[] {
     const currentYear = now.getFullYear();
     const lastYear = currentYear - 1;
 
+    // Demo images provided by user
+    const demoPres = require('../assets/images/demo-pres.jpg');
+    const demoLab = require('../assets/images/demo-lab.jpeg');
+
     return [
         {
             id: '1',
@@ -114,7 +118,7 @@ export function generateMockHistory(): HistoryItem[] {
             ],
             status: 'active',
             notes: 'Take with food. Complete the full course.',
-            imageUri: 'https://via.placeholder.com/300x400.png?text=Prescription+Image',
+            imageUri: demoPres,
         },
         {
             id: '2',
@@ -146,7 +150,7 @@ export function generateMockHistory(): HistoryItem[] {
                 },
             ],
             status: 'completed',
-            imageUri: 'https://via.placeholder.com/300x400.png?text=Lab+Report+Image',
+            imageUri: demoLab,
         },
         {
             id: '3',
@@ -163,6 +167,7 @@ export function generateMockHistory(): HistoryItem[] {
                 },
             ],
             status: 'active',
+            imageUri: demoPres,
         },
         {
             id: '4',
@@ -194,7 +199,7 @@ export function generateMockHistory(): HistoryItem[] {
                 },
             ],
             status: 'completed',
-            imageUri: 'https://via.placeholder.com/300x400.png?text=Cardiac+Lab+Report',
+            imageUri: demoLab,
         },
         {
             id: '5',
@@ -211,7 +216,7 @@ export function generateMockHistory(): HistoryItem[] {
                 },
             ],
             status: 'completed',
-            imageUri: 'https://via.placeholder.com/300x400.png?text=Prescription+Archive',
+            imageUri: demoPres,
         },
     ];
 }
