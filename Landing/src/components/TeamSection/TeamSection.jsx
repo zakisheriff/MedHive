@@ -4,6 +4,16 @@ import './TeamSection.css';
 const teamMembers = [
     {
         id: 1,
+        name: 'Zaki Sheriff',
+        role: 'App Frontend',
+        image: '/Team/Zaki.png',
+        social: {
+            linkedin: 'https://www.linkedin.com/in/zakisheriff',
+            github: 'https://github.com/zakisheriff'
+        }
+    },
+    {
+        id: 2,
         name: 'Abdul Raheem',
         role: 'Clinic Frontend',
         image: '/Team/Raheem.jpeg',
@@ -12,18 +22,6 @@ const teamMembers = [
             github: 'https://github.com/abdulraheem05'
         }
     },
-    {
-        id: 2,
-        name: 'Zaki Sheriff',
-        role: 'Patient Frontend',
-        image: '/Team/Zaki.png',
-        social: {
-            linkedin: 'https://www.linkedin.com/in/zakisheriff',
-            github: 'https://github.com/zakisheriff'
-        }
-    },
-
-
     {
         id: 3,
         name: 'Hanaa Ajuward',
@@ -37,7 +35,7 @@ const teamMembers = [
     {
         id: 4,
         name: 'Abdul Rahman',
-        role: 'Patient Backend',
+        role: 'App Backend',
         image: '/Team/Rahman.png',
         social: {
             linkedin: '#',
@@ -70,42 +68,47 @@ const TeamSection = () => {
     return (
         <section className="team-section" id="team">
             <div className="container">
-                <h2 className="section-title">Meet Our Team</h2>
+                <div className="team-header">
+                    <h2 className="section-title">Meet Our Team</h2>
+                    <p className="section-subtitle">The visionary minds behind MedHive's revolutionary healthcare platform</p>
+                </div>
 
-                <div className="team-grid">
-                    {teamMembers.map((member, index) => (
-                        <div
-                            key={member.id}
-                            className={`glass-card team-card member-${member.id}`}
-                        >
-                            <div className="member-image-container">
-                                <img
-                                    src={member.image}
-                                    alt={member.name}
-                                    className="member-image"
-                                />
-                            </div>
-                            <div className="member-info">
-                                <h3>{member.name}</h3>
-                                <span className="member-role">{member.role}</span>
-                                <p className="member-bio">{member.bio}</p>
-
-                                <div className="social-links">
-                                    {Object.keys(member.social).map((platform) => (
-                                        <a
-                                            key={platform}
-                                            href={member.social[platform]}
-                                            className="social-link"
-                                            aria-label={`${member.name}'s ${platform}`}
-                                            target='_blank'
-                                        >
-                                            <i className={`fab fa-${platform}`}></i>
-                                        </a>
-                                    ))}
+                <div className="team-scroll-container">
+                    <div className="team-row">
+                        {teamMembers.map((member, index) => (
+                            <div
+                                key={member.id}
+                                className={`team-premium-card member-${member.id}`}
+                            >
+                                <div className="member-image-wrapper">
+                                    <img
+                                        src={member.image}
+                                        alt={member.name}
+                                        className="member-image"
+                                    />
+                                    <div className="member-social-overlay">
+                                        {Object.keys(member.social).map((platform) => (
+                                            <a
+                                                key={platform}
+                                                href={member.social[platform]}
+                                                className="social-icon-btn"
+                                                aria-label={`${member.name}'s ${platform}`}
+                                                target='_blank'
+                                                rel="noopener noreferrer"
+                                            >
+                                                <i className={`fab fa-${platform}`}></i>
+                                            </a>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="member-details">
+                                    <span className="member-role-badge">{member.role}</span>
+                                    <h3 className="member-full-name">{member.name}</h3>
+                                    <div className="member-accent-line"></div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>
