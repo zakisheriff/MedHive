@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     },
     headerSubtitle: {
         fontSize: 14,
-        color: '#64748B',
+        color: '#8E8E93',
         fontWeight: '500',
     },
     scrollView: {

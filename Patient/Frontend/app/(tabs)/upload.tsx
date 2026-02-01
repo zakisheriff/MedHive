@@ -85,7 +85,10 @@ export default function UploadScreen() {
         <View style={styles.container}>
             {/* Header with Profile Avatar */}
             <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
-                <Text style={styles.headerTitle}>Upload</Text>
+                <View>
+                    <Text style={styles.headerTitle}>Upload</Text>
+                    <Text style={styles.headerSubtitle}>AI Scan & Extract</Text>
+                </View>
                 <ProfileAvatar size={34} />
             </View>
 
@@ -189,9 +192,9 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         paddingHorizontal: 20,
-        paddingBottom: 8,
+        paddingBottom: 12,
         width: '100%',
         maxWidth: 500,
         alignSelf: 'center',
@@ -200,6 +203,12 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontWeight: '700',
         color: Colors.light.text,
+        marginBottom: 2,
+    },
+    headerSubtitle: {
+        fontSize: 14,
+        color: '#8E8E93',
+        fontWeight: '500',
     },
     scrollView: {
         flex: 1,
