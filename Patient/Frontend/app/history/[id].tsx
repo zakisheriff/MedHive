@@ -148,7 +148,7 @@ export default function HistoryDetailScreen() {
                             <Image
                                 source={item.imageUri}
                                 style={styles.documentImage}
-                                contentFit="contain"
+                                contentFit="cover"
                             />
                         </TouchableOpacity>
                     </View>
@@ -185,10 +185,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
+        shadowRadius: 1,
     },
     headerTitle: {
         fontSize: 18,
@@ -231,20 +230,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
         padding: 16,
-        borderRadius: 20,
+        borderRadius: 35,
         gap: 16,
         borderWidth: 1,
         borderColor: '#F1F5F9',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-        elevation: 2,
     },
     clinicIconContainer: {
         width: 48,
         height: 48,
-        borderRadius: 16,
+        borderRadius: 35,
         backgroundColor: '#F8FAFC',
         alignItems: 'center',
         justifyContent: 'center',
@@ -275,7 +269,7 @@ const styles = StyleSheet.create({
     },
     detailCard: {
         backgroundColor: '#fff',
-        borderRadius: 16,
+        borderRadius: 35,
         padding: 16,
         marginBottom: 12,
         borderWidth: 1,
@@ -297,7 +291,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#EFF6FF',
         paddingHorizontal: 12,
         height: 28,
-        borderRadius: 14,
+        borderRadius: 35,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -328,7 +322,7 @@ const styles = StyleSheet.create({
     notesBox: {
         backgroundColor: '#FFF7ED',
         padding: 16,
-        borderRadius: 16,
+        borderRadius: 35,
         borderLeftWidth: 4,
         borderLeftColor: Colors.light.primary,
     },
@@ -339,9 +333,9 @@ const styles = StyleSheet.create({
     },
     documentImage: {
         width: '100%',
-        height: 400,
-        backgroundColor: '#F1F5F9',
-        borderRadius: 20,
+        aspectRatio: 1.1,
+        borderRadius: 35,
+        overflow: 'hidden',
     },
     errorContainer: {
         flex: 1,
