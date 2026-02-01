@@ -4,6 +4,7 @@ import { HoneyContainer } from '../../components/HoneyContainer';
 import { Colors } from '../../constants/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProfileAvatar } from '../../components/ProfileAvatar';
+import { useAlert } from '../../context/AlertContext';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
@@ -13,6 +14,7 @@ import { AccessRecord, AccessStatus, AccessDuration } from '../../types/access';
 
 export default function AccessScreen() {
     const insets = useSafeAreaInsets();
+    const { showAlert } = useAlert();
     const [accessRecords, setAccessRecords] = useState<AccessRecord[]>(generateMockAccess());
 
     // User's Med-ID (Mock)
@@ -26,7 +28,7 @@ export default function AccessScreen() {
         accessRecords.filter(r => r.status === 'active'),
         [accessRecords]);
 
-    const handleUpdateStatus = (id: string, action: 'approve_1h' | 'approve_full' | 'revoke') => {
+    const executeUpdate = (id: string, action: 'approve_1h' | 'approve_full' | 'revoke') => {
         setAccessRecords(prev => prev.map(record => {
             if (record.id !== id) return record;
 
@@ -45,7 +47,47 @@ export default function AccessScreen() {
                 duration: (action === 'approve_1h' ? '1h' : 'full') as AccessDuration,
                 expiryDate: expiry
             };
-        }).filter(r => r.status !== 'revoked')); // For mock UI, we just remove revoked ones
+        }).filter(r => r.status !== 'revoked'));
+
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    };
+
+    const handleUpdateStatus = (id: string, action: 'approve_1h' | 'approve_full' | 'revoke') => {
+        const record = accessRecords.find(r => r.id === id);
+        if (!record) return;
+
+        let title = "";
+        let message = "";
+        let confirmText = "Confirm";
+        let style: 'default' | 'destructive' = 'default';
+
+        if (action === 'approve_1h') {
+            title = "Grant Temporary Access?";
+            message = `${record.clinicName} will be able to view your medical history for exactly 60 minutes.`;
+            confirmText = "Approve for 1 Hour";
+        } else if (action === 'approve_full') {
+            title = "Grant Full Access?";
+            message = `${record.clinicName} will have ongoing access to your medical history until you revoke it manually.`;
+            confirmText = "Approve Full Access";
+        } else if (action === 'revoke') {
+            title = "Revoke Access?";
+            message = `${record.clinicName} will no longer be able to view your medical records or history.`;
+            confirmText = "Revoke";
+            style = 'destructive';
+        }
+
+        showAlert({
+            title,
+            message,
+            buttons: [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: confirmText,
+                    style,
+                    onPress: () => executeUpdate(id, action)
+                },
+            ]
+        });
     };
 
     const handleShareMedId = async () => {

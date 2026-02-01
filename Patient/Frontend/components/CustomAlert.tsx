@@ -140,7 +140,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '700',
         color: Colors.light.primary,
-        textTransform: 'uppercase', // Material style labels
         letterSpacing: 0.5,
     },
     destructiveText: {
