@@ -1,0 +1,119 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 0 20px;
+  font-family: "Helvetica", sans-serif;
+}
+
+/* 1. Hero Landing Style */
+.home-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 150px; /* Pushes it slightly above the center */
+}
+
+.greeting-text {
+  font-size: 3.5rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, #f1a63b, #f1a63b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.sub-greeting {
+  font-size: 3.5rem;
+  color: #c4c7c5; /* Gemini gray */
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 2. Chat History Style */
+.chat-content {
+  flex: 1;
+  padding-top: 60px;
+  padding-bottom: 180px;
+}
+
+.message-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  align-items: flex-start;
+}
+
+.message-row.user {
+  flex-direction: row-reverse;
+}
+
+.chat-avatar {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.message-text {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #1f1f1f;
+  max-width: 85%;
+}
+
+.user .message-text {
+  background-color: #f0f4f9;
+  padding: 12px 20px;
+  border-radius: 24px;
+}
+
+/* 3. Sticky Bottom Input */
+.input-sticky-bottom {
+  position: fixed;
+  bottom: 0;
+  width: calc(100% - 300px); /* Adjust based on sidebar width */
+  max-width: 850px;
+  background-color: #ffffff;
+  padding-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-pill {
+  width: 100%;
+  background-color: #f0f4f9;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  padding: 8px 24px;
+}
+
+.input-pill input {
+  flex: 1;
+  height: 50px;
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  outline: none;
+}
+
+.send-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.send-btn img {
+  width: 24px;
+  opacity: 0.6;
+}
+
+.footer-note {
+  font-size: 0.75rem;
+  color: #70757a;
+  margin-top: 12px;
+}
