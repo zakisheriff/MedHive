@@ -120,13 +120,13 @@ const Hero = ({ focusTrigger }) => {
                     setActiveAlert({
                         title: "Coming Soon!",
                         message: "MedHive's Prescription Reader is Currently in Private Beta. We're Refining the Model to Ensure 99.9% Accuracy Before Public Release.",
-                        confirmText: "Notify Me When Ready",
+                        confirmText: "Notify Me",
                         onConfirm: () => {
                             setActiveAlert(null);
                             setUploadStatus('idle');
                             setUploadPreview(null);
                         },
-                        onCancel: () => { 
+                        onCancel: () => {
                             setActiveAlert(null);
                             setUploadStatus('idle');
                             setUploadPreview(null);
@@ -232,25 +232,6 @@ const Hero = ({ focusTrigger }) => {
                                 { /* App Header removed - now individual per screen */}
 
                                 <div className="app-content-container">
-                                    {/* UPLOAD PROGRESS OVERLAY */}
-                                    {uploadStatus !== 'idle' && (
-                                        <div className="upload-progress-overlay animate-fade-in">
-                                            {uploadPreview && (
-                                                <div className="preview-container">
-                                                    <div className="preview-pill-wrapper">
-                                                        <img src={uploadPreview} alt="Preview" className="upload-preview-img" />
-                                                        <div className="scan-line"></div>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            <div className="upload-status-box">
-                                                <div className="status-spinner"></div>
-                                                <h3>{uploadStatus === 'uploading' ? 'Uploading...' : 'Analyzing with AI...'}</h3>
-                                                <p>Extracting medical details from your image</p>
-                                            </div>
-                                        </div>
-                                    )}
-
                                     {/* LOGIN SCREEN */}
                                     {screen === 'login' && (
                                         <div className="screen-login animate-fade-in">
@@ -510,23 +491,49 @@ const Hero = ({ focusTrigger }) => {
                                         </div>
                                     )}
 
-                                    {/* ALERT OVERLAY */}
-                                    {activeAlert && (
-                                        <div className="alert-overlay">
-                                            <div className="alert-content">
-                                                <h3>{activeAlert.title}</h3>
-                                                <p>{activeAlert.message}</p>
-                                                <div className="alert-actions">
-                                                    <button className="alert-btn-confirm" onClick={activeAlert.onConfirm}>{activeAlert.confirmText}</button>
-                                                    <button className="alert-btn-cancel" onClick={() => {
-                                                        if (activeAlert.onCancel) activeAlert.onCancel();
-                                                        setActiveAlert(null);
-                                                    }}>Cancel</button>
-                                                </div>
-                                            </div>
+                                    {/* PROFILE SCREEN */}
+                                    {screen === 'profile' && (
+                                        <div className="screen-profile animate-fade-in">
+                                            {/* ... profile content ... */}
                                         </div>
                                     )}
                                 </div>
+
+                                {/* UPLOAD PROGRESS OVERLAY (MOVED OUT) */}
+                                {uploadStatus !== 'idle' && (
+                                    <div className="upload-progress-overlay animate-fade-in">
+                                        {uploadPreview && (
+                                            <div className="preview-container">
+                                                <div className="preview-pill-wrapper">
+                                                    <img src={uploadPreview} alt="Preview" className="upload-preview-img" />
+                                                    <div className="scan-line"></div>
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className="upload-status-box">
+                                            <div className="status-spinner"></div>
+                                            <h3>{uploadStatus === 'uploading' ? 'Uploading...' : 'Analyzing with AI...'}</h3>
+                                            <p>Extracting medical details from your image</p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* ALERT OVERLAY (MOVED OUT) */}
+                                {activeAlert && (
+                                    <div className="alert-overlay">
+                                        <div className="alert-content">
+                                            <h3>{activeAlert.title}</h3>
+                                            <p>{activeAlert.message}</p>
+                                            <div className="alert-actions">
+                                                <button className="alert-btn-confirm" onClick={activeAlert.onConfirm}>{activeAlert.confirmText}</button>
+                                                <button className="alert-btn-cancel" onClick={() => {
+                                                    if (activeAlert.onCancel) activeAlert.onCancel();
+                                                    setActiveAlert(null);
+                                                }}>Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* BOTTOM NAV - HIDDEN ON LOGIN */}
                                 {screen !== 'login' && (
