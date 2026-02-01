@@ -58,6 +58,20 @@ html {
     position: relative;
 }
 
+.page-fade-in {
+    animation: pageFadeIn 1.2s ease-out forwards;
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 /* Shared Container */
 .container {
     max-width: var(--container-max-width);

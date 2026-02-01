@@ -69,6 +69,10 @@
     gap: 20px;
 }
 
+.hero-buttons a {
+    text-decoration: none;
+}
+
 /* Right Content - iPhone Mockup */
 .hero-right {
     position: relative;
@@ -768,7 +772,8 @@
     border: none;
     background: transparent;
     flex: 1;
-    font-size: 13px;
+    font-size: 16px;
+    /* Prevents iOS auto-zoom */
     outline: none;
 }
 
@@ -2031,16 +2036,17 @@
     }
 
     .hero-buttons {
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
-
-    .hero-buttons a {
-        flex: 1;
-        min-width: 140px;
-    }
-
-    .hero-buttons button {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
         width: 100%;
+    }
+
+    .hero-buttons a,
+    .hero-buttons button {
+        width: 100% !important;
+        max-width: 280px;
+        display: flex;
+        justify-content: center;
     }
 }
