@@ -198,7 +198,10 @@ export default function PrescriptionResultScreen() {
                     </View>
                 </View>
 
-                <View style={[styles.contentPill, { marginTop: insets.top + 60 }]}>
+                <View style={[
+                    styles.contentPill,
+                    Platform.OS !== 'web' && { marginTop: insets.top + 60 }
+                ]}>
                     {/* Header Image */}
                     <View style={styles.imageWrapper}>
                         <Image source={{ uri: imageUri }} style={styles.mainImage} resizeMode="cover" />
@@ -334,6 +337,7 @@ const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
         alignItems: 'center',
+        justifyContent: Platform.OS === 'web' ? 'center' : 'flex-start',
     },
     loadingContainer: {
         flex: 1,
@@ -349,19 +353,30 @@ const styles = StyleSheet.create({
     },
     contentPill: {
         width: width * 0.95,
-        flex: 1, // Let it fill space naturally
-        marginBottom: 20,
+        maxWidth: 420,
+        alignSelf: 'center',
         backgroundColor: Colors.light.primary,
         borderRadius: 40,
-        padding: 10,
+        padding: 15, // Increased padding
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.1,
         shadowRadius: 15,
         elevation: 10,
+        // Web optimization
+        ...Platform.select({
+            web: {
+                marginVertical: 40,
+                minHeight: 500,
+            },
+            default: {
+                flex: 1,
+                marginBottom: 20,
+            }
+        })
     },
     imageWrapper: {
-        height: height * 0.28,
+        height: Platform.OS === 'web' ? 160 : height * 0.28, // Compact image for web
         width: '100%',
         borderRadius: 32,
         overflow: 'hidden',
@@ -426,7 +441,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     buttonGradientBase: {
-        paddingVertical: 17,
+        paddingVertical: Platform.OS === 'web' ? 14 : 17, // Slimmer buttons on web
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -454,7 +469,8 @@ const styles = StyleSheet.create({
     },
     closeHeaderInner: {
         width: '100%',
-        paddingHorizontal: 20,
+        maxWidth: 420, // Match new contentPill width
+        paddingHorizontal: 15,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-end',
@@ -487,6 +503,7 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         width: width * 0.92,
+        maxWidth: 450, // UX: Premium focused width on Web
         backgroundColor: '#2D2D2A', // Deep charcoal
         borderRadius: 40,
         padding: 25,
