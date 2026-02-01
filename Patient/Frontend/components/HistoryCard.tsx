@@ -115,7 +115,7 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                             </Text>
                         )}
                         <Text style={styles.recordSubtitle} numberOfLines={1}>
-                            {item.type === 'prescription' ? 'Prescription' : 'Lab Report'}
+                            {item.type === 'prescription' ? 'Digital Prescription' : 'Electronic Lab Report'}
                         </Text>
                     </View>
                 </View>
@@ -173,10 +173,12 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                         </View>
                     )}
 
-                    {/* Prescription Image */}
-                    {isPrescription && item.imageUri && (
+                    {/* Document Image */}
+                    {item.imageUri && (
                         <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Prescription</Text>
+                            <Text style={styles.sectionTitle}>
+                                {isPrescription ? 'Prescription' : 'Lab Report Document'}
+                            </Text>
                             <TouchableOpacity
                                 activeOpacity={0.9}
                                 onPress={() => {

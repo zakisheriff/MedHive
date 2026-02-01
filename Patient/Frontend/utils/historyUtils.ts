@@ -132,6 +132,7 @@ export function generateMockHistory(): HistoryItem[] {
                 },
             ],
             status: 'completed',
+            imageUri: 'https://via.placeholder.com/300x400.png?text=Lab+Report+Image',
         },
         {
             id: '3',
@@ -164,6 +165,7 @@ export function generateMockHistory(): HistoryItem[] {
                 },
             ],
             status: 'completed',
+            imageUri: 'https://via.placeholder.com/300x400.png?text=Cardiac+Lab+Report',
         },
         {
             id: '5',

@@ -18,7 +18,7 @@ export default function HistoryScreen() {
     const [selectedFilter, setSelectedFilter] = useState<FilterType>('all');
 
     // TODO: Replace with actual data from backend/context
-    const [historyItems] = useState<HistoryItem[]>(generateMockHistory());
+    const historyItems = useMemo(() => generateMockHistory(), []);
 
     // Filter and group history items
     const filteredItems = useMemo(
