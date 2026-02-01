@@ -112,6 +112,9 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                                 {item.clinicName}
                             </Text>
                         )}
+                        <Text style={styles.recordSubtitle} numberOfLines={1}>
+                            {item.title || (item.type === 'prescription' ? 'Medical Prescription' : 'Diagnostic Lab Report')}
+                        </Text>
                     </View>
                 </View>
                 <View style={styles.headerRight}>
@@ -123,17 +126,23 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
             <View style={styles.previewContainer}>
                 {isPrescription && item.medicines && item.medicines.length > 0 && (
                     <View style={styles.previewRow}>
-                        <Ionicons name="medical-outline" size={16} color={Colors.light.primary} />
+                        <View style={styles.previewIconBadge}>
+                            <Ionicons name="medical" size={12} color={Colors.light.primary} />
+                        </View>
                         <Text style={styles.previewText} numberOfLines={1}>
-                            {item.medicines.length} {item.medicines.length === 1 ? 'medicine' : 'medicines'}
+                            {item.medicines[0].name}
+                            {item.medicines.length > 1 ? ` +${item.medicines.length - 1} more` : ''}
                         </Text>
                     </View>
                 )}
                 {!isPrescription && item.labTests && item.labTests.length > 0 && (
                     <View style={styles.previewRow}>
-                        <Ionicons name="analytics-outline" size={16} color={Colors.light.primary} />
+                        <View style={styles.previewIconBadge}>
+                            <Ionicons name="analytics" size={12} color={Colors.light.primary} />
+                        </View>
                         <Text style={styles.previewText} numberOfLines={1}>
-                            {item.labTests.length} {item.labTests.length === 1 ? 'test' : 'tests'}
+                            {item.labTests[0].name}
+                            {item.labTests.length > 1 ? ` +${item.labTests.length - 1} more` : ''}
                         </Text>
                     </View>
                 )}
@@ -278,11 +287,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         borderWidth: 1,
         borderColor: '#F1F5F9',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 2,
+
     },
     cardHeader: {
         flexDirection: 'row',
@@ -296,22 +301,33 @@ const styles = StyleSheet.create({
         marginRight: 12,
     },
     iconContainer: {
-        width: 44,
-        height: 44,
+        width: 48,
+        height: 48,
         borderRadius: 14,
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 12,
+        marginRight: 14,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 3,
     },
     headerText: {
         flex: 1,
         justifyContent: 'center',
     },
     clinicNamePrimary: {
-        fontSize: 17,
-        fontWeight: '700',
+        fontSize: 18,
+        fontWeight: '800',
         color: Colors.light.text,
-        letterSpacing: -0.3,
+        letterSpacing: -0.5,
+        marginBottom: 2,
+    },
+    recordSubtitle: {
+        fontSize: 14,
+        color: '#64748B',
+        fontWeight: '500',
     },
     headerRight: {
         alignItems: 'flex-end',
@@ -323,18 +339,34 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     previewContainer: {
-        marginTop: 0,
-        paddingTop: 0,
+        marginTop: 14,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
     },
     previewRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 6,
+        backgroundColor: '#F8FAFC',
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 12,
+        gap: 8,
+        borderWidth: 1,
+        borderColor: '#F1F5F9',
+    },
+    previewIconBadge: {
+        width: 22,
+        height: 22,
+        borderRadius: 8,
+        backgroundColor: 'rgba(220,163,73,0.1)',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     previewText: {
-        fontSize: 14,
-        color: Colors.light.text,
-        fontWeight: '500',
+        fontSize: 13,
+        color: '#475569',
+        fontWeight: '600',
     },
     detailsContainer: {
         marginTop: 16,
