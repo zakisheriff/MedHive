@@ -9,15 +9,18 @@ import {
     ActivityIndicator,
     Alert,
     Dimensions,
-    SafeAreaView
+    SafeAreaView,
+    Platform
 } from 'react-native';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/theme';
 import { API_ENDPOINTS } from '../constants/config';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default function PrescriptionResultScreen() {
     const { imageUri } = useLocalSearchParams<{ imageUri: string }>();
@@ -35,7 +38,7 @@ export default function PrescriptionResultScreen() {
 
     const extractData = async () => {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
 
         try {
             setLoading(true);
@@ -47,7 +50,6 @@ export default function PrescriptionResultScreen() {
                 type: 'image/jpeg',
             });
 
-            console.log('Sending request to:', API_ENDPOINTS.EXTRACT);
             const response = await fetch(API_ENDPOINTS.EXTRACT, {
                 method: 'POST',
                 body: formData,
@@ -60,14 +62,14 @@ export default function PrescriptionResultScreen() {
             clearTimeout(timeoutId);
             const result = await response.json();
 
-            if (!response.ok) {
+            if (!response.status.toString().startsWith('2')) {
                 throw new Error(result.error || `Server error: ${response.status}`);
             }
 
             if (result.error === 'not_medical_record') {
                 Alert.alert(
-                    'Validation Error',
-                    'This image does not appear to be a medical prescription or lab report. Please upload a clear medical document.',
+                    'Invalid Document',
+                    'MedHive AI: This image doesn\'t appear to be a medical prescription or lab report. Please upload a clear medical document.',
                     [{ text: 'OK', onPress: () => router.back() }]
                 );
                 return;
@@ -76,15 +78,14 @@ export default function PrescriptionResultScreen() {
             setData(result);
         } catch (error: any) {
             console.error('Extraction error:', error);
-            let title = 'Error';
-            let msg = error.message;
+            let title = 'Connection Issue';
+            let msg = 'Failed to reach MedHive AI. Please ensure your backend is running and connected to same WiFi.';
 
             if (error.name === 'AbortError') {
-                title = 'Connection Timeout';
-                msg = 'Request timed out. Is the backend server running?';
-            } else if (error.message.includes('Network request failed')) {
-                title = 'Connection Failed';
-                msg = 'Please check if your computer and phone are on the same WiFi.';
+                title = 'Timeout';
+                msg = 'MedHive AI is taking too long. Please try again.';
+            } else if (error.message) {
+                msg = error.message;
             }
 
             Alert.alert(title, msg);
@@ -97,7 +98,7 @@ export default function PrescriptionResultScreen() {
     const handleViewSummary = async () => {
         if (!data?.medicines?.[0]?.name) return;
         setViewMode('summary');
-        if (summary) return; // Already fetched
+        if (summary) return;
 
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
@@ -111,7 +112,7 @@ export default function PrescriptionResultScreen() {
             const result = await response.json();
             setSummary(result.summary);
         } catch (error) {
-            Alert.alert('Error', 'Failed to get summary');
+            Alert.alert('Error', 'Failed to generate medical summary.');
         } finally {
             setSummaryLoading(false);
         }
@@ -119,7 +120,7 @@ export default function PrescriptionResultScreen() {
 
     const handleSendToClinic = () => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        Alert.alert('Success', 'Prescription has been sent to the clinic pharmacy.');
+        Alert.alert('Success', 'Prescription has been securely forwarded to your clinic pharmacy.');
     };
 
     const handleAddToHistory = async () => {
@@ -131,234 +132,339 @@ export default function PrescriptionResultScreen() {
             });
             if (response.ok) {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                Alert.alert('Success', 'Added to your medical history.');
+                Alert.alert('Success', 'Record saved to your medical history.');
             }
         } catch (error) {
-            Alert.alert('Error', 'Failed to save to history');
+            Alert.alert('Error', 'Failed to save record.');
         }
     };
 
     if (loading) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#dca349" />
-                <Text style={styles.loadingText}>Gemini is analyzing your prescription...</Text>
-            </View>
+            <LinearGradient colors={['#F8FAFC', '#E2E8F0']} style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={Colors.light.primary} />
+                <Text style={styles.loadingText}>MedHive AI analyzing...</Text>
+            </LinearGradient>
         );
     }
 
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <View style={styles.mainContainer}>
             <Stack.Screen options={{ headerShown: false }} />
+            <LinearGradient
+                colors={['#F5B25F', '#dca349']}
+                style={StyleSheet.absoluteFill}
+            />
 
-            <View style={styles.container}>
-                <View style={styles.card}>
-                    {/* Image Scroll Section */}
-                    <View style={styles.imageSection}>
-                        <Image source={{ uri: imageUri }} style={styles.prescriptionImage} resizeMode="cover" />
+            <SafeAreaView style={styles.safeArea}>
+                <View style={styles.contentPill}>
+                    {/* Header Image with Glassmorphism Overlay */}
+                    <View style={styles.imageWrapper}>
+                        <Image source={{ uri: imageUri }} style={styles.mainImage} resizeMode="cover" />
+                        <BlurView intensity={20} tint="dark" style={styles.imageOverlay}>
+                            <Ionicons name="scan-outline" size={24} color="#fff" />
+                            <Text style={styles.overlayText}>AI Scanned Document</Text>
+                        </BlurView>
                     </View>
 
-                    {/* Content Section */}
-                    <View style={styles.contentSection}>
-                        <ScrollView showsVerticalScrollIndicator={false}>
+                    {/* Results Area */}
+                    <View style={styles.resultsArea}>
+                        <View style={styles.tabSwitcher}>
+                            <TouchableOpacity
+                                style={[styles.tab, viewMode === 'details' && styles.activeTab]}
+                                onPress={() => setViewMode('details')}
+                            >
+                                <Text style={[styles.tabText, viewMode === 'details' && styles.activeTabText]}>Details</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.tab, viewMode === 'summary' && styles.activeTab]}
+                                onPress={handleViewSummary}
+                            >
+                                <Text style={[styles.tabText, viewMode === 'summary' && styles.activeTabText]}>Summary</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
                             {viewMode === 'details' ? (
                                 <View>
-                                    <Text style={styles.sectionTitle}>Medicine Details</Text>
                                     {data?.medicines?.map((med: any, index: number) => (
-                                        <View key={index} style={styles.medicineItem}>
-                                            <Text style={styles.medName}>{med.name}</Text>
-                                            <Text style={styles.medDetails}>
-                                                {med.dosage}{med.frequency ? ` • ${med.frequency}` : ''}{med.duration ? ` • ${med.duration}` : ''}
-                                            </Text>
+                                        <View key={index} style={styles.medCard}>
+                                            <View style={styles.medHeader}>
+                                                <Ionicons name="medical" size={20} color={Colors.light.primary} />
+                                                <Text style={styles.medNameText}>{med.name}</Text>
+                                            </View>
+                                            <View style={styles.medInfoRow}>
+                                                <Text style={styles.medDetailLabel}>Dosage: <Text style={styles.medDetailValue}>{med.dosage || 'N/A'}</Text></Text>
+                                                <Text style={styles.medDetailLabel}>Duration: <Text style={styles.medDetailValue}>{med.duration || 'N/A'}</Text></Text>
+                                            </View>
                                             {med.instructions ? (
-                                                <Text style={styles.medInstructions}>{med.instructions}</Text>
+                                                <Text style={styles.medInstructionsText}>Note: {med.instructions}</Text>
                                             ) : null}
                                         </View>
                                     ))}
                                     {!data?.medicines?.length && (
-                                        <Text style={styles.emptyText}>No medicines detected.</Text>
+                                        <Text style={styles.emptyText}>No data extracted.</Text>
                                     )}
                                 </View>
                             ) : (
-                                <View>
-                                    <Text style={styles.sectionTitle}>Medicine Summary</Text>
+                                <View style={styles.summaryBox}>
                                     {summaryLoading ? (
-                                        <ActivityIndicator color="#4B4B4B" style={{ marginTop: 20 }} />
+                                        <ActivityIndicator color={Colors.light.primary} style={{ marginTop: 20 }} />
                                     ) : (
-                                        <Text style={styles.summaryText}>{summary || 'Click "View Summary" to analyze.'}</Text>
+                                        <Text style={styles.summaryBodyText}>{summary || 'Analyzing medicine...'}</Text>
                                     )}
                                 </View>
                             )}
                         </ScrollView>
 
-                        {/* Action Buttons */}
-                        <View style={styles.buttonGroup}>
-                            <TouchableOpacity style={styles.charcoalButton} onPress={() => setViewMode('details')}>
-                                <Text style={styles.buttonText}>View Medicine</Text>
+                        {/* Action Buttons - Refined Aesthetics */}
+                        <View style={styles.actionGrid}>
+                            <TouchableOpacity
+                                style={[styles.actionBtn, styles.btnPrimary]}
+                                onPress={handleSendToClinic}
+                            >
+                                <LinearGradient colors={['#4A4A4A', '#2D2D2D']} style={styles.btnGradient}>
+                                    <Ionicons name="business" size={18} color="#fff" />
+                                    <Text style={styles.btnText}>Send to Clinic</Text>
+                                </LinearGradient>
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={styles.charcoalButton}
-                                onPress={handleViewSummary}
+                                style={[styles.actionBtn, styles.btnSecondary]}
+                                onPress={handleAddToHistory}
                             >
-                                <Text style={styles.buttonText}>View Summary</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={styles.sageButton} onPress={handleSendToClinic}>
-                                <Text style={styles.buttonText}>Send to Clinic</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={styles.sageButton} onPress={handleAddToHistory}>
-                                <Text style={styles.buttonText}>Add to History</Text>
+                                <LinearGradient colors={['#ADC178', '#8A9A5B']} style={styles.btnGradient}>
+                                    <Ionicons name="archive" size={18} color="#fff" />
+                                    <Text style={styles.btnText}>Add to History</Text>
+                                </LinearGradient>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
 
-                {/* Bottom Close Button */}
+                {/* Elegant Close Button */}
                 <TouchableOpacity
-                    style={styles.closeButton}
+                    style={styles.floatingClose}
                     onPress={() => router.back()}
-                    activeOpacity={0.7}
+                    activeOpacity={0.8}
                 >
-                    <Ionicons name="close" size={28} color="#fff" />
+                    <BlurView intensity={30} tint="light" style={styles.closeBlur}>
+                        <Ionicons name="close-outline" size={32} color="#fff" />
+                    </BlurView>
                 </TouchableOpacity>
-            </View>
-        </SafeAreaView>
+            </SafeAreaView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
+    mainContainer: {
+        flex: 1,
+    },
     safeArea: {
         flex: 1,
-        backgroundColor: '#F5B25F', // MedHive Honey/Peach background
-    },
-    container: {
-        flex: 1,
         alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingTop: 10,
-        paddingBottom: 20,
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#F8FAFC',
     },
     loadingText: {
-        marginTop: 16,
-        fontSize: 16,
-        color: '#666',
-        fontWeight: '500',
+        marginTop: 20,
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#4A4A4A',
+        letterSpacing: 0.5,
     },
-    card: {
-        flex: 1,
-        width: '100%',
+    contentPill: {
+        width: width * 0.92,
+        height: height * 0.78,
         backgroundColor: '#fff',
-        borderRadius: 45, // Large rounded corners from Figma
-        overflow: 'hidden',
-        elevation: 10,
+        borderRadius: 40,
+        padding: 10,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 0.15,
-        shadowRadius: 15,
-        marginBottom: 80, // Space for the close button
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.2,
+        shadowRadius: 20,
+        elevation: 15,
+        marginTop: 20,
     },
-    imageSection: {
-        height: '35%',
+    imageWrapper: {
+        height: '32%',
         width: '100%',
-        padding: 20,
-        alignItems: 'center',
-        justifyContent: 'center',
+        borderRadius: 32,
+        overflow: 'hidden',
+        position: 'relative',
     },
-    prescriptionImage: {
+    mainImage: {
         width: '100%',
         height: '100%',
-        borderRadius: 30,
-        backgroundColor: '#eee',
     },
-    contentSection: {
+    imageOverlay: {
+        position: 'absolute',
+        bottom: 12,
+        left: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+    },
+    overlayText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: '600',
+    },
+    resultsArea: {
         flex: 1,
-        paddingHorizontal: 25,
+        paddingTop: 15,
+        paddingHorizontal: 15,
+    },
+    tabSwitcher: {
+        flexDirection: 'row',
+        backgroundColor: '#F1F5F9',
+        borderRadius: 20,
+        padding: 4,
+        marginBottom: 20,
+    },
+    tab: {
+        flex: 1,
+        paddingVertical: 10,
+        alignItems: 'center',
+        borderRadius: 16,
+    },
+    activeTab: {
+        backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+    },
+    tabText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#64748B',
+    },
+    activeTabText: {
+        color: '#1E293B',
+    },
+    scrollContent: {
         paddingBottom: 20,
     },
-    sectionTitle: {
-        fontSize: 20,
-        fontWeight: '800',
-        color: '#4A4A4A',
-        marginBottom: 15,
-        textAlign: 'left',
-    },
-    medicineItem: {
-        backgroundColor: '#F9FAFB',
-        padding: 16,
-        borderRadius: 20,
+    medCard: {
+        backgroundColor: '#fff',
+        borderRadius: 24,
+        padding: 18,
         marginBottom: 12,
         borderWidth: 1,
-        borderColor: '#F3F4F6',
+        borderColor: '#E2E8F0',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.03,
+        shadowRadius: 5,
     },
-    medName: {
+    medHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        marginBottom: 10,
+    },
+    medNameText: {
         fontSize: 17,
-        fontWeight: '700',
-        color: '#dca349', // Primary honey color for titles
+        fontWeight: '800',
+        color: '#1E293B',
     },
-    medDetails: {
-        fontSize: 14,
-        color: '#6B7280',
-        marginTop: 4,
+    medInfoRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 5,
+    },
+    medDetailLabel: {
+        fontSize: 13,
+        color: '#64748B',
         fontWeight: '500',
     },
-    medInstructions: {
-        fontSize: 13,
-        color: '#9CA3AF',
-        marginTop: 8,
-        fontStyle: 'italic',
+    medDetailValue: {
+        color: '#334155',
+        fontWeight: '700',
     },
-    summaryText: {
+    medInstructionsText: {
+        fontSize: 12,
+        color: '#94A3B8',
+        fontStyle: 'italic',
+        marginTop: 10,
+        paddingTop: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#F1F5F9',
+    },
+    summaryBox: {
+        padding: 5,
+    },
+    summaryBodyText: {
         fontSize: 15,
-        color: '#4B5563',
-        lineHeight: 22,
+        lineHeight: 24,
+        color: '#334155',
+        textAlign: 'justify',
     },
     emptyText: {
         textAlign: 'center',
-        color: '#9CA3AF',
-        marginTop: 20,
+        color: '#94A3B8',
+        marginTop: 40,
     },
-    buttonGroup: {
-        marginTop: 15,
+    actionGrid: {
         gap: 10,
+        paddingTop: 10,
+        paddingBottom: 5,
     },
-    charcoalButton: {
-        backgroundColor: '#4A4A4A', // Dark charcoal/gray from Figma
+    actionBtn: {
+        borderRadius: 20,
+        overflow: 'hidden',
+    },
+    btnPrimary: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 5,
+    },
+    btnSecondary: {
+        shadowColor: Colors.light.primary,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 3,
+    },
+    btnGradient: {
         paddingVertical: 14,
-        borderRadius: 18,
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
     },
-    sageButton: {
-        backgroundColor: '#ADC178', // Sage green from Figma
-        paddingVertical: 14,
-        borderRadius: 18,
-        alignItems: 'center',
-    },
-    buttonText: {
+    btnText: {
         color: '#fff',
         fontSize: 16,
         fontWeight: '700',
+        letterSpacing: 0.5,
     },
-    closeButton: {
-        position: 'absolute',
-        bottom: 20,
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: '#EB5757', // Subtle red for close, or matching theme
+    floatingClose: {
+        marginTop: 30,
+        width: 68,
+        height: 68,
+        borderRadius: 34,
+        overflow: 'hidden',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 10,
+    },
+    closeBlur: {
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-    }
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    },
 });
