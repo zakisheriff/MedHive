@@ -5,7 +5,7 @@ const teamMembers = [
     {
         id: 1,
         name: 'Abdul Raheem',
-        role: 'Frontend and ML',
+        role: 'Clinic Frontend',
         image: '/Team/Raheem.jpeg',
         social: {
             linkedin: 'https://www.linkedin.com/in/abdul-raheem-aouffan',
@@ -15,7 +15,7 @@ const teamMembers = [
     {
         id: 2,
         name: 'Zaki Sheriff',
-        role: 'Frontend and Backend',
+        role: 'Patient Frontend',
         image: '/Team/Zaki.png',
         social: {
             linkedin: 'https://www.linkedin.com/in/zakisheriff',
@@ -27,7 +27,7 @@ const teamMembers = [
     {
         id: 3,
         name: 'Hanaa Ajuward',
-        role: 'Backend Developer',
+        role: 'Clinic Backend',
         image: '/Team/Hanaa.jpeg',
         social: {
             linkedin: '#',
@@ -37,7 +37,7 @@ const teamMembers = [
     {
         id: 4,
         name: 'Abdul Rahman',
-        role: 'Backend Developer',
+        role: 'Patient Backend',
         image: '/Team/Rahman.png',
         social: {
             linkedin: '#',
@@ -47,7 +47,7 @@ const teamMembers = [
     {
         id: 5,
         name: 'Kausian Senthan',
-        role: 'Backend Developer',
+        role: 'Pharma Company Frontend',
         image: '/Team/Kausian.png',
         social: {
             linkedin: 'https://www.linkedin.com/in/kausian-senthan',
@@ -57,8 +57,7 @@ const teamMembers = [
     {
         id: 6,
         name: 'Afker Thowfeek',
-        role: 'Database Administrator',
-        bio: 'Ensuring seamless delivery and operational excellence across all regions.',
+        role: 'Pharma Company Backend',
         image: '/Team/Afker.jpeg',
         social: {
             linkedin: '#',

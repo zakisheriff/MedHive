@@ -146,7 +146,6 @@ html {
 
 .btn-cta:hover {
     box-shadow: 0 12px 40px rgba(220, 163, 73, 0.6);
-    transform: translateY(-2px);
 }
 
 .btn-cta:active {

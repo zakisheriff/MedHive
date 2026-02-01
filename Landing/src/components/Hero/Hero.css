@@ -535,11 +535,12 @@
     padding: 14px 14px 14px 45px;
     border: 1.5px solid #e2e8f0;
     border-radius: 50px;
-    font-size: 14px;
+    font-size: 16px;
+    /* Increased to 16px to prevent mobile zoom */
     color: #334155;
     background: #fff;
     outline: none;
-    transition: all 0.2s;
+    transition: all 0.3s;
 }
 
 .login-input-wrapper input:focus {
