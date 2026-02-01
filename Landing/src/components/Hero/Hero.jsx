@@ -201,7 +201,7 @@ const Hero = ({ focusTrigger }) => {
                     <h1 className="hero-title">MedHive</h1>
                     <h2 className="hero-moto">Your Health,<br />Unified.</h2>
                     <p className="hero-subtitle">
-                        MedHive is Sri Lanka's AI-Powered Healthcare Platform. Unify Medical Records, Digitize Prescriptions, and Access Intelligent Health Insights with Your Med ID.
+                        MedHive is Sri Lanka's AI-Powered Healthcare Platform. Unify Medical Records, Digitize Prescriptions, and Access Intelligent Health Insights with Your Med-ID.
                     </p>
                     <div className="hero-buttons">
                         <button className="btn-primary glass-btn" onClick={handleGetStartedClick}>Experience MedHive</button>
