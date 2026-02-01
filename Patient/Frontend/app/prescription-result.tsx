@@ -181,7 +181,10 @@ export default function PrescriptionResultScreen() {
 
             <SafeAreaView style={styles.safeArea} edges={['bottom', 'left', 'right']}>
                 {/* Sticky "Close" Button Unit - Matching Profile Modal */}
-                <View style={[styles.closeHeader, { top: insets.top + 10, pointerEvents: 'box-none' }]}>
+                <View style={[
+                    styles.closeHeader,
+                    { top: Platform.OS === 'web' ? 65 : insets.top + 10, pointerEvents: 'box-none' }
+                ]}>
                     <View style={styles.closeHeaderInner}>
                         <View style={styles.headerSpacer} />
                         <BlurView intensity={60} tint="light" style={styles.blurWrapper}>
