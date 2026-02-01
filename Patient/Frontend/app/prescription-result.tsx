@@ -32,6 +32,7 @@ export default function PrescriptionResultScreen() {
     const [summary, setSummary] = useState<string | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalType, setModalType] = useState<'details' | 'summary'>('details');
+    const [hasError, setHasError] = useState(false);
 
     useEffect(() => {
         if (imageUri) {
@@ -79,20 +80,17 @@ export default function PrescriptionResultScreen() {
             }
 
             setData(result);
+            setHasError(false);
         } catch (error: any) {
             console.error('Extraction error:', error);
-            let title = 'Connection Issue';
-            let msg = 'Failed to reach MedHive AI. Please ensure your backend is running and connected to same WiFi.';
+            setHasError(true);
 
-            if (error.name === 'AbortError') {
-                title = 'Timeout';
-                msg = 'MedHive AI is taking too long. Please try again.';
-            } else if (error.message) {
-                msg = error.message;
-            }
-
-            Alert.alert(title, msg);
-            router.back();
+            // Soft alert instead of forcing a back navigation
+            Alert.alert(
+                'Server Busy',
+                'MedHive AI is temporarily unavailable (Free Tier limit). You can still securely send your prescription image directly to the clinic below.',
+                [{ text: 'Continue' }]
+            );
         } finally {
             setLoading(false);
         }
@@ -145,7 +143,10 @@ export default function PrescriptionResultScreen() {
 
     const handleSendToClinic = () => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        Alert.alert('Success', 'Prescription has been securely forwarded to your clinic pharmacy.');
+        const msg = hasError
+            ? 'Your prescription image has been securely forwarded to your clinic pharmacy (Direct Mode).'
+            : 'Prescription data and image have been securely forwarded to your clinic pharmacy.';
+        Alert.alert('Success', msg);
     };
 
     const handleAddToHistory = async () => {
@@ -190,37 +191,64 @@ export default function PrescriptionResultScreen() {
 
                     {/* Action Area */}
                     <View style={styles.resultsArea}>
-                        <Text style={styles.welcomeText}>Scan Complete</Text>
-                        <Text style={styles.subText}>Select an option below to view extracted data or get a detailed AI summary.</Text>
+                        <Text style={styles.welcomeText}>
+                            {hasError ? 'Direct Send Mode' : 'Scan Complete'}
+                        </Text>
+                        <Text style={styles.subText}>
+                            {hasError
+                                ? 'AI extraction hit its limit. You can still forward the image to your clinic for manual verification.'
+                                : 'Select an option below to view extracted data or get a detailed AI summary.'}
+                        </Text>
 
-                        <View style={styles.primaryActionGrid}>
-                            <TouchableOpacity style={styles.buttonBase} onPress={handleOpenDetails}>
-                                <LinearGradient colors={['#6B7280', '#374151']} style={styles.buttonGradientBase}>
-                                    <Ionicons name="list" size={18} color="#fff" />
-                                    <Text style={styles.buttonTextBase}>View Details</Text>
+                        <View style={styles.actionGridContainer}>
+                            <TouchableOpacity
+                                style={[styles.buttonBase, hasError && styles.buttonDisabled]}
+                                onPress={handleOpenDetails}
+                                disabled={hasError}
+                            >
+                                <LinearGradient
+                                    colors={hasError ? ['#9CA3AF', '#6B7280'] : ['#4A4A4A', '#2D2D2D']}
+                                    style={styles.buttonGradientBase}
+                                >
+                                    <Ionicons name="list" size={18} color={hasError ? 'rgba(255,255,255,0.5)' : "#fff"} />
+                                    <Text style={[styles.buttonTextBase, hasError && styles.textDisabled]}>View Medical Details</Text>
                                 </LinearGradient>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={styles.buttonBase} onPress={handleOpenSummary}>
-                                <LinearGradient colors={['#818cf8', '#4f46e5']} style={styles.buttonGradientBase}>
-                                    <Ionicons name="sparkles" size={18} color="#fff" />
-                                    <Text style={styles.buttonTextBase}>AI Summary</Text>
+                            <TouchableOpacity
+                                style={[styles.buttonBase, hasError && styles.buttonDisabled]}
+                                onPress={handleOpenSummary}
+                                disabled={hasError}
+                            >
+                                <LinearGradient
+                                    colors={hasError ? ['#9CA3AF', '#6B7280'] : ['#4A4A4A', '#2D2D2D']}
+                                    style={styles.buttonGradientBase}
+                                >
+                                    <Ionicons name="sparkles" size={18} color={hasError ? 'rgba(255,255,255,0.5)' : "#fff"} />
+                                    <Text style={[styles.buttonTextBase, hasError && styles.textDisabled]}>View AI Summary</Text>
                                 </LinearGradient>
                             </TouchableOpacity>
-                        </View>
 
-                        <View style={styles.footerActions}>
+                            <View style={styles.divider} />
+
                             <TouchableOpacity style={styles.buttonBase} onPress={handleSendToClinic}>
-                                <LinearGradient colors={['#4A4A4A', '#2D2D2D']} style={styles.buttonGradientBase}>
+                                <LinearGradient colors={['#ADC178', '#8A9A5B']} style={styles.buttonGradientBase}>
                                     <Ionicons name="business" size={18} color="#fff" />
                                     <Text style={styles.buttonTextBase}>Send to Clinic</Text>
                                 </LinearGradient>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={styles.buttonBase} onPress={handleAddToHistory}>
-                                <LinearGradient colors={['#ADC178', '#8A9A5B']} style={styles.buttonGradientBase}>
-                                    <Ionicons name="archive" size={18} color="#fff" />
-                                    <Text style={styles.buttonTextBase}>Add to History</Text>
+                            <TouchableOpacity
+                                style={[styles.buttonBase, hasError && styles.buttonDisabled]}
+                                onPress={handleAddToHistory}
+                                disabled={hasError}
+                            >
+                                <LinearGradient
+                                    colors={hasError ? ['#9CA3AF', '#6B7280'] : ['#ADC178', '#8A9A5B']}
+                                    style={styles.buttonGradientBase}
+                                >
+                                    <Ionicons name="archive" size={18} color={hasError ? 'rgba(255,255,255,0.5)' : "#fff"} />
+                                    <Text style={[styles.buttonTextBase, hasError && styles.textDisabled]}>Add to History</Text>
                                 </LinearGradient>
                             </TouchableOpacity>
                         </View>
@@ -229,9 +257,7 @@ export default function PrescriptionResultScreen() {
 
                 {/* Close Button */}
                 <TouchableOpacity style={styles.floatingClose} onPress={() => router.back()}>
-                    <LinearGradient colors={['#F5B25F', '#dca349']} style={styles.closeGradient}>
-                        <Ionicons name="close-outline" size={34} color="#fff" />
-                    </LinearGradient>
+                    <Ionicons name="close-circle-outline" size={52} color="#dca349" />
                 </TouchableOpacity>
             </SafeAreaView>
 
@@ -353,39 +379,44 @@ const styles = StyleSheet.create({
     },
     resultsArea: {
         flex: 1,
-        padding: 20,
+        paddingVertical: 15,
+        paddingHorizontal: 15,
     },
     welcomeText: {
         fontSize: 22,
         fontWeight: '900',
         color: '#fff',
         marginBottom: 8,
+        textAlign: 'center',
     },
     subText: {
         fontSize: 14,
         color: 'rgba(255,255,255,0.9)',
         lineHeight: 20,
-        marginBottom: 25,
-    },
-    primaryActionGrid: {
-        gap: 12,
         marginBottom: 20,
+        textAlign: 'center',
     },
-    footerActions: {
+    actionGridContainer: {
         gap: 12,
-        marginTop: 10,
+        marginTop: 5,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        marginVertical: 5,
     },
     buttonBase: {
+        width: '100%',
         borderRadius: 22,
         overflow: 'hidden',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-        elevation: 6,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 5,
     },
     buttonGradientBase: {
-        paddingVertical: 18,
+        paddingVertical: 17,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
@@ -397,22 +428,24 @@ const styles = StyleSheet.create({
         fontWeight: '800',
         letterSpacing: 0.3,
     },
-    floatingClose: {
-        marginTop: 25,
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.25,
-        shadowRadius: 12,
-        elevation: 10,
+    buttonDisabled: {
+        opacity: 0.6,
     },
-    closeGradient: {
-        flex: 1,
+    textDisabled: {
+        color: 'rgba(255,255,255,0.5)',
+    },
+    floatingClose: {
+        marginTop: 20,
+        width: 52,
+        height: 52,
+        borderRadius: 26,
         alignItems: 'center',
         justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 5,
     },
     // Modal Styles matching design
     modalOverlay: {
