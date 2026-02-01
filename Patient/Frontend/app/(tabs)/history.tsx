@@ -15,7 +15,7 @@ export default function HistoryScreen() {
     const insets = useSafeAreaInsets();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilter, setSelectedFilter] = useState<FilterType>('all');
-    
+
     // TODO: Replace with actual data from backend/context
     const [historyItems] = useState<HistoryItem[]>(generateMockHistory());
 
@@ -75,10 +75,12 @@ export default function HistoryScreen() {
 
             {/* Filter Chips */}
             {historyItems.length > 0 && (
-                <FilterChips
-                    selectedFilter={selectedFilter}
-                    onFilterChange={setSelectedFilter}
-                />
+                <View style={styles.filterContainer}>
+                    <FilterChips
+                        selectedFilter={selectedFilter}
+                        onFilterChange={setSelectedFilter}
+                    />
+                </View>
             )}
 
             {/* History List */}
@@ -144,6 +146,11 @@ const styles = StyleSheet.create({
     searchContainer: {
         paddingHorizontal: 20,
         paddingBottom: 12,
+        width: '100%',
+        maxWidth: 500,
+        alignSelf: 'center',
+    },
+    filterContainer: {
         width: '100%',
         maxWidth: 500,
         alignSelf: 'center',
