@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
     View,
     Text,
@@ -6,7 +6,11 @@ import {
     TouchableOpacity,
     ScrollView,
     Image,
-    Switch
+    Switch,
+    Linking,
+    TextInput,
+    Modal,
+    Alert
 } from 'react-native';
 import { useAlert } from '../context/AlertContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,6 +20,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { router } from 'expo-router';
 import { Colors } from '../constants/theme';
+import { generateMockHistory } from '../utils/historyUtils';
+import { generateMockAccess } from '../utils/accessUtils';
 
 // Mock user data
 const USER = {
@@ -60,10 +66,35 @@ const MenuItem = ({ icon, label, value, onPress, showChevron = true, iconColor, 
 
 export default function ProfileScreen() {
     const insets = useSafeAreaInsets();
-    const [notifications, setNotifications] = useState(true);
-    const [biometrics, setBiometrics] = useState(false);
-
     const { showAlert } = useAlert();
+
+    // User State
+    const [userData, setUserData] = useState({
+        name: 'John Doe',
+        email: 'john.doe@email.com',
+        medId: '2000 1548 2314',
+        avatar: null,
+        memberSince: 'Jan 2024'
+    });
+
+    // Preferences
+    const [notifications, setNotifications] = useState(true);
+    const [biometrics, setBiometrics] = useState(true);
+
+    // Modal States
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [tempName, setTempName] = useState(userData.name);
+    const [tempEmail, setTempEmail] = useState(userData.email);
+
+    // Dynamic Statistics
+    const historyItems = useMemo(() => generateMockHistory(), []);
+    const accessRecords = useMemo(() => generateMockAccess(), []);
+
+    const stats = useMemo(() => ({
+        uploads: historyItems.length,
+        shared: accessRecords.filter(r => r.status === 'active').length,
+        months: 8 // Mock 
+    }), [historyItems, accessRecords]);
 
     const handleLogout = () => {
         showAlert({
@@ -83,6 +114,31 @@ export default function ProfileScreen() {
         });
     };
 
+    const handleSaveProfile = () => {
+        if (!tempName.trim() || !tempEmail.trim()) {
+            Alert.alert('Error', 'Name and Email are required.');
+            return;
+        }
+        setUserData(prev => ({ ...prev, name: tempName, email: tempEmail }));
+        setEditModalVisible(false);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    };
+
+    const handleContactUs = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        Linking.openURL('mailto:support@medhive.ai?subject=Support%20Request');
+    };
+
+    const handleHelpCenter = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        Linking.openURL('https://medhive.ai/support');
+    };
+
+    const handleRateApp = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        Alert.alert('Rate MedHive', 'Thank you for your feedback! This would open the App Store in production.', [{ text: 'Cancel' }, { text: '5 Stars ⭐', onPress: () => { } }]);
+    };
+
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -94,7 +150,6 @@ export default function ProfileScreen() {
             <View style={[styles.closeHeader, { top: insets.top + 10, pointerEvents: 'box-none' }]}>
                 <View style={[styles.closeHeaderInner, { pointerEvents: 'box-none' }]}>
                     <View style={styles.headerSpacer} />
-                    {/* Account Title moved to ScrollView to be non-sticky */}
                     <View style={styles.closeButtonCenterer}>
                         <BlurView intensity={60} tint="light" style={styles.blurWrapper}>
                             <TouchableOpacity
@@ -119,22 +174,19 @@ export default function ProfileScreen() {
                 <View style={styles.scrollHeader}>
                     <Text style={styles.headerTitleCentered}>Account</Text>
                 </View>
+
                 {/* User Identity Card (App Store Style) */}
                 <View style={styles.identityCard}>
                     <View style={styles.identityTop}>
                         <View style={styles.avatarContainer}>
-                            {USER.avatar ? (
-                                <Image source={{ uri: USER.avatar }} style={styles.avatar} />
-                            ) : (
-                                <LinearGradient
-                                    colors={[Colors.light.primary, '#E8A849']}
-                                    style={styles.avatarPlaceholder}
-                                >
-                                    <Text style={styles.avatarInitials}>
-                                        {USER.name.split(' ').map(n => n[0]).join('')}
-                                    </Text>
-                                </LinearGradient>
-                            )}
+                            <LinearGradient
+                                colors={[Colors.light.primary, '#E8A849']}
+                                style={styles.avatarPlaceholder}
+                            >
+                                <Text style={styles.avatarInitials}>
+                                    {userData.name.split(' ').map(n => n[0]).join('')}
+                                </Text>
+                            </LinearGradient>
                             <TouchableOpacity
                                 style={styles.editAvatarBtn}
                                 onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
@@ -143,14 +195,13 @@ export default function ProfileScreen() {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.identityText}>
-                            <Text style={styles.userName}>{USER.name}</Text>
-                            <Text style={styles.userEmail}>{USER.email}</Text>
+                            <Text style={styles.userName}>{userData.name}</Text>
+                            <Text style={styles.userEmail}>{userData.email}</Text>
                         </View>
                     </View>
 
                     <View style={styles.identityDivider} />
 
-                    {/* Med ID integrated into Card */}
                     <TouchableOpacity
                         style={styles.identityFooter}
                         onPress={() => {
@@ -164,28 +215,28 @@ export default function ProfileScreen() {
                     >
                         <View>
                             <Text style={styles.medIdLabel}>Med-ID</Text>
-                            <Text style={styles.medIdValue}>{USER.medId}</Text>
+                            <Text style={styles.medIdValue}>{userData.medId}</Text>
                         </View>
                         <Ionicons name="copy-outline" size={18} color={Colors.light.primary} />
                     </TouchableOpacity>
                 </View>
 
-                {/* Quick Stats Section */}
-                <Text style={styles.sectionTitle}>Statistics</Text>
+                {/* Statistics Section */}
+                <Text style={styles.sectionTitle}>Performance</Text>
                 <View style={styles.statsContainer}>
                     <View style={styles.statItem}>
-                        <Text style={styles.statValue}>12</Text>
+                        <Text style={styles.statValue}>{stats.uploads}</Text>
                         <Text style={styles.statLabel}>Uploads</Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
-                        <Text style={styles.statValue}>3</Text>
-                        <Text style={styles.statLabel}>Shared</Text>
+                        <Text style={styles.statValue}>{stats.shared}</Text>
+                        <Text style={styles.statLabel}>Clinics</Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
-                        <Text style={styles.statValue}>8</Text>
-                        <Text style={styles.statLabel}>Months</Text>
+                        <Text style={styles.statValue}>{stats.months}</Text>
+                        <Text style={styles.statLabel}>Health Age</Text>
                     </View>
                 </View>
 
@@ -195,30 +246,34 @@ export default function ProfileScreen() {
                     <MenuItem
                         icon="person-outline"
                         label="Edit Profile"
-                        onPress={() => { }}
+                        onPress={() => {
+                            setTempName(userData.name);
+                            setTempEmail(userData.email);
+                            setEditModalVisible(true);
+                        }}
                     />
                     <MenuItem
                         icon="shield-checkmark-outline"
-                        label="Privacy & Security"
-                        onPress={() => { }}
+                        label="Security & Privacy"
+                        onPress={() => Linking.openURL('https://medhive.ai/privacy')}
                     />
                     <MenuItem
                         icon="card-outline"
                         label="Subscription"
-                        value="Free Plan"
-                        onPress={() => { }}
+                        value="Premium AI Plan"
+                        onPress={() => Alert.alert('MedHive Premium', 'You are currently on the Early Adopter plan. 🚀')}
                     />
                 </View>
 
                 {/* Preferences Section */}
-                <Text style={styles.sectionTitle}>Preferences</Text>
+                <Text style={styles.sectionTitle}>Settings</Text>
                 <View style={styles.menuCard}>
                     <View style={styles.menuItem}>
                         <View style={[styles.menuIcon, { backgroundColor: 'rgba(220,163,73,0.1)' }]}>
                             <Ionicons name="notifications-outline" size={20} color={Colors.light.primary} />
                         </View>
                         <View style={styles.menuContent}>
-                            <Text style={styles.menuLabel}>Notifications</Text>
+                            <Text style={styles.menuLabel}>Smart Notifications</Text>
                         </View>
                         <Switch
                             value={notifications}
@@ -235,7 +290,7 @@ export default function ProfileScreen() {
                             <Ionicons name="finger-print-outline" size={20} color={Colors.light.primary} />
                         </View>
                         <View style={styles.menuContent}>
-                            <Text style={styles.menuLabel}>Face ID / Touch ID</Text>
+                            <Text style={styles.menuLabel}>Face ID Login</Text>
                         </View>
                         <Switch
                             value={biometrics}
@@ -248,9 +303,9 @@ export default function ProfileScreen() {
                         />
                     </View>
                     <MenuItem
-                        icon="language-outline"
-                        label="Language"
-                        value="English"
+                        icon="globe-outline"
+                        label="Region"
+                        value="Global (English)"
                         onPress={() => { }}
                     />
                 </View>
@@ -260,35 +315,92 @@ export default function ProfileScreen() {
                 <View style={styles.menuCard}>
                     <MenuItem
                         icon="help-circle-outline"
-                        label="Help Center"
-                        onPress={() => { }}
+                        label="Knowledge Base"
+                        onPress={handleHelpCenter}
                     />
                     <MenuItem
-                        icon="chatbubble-outline"
-                        label="Contact Us"
-                        onPress={() => { }}
+                        icon="mail-outline"
+                        label="Contact Medical Support"
+                        onPress={handleContactUs}
                     />
                     <MenuItem
                         icon="star-outline"
-                        label="Rate App"
-                        onPress={() => { }}
+                        label="Rate MedHive AI"
+                        onPress={handleRateApp}
                     />
                 </View>
 
                 {/* Logout */}
-                <View style={[styles.menuCard, { marginTop: 24 }]}>
+                <View style={[styles.menuCard, { marginTop: 24, marginBottom: 12 }]}>
                     <MenuItem
                         icon="log-out-outline"
-                        label="Log Out"
+                        label="Sign Out"
                         showChevron={false}
                         danger
                         onPress={handleLogout}
                     />
                 </View>
 
-                {/* Version */}
-                <Text style={styles.version}>MedHive v1.0.0</Text>
+                <Text style={styles.version}>MedHive Production v1.0.4 • 2026</Text>
             </ScrollView>
+
+            {/* Edit Profile Modal */}
+            <Modal
+                visible={editModalVisible}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setEditModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <BlurView intensity={50} tint="dark" style={StyleSheet.absoluteFill} />
+                    <View style={styles.editCard}>
+                        <Text style={styles.editTitle}>Edit Profile</Text>
+
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.inputLabel}>Full Name</Text>
+                            <TextInput
+                                style={styles.textInput}
+                                value={tempName}
+                                onChangeText={setTempName}
+                                placeholder="Enter your name"
+                                placeholderTextColor="#8E8E93"
+                            />
+                        </View>
+
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.inputLabel}>Email Address</Text>
+                            <TextInput
+                                style={styles.textInput}
+                                value={tempEmail}
+                                onChangeText={setTempEmail}
+                                placeholder="Enter your email"
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                placeholderTextColor="#8E8E93"
+                            />
+                        </View>
+
+                        <TouchableOpacity
+                            style={styles.saveBtn}
+                            onPress={handleSaveProfile}
+                        >
+                            <LinearGradient
+                                colors={[Colors.light.primary, Colors.light.primaryDark]}
+                                style={styles.saveGradient}
+                            >
+                                <Text style={styles.saveBtnText}>Save Changes</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.cancelBtn}
+                            onPress={() => setEditModalVisible(false)}
+                        >
+                            <Text style={styles.cancelBtnText}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -539,5 +651,74 @@ const styles = StyleSheet.create({
         width: '100%',
         maxWidth: 500,
         alignSelf: 'center',
+    },
+    // Modal Styles
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    editCard: {
+        width: '100%',
+        maxWidth: 400,
+        backgroundColor: '#fff',
+        borderRadius: 35,
+        padding: 24,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.1,
+        shadowRadius: 20,
+        elevation: 10,
+    },
+    editTitle: {
+        fontSize: 22,
+        fontWeight: '700',
+        color: '#1C1C1E',
+        marginBottom: 24,
+        textAlign: 'center',
+    },
+    inputContainer: {
+        marginBottom: 20,
+    },
+    inputLabel: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#8E8E93',
+        marginBottom: 8,
+        marginLeft: 4,
+    },
+    textInput: {
+        backgroundColor: '#F2F2F7',
+        borderRadius: 18,
+        paddingVertical: 14,
+        paddingHorizontal: 16,
+        fontSize: 16,
+        color: '#1C1C1E',
+        borderWidth: 1,
+        borderColor: '#E5E5EA',
+    },
+    saveBtn: {
+        borderRadius: 20,
+        overflow: 'hidden',
+        marginTop: 10,
+    },
+    saveGradient: {
+        paddingVertical: 16,
+        alignItems: 'center',
+    },
+    saveBtnText: {
+        color: '#fff',
+        fontSize: 17,
+        fontWeight: '700',
+    },
+    cancelBtn: {
+        paddingVertical: 16,
+        alignItems: 'center',
+    },
+    cancelBtnText: {
+        color: '#8E8E93',
+        fontSize: 16,
+        fontWeight: '600',
     },
 });
