@@ -1,60 +1,157 @@
 /* Features Section Styles */
 .features-section {
     position: relative;
-    padding: 100px 0 120px;
+    padding: 120px 0;
     background: transparent;
 }
 
-.features-grid {
+.features-section .section-title {
+    margin-bottom: 60px;
+}
+
+.features-bento-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
+    grid-auto-rows: 240px;
+    /* Increased height for better content fit */
+    gap: 24px;
 }
 
-.feature-card {
-    padding: 35px 30px;
+.feature-bento-card {
+    position: relative;
+    border-radius: 32px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.bento-content {
+    position: relative;
+    height: 100%;
+    padding: 35px;
+    /* Balanced padding */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    justify-content: flex-start;
+    /* Consistent top alignment */
+    z-index: 2;
 }
 
-.feature-icon {
-    width: 65px;
-    height: 65px;
-    margin-bottom: 22px;
+/* Bento Sizes */
+.bento-tall {
+    grid-row: span 2;
+}
+
+.bento-wide {
+    grid-column: span 2;
+}
+
+.bento-wide .bento-content {
+    flex-direction: row;
+    align-items: center;
+    gap: 40px;
+}
+
+.bento-standard {
+    grid-row: span 1;
+}
+
+.feature-icon-wrapper {
+    width: 55px;
+    height: 55px;
+    background: rgba(220, 163, 73, 0.1);
+    border: 1px solid rgba(220, 163, 73, 0.2);
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--border-radius-md);
-    background: rgba(220, 163, 73, 0.1);
-    border: 2px solid var(--color-border-accent);
+    margin-bottom: 24px;
+    flex-shrink: 0;
 }
 
-.feature-icon svg {
-    width: 32px;
-    height: 32px;
+.bento-tall .feature-icon-wrapper {
+    margin-bottom: auto;
+    /* Push text to the bottom in tall cards */
+}
+
+.bento-wide .feature-icon-wrapper {
+    margin-bottom: 0;
+}
+
+.feature-icon-wrapper svg {
+    width: 28px;
+    height: 28px;
     color: var(--color-primary);
-    stroke-width: 2;
 }
 
-.feature-card h3 {
-    font-size: 20px;
+.feature-text h3 {
+    font-size: 22px;
     font-weight: 700;
-    margin-bottom: 12px;
     color: var(--color-text-primary);
+    margin-bottom: 12px;
 }
 
-.feature-card p {
+.feature-text p {
     font-size: 15px;
     line-height: 1.6;
     color: var(--color-text-muted);
+    margin: 0;
+}
+
+/* Visual Effects */
+.bento-glass-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(220, 163, 73, 0.05), transparent 60%);
+    pointer-events: none;
+}
+
+.bento-border-pulse {
+    position: absolute;
+    inset: -1px;
+    border-radius: 32px;
+    background: linear-gradient(135deg, var(--color-primary), transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 1;
+}
+
+.feature-bento-card:hover {
+    transform: translateY(-8px) scale(1.01);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(220, 163, 73, 0.4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.feature-bento-card:hover .bento-border-pulse {
+    opacity: 0.8;
+}
+
+/* Specific Card Adjustments */
+.bento-tall .feature-text h3 {
+    font-size: 28px;
 }
 
 /* Mobile Responsive */
 @media (max-width: 1024px) {
-    .features-grid {
+    .features-bento-grid {
         grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 220px;
+    }
+
+    .bento-wide {
+        grid-column: span 2;
+    }
+
+    .bento-wide .bento-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+    }
+
+    .bento-wide .feature-icon-wrapper {
+        margin-bottom: 24px;
     }
 }
 
@@ -63,12 +160,35 @@
         padding: 80px 0 100px;
     }
 
-    .features-grid {
+    .features-bento-grid {
         grid-template-columns: 1fr;
-        gap: 20px;
+        grid-auto-rows: auto;
+        gap: 15px;
     }
 
-    .feature-card {
-        padding: 30px 25px;
+    .bento-tall,
+    .bento-wide,
+    .bento-standard {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
+    .feature-bento-card {
+        border-radius: 20px;
+    }
+
+    .bento-content {
+        padding: 25px;
+    }
+
+    .feature-icon-wrapper {
+        margin-bottom: 15px;
+        width: 50px;
+        height: 50px;
+    }
+
+    .feature-icon-wrapper svg {
+        width: 24px;
+        height: 24px;
     }
 }

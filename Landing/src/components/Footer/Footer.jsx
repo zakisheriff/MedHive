@@ -105,7 +105,7 @@ const Footer = ({ onScrollToTop }) => {
 
                 {/* Bottom Section - Copyright */}
                 <div className="footer-bottom">
-                    <p className="footer-copy">© 2025 MedHive. All rights reserved.</p>
+                    <p className="footer-copy">© 2026 MedHive. All rights reserved.</p>
                 </div>
             </div>
         </footer>

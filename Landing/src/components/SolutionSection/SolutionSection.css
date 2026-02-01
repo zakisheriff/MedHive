@@ -1,71 +1,174 @@
 /* Solution Section Styles */
 .solution-section {
     position: relative;
-    padding: 100px 0 120px;
+    padding: 120px 0;
     background: transparent;
 }
 
-.solution-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+.ecosystem-stack-container {
+    position: relative;
+    max-width: 1000px;
+    margin: 80px auto 0;
+    padding: 0 20px;
 }
 
-.solution-card {
-    padding: 30px 20px;
-    text-align: center;
+.stack-thread-line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom,
+            transparent,
+            rgba(220, 163, 73, 0.4) 10%,
+            rgba(220, 163, 73, 0.4) 90%,
+            transparent);
+    transform: translateX(-50%);
+    z-index: 1;
 }
 
-.solution-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 20px;
+.ecosystem-stack-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+}
+
+.stack-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.stack-connector {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    background: #0D0D0D;
+    border: 2px solid var(--color-primary);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--border-radius-sm);
-    background: linear-gradient(135deg, rgba(220, 163, 73, 0.2) 0%, rgba(220, 163, 73, 0.05) 100%);
-    border: 1px solid var(--color-border-accent);
+    box-shadow: 0 0 20px rgba(220, 163, 73, 0.4);
 }
 
-.solution-icon svg {
-    width: 30px;
-    height: 30px;
+.connector-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    animation: connectorPulse 2s infinite;
+}
+
+@keyframes connectorPulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(220, 163, 73, 0.4);
+    }
+
+    70% {
+        transform: scale(1.5);
+        opacity: 0;
+        box-shadow: 0 0 0 10px rgba(220, 163, 73, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0;
+        box-shadow: 0 0 0 0 rgba(220, 163, 73, 0);
+    }
+}
+
+.stack-card {
+    width: calc(50% - 60px);
+    padding: 30px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.stack-item.left .stack-card {
+    margin-right: auto;
+    text-align: right;
+    flex-direction: row-reverse;
+}
+
+.stack-item.right .stack-card {
+    margin-left: auto;
+    text-align: left;
+}
+
+.stack-icon-box {
+    width: 65px;
+    height: 65px;
+    background: rgba(220, 163, 73, 0.1);
+    border: 1px solid rgba(220, 163, 73, 0.2);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stack-icon-box svg {
+    width: 32px;
+    height: 32px;
     color: var(--color-primary);
-    stroke-width: 2;
 }
 
-.solution-card h3 {
-    font-size: 17px;
+.stack-text h3 {
+    font-size: 20px;
     font-weight: 700;
-    margin-bottom: 10px;
     color: var(--color-text-primary);
+    margin-bottom: 10px;
 }
 
-.solution-card p {
-    font-size: 14px;
-    line-height: 1.5;
+.stack-text p {
+    font-size: 15px;
+    line-height: 1.6;
     color: var(--color-text-muted);
+    margin: 0;
+}
+
+.stack-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(220, 163, 73, 0.4);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 /* Mobile Responsive */
-@media (max-width: 1100px) {
-    .solution-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 768px) {
-    .solution-section {
-        padding: 80px 0 100px;
+@media (max-width: 900px) {
+    .stack-thread-line {
+        left: 30px;
+        transform: none;
     }
 
-    .solution-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
+    .stack-connector {
+        left: 30px;
     }
 
-    .solution-card {
-        padding: 25px 20px;
+    .stack-card {
+        width: calc(100% - 80px);
+        margin-left: 80px !important;
+        text-align: left !important;
+        flex-direction: row !important;
+        padding: 24px;
+    }
+
+    .stack-icon-box {
+        width: 55px;
+        height: 55px;
+    }
+
+    .stack-icon-box svg {
+        width: 26px;
+        height: 26px;
     }
 }

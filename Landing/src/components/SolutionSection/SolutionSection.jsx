@@ -103,19 +103,31 @@ const SolutionSection = () => {
                 <h2 className={`section-title scroll-fade-in ${isVisible ? 'visible' : ''}`}>
                     The MedHive Ecosystem
                 </h2>
-                <div className="solution-grid">
-                    {solutions.map((solution, index) => (
-                        <div
-                            key={index}
-                            className={`solution-card glass-card scroll-scale-in stagger-${index + 1} ${isVisible ? 'visible' : ''}`}
-                        >
-                            <div className="solution-icon">
-                                {solution.icon}
+
+                <div className="ecosystem-stack-container">
+                    <div className="stack-thread-line"></div>
+
+                    <div className="ecosystem-stack-flow">
+                        {solutions.map((solution, index) => (
+                            <div
+                                key={index}
+                                className={`stack-item ${index % 2 === 0 ? 'left' : 'right'} scroll-slide-up stagger-${index + 1} ${isVisible ? 'visible' : ''}`}
+                            >
+                                <div className="stack-connector">
+                                    <div className="connector-dot"></div>
+                                </div>
+                                <div className="stack-card glass-card">
+                                    <div className="stack-icon-box">
+                                        {solution.icon}
+                                    </div>
+                                    <div className="stack-text">
+                                        <h3>{solution.title}</h3>
+                                        <p>{solution.description}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <h3>{solution.title}</h3>
-                            <p>{solution.description}</p>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>

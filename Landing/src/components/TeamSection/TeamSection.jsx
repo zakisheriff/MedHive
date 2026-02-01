@@ -99,69 +99,68 @@ const TeamSection = () => {
         return isMobile ? displayMembers : displayMembers.slice(0, 4);
     }, [isMobile, displayMembers]);
 
-    // Track scroll position to update active index
+    // Track scroll position to update active index and progress
     useEffect(() => {
+        const container = scrollRef.current;
+        if (!container) return;
+
         const handleScroll = () => {
-            if (isScrollingToMember.current) return;
+            const scrollLeft = container.scrollLeft;
+            const maxScroll = container.scrollWidth - container.offsetWidth;
 
-            if (scrollRef.current) {
-                const container = scrollRef.current;
-                const cards = container.querySelectorAll('.team-premium-card');
-                if (cards.length === 0) return;
-
-                const scrollLeft = container.scrollLeft;
-                const maxScroll = container.scrollWidth - container.offsetWidth;
-
-                // Update scroll progress (0-100)
+            // 1. Update scroll progress in real-time (independent of active index)
+            if (maxScroll > 0) {
                 const progress = (scrollLeft / maxScroll) * 100;
                 setScrollProgress(progress);
+            }
 
-                // Force first/last indices at scroll boundaries
-                if (scrollLeft <= 30) {
-                    if (activeIndex !== 0) setActiveIndex(0);
-                    return;
-                }
-                if (scrollLeft >= maxScroll - 30) {
-                    const lastIdx = displayDots.length - 1;
-                    if (activeIndex !== lastIdx) setActiveIndex(lastIdx);
-                    return;
-                }
+            // 2. Update active index (dots)
+            if (isScrollingToMember.current) return;
 
-                let newIndex = 0;
+            const cards = container.querySelectorAll('.team-premium-card');
+            if (cards.length === 0) return;
 
-                if (!isMobile) {
-                    // Stable Desktop logic: Use percentage of scrollable range
-                    // Since we have 4 dots, we divide range into 4 zones
-                    const scrollPercentage = scrollLeft / maxScroll;
-                    newIndex = Math.min(3, Math.round(scrollPercentage * 3));
-                } else {
-                    // Mobile logic: Closest to center
-                    const containerCenter = scrollLeft + container.offsetWidth / 2;
-                    let minDistance = Infinity;
-                    cards.forEach((card, index) => {
-                        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-                        const distance = Math.abs(containerCenter - cardCenter);
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            newIndex = index;
-                        }
-                    });
-                }
+            // Force first/last indices at scroll boundaries
+            if (scrollLeft <= 30) {
+                if (activeIndex !== 0) setActiveIndex(0);
+                return;
+            }
+            if (scrollLeft >= maxScroll - 30) {
+                const lastIdx = displayDots.length - 1;
+                if (activeIndex !== lastIdx) setActiveIndex(lastIdx);
+                return;
+            }
 
-                if (newIndex !== activeIndex) {
-                    setActiveIndex(newIndex);
-                }
+            let newIndex = 0;
+            if (!isMobile) {
+                // Stable Desktop logic
+                const scrollPercentage = scrollLeft / maxScroll;
+                newIndex = Math.min(3, Math.round(scrollPercentage * 3));
+            } else {
+                // Mobile logic: Closest to center
+                const containerCenter = scrollLeft + container.offsetWidth / 2;
+                let minDistance = Infinity;
+                cards.forEach((card, index) => {
+                    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+                    const distance = Math.abs(containerCenter - cardCenter);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        newIndex = index;
+                    }
+                });
+            }
+
+            if (newIndex !== activeIndex) {
+                setActiveIndex(newIndex);
             }
         };
 
-        const container = scrollRef.current;
-        if (container) {
-            container.addEventListener('scroll', handleScroll, { passive: true });
-            // Initial check
-            handleScroll();
-            return () => container.removeEventListener('scroll', handleScroll);
-        }
-    }, [activeIndex, isMobile, displayDots.length]);
+        container.addEventListener('scroll', handleScroll, { passive: true });
+        // Initial check
+        handleScroll();
+
+        return () => container.removeEventListener('scroll', handleScroll);
+    }, [isMobile, displayDots.length, activeIndex]); // Simplified dependencies for more stable listener
 
     const scrollToMember = (index) => {
         if (scrollRef.current) {
