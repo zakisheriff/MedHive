@@ -193,22 +193,18 @@ export default function PrescriptionResultScreen() {
                         <Text style={styles.welcomeText}>Scan Complete</Text>
                         <Text style={styles.subText}>Select an option below to view extracted data or get a detailed AI summary.</Text>
 
-                        <View style={styles.primaryActionRow}>
+                        <View style={styles.primaryActionGrid}>
                             <TouchableOpacity style={styles.mainActionBtn} onPress={handleOpenDetails}>
-                                <LinearGradient colors={['#fff', '#f0f0f0']} style={styles.actionBtnGradient}>
-                                    <View style={styles.iconCircle}>
-                                        <Ionicons name="list" size={20} color={Colors.light.primary} />
-                                    </View>
+                                <LinearGradient colors={['#6B7280', '#374151']} style={styles.actionBtnGradient}>
+                                    <Ionicons name="list" size={18} color="#fff" />
                                     <Text style={styles.actionBtnLabel}>View Details</Text>
                                 </LinearGradient>
                             </TouchableOpacity>
 
                             <TouchableOpacity style={styles.mainActionBtn} onPress={handleOpenSummary}>
-                                <LinearGradient colors={['#fff', '#f0f0f0']} style={styles.actionBtnGradient}>
-                                    <View style={styles.iconCircle}>
-                                        <Ionicons name="sparkles" size={20} color={Colors.light.primary} />
-                                    </View>
-                                    <Text style={styles.actionBtnLabel}>Summary</Text>
+                                <LinearGradient colors={['#818cf8', '#4f46e5']} style={styles.actionBtnGradient}>
+                                    <Ionicons name="sparkles" size={18} color="#fff" />
+                                    <Text style={styles.actionBtnLabel}>AI Summary</Text>
                                 </LinearGradient>
                             </TouchableOpacity>
                         </View>
@@ -247,7 +243,7 @@ export default function PrescriptionResultScreen() {
                 <View style={styles.modalOverlay}>
                     <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalBrand}>heala's Prescription Reader</Text>
+                        <Text style={styles.modalBrand}>MedHive's Prescription Reader</Text>
 
                         <View style={styles.dataContainer}>
                             <Text style={styles.dataTitle}>
@@ -314,12 +310,12 @@ const styles = StyleSheet.create({
         color: '#4A4A4A',
     },
     contentPill: {
-        width: width * 0.92,
-        height: height * 0.78,
+        width: width * 0.95,
+        height: height * 0.8,
         backgroundColor: '#F5B25F',
         borderRadius: 40,
         padding: 10,
-        marginTop: 20,
+        marginTop: 15,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.1,
@@ -369,15 +365,12 @@ const styles = StyleSheet.create({
         lineHeight: 20,
         marginBottom: 25,
     },
-    primaryActionRow: {
-        flexDirection: 'row',
-        gap: 12,
+    primaryActionGrid: {
+        gap: 10,
         marginBottom: 20,
     },
     mainActionBtn: {
-        flex: 1,
-        height: 60,
-        borderRadius: 20,
+        borderRadius: 22,
         overflow: 'hidden',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
@@ -386,28 +379,16 @@ const styles = StyleSheet.create({
         elevation: 4,
     },
     actionBtnGradient: {
-        flex: 1,
+        paddingVertical: 16,
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 12,
+        justifyContent: 'center',
         gap: 10,
     },
-    iconCircle: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 3,
-    },
     actionBtnLabel: {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: '700',
-        color: '#dca349',
+        color: '#fff',
     },
     footerActions: {
         gap: 10,
@@ -450,7 +431,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContent: {
-        width: width * 0.85,
+        width: width * 0.92,
         backgroundColor: '#2D2D2A', // Deep charcoal
         borderRadius: 40,
         padding: 25,
@@ -464,7 +445,7 @@ const styles = StyleSheet.create({
         elevation: 20,
     },
     modalBrand: {
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: '700',
         color: '#fff',
         marginBottom: 20,
@@ -475,12 +456,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 0.05)',
         borderRadius: 30,
         padding: 20,
-        height: height * 0.3,
+        height: height * 0.45,
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.08)',
     },
     dataTitle: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '800',
         color: 'rgba(255,255,255,0.7)',
         textAlign: 'center',
@@ -490,19 +471,19 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     modalMedItem: {
-        marginBottom: 10,
+        marginBottom: 12,
     },
     modalMedText: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '600',
         textAlign: 'center',
-        lineHeight: 24,
+        lineHeight: 26,
     },
     modalSummaryText: {
         color: '#fff',
-        fontSize: 15,
-        lineHeight: 22,
+        fontSize: 17,
+        lineHeight: 25,
         textAlign: 'center',
     },
     modalEmptyText: {
