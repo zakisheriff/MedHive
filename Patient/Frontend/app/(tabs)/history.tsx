@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 
 import { Colors } from '../../constants/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProfileAvatar } from '../../components/ProfileAvatar';
+import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { HistoryCard } from '../../components/HistoryCard';
 import { FilterChips, FilterType } from '../../components/FilterChips';
@@ -109,8 +110,7 @@ export default function HistoryScreen() {
                                             key={item.id}
                                             item={item}
                                             onPress={() => {
-                                                // TODO: Navigate to detail screen
-                                                console.log('View details for:', item.id);
+                                                router.push(`/history/${item.id}`);
                                             }}
                                         />
                                     ))}
@@ -166,9 +166,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#FFFFFF',
-        paddingVertical: 12,
+        height: 35,
         paddingHorizontal: 16,
-        borderRadius: 16,
+        borderRadius: 17.5,
         gap: 10,
         borderWidth: 1,
         borderColor: '#E2E8F0',

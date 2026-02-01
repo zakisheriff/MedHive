@@ -8,6 +8,7 @@ import {
     LayoutAnimation,
     Platform,
     UIManager,
+    Share,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -42,12 +43,33 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
         }).start();
     };
 
+    const handleShare = async () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        try {
+            const medicinesText = item.medicines?.map(m => `- ${m.name} (${m.dosage})`).join('\n') || '';
+            const testsText = item.labTests?.map(t => `- ${t.name}: ${t.value} ${t.unit}`).join('\n') || '';
+
+            let message = `MedHive Medical Record\n`;
+            message += `-------------------\n`;
+            message += `Doctor: ${item.doctorName || 'N/A'}\n`;
+            message += `Clinic: ${item.clinicName || 'N/A'}\n`;
+            message += `Date: ${item.date.toLocaleDateString()}\n\n`;
+
+            if (medicinesText) message += `Medications:\n${medicinesText}\n\n`;
+            if (testsText) message += `Lab Tests:\n${testsText}\n\n`;
+            if (item.notes) message += `Notes: ${item.notes}\n`;
+
+            await Share.share({
+                message,
+                title: 'Share Medical Record',
+            });
+        } catch (error) {
+            console.error('Error sharing:', error);
+        }
+    };
+
     const isPrescription = item.type === 'prescription';
     const iconName = isPrescription ? 'receipt' : 'flask';
-    const statusColor =
-        item.status === 'active' ? '#10B981' :
-            item.status === 'completed' ? '#6B7280' :
-                '#EF4444';
 
     const formatDate = (date: Date) => {
         const now = new Date();
@@ -179,16 +201,14 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                                 onPress?.();
                             }}
                         >
-                            <Ionicons name="eye-outline" size={18} color={Colors.light.primary} />
+                            <Ionicons name="eye-outline" size={16} color={Colors.light.primary} />
                             <Text style={styles.actionText}>View Details</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.actionButton, styles.shareButton]}
-                            onPress={() => {
-                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                            }}
+                            onPress={handleShare}
                         >
-                            <Ionicons name="share-outline" size={18} color="#fff" />
+                            <Ionicons name="share-outline" size={16} color="#fff" />
                             <Text style={[styles.actionText, styles.shareText]}>Share</Text>
                         </TouchableOpacity>
                     </View>
@@ -375,7 +395,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.light.primary,
         paddingHorizontal: 10,
         paddingVertical: 4,
-        borderRadius: 8,
+        borderRadius: 17.5,
     },
     dosageText: {
         fontSize: 12,
@@ -419,7 +439,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 8,
-        paddingVertical: 4,
+        height: 24,
         borderRadius: 12,
         gap: 4,
     },
@@ -475,11 +495,11 @@ const styles = StyleSheet.create({
     },
     actionButton: {
         flex: 1,
+        height: 35,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 12,
-        borderRadius: 12,
+        borderRadius: 17.5,
         backgroundColor: '#F8FAFC',
         gap: 6,
     },
@@ -487,8 +507,8 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.light.primary,
     },
     actionText: {
-        fontSize: 14,
-        fontWeight: '600',
+        fontSize: 13,
+        fontWeight: '700',
         color: Colors.light.primary,
     },
     shareText: {
