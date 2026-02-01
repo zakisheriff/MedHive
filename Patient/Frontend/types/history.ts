@@ -20,7 +20,6 @@ export interface HistoryItem {
     type: HistoryItemType;
     title: string;
     date: Date;
-    doctorName?: string;
     clinicName?: string;
     medicines?: Medicine[];
     labTests?: LabTest[];

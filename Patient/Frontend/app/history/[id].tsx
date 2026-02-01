@@ -78,14 +78,15 @@ export default function HistoryDetailScreen() {
                     })}</Text>
                 </View>
 
-                <View style={styles.infoGrid}>
-                    <View style={styles.infoItem}>
-                        <Text style={styles.infoLabel}>Doctor</Text>
-                        <Text style={styles.infoValue}>{item.doctorName || 'Not specified'}</Text>
-                    </View>
-                    <View style={styles.infoItem}>
-                        <Text style={styles.infoLabel}>Clinic</Text>
-                        <Text style={styles.infoValue}>{item.clinicName || 'Not specified'}</Text>
+                <View style={[styles.section, { marginBottom: 10 }]}>
+                    <View style={styles.clinicHighlightCard}>
+                        <View style={styles.clinicIconContainer}>
+                            <Ionicons name="medical" size={20} color={Colors.light.primary} />
+                        </View>
+                        <View>
+                            <Text style={styles.infoLabel}>Facility / Clinic</Text>
+                            <Text style={styles.clinicNameHighlight}>{item.clinicName || 'Not specified'}</Text>
+                        </View>
                     </View>
                 </View>
 
@@ -212,19 +213,34 @@ const styles = StyleSheet.create({
         color: '#64748B',
         fontWeight: '500',
     },
-    infoGrid: {
+    clinicHighlightCard: {
         flexDirection: 'row',
-        paddingHorizontal: 20,
-        gap: 15,
-        marginBottom: 30,
-    },
-    infoItem: {
-        flex: 1,
+        alignItems: 'center',
         backgroundColor: '#fff',
-        padding: 15,
-        borderRadius: 16,
+        padding: 16,
+        borderRadius: 20,
+        gap: 16,
         borderWidth: 1,
         borderColor: '#F1F5F9',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 2,
+    },
+    clinicIconContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: 16,
+        backgroundColor: '#F8FAFC',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    clinicNameHighlight: {
+        fontSize: 18,
+        fontWeight: '800',
+        color: Colors.light.text,
+        letterSpacing: -0.5,
     },
     infoLabel: {
         fontSize: 12,
@@ -233,11 +249,6 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase',
         letterSpacing: 0.5,
         marginBottom: 4,
-    },
-    infoValue: {
-        fontSize: 15,
-        fontWeight: '700',
-        color: Colors.light.text,
     },
     section: {
         paddingHorizontal: 20,

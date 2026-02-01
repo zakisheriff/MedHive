@@ -64,14 +64,12 @@ export function filterHistory(
     if (filter === 'prescription' || filter === 'labReport') {
         filtered = filtered.filter((item) => item.type === filter);
     }
-    // Note: 'active' and 'completed' removed from UI but keeping logic permissive if needed or removing strict check
 
     // Apply search query
     if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         filtered = filtered.filter((item) => {
             const matchesTitle = item.title.toLowerCase().includes(query);
-            const matchesDoctor = item.doctorName?.toLowerCase().includes(query) ?? false;
             const matchesClinic = item.clinicName?.toLowerCase().includes(query) ?? false;
             const matchesMedicines = item.medicines?.some((m) =>
                 m.name.toLowerCase().includes(query)
@@ -80,7 +78,7 @@ export function filterHistory(
                 t.name.toLowerCase().includes(query)
             ) ?? false;
 
-            return matchesTitle || matchesDoctor || matchesClinic || matchesMedicines || matchesTests;
+            return matchesTitle || matchesClinic || matchesMedicines || matchesTests;
         });
     }
 
@@ -89,7 +87,7 @@ export function filterHistory(
 
 // Mock data generator for development
 export function generateMockHistory(): HistoryItem[] {
-    const now = new Date(); // Assume 2026 for now or current date
+    const now = new Date();
     const currentYear = now.getFullYear();
     const lastYear = currentYear - 1;
 
@@ -99,7 +97,6 @@ export function generateMockHistory(): HistoryItem[] {
             type: 'prescription',
             title: 'General Checkup Prescription',
             date: new Date(now.getTime() - 2 * 60 * 60 * 1000), // Today
-            doctorName: 'Dr. Sarah Johnson',
             clinicName: 'City Medical Center',
             medicines: [
                 {
@@ -117,14 +114,13 @@ export function generateMockHistory(): HistoryItem[] {
             ],
             status: 'active',
             notes: 'Take with food. Complete the full course.',
-            imageUri: 'https://via.placeholder.com/300x400.png?text=Prescription+Image', // Mock Image
+            imageUri: 'https://via.placeholder.com/300x400.png?text=Prescription+Image',
         },
         {
             id: '2',
             type: 'labReport',
             title: 'Complete Blood Count',
             date: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-            doctorName: 'Dr. Michael Chen',
             clinicName: 'Health Diagnostics Lab',
             labTests: [
                 {
@@ -137,13 +133,11 @@ export function generateMockHistory(): HistoryItem[] {
             ],
             status: 'completed',
         },
-        // Item from last month
         {
             id: '3',
             type: 'prescription',
             title: 'Diabetes Management',
             date: new Date(currentYear, now.getMonth() - 1, 15),
-            doctorName: 'Dr. Emily Rodriguez',
             clinicName: 'Endocrine Care Clinic',
             medicines: [
                 {
@@ -155,13 +149,11 @@ export function generateMockHistory(): HistoryItem[] {
             ],
             status: 'active',
         },
-        // Item from last year
         {
             id: '4',
             type: 'labReport',
             title: 'Annual Physical Results',
             date: new Date(lastYear, 10, 20), // Nov 20th last year
-            doctorName: 'Dr. James Wilson',
             clinicName: 'Cardiac Health Lab',
             labTests: [
                 {
@@ -178,7 +170,6 @@ export function generateMockHistory(): HistoryItem[] {
             type: 'prescription',
             title: 'Antibiotic Course',
             date: new Date(lastYear, 10, 25), // Nov 25th last year
-            doctorName: 'Dr. Robert Kim',
             clinicName: 'Family Care Clinic',
             medicines: [
                 {

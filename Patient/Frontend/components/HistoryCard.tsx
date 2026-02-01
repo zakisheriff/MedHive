@@ -51,7 +51,6 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
 
             let message = `MedHive Medical Record\n`;
             message += `-------------------\n`;
-            message += `Doctor: ${item.doctorName || 'N/A'}\n`;
             message += `Clinic: ${item.clinicName || 'N/A'}\n`;
             message += `Date: ${item.date.toLocaleDateString()}\n\n`;
 
@@ -108,18 +107,10 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                         <Ionicons name={iconName} size={20} color="#fff" />
                     </LinearGradient>
                     <View style={styles.headerText}>
-                        {item.doctorName && (
-                            <Text style={styles.doctorName} numberOfLines={1}>
-                                {item.doctorName}
-                            </Text>
-                        )}
                         {item.clinicName && (
-                            <View style={styles.clinicRow}>
-                                <Ionicons name="location-outline" size={12} color="#8E8E93" />
-                                <Text style={styles.clinicText} numberOfLines={1}>
-                                    {item.clinicName}
-                                </Text>
-                            </View>
+                            <Text style={styles.clinicNamePrimary} numberOfLines={1}>
+                                {item.clinicName}
+                            </Text>
                         )}
                     </View>
                 </View>
@@ -316,20 +307,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
     },
-    doctorName: {
-        fontSize: 16,
-        fontWeight: '600',
+    clinicNamePrimary: {
+        fontSize: 17,
+        fontWeight: '700',
         color: Colors.light.text,
-        marginBottom: 4,
-    },
-    clinicRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4,
-    },
-    clinicText: {
-        fontSize: 13,
-        color: '#8E8E93',
+        letterSpacing: -0.3,
     },
     headerRight: {
         alignItems: 'flex-end',
