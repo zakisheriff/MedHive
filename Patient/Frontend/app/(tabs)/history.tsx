@@ -1,48 +1,115 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput } from 'react-native';
-import { HoneyContainer } from '../../components/HoneyContainer';
+import React, { useState, useMemo } from 'react';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { Colors } from '../../constants/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProfileAvatar } from '../../components/ProfileAvatar';
 import { Ionicons } from '@expo/vector-icons';
+import { HistoryCard } from '../../components/HistoryCard';
+import { FilterChips, FilterType } from '../../components/FilterChips';
+import { EmptyHistoryState } from '../../components/EmptyHistoryState';
+import { HistoryItem } from '../../types/history';
+import { groupHistoryByDate, filterHistory, generateMockHistory } from '../../utils/historyUtils';
+import * as Haptics from 'expo-haptics';
 
 export default function HistoryScreen() {
     const insets = useSafeAreaInsets();
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedFilter, setSelectedFilter] = useState<FilterType>('all');
+    
+    // TODO: Replace with actual data from backend/context
+    const [historyItems] = useState<HistoryItem[]>(generateMockHistory());
+
+    // Filter and group history items
+    const filteredItems = useMemo(
+        () => filterHistory(historyItems, selectedFilter, searchQuery),
+        [historyItems, selectedFilter, searchQuery]
+    );
+
+    const groupedHistory = useMemo(
+        () => groupHistoryByDate(filteredItems),
+        [filteredItems]
+    );
+
+    const handleClearSearch = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setSearchQuery('');
+    };
 
     return (
         <View style={styles.container}>
             {/* Header with Profile Avatar */}
             <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
-                <Text style={styles.headerTitle}>History</Text>
+                <View>
+                    <Text style={styles.headerTitle}>History</Text>
+                    {historyItems.length > 0 && (
+                        <Text style={styles.headerSubtitle}>
+                            {filteredItems.length} {filteredItems.length === 1 ? 'record' : 'records'}
+                        </Text>
+                    )}
+                </View>
                 <ProfileAvatar size={34} />
             </View>
 
-            {/* Search Bar on History Page */}
+            {/* Search Bar */}
             <View style={styles.searchContainer}>
                 <View style={styles.searchBar}>
                     <Ionicons name="search" size={20} color="#8E8E93" />
                     <TextInput
                         style={styles.searchInput}
-                        placeholder="Search records..."
+                        placeholder="Search by medicine, doctor, clinic..."
                         placeholderTextColor="#8E8E93"
                         value={searchQuery}
                         onChangeText={setSearchQuery}
-                        clearButtonMode="while-editing"
+                        clearButtonMode="never"
                     />
+                    {searchQuery.length > 0 && (
+                        <TouchableOpacity
+                            onPress={handleClearSearch}
+                            style={styles.clearButton}
+                        >
+                            <Ionicons name="close-circle" size={20} color="#8E8E93" />
+                        </TouchableOpacity>
+                    )}
                 </View>
             </View>
 
+            {/* Filter Chips */}
+            {historyItems.length > 0 && (
+                <FilterChips
+                    selectedFilter={selectedFilter}
+                    onFilterChange={setSelectedFilter}
+                />
+            )}
+
+            {/* History List */}
             <ScrollView
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
-                <HoneyContainer>
-                    <View style={styles.content}>
-                        <Text style={styles.subtitle}>Your upload history will appear here.</Text>
-                    </View>
-                </HoneyContainer>
+                {groupedHistory.length === 0 ? (
+                    <EmptyHistoryState />
+                ) : (
+                    groupedHistory.map((group, groupIndex) => (
+                        <View key={groupIndex} style={styles.groupContainer}>
+                            <View style={styles.groupHeader}>
+                                <View style={styles.groupHeaderLine} />
+                                <Text style={styles.groupTitle}>{group.dateLabel}</Text>
+                                <View style={styles.groupHeaderLine} />
+                            </View>
+                            {group.items.map((item) => (
+                                <HistoryCard
+                                    key={item.id}
+                                    item={item}
+                                    onPress={() => {
+                                        // TODO: Navigate to detail screen
+                                        console.log('View details for:', item.id);
+                                    }}
+                                />
+                            ))}
+                        </View>
+                    ))
+                )}
             </ScrollView>
         </View>
     );
@@ -56,9 +123,9 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         paddingHorizontal: 20,
-        paddingBottom: 8,
+        paddingBottom: 12,
         width: '100%',
         maxWidth: 500,
         alignSelf: 'center',
@@ -67,10 +134,16 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontWeight: '700',
         color: Colors.light.text,
+        marginBottom: 2,
+    },
+    headerSubtitle: {
+        fontSize: 14,
+        color: '#8E8E93',
+        fontWeight: '500',
     },
     searchContainer: {
         paddingHorizontal: 20,
-        paddingBottom: 16,
+        paddingBottom: 12,
         width: '100%',
         maxWidth: 500,
         alignSelf: 'center',
@@ -78,39 +151,60 @@ const styles = StyleSheet.create({
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#E9E9EB',
-        paddingVertical: 10,
-        paddingHorizontal: 12,
-        borderRadius: 12,
-        gap: 8,
+        backgroundColor: '#FFFFFF',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: 16,
+        gap: 10,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 1,
     },
     searchInput: {
         flex: 1,
-        fontSize: 17,
-        color: '#000',
-        padding: 0, // Remove default platform padding
+        fontSize: 16,
+        color: Colors.light.text,
+        padding: 0,
+    },
+    clearButton: {
+        padding: 2,
     },
     scrollView: {
         flex: 1,
     },
     scrollContent: {
         flexGrow: 1,
-        justifyContent: 'flex-start',
         paddingHorizontal: 20,
-        paddingTop: 10,
-        paddingBottom: 120,
+        paddingTop: 8,
+        paddingBottom: 140,
         width: '100%',
         maxWidth: 500,
         alignSelf: 'center',
     },
-    content: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingVertical: 40,
+    groupContainer: {
+        marginBottom: 24,
     },
-    subtitle: {
-        fontSize: 16,
-        color: '#8E8E93',
-        textAlign: 'center',
+    groupHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+        marginTop: 8,
+    },
+    groupHeaderLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: '#E2E8F0',
+    },
+    groupTitle: {
+        fontSize: 13,
+        fontWeight: '700',
+        color: Colors.light.primary,
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
+        marginHorizontal: 12,
     },
 });
