@@ -1,0 +1,113 @@
+.prescriptions-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.page-heading {
+  color: #f1a63b; /* MedHive Orange */
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.orders-list { display: flex; flex-direction: column; gap: 30px; }
+
+/* ORDER CARD */
+.order-card {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.order-header {
+  background-color: #f1a63b;
+  color: white;
+  padding: 15px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.order-body {
+  display: flex;
+  padding: 30px;
+  gap: 40px;
+}
+
+/* Image Column */
+.image-preview-container {
+  width: 200px;
+  height: 250px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid #ddd;
+}
+
+.order-img { width: 100%; height: 100%; object-fit: cover; }
+
+.zoom-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.4);
+  color: white; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.3s; font-weight: bold;
+}
+.image-preview-container:hover .zoom-overlay { opacity: 1; }
+
+/* Medicine Row */
+.medicines-column { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+.medicine-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.med-info { font-size: 1.1rem; color: #333; }
+
+.status-buttons { display: flex; gap: 10px; }
+
+.status-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  background: #eee;
+}
+
+.status-btn.available.active { background-color: #4CAF50; color: white; }
+.status-btn.unavailable.active { background-color: #d93025; color: white; }
+
+/* DISPENSE BUTTON */
+.order-footer { padding: 20px; display: flex; justify-content: center; background: #fafafa; }
+
+.dispense-btn {
+  padding: 12px 60px;
+  background: #444;
+  color: white;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.dispense-btn:hover { transform: scale(1.05); background: #222; }
+
+/* Image Modal */
+.image-modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+  z-index: 2000; display: flex; align-items: center; justify-content: center;
+}
+.image-modal img { max-width: 90%; max-height: 90%; border-radius: 8px; }
+.close-modal {
+  position: absolute; top: 40px; right: 40px; background: none; border: none;
+  color: white; font-size: 3rem; cursor: pointer;
+}
