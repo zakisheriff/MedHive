@@ -1,95 +1,78 @@
-.sidebar {
-  height: calc(100vh - 40px);
-  margin: 20px;
-  background-color: #f8f9fa; /* Off-white rectangle */
-  border-radius: 24px;
-  display: flex;
-  flex-direction: column;
-  padding: 24px 10px;
+.gemini-sidebar {
+  height: 100vh;
+  background-color: #f0f4f9; /* Gemini Light Grey */
   position: fixed;
   left: 0;
   top: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
   z-index: 1000;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Slight drop shadow */
   font-family: "Helvetica", sans-serif;
 }
 
 .sidebar-header {
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 10px;
-  margin-bottom: 45px;
+  margin-bottom: 40px;
 }
 
-.logo-container { display: flex; align-items: center; gap: 12px; }
-.logo-icon { height: 32px; width: 32px; object-fit: contain; }
-.brand-name { font-size: 1.2rem; font-weight: bold; color: #000; }
-
-.expand-toggle {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  cursor: pointer;
-  padding: 5px;
+.logo-group {
   display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.expand-toggle img { width: 18px; transition: transform 0.3s; }
+.sidebar-logo { height: 52px; padding-left: 4px;}
+.logo-text { font-weight: bold; font-size: 1.2rem; color: #000; }
 
-.sidebar-nav { flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
+
+
+.sidebar-nav { flex-grow: 1; }
 
 .nav-item {
   position: relative;
   display: flex;
   align-items: center;
-  height: 52px;
+  height: 62px;
   text-decoration: none;
-  color: #666;
-  transition: color 0.3s;
+  color: #444746;
+  margin-bottom: 7px;
+  transition: background 0.2s;
 }
 
+.nav-item:hover { background-color: #e1e5ea; }
+
 .icon-box {
-  min-width: 64px; /* Centers icon in the circle area */
+  min-width: 80px; /* Centers icons in collapsed state */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2;
 }
 
-.nav-custom-icon { width: 22px; height: 22px; }
+.custom-icon { width: 34px; height: 34px; opacity: 0.8; padding-left: 18px; }
 
-.link-label {
-  z-index: 2;
-  font-weight: 600;
-  white-space: nowrap;
-  font-size: 0.95rem;
-}
+.nav-label { font-weight: 500; font-size: 0.95rem; white-space: nowrap; }
 
-/* THE EXPANDING INDICATOR */
-.active-bg-indicator {
+/* THE ORANGE LEFT STICK */
+.active-stick {
   position: absolute;
-  left: 6px; /* Spacing from left edge */
-  height: 52px;
-  width: 52px; /* Starts as a circle */
+  left: 0;
+  width: 5px;
+  height: 54px; /* Matches icon height exactly */
   background-color: #f1a63b; /* MedHive Orange */
-  border-radius: 26px; /* Makes it circular */
-  z-index: 1;
+  border-radius: 0 4px 4px 0;
+  z-index: 5;
 }
 
-/* When sidebar expands, the indicator naturally follows the .nav-item width */
-.sidebar[style*="width: 260px"] .active-bg-indicator {
-  width: calc(100% - 12px); /* Stretches into a capsule pill */
-}
-
-.nav-item.active { color: #000; }
-.nav-item.active .nav-custom-icon { filter: brightness(0); }
-
+/* FIX: Ensure Logout stays at the very bottom */
 .sidebar-footer {
-  margin-top: auto;
-  border-top: 1px solid #eee;
+  margin-top: auto; /* Pushes it to the bottom */
+  padding-bottom: 20px;
+  border-top: 1px solid #e1e5ea;
   padding-top: 15px;
 }
 
-.logout-item { color: #888; cursor: pointer; }
-.logout-item:hover { color: #ff4444; }
+.logout-link { color: #d93025; cursor: pointer; }

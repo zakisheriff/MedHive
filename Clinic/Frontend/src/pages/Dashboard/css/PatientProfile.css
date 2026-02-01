@@ -1,0 +1,48 @@
+/* Enhanced PatientProfile.css */
+
+/* HEADER REFINEMENTS */
+.sub-meta { color: #536471; font-size: 1.1rem; margin-top: 5px; }
+.secondary-meta { display: flex; gap: 20px; margin-top: 10px; font-size: 0.85rem; color: #70757a; font-weight: 600; }
+.insurance-tag.active { color: #1a8d1a; background: #e8f5e9; padding: 2px 8px; border-radius: 4px; }
+
+/* FLAGS (STRICT HIERARCHY) */
+.flags-container { padding: 10px 40px; display: flex; gap: 12px; flex-wrap: wrap; }
+.flag-chip { padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; border: 1px solid transparent; }
+.flag-chip.high-risk { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+.flag-chip.warning { background: #fff7ed; color: #c2410c; border-color: #fdba74; }
+.flag-chip.allergy { background: #000; color: #fff; } /* Strict Black for allergies */
+
+/* VITAL SNAPSHOT GRID */
+.vital-snapshot {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 20px 40px;
+  background: #f8f9fa;
+  margin: 20px 40px;
+  border-radius: 16px;
+}
+
+.vital-tile label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #70757a; }
+.vital-tile .value { font-size: 1.25rem; font-weight: 800; margin: 5px 0 0 0; color: #0f1419; }
+.vital-tile.abnormal .value { color: #dc2626; }
+
+/* MEDICATION CARDS */
+.med-card-detailed {
+  padding: 20px;
+  border: 1px solid #e1e8ed;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+.med-card-detailed.high-risk { border-left: 6px solid #b91c1c; background: #fffafa; }
+.med-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.risk-tag { font-size: 0.65rem; background: #b91c1c; color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 900; }
+
+/* TIMELINE (LinkedIn-Style Sequential) */
+
+.timeline-item .dot.active { background: #f1a63b; box-shadow: 0 0 0 4px #f1a63b22; }
+
+/* DOCUMENT TAGS */
+.tag { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 800; margin-left: 10px; }
+.tag.critical { background: #fee2e2; color: #b91c1c; }
+.tag.hospital { background: #f0f4f9; color: #1f1f1f; }

@@ -1,0 +1,222 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 0 20px;
+  font-family: "Helvetica", sans-serif;
+}
+
+/* 1. Hero Landing Style */
+.home-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: -550px; /* Pushes it slightly above the center */
+}
+
+.greeting-text {
+  font-size: 3.5rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, #f1a63b, #f1a63b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.sub-greeting {
+  font-size: 3.5rem;
+  color: #c4c7c5; /* Gemini gray */
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 2. Chat History Style */
+.chat-content {
+  flex: 1;
+  padding-top: 60px;
+  padding-bottom: 180px;
+}
+
+.message-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  align-items: flex-start;
+}
+
+.message-row.user {
+  justify-content: flex-end;
+}
+
+.chat-avatar {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.message-text {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #1f1f1f;
+  max-width: 85%;
+}
+
+.user .message-text {
+  background-color: #f0f4f9;
+  padding: 12px 20px;
+  border-radius: 24px;
+}
+
+/* 3. Sticky Bottom Input */
+.input-sticky-bottom {
+  position: fixed;
+  bottom: 250px;
+  width: calc(100% - 300px); /* Adjust based on sidebar width */
+  max-width: 850px;
+  background-color: #ffffff;
+  padding-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-sticky-bottom.has-started {
+  /* CHAT STATE */
+  position: fixed;
+  bottom: 40px;
+  /* Shift to the bottom only once chat starts */
+}
+
+.input-pill {
+  width: 100%;
+  background-color: #f0f4f9;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  padding: 8px 24px;
+  
+}
+
+.input-pill input {
+  flex: 1;
+  height: 50px;
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  outline: none;
+}
+
+.send-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.send-btn img {
+  width: 35px;
+  opacity: 0.6;
+}
+
+.send-btn img.active {
+  opacity: 1.0;
+}
+
+.footer-note {
+  font-size: 0.75rem;
+  color: #70757a;
+  position: fixed;
+  bottom: 10px;
+}
+
+/* Home.css adjustments */
+
+.message-row.ai {
+  display: flex;
+  justify-content: flex-start; /* AI responds from the left */
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.avatar-container {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.chat-avatar {
+  width: 28px;
+  height: 28px;
+  z-index: 2;
+  object-fit: contain;
+}
+
+/* THE ORANGE LOADING RING */
+.avatar-container.loading::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #f1a63b; /* MedHive Orange */
+  border-right-color: #f1a63b;
+  animation: spin 1s linear infinite;
+  z-index: 1;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* AI Message Text Styling */
+.ai .message-text {
+  padding-top: 8px; /* Aligns text with the avatar top */
+  color: #1f1f1f;
+  max-width: 85%;
+  line-height: 1.6;
+}
+
+/* User Message Styling (Pill-like on the right) */
+.message-row.user {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 30px;
+}
+
+.user .message-text {
+  background-color: #f0f4f9; /* Gemini User bubble */
+  padding: 12px 20px;
+  border-radius: 24px;
+  max-width: 70%;
+}
+
+/* Loading Dots Animation */
+.loading-dots {
+  display: flex;
+  gap: 4px;
+  padding-top: 15px;
+}
+
+.loading-dots span {
+  width: 6px;
+  height: 6px;
+  background-color: #c4c7c5;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.0); }
+}
