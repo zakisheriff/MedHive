@@ -810,6 +810,7 @@
     overflow-x: auto;
     padding-bottom: 5px;
     flex-wrap: nowrap;
+
     /* Ensure they stay in row but shrink/fit */
 }
 
@@ -825,6 +826,7 @@
     font-weight: 700;
     white-space: nowrap;
     flex-shrink: 0;
+    cursor: pointer;
 }
 
 .f-chip.active {
