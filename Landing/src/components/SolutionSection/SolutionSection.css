@@ -146,17 +146,17 @@
 /* Mobile Responsive */
 @media (max-width: 900px) {
     .stack-thread-line {
-        left: 30px;
+        left: 20px;
         transform: none;
     }
 
     .stack-connector {
-        left: 30px;
+        left: 20px;
     }
 
     .stack-card {
-        width: calc(100% - 80px);
-        margin-left: 80px !important;
+        width: calc(100% - 60px);
+        margin-left: 45px !important;
         text-align: left !important;
         flex-direction: row !important;
         padding: 24px;

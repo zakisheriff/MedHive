@@ -3,7 +3,7 @@ import './SolutionSection.css';
 
 const solutions = [
     {
-        title: 'AI Prescription Reader',
+        title: 'Prescription Reader',
         description: 'Instantly digitize handwritten prescriptions with advanced OCR',
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
