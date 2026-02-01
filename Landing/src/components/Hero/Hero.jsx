@@ -2,20 +2,44 @@ import React, { useState, useRef } from 'react';
 import './Hero.css';
 
 const Hero = () => {
-    // iPhone State: 'upload', 'history', 'details', 'profile', 'access'
+    // iPhone State: 'upload', 'history', 'access', 'profile'
     const [screen, setScreen] = useState('upload');
-    const [selectedItem, setSelectedItem] = useState(null);
     const [uploadStatus, setUploadStatus] = useState('idle');
+    const [activeAlert, setActiveAlert] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedFilter, setSelectedFilter] = useState('all');
     const fileInputRef = useRef(null);
 
-    // History Navigation State
-    const [selectedYear, setSelectedYear] = useState(null);
-    const [selectedMonth, setSelectedMonth] = useState(null);
+    // Mock Access Data (Matches access.tsx / generateMockAccess)
+    const [accessRecords, setAccessRecords] = useState([
+        { id: '1', clinicName: 'City Medical Center', doctorName: 'Dr. Sarah Wilson', status: 'pending', icon: '🏥' },
+        { id: '2', clinicName: 'Health Diagnostics Lab', doctorName: 'Dr. Michael Chen', status: 'active', duration: 'full', icon: '🧪' },
+        { id: '3', clinicName: 'Endocrine Care Clinic', doctorName: 'Dr. Jane Smith', status: 'active', duration: '1h', icon: '🩺', expiresSoon: true },
+    ]);
 
-    const handleUploadClick = () => {
-        fileInputRef.current.click();
-    };
+    // Mock History Data (Matches historyUtils.ts / generateMockHistory)
+    const historyGroups = [
+        {
+            year: 2025,
+            months: [
+                {
+                    monthLabel: 'May',
+                    items: [
+                        { id: '1', type: 'prescription', title: 'Digital Prescription', date: 'Today', clinicName: 'City Medical Center', medicines: [{ name: 'Amoxicillin' }, { name: 'Ibuprofen' }], status: 'active' }
+                    ]
+                },
+                {
+                    monthLabel: 'April',
+                    items: [
+                        { id: '2', type: 'labReport', title: 'Electronic Lab Report', date: 'Apr 28', clinicName: 'Health Diagnostics Lab', labTests: [{ name: 'Hemoglobin' }, { name: 'WBC Count' }], status: 'completed' },
+                        { id: '3', type: 'prescription', title: 'Digital Prescription', date: 'Apr 15', clinicName: 'Endocrine Care Clinic', medicines: [{ name: 'Metformin' }], status: 'active' }
+                    ]
+                }
+            ]
+        }
+    ];
 
+    const handleUploadClick = () => { fileInputRef.current.click(); };
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             setUploadStatus('uploading');
@@ -27,108 +51,40 @@ const Hero = () => {
         }
     };
 
-    // Mock Hierarchical Data
-    const historyData = {
-        '2025': {
-            'May': [
-                {
-                    id: 1,
-                    type: 'hospital',
-                    icon: '🏥',
-                    title: 'General Checkup',
-                    subtitle: 'City Hospital • May 12, 2025',
-                    status: 'Passed',
-                    statusClass: 'check',
-                    details: 'Routine annual physical examination. Vitals stable. Blood pressure 120/80. No significant findings.'
-                }
-            ],
-            'April': [
-                {
-                    id: 2,
-                    type: 'lab',
-                    icon: '🧪',
-                    title: 'Blood Test Results',
-                    subtitle: 'Metro Labs • Apr 28, 2025',
-                    status: 'Review',
-                    statusClass: 'alert',
-                    details: 'Complete Blood Count (CBC). Hemoglobin slightly low. Vitamin D deficiency detected. Supplement recommended.'
-                },
-                {
-                    id: 3,
-                    type: 'pharmacy',
-                    icon: '💊',
-                    title: 'Prescription Filled',
-                    subtitle: 'MediCare Pharmacy • Apr 15, 2025',
-                    status: 'Active',
-                    statusClass: 'success',
-                    details: 'Amoxicillin 500mg. Take 3 times daily for 7 days. Finished course on Apr 22, 2025.'
-                }
-            ]
-        },
-        '2024': {
-            'January': [
-                {
-                    id: 4,
-                    type: 'vaccine',
-                    icon: '💉',
-                    title: 'Annual Vaccination',
-                    subtitle: 'Community Clinic • Jan 10, 2024',
-                    status: 'Done',
-                    statusClass: 'check',
-                    details: 'Influenza Vaccine (Flu Shot). Batch #4492-B. Next due: Jan 2025.'
-                }
-            ]
+    const handleAccessAction = (id, action) => {
+        const record = accessRecords.find(r => r.id === id);
+        if (!record) return;
+
+        let title = ""; let message = ""; let confirmText = "Confirm";
+        if (action === 'approve_1h') {
+            title = "Grant Temporary Access?";
+            message = `${record.clinicName} will be able to view your medical history for exactly 60 minutes.`;
+            confirmText = "Approve for 1 Hour";
+        } else if (action === 'approve_full') {
+            title = "Grant Full Access?";
+            message = `${record.clinicName} will have ongoing access to your history until you revoke it.`;
+            confirmText = "Approve Full Access";
+        } else if (action === 'revoke') {
+            title = "Revoke Access?";
+            message = `${record.clinicName} will no longer be able to view your medical records.`;
+            confirmText = "Revoke";
         }
-    };
 
-    const handleYearClick = (year) => {
-        setSelectedYear(year);
-        setScreen('history-months');
-    };
-
-    const handleMonthClick = (month) => {
-        setSelectedMonth(month);
-        setScreen('history-clinics');
-    };
-
-    const handleItemClick = (item) => {
-        setSelectedItem(item);
-        setScreen('details');
-    };
-
-    const handleBackClick = () => {
-        if (screen === 'details') {
-            setScreen('history-clinics');
-            setSelectedItem(null);
-        } else if (screen === 'history-clinics') {
-            setScreen('history-months');
-            setSelectedMonth(null);
-        } else if (screen === 'history-months') {
-            setScreen('history-years');
-            setSelectedYear(null);
-        } else if (screen === 'history-years') {
-            setScreen('home');
-        }
-    };
-
-    // Main bottom nav click handler
-    const handleHistoryNavClick = () => {
-        // Reset to top level when clicking bottom nav
-        setScreen('history-years');
-        setSelectedYear(null);
-        setSelectedMonth(null);
-        setSelectedItem(null);
+        setActiveAlert({
+            title, message, confirmText, isDestructive: action === 'revoke',
+            onConfirm: () => {
+                if (action === 'revoke') setAccessRecords(prev => prev.filter(r => r.id !== id));
+                else setAccessRecords(prev => prev.map(r => r.id === id ? {
+                    ...r, status: 'active', duration: action === 'approve_1h' ? '1h' : 'full', expiresSoon: action === 'approve_1h'
+                } : r));
+                setActiveAlert(null);
+            }
+        });
     };
 
     return (
         <section className="hero">
-            <input
-                type="file"
-                ref={fileInputRef}
-                style={{ display: 'none' }}
-                accept="image/*,.pdf"
-                onChange={handleFileChange}
-            />
+            <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept="image/*,.pdf" onChange={handleFileChange} />
             <div className="hero-gradient" />
 
             <div className="container hero-container">
@@ -139,17 +95,12 @@ const Hero = () => {
                         MedHive is Sri Lanka's AI-Powered Healthcare Platform. Unify Medical Records, Digitize Prescriptions, and Access Intelligent Health Insights with Your Med ID.
                     </p>
                     <div className="hero-buttons">
-                        <a href="#join">
-                            <button className="btn-primary glass-btn">Get Started</button>
-                        </a>
-                        <a href="#ai">
-                            <button className="btn-secondary glass-btn">Learn More</button>
-                        </a>
+                        <a href="#join"><button className="btn-primary glass-btn">Get Started</button></a>
+                        <a href="#ai"><button className="btn-secondary glass-btn">Learn More</button></a>
                     </div>
                 </div>
 
                 <div className="hero-right animate-slide-in-right">
-                    {/* Interactive iPhone Mockup */}
                     <div className="iphone-mockup">
                         <div className="iphone-bezel">
                             <div className="iphone-screen">
@@ -157,340 +108,253 @@ const Hero = () => {
                                 <div className="status-bar">
                                     <span>9:41</span>
                                     <div className="status-icons">
-                                        <div className="ios-signal">
-                                            <div className="bar"></div>
-                                            <div className="bar"></div>
-                                            <div className="bar"></div>
-                                            <div className="bar"></div>
-                                        </div>
-                                        <div className="ios-battery">
-                                            <div className="battery-level"></div>
-                                        </div>
+                                        <div className="ios-signal">{[1, 2, 3, 4].map(i => <div key={i} className="bar"></div>)}</div>
+                                        <div className="ios-battery"><div className="battery-level"></div></div>
                                     </div>
                                 </div>
 
+                                { /* App Header removed - now individual per screen */}
 
                                 <div className="app-content-container">
-                                    {/* UPLOAD SCREEN (HOME) */}
+                                    {/* UPLOAD SCREEN */}
                                     {screen === 'upload' && (
-                                        <div className="screen-home animate-scale-in">
-                                            <div className="main-honey-card">
-                                                <div className="honey-card-pattern"></div>
-                                                <div className="honey-card-content">
-                                                    {uploadStatus === 'idle' && (
-                                                        <>
-                                                            <h2 className="honey-card-title">Upload Your<br />Health Records</h2>
-                                                            <p className="honey-card-subtitle">
-                                                                Upload an image to extract Medicine Name, Dosage, and Duration.
-                                                            </p>
-                                                            <div className="honey-card-actions">
-                                                                <button className="action-btn" onClick={handleUploadClick}>Upload Prescription</button>
-                                                                <button className="action-btn" onClick={handleUploadClick}>Upload Lab Report</button>
+                                        <div className="screen-home animate-fade-in">
+                                            <div className="home-header">
+                                                <h1>Upload</h1>
+                                                <div className="profile-circle" onClick={() => setScreen('profile')} style={{ cursor: 'pointer' }}>JD</div>
+                                            </div>
+
+                                            <div className="upload-main-card">
+                                                <div className="upload-icon-circle">
+                                                    <i className="fa-regular fa-file-lines"></i>
+                                                </div>
+                                                <h2>Upload Your Health Record</h2>
+                                                <p>Upload an Image to Extract Medicine Name, Dosage, and Duration</p>
+
+                                                <div className="upload-actions-list">
+                                                    <div className="upload-action-item" onClick={handleUploadClick}>
+                                                        <div className="ua-content">
+                                                            <h4>Prescription Reader</h4>
+                                                            <span>Extract Medicine Details</span>
+                                                        </div>
+                                                        <i className="fa-solid fa-chevron-right ua-arrow"></i>
+                                                    </div>
+                                                    <div className="upload-action-item">
+                                                        <div className="ua-content">
+                                                            <h4>Lab Report Analyzer</h4>
+                                                            <span>Analyze Test Results</span>
+                                                        </div>
+                                                        <i className="fa-solid fa-chevron-right ua-arrow"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            
+                                        </div>
+                                    )}
+
+                                    {/* HISTORY SCREEN */}
+                                    {screen === 'history' && (
+                                        <div className="screen-history animate-fade-in">
+                                            <div className="home-header">
+                                                <h1>History</h1>
+                                                <div className="profile-circle" onClick={() => setScreen('profile')} style={{ cursor: 'pointer' }}>JD</div>
+                                            </div>
+
+                                            <div className="search-bar-pill">
+                                                <i className="fas fa-search"></i>
+                                                <input type="text" placeholder="Search by medicine, doctor..." disabled />
+                                            </div>
+
+                                            <div className="filter-chips-row">
+                                                <div className="f-chip active">All</div>
+                                                <div className="f-chip">Prescriptions</div>
+                                                <div className="f-chip">Lab Reports</div>
+                                            </div>
+
+                                            {historyGroups.map(yearGroup => (
+                                                <div key={yearGroup.year} className="year-container">
+                                                    {yearGroup.months.map(month => (
+                                                        <div key={month.monthLabel} className="month-group">
+                                                            <div className="month-label">{month.monthLabel} {yearGroup.year}</div>
+                                                            <div className="history-list">
+                                                                {month.items.map(item => (
+                                                                    <div key={item.id} className="history-card" onClick={() => setActiveAlert(item)}>
+                                                                        <div className="hc-top">
+                                                                            <div className="hc-icon-box" style={{ background: item.type === 'prescription' ? 'rgba(220, 163, 73, 0.1)' : 'rgba(59, 130, 246, 0.1)', color: item.type === 'prescription' ? '#dca349' : '#3b82f6' }}>
+                                                                                <i className={`fas ${item.type === 'prescription' ? 'fa-file-prescription' : 'fa-flask'}`}></i>
+                                                                            </div>
+                                                                            <div className="hc-main">
+                                                                                <h4>{item.title}</h4>
+                                                                                <p>By {item.clinicName}</p>
+                                                                            </div>
+                                                                            <div className="hc-date">{item.date}</div>
+                                                                        </div>
+                                                                        <div className="hc-badges">
+                                                                            {item.medicines && item.medicines.slice(0, 2).map((med, idx) => (
+                                                                                <div key={idx} className="hc-badge">
+                                                                                    <i className="fas fa-pills"></i>
+                                                                                    <span>{med.name}</span>
+                                                                                </div>
+                                                                            ))}
+                                                                            {item.medicines && item.medicines.length > 2 && (
+                                                                                <div className="hc-badge-more">+{item.medicines.length - 2} more</div>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
                                                             </div>
-                                                        </>
-                                                    )}
-
-                                                    {uploadStatus === 'uploading' && (
-                                                        <div className="upload-state">
-                                                            <div className="spinner"></div>
-                                                            <p>Step 1/2: Checking Document Type...</p>
                                                         </div>
-                                                    )}
-
-                                                    {uploadStatus === 'processing' && (
-                                                        <div className="upload-state">
-                                                            <div className="spinner"></div>
-                                                            <p>Step 2/2: Extracting Medicine Names...</p>
-                                                        </div>
-                                                    )}
-
-                                                    {uploadStatus === 'completed' && (
-                                                        <div className="upload-state">
-                                                            <i className="fas fa-clock" style={{ fontSize: '40px', marginBottom: '15px' }}></i>
-                                                            <h3>Coming Soon</h3>
-                                                            <p>This AI feature is rolling out soon!</p>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* HISTORY - LEVEL 1: YEARS */}
-                                    {screen === 'history-years' && (
-                                        <div className="screen-history animate-slide-in-right">
-                                            <div className="list-header">
-                                                <h3>Timeline</h3>
-                                            </div>
-                                            {Object.keys(historyData).sort((a, b) => b - a).map((year) => (
-                                                <div
-                                                    key={year}
-                                                    className="history-simple-item"
-                                                    onClick={() => handleYearClick(year)}
-                                                >
-                                                    <div className="simple-item-label">{year}</div>
-                                                    <i className="fas fa-chevron-right arrow-icon"></i>
+                                                    ))}
                                                 </div>
                                             ))}
-                                        </div>
-                                    )}
-
-                                    {/* HISTORY - LEVEL 2: MONTHS */}
-                                    {screen === 'history-months' && (
-                                        <div className="screen-history animate-slide-in-right">
-                                            <div className="list-header-row">
-                                                <button className="back-btn-small" onClick={handleBackClick}>
-                                                    <i className="fas fa-chevron-left"></i>
-                                                </button>
-                                                <h3>{selectedYear}</h3>
-                                            </div>
-                                            {historyData[selectedYear] && Object.keys(historyData[selectedYear]).map((month) => (
-                                                <div
-                                                    key={month}
-                                                    className="history-simple-item"
-                                                    onClick={() => handleMonthClick(month)}
-                                                >
-                                                    <div className="simple-item-label">{month}</div>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                        <span className="count-badge">{historyData[selectedYear][month].length}</span>
-                                                        <i className="fas fa-chevron-right arrow-icon"></i>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-
-                                    {/* HISTORY - LEVEL 3: CLINICS (ITEMS) */}
-                                    {screen === 'history-clinics' && (
-                                        <div className="screen-history animate-slide-in-right">
-                                            <div className="list-header-row">
-                                                <button className="back-btn-small" onClick={handleBackClick}>
-                                                    <i className="fas fa-chevron-left"></i>
-                                                </button>
-                                                <h3>{selectedMonth} {selectedYear}</h3>
-                                            </div>
-                                            {historyData[selectedYear] && historyData[selectedYear][selectedMonth] && historyData[selectedYear][selectedMonth].map((item) => (
-                                                <div
-                                                    key={item.id}
-                                                    className="history-item-card"
-                                                    onClick={() => handleItemClick(item)}
-                                                >
-                                                    <div className="h-item-left">
-                                                        <div className="h-icon-box">{item.icon}</div>
-                                                        <div className="h-info">
-                                                            <h4>{item.title}</h4>
-                                                            <p>{item.subtitle.split('•')[0]}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="h-date">
-                                                        {item.subtitle.split('•')[1].trim().split(',')[0]}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-
-
-                                    {/* DETAILS SCREEN */}
-                                    {screen === 'details' && selectedItem && (
-                                        <div className="screen-details animate-slide-in-right">
-                                            <div className="detail-view-card">
-                                                <div className="dv-header">
-                                                    <div className="dv-icon">{selectedItem.icon}</div>
-                                                    <h2>{selectedItem.title}</h2>
-                                                </div>
-                                                <div className="dv-row">
-                                                    <span className="dv-label">Status</span>
-                                                    <span className="dv-value" style={{ color: 'var(--color-primary)' }}>{selectedItem.status}</span>
-                                                </div>
-                                                <div className="dv-row">
-                                                    <span className="dv-label">Location</span>
-                                                    <span className="dv-value">{selectedItem.subtitle.split('•')[0]}</span>
-                                                </div>
-                                                <div className="dv-row">
-                                                    <span className="dv-label">Date</span>
-                                                    <span className="dv-value">{selectedItem.subtitle.split('•')[1]}</span>
-                                                </div>
-                                                <div className="dv-row" style={{ display: 'block', borderBottom: 'none', paddingTop: '15px' }}>
-                                                    <span className="dv-label" style={{ display: 'block', marginBottom: '8px' }}>Medical Notes</span>
-                                                    <p style={{ fontSize: '13px', lineHeight: '1.5', color: '#555' }}>{selectedItem.details}</p>
-                                                </div>
-                                            </div>
-                                            <button className="section-btn-primary" style={{ width: '100%', marginTop: '20px', padding: '15px', borderRadius: '15px' }} onClick={handleBackClick}>
-                                                Back
-                                            </button>
-                                        </div>
-                                    )}
-
-                                    {/* PROFILE SCREEN */}
-                                    {screen === 'profile' && (
-                                        <div className="screen-profile animate-fade-in">
-                                            <div className="profile-header-bg">
-                                                <div className="profile-avatar-wrapper">
-                                                    <div className="profile-avatar-large">JD</div>
-                                                </div>
-                                            </div>
-
-                                            <div className="profile-content-scroll">
-                                                <div className="profile-info-card">
-                                                    <h2>Johnathan E. Doe</h2>
-                                                    <span className="profile-handle">@JohnDoe23</span>
-                                                    <div className="profile-id-badge">ID: PNT-892345</div>
-
-                                                    <div className="profile-action-row">
-                                                        <button className="btn-profile-action primary">
-                                                            Edit Profile
-                                                        </button>
-                                                        <button className="btn-profile-action secondary">
-                                                            Sign Out
-                                                        </button>
-                                                    </div>
-                                                </div>
-
-                                                <div className="profile-section-title">Personal Details</div>
-                                                <div className="profile-details-group">
-                                                    <div className="profile-row-item">
-                                                        <div className="p-icon-box"><i className="fas fa-user"></i></div>
-                                                        <div className="p-row-content">
-                                                            <span className="p-label">Full Name</span>
-                                                            <span className="p-value">Johnathan Elias Doe</span>
-                                                        </div>
-                                                    </div>
-                                                    <div className="profile-row-separator"></div>
-                                                    <div className="profile-row-item">
-                                                        <div className="p-icon-box"><i className="fas fa-birthday-cake"></i></div>
-                                                        <div className="p-row-content">
-                                                            <span className="p-label">Date of Birth</span>
-                                                            <span className="p-value">Sept 14, 1985</span>
-                                                        </div>
-                                                    </div>
-                                                    <div className="profile-row-separator"></div>
-                                                    <div className="profile-row-item">
-                                                        <div className="p-icon-box"><i className="fas fa-tint"></i></div>
-                                                        <div className="p-row-content">
-                                                            <span className="p-label">Blood Type</span>
-                                                            <span className="p-value">O+ (Positive)</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="profile-section-title">Settings</div>
-                                                <div className="profile-details-group">
-                                                    <div className="profile-row-item">
-                                                        <div className="p-icon-box"><i className="fas fa-bell"></i></div>
-                                                        <div className="p-row-content">
-                                                            <span className="p-label">Notifications</span>
-                                                            <span className="p-value">On</span>
-                                                        </div>
-                                                        <i className="fas fa-chevron-right arrow-icon"></i>
-                                                    </div>
-                                                    <div className="profile-row-separator"></div>
-                                                    <div className="profile-row-item">
-                                                        <div className="p-icon-box"><i className="fas fa-shield-alt"></i></div>
-                                                        <div className="p-row-content">
-                                                            <span className="p-label">Privacy & Security</span>
-                                                        </div>
-                                                        <i className="fas fa-chevron-right arrow-icon"></i>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
                                     )}
 
                                     {/* ACCESS SCREEN */}
                                     {screen === 'access' && (
                                         <div className="screen-access animate-fade-in">
-                                            <div className="access-header">
-                                                <h2>Access</h2>
-                                                <p>Manage who can see your data.</p>
+                                            <div className="home-header">
+                                                <h1>Access</h1>
+                                                <div className="profile-circle" onClick={() => setScreen('profile')} style={{ cursor: 'pointer' }}>JD</div>
                                             </div>
 
-                                            <div className="access-search-container">
-                                                <div className="search-bar">
-                                                    <i className="fas fa-search search-icon"></i>
-                                                    <input type="text" placeholder="Search clinics..." />
+                                            <div className="med-id-card-gradient">
+                                                <div className="mic-header">
+                                                    <div className="mic-brand"><i className="fas fa-shield-alt"></i> Med-ID</div>
+                                                    <i className="fas fa-share-alt"></i>
                                                 </div>
+                                                <div className="mic-number-box">
+                                                    <span>2000 1548 23</span>
+                                                </div>
+                                                <p className="mic-footer">Share this ID with your doctor to grant access</p>
                                             </div>
 
-                                            <div className="access-list-scroll">
-                                                <div className="access-card dark-card">
-                                                    <div className="ac-content">
-                                                        <h4>Maaran Clinic</h4>
-                                                        <p>Last access: 2d ago</p>
+                                            <div className="access-section-v2">
+                                                <h3 className="as-title">Incoming Requests <span className="as-badge">1</span></h3>
+                                                {accessRecords.filter(r => r.status === 'pending').map(r => (
+                                                    <div key={r.id} className="access-card-real">
+                                                        <div className="acr-header">
+                                                            <div className="acr-icon req"><i className="fas fa-bell"></i></div>
+                                                            <div className="acr-info"><h4>{r.clinicName}</h4><p>{r.doctorName}</p></div>
+                                                        </div>
+                                                        <div className="acr-actions">
+                                                            <button className="btn-acr-1h" onClick={() => handleAccessAction(r.id, 'approve_1h')}>1 Hour</button>
+                                                            <button className="btn-acr-full" onClick={() => handleAccessAction(r.id, 'approve_full')}>Full Access</button>
+                                                        </div>
                                                     </div>
-                                                    <div className="ac-status alert">
-                                                        <i className="fas fa-exclamation"></i>
-                                                    </div>
-                                                </div>
+                                                ))}
+                                            </div>
 
-                                                <div className="access-card dark-card">
-                                                    <div className="ac-content">
-                                                        <h4>Vetri Clinic</h4>
-                                                        <p>Active Access</p>
+                                            <div className="access-section-v2">
+                                                <h3 className="as-title">Clinics with Access</h3>
+                                                {accessRecords.filter(r => r.status === 'active').map(r => (
+                                                    <div key={r.id} className="access-card-real active">
+                                                        <div className="acr-header">
+                                                            <div className="acr-icon active"><i className="fas fa-check-circle"></i></div>
+                                                            <div className="acr-info"><h4>{r.clinicName}</h4><p>{r.doctorName}</p></div>
+                                                        </div>
+                                                        <button className="btn-acr-revoke" onClick={() => handleAccessAction(r.id, 'revoke')}>Revoke Access</button>
                                                     </div>
-                                                    <div className="ac-status success">
-                                                        <i className="fas fa-check"></i>
-                                                    </div>
-                                                </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
 
-                                                <div className="access-card dark-card">
-                                                    <div className="ac-content">
-                                                        <h4>Vetrimaaran Clinic</h4>
-                                                        <p>Request Pending</p>
-                                                    </div>
-                                                    <div className="ac-status notification">1</div>
-                                                </div>
-
-                                                <div className="access-card dark-card">
-                                                    <div className="ac-content">
-                                                        <h4>Apollo Hospital</h4>
-                                                        <p>Access Revoked</p>
-                                                    </div>
-                                                    <div className="ac-status alert">
-                                                        <i className="fas fa-exclamation"></i>
-                                                    </div>
-                                                </div>
-
-                                                <div className="access-card dark-card">
-                                                    <div className="ac-content">
-                                                        <h4>City Health Center</h4>
-                                                        <p>Action Required</p>
-                                                    </div>
-                                                    <div className="ac-status alert">
-                                                        <i className="fas fa-exclamation"></i>
-                                                    </div>
+                                    {/* ALERT OVERLAY */}
+                                    {activeAlert && (
+                                        <div className="alert-overlay">
+                                            <div className="alert-content">
+                                                <h3>{activeAlert.title}</h3>
+                                                <p>{activeAlert.message}</p>
+                                                <div className="alert-actions">
+                                                    <button className="alert-btn-confirm" onClick={activeAlert.onConfirm}>{activeAlert.confirmText}</button>
+                                                    <button className="alert-btn-cancel" onClick={() => setActiveAlert(null)}>Cancel</button>
                                                 </div>
                                             </div>
                                         </div>
                                     )}
                                 </div>
 
-                                {/* FLOATING BOTTOM NAV */}
+                                {/* BOTTOM NAV */}
                                 <div className="floating-nav">
-                                    <div className={`nav-item ${screen === 'profile' ? 'active' : ''}`} onClick={() => setScreen('profile')}>
-                                        <i className="far fa-user"></i>
-                                        <span>Profile</span>
-                                    </div>
-                                    <div className={`nav-item ${screen === 'upload' ? 'active' : ''}`} onClick={() => setScreen('upload')}>
-                                        <i className="fas fa-upload"></i>
-                                        <span>Upload</span>
-                                    </div>
-                                    <div className={`nav-item ${screen.includes('history') || screen === 'details' ? 'active' : ''}`} onClick={handleHistoryNavClick}>
+                                    <div className="nav-indicator" style={{
+                                        left: screen === 'history' ? '10px' : (screen === 'upload' || screen === 'profile') ? 'calc(33.33% + 5px)' : 'calc(66.66% + 5px)',
+                                        width: 'calc(33.33% - 15px)'
+                                    }}></div>
+                                    <div className={`nav-item ${screen === 'history' ? 'active' : ''}`} onClick={() => setScreen('history')}>
                                         <i className="fas fa-history"></i>
-                                        <span>History</span>
+                                    </div>
+                                    <div className={`nav-item ${(screen === 'upload' || screen === 'profile') ? 'active' : ''}`} onClick={() => setScreen('upload')}>
+                                        <i className="fas fa-upload"></i>
                                     </div>
                                     <div className={`nav-item ${screen === 'access' ? 'active' : ''}`} onClick={() => setScreen('access')}>
-                                        <i className="fas fa-lock"></i>
-                                        <span>Access</span>
+                                        <i className="fas fa-key"></i>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="iphone-buttons left-side-buttons"></div>
-                            <div className="iphone-buttons right-side-button"></div>
+                                {/* PROFILE SCREEN (OVERLAY STYLE) */}
+                                {screen === 'profile' && (
+                                    <div className="screen-profile-overlay animate-slide-up">
+                                        <div className="profile-header-done">
+                                            <h3>Account</h3>
+                                            <button className="btn-done" onClick={() => setScreen('upload')}>Close</button>
+                                        </div>
+
+                                        <div className="id-card-apple">
+                                            <div className="ica-top">
+                                                <div className="ica-avatar">JD</div>
+                                                <div className="ica-text">
+                                                    <h2>Johnathan Doe</h2>
+                                                    <p>john.doe@email.com</p>
+                                                </div>
+                                            </div>
+                                            <div className="ica-divider"></div>
+                                            <div className="ica-footer">
+                                                <div className="ica-med-label">MED-ID</div>
+                                                <div className="ica-med-value">2000154823</div>
+                                            </div>
+                                        </div>
+
+                                        <div className="stats-card-apple">
+                                            <div className="stat-unit"><strong>12</strong><span>Uploads</span></div>
+                                            <div className="stat-v-divider"></div>
+                                            <div className="stat-unit"><strong>3</strong><span>Shared</span></div>
+                                            <div className="stat-v-divider"></div>
+                                            <div className="stat-unit"><strong>8</strong><span>Months</span></div>
+                                        </div>
+
+                                        <h4 className="pref-section-title">Account</h4>
+                                        <div className="menu-card-apple">
+                                            <div className="mca-item">
+                                                <div className="mca-icon"><i className="fas fa-user-circle"></i></div>
+                                                <span>Edit Profile</span>
+                                                <i className="fas fa-chevron-right mca-chevron"></i>
+                                            </div>
+                                            <div className="mca-item">
+                                                <div className="mca-icon"><i className="fas fa-shield-alt"></i></div>
+                                                <span>Privacy & Security</span>
+                                                <i className="fas fa-chevron-right mca-chevron"></i>
+                                            </div>
+                                        </div>
+
+                                        <h4 className="pref-section-title">Support</h4>
+                                        <div className="menu-card-apple">
+                                            <div className="mca-item">
+                                                <div className="mca-icon"><i className="fas fa-question-circle"></i></div>
+                                                <span>Help Center</span>
+                                                <i className="fas fa-chevron-right mca-chevron"></i>
+                                            </div>
+                                            <div className="mca-item destructive">
+                                                <div className="mca-icon"><i className="fas fa-sign-out-alt"></i></div>
+                                                <span>Log Out</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </section >
