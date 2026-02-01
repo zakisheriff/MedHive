@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './css/Prescriptions.css';
 
@@ -31,6 +31,22 @@ const Prescriptions = () => {
   ]);
 
   const [selectedImage, setSelectedImage] = useState(null);
+
+  useEffect(()=>{
+    const handleEsc = (e) =>{
+      if(e.key === 'Escape'){
+        setSelectedImage(null);
+      }
+    };
+
+    if (selectedImage){
+      window.addEventListener('keydown', handleEsc);
+    }
+
+    return ()=>{
+      window.removeEventListener('keydown', handleEsc);
+    }   
+  }, [selectedImage] );
 
   const toggleStatus = (orderId, medIndex, status) => {
     setOrders(prev => prev.map(order => 
