@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
     statsContainer: {
         flexDirection: 'row',
         backgroundColor: '#fff',
-        borderRadius: 24,
+        borderRadius: 35,
         paddingHorizontal: 28,
         paddingVertical: 24,
         marginBottom: 40, // Increased margin for more air
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
     },
     menuCard: {
         backgroundColor: '#fff',
-        borderRadius: 16,
+        borderRadius: 35,
         marginBottom: 24,
         overflow: 'hidden',
         width: '100%',
@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
     menuIcon: {
         width: 36,
         height: 36,
-        borderRadius: 10,
+        borderRadius: 35,
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 14,

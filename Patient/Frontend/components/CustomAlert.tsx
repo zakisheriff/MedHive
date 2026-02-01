@@ -93,18 +93,13 @@ const styles = StyleSheet.create({
     },
     alertContainer: {
         backgroundColor: '#FFFFFF',
-        borderRadius: 24,
+        borderRadius: 35,
         width: Math.min(width * 0.85, 360), // Slightly more compact
         overflow: 'hidden',
         // Smoother shadow
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.12,
-        shadowRadius: 16,
-        elevation: 8,
     },
     alertContent: {
-        paddingTop: 32,
+        paddingTop: 20,
         paddingHorizontal: 24,
         paddingBottom: 16,
         alignItems: 'flex-start', // Standard material alignment
@@ -130,11 +125,10 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     button: {
-        paddingVertical: 10,
         paddingHorizontal: 16,
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 8,
+        borderRadius: 35,
     },
     flexButton: {
         // No longer flexing to full width

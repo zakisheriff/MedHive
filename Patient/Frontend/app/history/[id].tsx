@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     heroIconContainer: {
         width: 80,
         height: 80,
-        borderRadius: 24,
+        borderRadius: 35,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 20,

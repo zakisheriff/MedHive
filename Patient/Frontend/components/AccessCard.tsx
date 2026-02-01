@@ -102,7 +102,7 @@ export function AccessCard({ record, onUpdateStatus }: AccessCardProps) {
 const styles = StyleSheet.create({
     card: {
         backgroundColor: '#fff',
-        borderRadius: 24,
+        borderRadius: 35,
         padding: 16,
         marginBottom: 16,
         borderWidth: 1,
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     logoContainer: {
         width: 48,
         height: 48,
-        borderRadius: 16,
+        borderRadius: 35,
         overflow: 'hidden',
     },
     logoBackground: {
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     statusBadge: {
         paddingHorizontal: 10,
         paddingVertical: 4,
-        borderRadius: 12,
+        borderRadius: 35,
     },
     limitedBadge: {
         backgroundColor: '#FFF7ED',
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
         gap: 6,
         backgroundColor: '#FFFBEB',
         padding: 8,
-        borderRadius: 12,
+        borderRadius: 35,
         marginBottom: 16,
     },
     expiryText: {
@@ -193,14 +193,14 @@ const styles = StyleSheet.create({
     },
     button: {
         flex: 1,
-        minWidth: '28%', // Ensure buttons don't get too small
+        minWidth: '28%',
         height: 40,
-        borderRadius: 12,
+        borderRadius: 35,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 4,
-        paddingHorizontal: 4, // More compact
+        gap: 6,
+        paddingHorizontal: 12,
     },
     approveBtn: {
         backgroundColor: Colors.light.primary,
@@ -214,11 +214,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#FEF2F2',
         borderWidth: 1,
         borderColor: '#FEE2E2',
-        flex: 0,
-        width: '100%',
     },
     buttonText: {
-        fontSize: 12, // Smaller font to fit better
+        fontSize: 13,
         fontWeight: '700',
         color: '#fff',
     },

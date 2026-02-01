@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         maxWidth: 450,
         alignSelf: 'center',
         backgroundColor: '#FFFFFF',
-        borderRadius: 24,
+        borderRadius: 35,
         padding: 24,
         borderWidth: 1,
         borderColor: '#F1F5F9',

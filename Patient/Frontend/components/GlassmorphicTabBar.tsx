@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
         pointerEvents: 'box-none',
     },
     pill: {
-        borderRadius: 40,
+        borderRadius: 35,
         overflow: 'hidden',
         borderWidth: 1,
         borderColor: 'rgba(0, 0, 0, 0.05)', // Added subtle border for definition instead of shadow
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 16,
         paddingVertical: 10,
-        borderRadius: 30,
+        borderRadius: 35,
         flexDirection: 'row',
         gap: 6,
     },

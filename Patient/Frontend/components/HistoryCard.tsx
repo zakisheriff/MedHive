@@ -178,7 +178,7 @@ function LabTestItem({ test }: { test: LabTest }) {
 const styles = StyleSheet.create({
     card: {
         backgroundColor: '#FFFFFF',
-        borderRadius: 20,
+        borderRadius: 35,
         padding: 18,
         marginBottom: 12,
         borderWidth: 1,
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     iconContainer: {
         width: 48,
         height: 48,
-        borderRadius: 14,
+        borderRadius: 35,
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 14,
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F8FAFC',
         paddingHorizontal: 10,
         paddingVertical: 6,
-        borderRadius: 12,
+        borderRadius: 35,
         gap: 8,
         borderWidth: 1,
         borderColor: '#F1F5F9',
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     previewIconBadge: {
         width: 22,
         height: 22,
-        borderRadius: 8,
+        borderRadius: 35,
         backgroundColor: 'rgba(220,163,73,0.1)',
         alignItems: 'center',
         justifyContent: 'center',
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     },
     medicineCard: {
         backgroundColor: '#F8FAFC',
-        borderRadius: 12,
+        borderRadius: 35,
         padding: 14,
         marginBottom: 10,
         borderLeftWidth: 3,
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.light.primary,
         paddingHorizontal: 10,
         paddingVertical: 4,
-        borderRadius: 17.5,
+        borderRadius: 35,
     },
     dosageText: {
         fontSize: 11,
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     },
     labTestCard: {
         backgroundColor: '#F8FAFC',
-        borderRadius: 12,
+        borderRadius: 35,
         padding: 14,
         marginBottom: 10,
         borderLeftWidth: 3,
@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
     notesContainer: {
         flexDirection: 'row',
         backgroundColor: '#FFF7ED',
-        borderRadius: 12,
+        borderRadius: 35,
         padding: 12,
         gap: 8,
         marginBottom: 16,
