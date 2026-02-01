@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './CTASection.css';
 
-const CTASection = () => {
+const CTASection = ({ onCTAClick }) => {
     const sectionRef = useRef(null);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -27,7 +27,7 @@ const CTASection = () => {
             <div className={`cta-card glass-card scroll-scale-in ${isVisible ? 'visible' : ''}`}>
                 <h2>Join the future of connected healthcare.</h2>
                 <p>Be among the first to experience the power of AI-driven health management</p>
-                <button className="btn-cta glass-btn">Get Early Access</button>
+                <button className="btn-cta glass-btn" onClick={onCTAClick}>Get Early Access</button>
             </div>
         </section>
     );

@@ -1,14 +1,27 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Hero.css';
 
-const Hero = () => {
+const Hero = ({ focusTrigger }) => {
     // iPhone State: 'upload', 'history', 'access', 'profile', 'login'
     const [screen, setScreen] = useState('login');
     const [uploadStatus, setUploadStatus] = useState('idle');
     const [activeAlert, setActiveAlert] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('all');
+    const [highlightMockup, setHighlightMockup] = useState(false);
+    const [localTrigger, setLocalTrigger] = useState(0);
     const fileInputRef = useRef(null);
+
+    // Trigger highlight when focusTrigger or localTrigger changes
+    useEffect(() => {
+        if (focusTrigger > 0 || localTrigger > 0) {
+            setHighlightMockup(true);
+            const timer = setTimeout(() => {
+                setHighlightMockup(false);
+            }, 6000); // Highlight for 6 seconds
+            return () => clearTimeout(timer);
+        }
+    }, [focusTrigger, localTrigger]);
 
     // History Detail State
     const [activeHistoryItem, setActiveHistoryItem] = useState(null);
@@ -108,6 +121,23 @@ const Hero = () => {
         });
     };
 
+    const handleGetStartedClick = () => {
+        setLocalTrigger(prev => prev + 1);
+
+        if (window.innerWidth <= 900) {
+            // Scroll to mockup on mobile
+            const element = document.getElementById('hero-mockup-target');
+            if (element) {
+                const yOffset = -180;
+                const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+        } else {
+            // Scroll to top on desktop
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
     return (
         <section className="hero">
             <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept="image/*,.pdf" onChange={handleFileChange} />
@@ -121,13 +151,19 @@ const Hero = () => {
                         MedHive is Sri Lanka's AI-Powered Healthcare Platform. Unify Medical Records, Digitize Prescriptions, and Access Intelligent Health Insights with Your Med ID.
                     </p>
                     <div className="hero-buttons">
-                        <a href="#join"><button className="btn-primary glass-btn">Get Started</button></a>
+                        <button className="btn-primary glass-btn" onClick={handleGetStartedClick}>Get Started</button>
                         <a href="#ai"><button className="btn-secondary glass-btn">Learn More</button></a>
                     </div>
                 </div>
 
-                <div className="hero-right animate-slide-in-right">
-                    <div className="iphone-mockup">
+                <div className="hero-right animate-slide-in-right" id="hero-mockup-target">
+                    {highlightMockup && (
+                        <div className="medhive-focus-overlay">
+                            Try it!
+                        </div>
+                    )}
+
+                    <div className={`iphone-mockup ${highlightMockup ? 'focused-mockup' : ''}`}>
                         <div className="iphone-bezel">
                             <div className="iphone-screen">
                                 <div className="dynamic-island"></div>

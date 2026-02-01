@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
+
 /* Hero Section Styles */
 .hero {
     min-height: 100vh;
@@ -15,8 +17,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background:
-        radial-gradient(circle at 10% 20%, rgba(220, 163, 73, 0.08) 0%, transparent 40%);
+    background: transparent;
     z-index: 0;
     pointer-events: none;
 }
@@ -74,6 +75,7 @@
     display: flex;
     justify-content: center;
     perspective: 1000px;
+    background: transparent !important;
 }
 
 .iphone-mockup {
@@ -81,8 +83,69 @@
     height: 650px;
     position: relative;
     transform: rotateY(-10deg) rotateX(5deg);
-    transition: transform 0.5s ease;
-    filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.15));
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: transparent !important;
+    border-radius: 55px;
+    /* Match bezel to fix rectangular residues */
+}
+
+.iphone-mockup.focused-mockup {
+    /* No scaling or movement - just show the callout */
+    box-shadow: none;
+    /* Removed as per user request to get rid of the white outer something */
+}
+
+.medhive-focus-overlay {
+    position: absolute;
+    top: -85px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #DCA349;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 16px;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 32px;
+    white-space: nowrap;
+    z-index: 1100;
+    pointer-events: none;
+    animation: slideDownIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+        overlayFloat 2s ease-in-out infinite alternate;
+}
+
+@keyframes overlayFloat {
+    from {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    to {
+        transform: translateX(-50%) translateY(-8px);
+    }
+}
+
+
+.medhive-focus-overlay::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #DCA349;
+}
+
+@keyframes slideDownIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 }
 
 @media (min-width: 901px) {

@@ -1,6 +1,8 @@
 /* CTA Section Styles */
 .cta-section {
     padding: 80px 40px;
+    margin-bottom: 60px;
+    /* Added margin before footer */
     display: flex;
     justify-content: center;
     align-items: center;
