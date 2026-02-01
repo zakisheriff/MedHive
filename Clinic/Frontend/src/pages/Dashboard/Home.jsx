@@ -20,7 +20,7 @@ const Home = () => {
     setIsTyping(true);
 
     setTimeout(() => {
-      const aiReply = { role: 'ai', text: "I've received your request regarding clinical records. Once integrated, I'll fetch that data for you." };
+      const aiReply = { role: 'ai', text: "Faaaahhhhhhh" };
       setMessages(prev => [...prev, aiReply]);
       setIsTyping(false);
     }, 2000);
@@ -78,8 +78,8 @@ const Home = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
-          <button type="submit" className="send-btn">
-            <img src="/icons/search.png" alt="send" />
+          <button type="submit" className={"send-btn"}>
+            <img src="/icons/send.png" alt="send" className={input.length > 0? 'active' : ''} />
           </button>
         </form>
         <p className="footer-note">

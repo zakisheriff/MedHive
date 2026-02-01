@@ -116,8 +116,12 @@
 }
 
 .send-btn img {
-  width: 24px;
+  width: 35px;
   opacity: 0.6;
+}
+
+.send-btn img.active {
+  opacity: 1.0;
 }
 
 .footer-note {
