@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
 import { Colors } from '../constants/theme';
 import { HistoryItem, Medicine, LabTest } from '../types/history';
@@ -32,7 +33,7 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setExpanded(!expanded);
-        
+
         Animated.spring(animation, {
             toValue: expanded ? 0 : 1,
             useNativeDriver: false,
@@ -43,16 +44,16 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
 
     const isPrescription = item.type === 'prescription';
     const iconName = isPrescription ? 'receipt' : 'flask';
-    const statusColor = 
+    const statusColor =
         item.status === 'active' ? '#10B981' :
-        item.status === 'completed' ? '#6B7280' :
-        '#EF4444';
+            item.status === 'completed' ? '#6B7280' :
+                '#EF4444';
 
     const formatDate = (date: Date) => {
         const now = new Date();
         const diffTime = Math.abs(now.getTime() - date.getTime());
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        
+
         if (diffDays === 0) {
             return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         } else if (diffDays === 1) {
@@ -148,6 +149,19 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                         </View>
                     )}
 
+                    {/* Prescription Image */}
+                    {isPrescription && item.imageUri && (
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Prescription</Text>
+                            <Image
+                                source={{ uri: item.imageUri }}
+                                style={styles.prescriptionImage}
+                                contentFit="cover"
+                                transition={1000}
+                            />
+                        </View>
+                    )}
+
                     {/* Notes */}
                     {item.notes && (
                         <View style={styles.notesContainer}>
@@ -184,10 +198,10 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
             {/* Expand Indicator */}
             <View style={styles.expandIndicator}>
                 <Animated.View style={{ transform: [{ rotate: rotateInterpolate }] }}>
-                    <Ionicons 
-                        name="chevron-down" 
-                        size={18} 
-                        color={Colors.light.primary} 
+                    <Ionicons
+                        name="chevron-down"
+                        size={18}
+                        color={Colors.light.primary}
                     />
                 </Animated.View>
             </View>
@@ -219,9 +233,9 @@ function MedicineItem({ medicine }: { medicine: Medicine }) {
 }
 
 function LabTestItem({ test }: { test: LabTest }) {
-    const statusColor = 
+    const statusColor =
         test.status === 'normal' ? '#10B981' :
-        test.status === 'critical' ? '#EF4444' : '#F59E0B';
+            test.status === 'critical' ? '#EF4444' : '#F59E0B';
 
     return (
         <View style={styles.labTestCard}>
@@ -486,5 +500,12 @@ const styles = StyleSheet.create({
         paddingTop: 12,
         borderTopWidth: 1,
         borderTopColor: '#F1F5F9',
+    },
+    prescriptionImage: {
+        width: '100%',
+        height: 200,
+        borderRadius: 12,
+        marginTop: 8,
+        backgroundColor: '#F1F5F9',
     },
 });

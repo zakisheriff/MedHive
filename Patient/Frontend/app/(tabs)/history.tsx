@@ -92,22 +92,29 @@ export default function HistoryScreen() {
                 {groupedHistory.length === 0 ? (
                     <EmptyHistoryState />
                 ) : (
-                    groupedHistory.map((group, groupIndex) => (
-                        <View key={groupIndex} style={styles.groupContainer}>
-                            <View style={styles.groupHeader}>
-                                <View style={styles.groupHeaderLine} />
-                                <Text style={styles.groupTitle}>{group.dateLabel}</Text>
-                                <View style={styles.groupHeaderLine} />
-                            </View>
-                            {group.items.map((item) => (
-                                <HistoryCard
-                                    key={item.id}
-                                    item={item}
-                                    onPress={() => {
-                                        // TODO: Navigate to detail screen
-                                        console.log('View details for:', item.id);
-                                    }}
-                                />
+                    groupedHistory.map((yearGroup) => (
+                        <View key={yearGroup.year} style={styles.yearContainer}>
+                            <Text style={styles.yearTitle}>{yearGroup.year}</Text>
+
+                            {yearGroup.months.map((monthGroup, monthIndex) => (
+                                <View key={`${yearGroup.year}-${monthIndex}`} style={styles.monthContainer}>
+                                    <View style={styles.groupHeader}>
+                                        <View style={styles.groupHeaderLine} />
+                                        <Text style={styles.groupTitle}>{monthGroup.monthLabel}</Text>
+                                        <View style={styles.groupHeaderLine} />
+                                    </View>
+
+                                    {monthGroup.items.map((item) => (
+                                        <HistoryCard
+                                            key={item.id}
+                                            item={item}
+                                            onPress={() => {
+                                                // TODO: Navigate to detail screen
+                                                console.log('View details for:', item.id);
+                                            }}
+                                        />
+                                    ))}
+                                </View>
                             ))}
                         </View>
                     ))
@@ -213,5 +220,18 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase',
         letterSpacing: 0.5,
         marginHorizontal: 12,
+    },
+    yearContainer: {
+        marginBottom: 24,
+    },
+    yearTitle: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: Colors.light.text,
+        marginBottom: 16,
+        paddingHorizontal: 4,
+    },
+    monthContainer: {
+        marginBottom: 16,
     },
 });

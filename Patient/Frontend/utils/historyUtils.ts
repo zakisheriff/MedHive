@@ -1,79 +1,53 @@
-import { HistoryItem, GroupedHistory, HistoryItemType } from '../types/history';
+import { HistoryItem, YearGroup } from '../types/history';
 import { FilterType } from '../components/FilterChips';
 
-export function groupHistoryByDate(items: HistoryItem[]): GroupedHistory[] {
+export function groupHistoryByDate(items: HistoryItem[]): YearGroup[] {
     if (items.length === 0) return [];
 
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const thisWeek = new Date(today);
-    thisWeek.setDate(thisWeek.getDate() - 7);
+    const groupedByYear: { [year: number]: { [month: number]: HistoryItem[] } } = {};
 
-    const grouped: { [key: string]: HistoryItem[] } = {};
-    const dateLabels: { [key: string]: string } = {};
-
+    // First pass: Group by Year and Month
     items.forEach((item) => {
-        const itemDate = new Date(item.date);
-        const itemDateOnly = new Date(itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate());
+        const date = new Date(item.date);
+        const year = date.getFullYear();
+        const month = date.getMonth();
 
-        let dateKey: string;
-        let dateLabel: string;
-
-        if (itemDateOnly.getTime() === today.getTime()) {
-            dateKey = 'today';
-            dateLabel = 'Today';
-        } else if (itemDateOnly.getTime() === yesterday.getTime()) {
-            dateKey = 'yesterday';
-            dateLabel = 'Yesterday';
-        } else if (itemDate >= thisWeek) {
-            dateKey = 'thisWeek';
-            dateLabel = 'This Week';
-        } else if (itemDate.getMonth() === now.getMonth() && itemDate.getFullYear() === now.getFullYear()) {
-            dateKey = 'thisMonth';
-            dateLabel = 'This Month';
-        } else {
-            dateKey = itemDateOnly.toISOString();
-            dateLabel = itemDate.toLocaleDateString('en-US', { 
-                month: 'long', 
-                year: 'numeric',
-                day: 'numeric'
-            });
+        if (!groupedByYear[year]) {
+            groupedByYear[year] = {};
         }
-
-        if (!grouped[dateKey]) {
-            grouped[dateKey] = [];
-            dateLabels[dateKey] = dateLabel;
+        if (!groupedByYear[year][month]) {
+            groupedByYear[year][month] = [];
         }
-        grouped[dateKey].push(item);
+        groupedByYear[year][month].push(item);
     });
 
-    // Sort items within each group by date (newest first)
-    Object.keys(grouped).forEach((key) => {
-        grouped[key].sort((a, b) => b.date.getTime() - a.date.getTime());
-    });
+    // Second pass: Convert to array structure and sort
+    const sortedYears = Object.keys(groupedByYear)
+        .map(Number)
+        .sort((a, b) => b - a); // Descending years (2026, 2025...)
 
-    // Convert to array and sort groups
-    const result: GroupedHistory[] = Object.keys(grouped).map((key) => ({
-        dateLabel: dateLabels[key],
-        items: grouped[key],
-    }));
+    const result: YearGroup[] = sortedYears.map((year) => {
+        const monthsInYear = groupedByYear[year];
+        const sortedMonths = Object.keys(monthsInYear)
+            .map(Number)
+            .sort((a, b) => b - a); // Descending months (Dec, Nov...)
 
-    // Sort groups: today, yesterday, this week, this month, then by date
-    const order: { [key: string]: number } = {
-        today: 0,
-        yesterday: 1,
-        thisWeek: 2,
-        thisMonth: 3,
-    };
+        const monthGroups = sortedMonths.map((month) => {
+            // Sort items within month by date descending
+            const sortedItems = monthsInYear[month].sort((a, b) => b.date.getTime() - a.date.getTime());
 
-    result.sort((a, b) => {
-        const aKey = Object.keys(grouped).find((key) => dateLabels[key] === a.dateLabel) || '';
-        const bKey = Object.keys(grouped).find((key) => dateLabels[key] === b.dateLabel) || '';
-        const aOrder = order[aKey] ?? 4;
-        const bOrder = order[bKey] ?? 4;
-        return aOrder - bOrder;
+            const monthLabel = new Date(year, month).toLocaleString('default', { month: 'long' });
+
+            return {
+                monthLabel,
+                items: sortedItems
+            };
+        });
+
+        return {
+            year,
+            months: monthGroups
+        };
     });
 
     return result;
@@ -89,9 +63,8 @@ export function filterHistory(
     // Apply type filter
     if (filter === 'prescription' || filter === 'labReport') {
         filtered = filtered.filter((item) => item.type === filter);
-    } else if (filter === 'active' || filter === 'completed') {
-        filtered = filtered.filter((item) => item.status === filter);
     }
+    // Note: 'active' and 'completed' removed from UI but keeping logic permissive if needed or removing strict check
 
     // Apply search query
     if (searchQuery.trim()) {
@@ -106,7 +79,7 @@ export function filterHistory(
             const matchesTests = item.labTests?.some((t) =>
                 t.name.toLowerCase().includes(query)
             ) ?? false;
-            
+
             return matchesTitle || matchesDoctor || matchesClinic || matchesMedicines || matchesTests;
         });
     }
@@ -116,13 +89,16 @@ export function filterHistory(
 
 // Mock data generator for development
 export function generateMockHistory(): HistoryItem[] {
-    const now = new Date();
+    const now = new Date(); // Assume 2026 for now or current date
+    const currentYear = now.getFullYear();
+    const lastYear = currentYear - 1;
+
     return [
         {
             id: '1',
             type: 'prescription',
             title: 'General Checkup Prescription',
-            date: new Date(now.getTime() - 2 * 60 * 60 * 1000), // 2 hours ago
+            date: new Date(now.getTime() - 2 * 60 * 60 * 1000), // Today
             doctorName: 'Dr. Sarah Johnson',
             clinicName: 'City Medical Center',
             medicines: [
@@ -141,12 +117,13 @@ export function generateMockHistory(): HistoryItem[] {
             ],
             status: 'active',
             notes: 'Take with food. Complete the full course.',
+            imageUri: 'https://via.placeholder.com/300x400.png?text=Prescription+Image', // Mock Image
         },
         {
             id: '2',
             type: 'labReport',
             title: 'Complete Blood Count',
-            date: new Date(now.getTime() - 24 * 60 * 60 * 1000), // Yesterday
+            date: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
             doctorName: 'Dr. Michael Chen',
             clinicName: 'Health Diagnostics Lab',
             labTests: [
@@ -157,28 +134,15 @@ export function generateMockHistory(): HistoryItem[] {
                     status: 'normal',
                     referenceRange: '13.5-17.5 g/dL',
                 },
-                {
-                    name: 'White Blood Cells',
-                    value: '7.5',
-                    unit: '×10³/μL',
-                    status: 'normal',
-                    referenceRange: '4.5-11.0 ×10³/μL',
-                },
-                {
-                    name: 'Platelets',
-                    value: '250',
-                    unit: '×10³/μL',
-                    status: 'normal',
-                    referenceRange: '150-450 ×10³/μL',
-                },
             ],
             status: 'completed',
         },
+        // Item from last month
         {
             id: '3',
             type: 'prescription',
             title: 'Diabetes Management',
-            date: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+            date: new Date(currentYear, now.getMonth() - 1, 15),
             doctorName: 'Dr. Emily Rodriguez',
             clinicName: 'Endocrine Care Clinic',
             medicines: [
@@ -191,41 +155,20 @@ export function generateMockHistory(): HistoryItem[] {
             ],
             status: 'active',
         },
+        // Item from last year
         {
             id: '4',
             type: 'labReport',
-            title: 'Lipid Profile',
-            date: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+            title: 'Annual Physical Results',
+            date: new Date(lastYear, 10, 20), // Nov 20th last year
             doctorName: 'Dr. James Wilson',
             clinicName: 'Cardiac Health Lab',
             labTests: [
                 {
-                    name: 'Total Cholesterol',
+                    name: 'Cholesterol',
                     value: '185',
                     unit: 'mg/dL',
                     status: 'normal',
-                    referenceRange: '<200 mg/dL',
-                },
-                {
-                    name: 'LDL Cholesterol',
-                    value: '120',
-                    unit: 'mg/dL',
-                    status: 'normal',
-                    referenceRange: '<100 mg/dL',
-                },
-                {
-                    name: 'HDL Cholesterol',
-                    value: '45',
-                    unit: 'mg/dL',
-                    status: 'abnormal',
-                    referenceRange: '>60 mg/dL',
-                },
-                {
-                    name: 'Triglycerides',
-                    value: '150',
-                    unit: 'mg/dL',
-                    status: 'normal',
-                    referenceRange: '<150 mg/dL',
                 },
             ],
             status: 'completed',
@@ -234,7 +177,7 @@ export function generateMockHistory(): HistoryItem[] {
             id: '5',
             type: 'prescription',
             title: 'Antibiotic Course',
-            date: new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+            date: new Date(lastYear, 10, 25), // Nov 25th last year
             doctorName: 'Dr. Robert Kim',
             clinicName: 'Family Care Clinic',
             medicines: [
@@ -246,6 +189,7 @@ export function generateMockHistory(): HistoryItem[] {
                 },
             ],
             status: 'completed',
+            imageUri: 'https://via.placeholder.com/300x400.png?text=Prescription+Archive',
         },
     ];
 }
