@@ -70,7 +70,7 @@ const TeamSection = () => {
             <div className="container">
                 <div className="team-header">
                     <h2 className="section-title">Meet Our Team</h2>
-                    <p className="section-subtitle">The visionary minds behind MedHive's revolutionary healthcare platform</p>
+                    <p className="section-subtitle">The Visionary Minds Behind MedHive's Revolutionary Healthcare Platform</p>
                 </div>
 
                 <div className="team-scroll-container">
