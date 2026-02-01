@@ -103,11 +103,10 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: '#fff',
         borderRadius: 35,
-        padding: 16,
+        padding: 12,
         marginBottom: 16,
         borderWidth: 1,
         borderColor: '#F1F5F9',
-
     },
     header: {
         flexDirection: 'row',
@@ -187,19 +186,19 @@ const styles = StyleSheet.create({
     },
     actionRow: {
         flexDirection: 'row',
-        gap: 8,
+        gap: 4,
         flexWrap: 'wrap',
     },
     button: {
         flex: 1,
-        minWidth: '28%',
+        minWidth: '25%', // Slightly smaller minWidth
         height: 40,
         borderRadius: 35,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 6,
-        paddingHorizontal: 12,
+        gap: 3,
+        paddingHorizontal: 4, // Even more compact
     },
     approveBtn: {
         backgroundColor: Colors.light.primary,
@@ -215,7 +214,7 @@ const styles = StyleSheet.create({
         borderColor: '#FEE2E2',
     },
     buttonText: {
-        fontSize: 13,
+        fontSize: 11,
         fontWeight: '700',
         color: '#fff',
     },
