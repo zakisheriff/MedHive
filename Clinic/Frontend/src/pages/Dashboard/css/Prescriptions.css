@@ -1,119 +1,120 @@
-* {
-  font-family: 'Helvetica', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 .prescriptions-container {
-  max-width: 1000px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 40px 20px;
+  font-family: "Helvetica", Arial, sans-serif;
+  background-color: #ffffff; /* Strict Light Mode */
 }
 
-.page-heading {
-  color: #f1a63b; /* MedHive Orange */
-  font-size: 2.2rem;
-  font-weight: bold;
-  margin-bottom: 40px;
-  text-align: center;
+.page-header h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  border-bottom: 1px solid #e1e8ed; /* Twitter-style divider */
+  padding-bottom: 20px;
+  margin-bottom: 0;
 }
 
-.orders-list { display: flex; flex-direction: column; gap: 30px; }
-
-/* ORDER CARD */
-.order-card {
-  background: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  overflow: hidden;
-  border: 1px solid #eee;
+.orders-feed {
+  border-left: 1px solid #e1e8ed;
+  border-right: 1px solid #e1e8ed;
 }
 
-.order-header {
-  background-color: #f1a63b;
-  color: white;
-  padding: 15px;
-  font-size: 1.4rem;
-  font-weight: bold;
-  text-align: center;
-}
-
-.order-body {
+/* THE TWITTER-STYLE CARD */
+.prescription-card {
   display: flex;
-  padding: 30px;
-  gap: 40px;
+  border-bottom: 1px solid #e1e8ed; /* Thin stroke instead of shadow */
+  background: #fff;
+  transition: background 0.2s;
 }
 
-/* Image Column */
-.image-preview-container {
-  width: 200px;
-  height: 250px;
-  background: #f8f9fa;
-  border-radius: 12px;
+.prescription-card:hover {
+  background-color: #f7f9fa; /* Subtle hover effect like a tweet */
+}
+
+/* Image on the left fully */
+.prescription-image-area {
+  width: 180px;
+  min-height: 200px;
+  border-right: 1px solid #e1e8ed;
   overflow: hidden;
-  cursor: pointer;
-  position: relative;
-  border: 1px solid #ddd;
 }
 
-.order-img { width: 100%; height: 100%; object-fit: cover; }
-
-.zoom-overlay {
-  position: absolute; inset: 0; background: rgba(0,0,0,0.4);
-  color: white; display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity 0.3s; font-weight: bold;
+.prescription-image-area img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
-.image-preview-container:hover .zoom-overlay { opacity: 1; }
 
-/* Medicine Row */
-.medicines-column { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+/* Content on the right */
+.prescription-content {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
 
-.medicine-row {
+.patient-meta {
+  margin-bottom: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.patient-meta .name {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #0f1419;
+}
+
+.patient-meta .handle {
+  color: #536471;
+  font-size: 0.9rem;
+}
+
+.medicine-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.med-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #f0f0f0;
 }
 
-.med-info { font-size: 1.1rem; color: #333; }
+.med-text { font-size: 0.95rem; color: #0f1419; margin: 0; }
 
-.status-buttons { display: flex; gap: 10px; }
-
-.status-btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
+.action-btn {
+  padding: 6px 12px;
+  border: 1px solid #cfd9de; /* Outlined buttons */
+  background: white;
+  font-size: 0.8rem;
+  font-weight: 700;
   cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s;
-  background: #eee;
+  margin-left: 5px;
 }
 
-.status-btn.available.active { background-color: #4CAF50; color: white; }
-.status-btn.unavailable.active { background-color: #d93025; color: white; }
+.action-btn.avail.active { background-color: #1a8d1a; color: white; border-color: #1a8d1a; }
+.action-btn.unavail.active { background-color: #f4212e; color: white; border-color: #f4212e; }
 
-/* DISPENSE BUTTON */
-.order-footer { padding: 20px; display: flex; justify-content: center; background: #fafafa; }
+/* Dispense button at the bottom */
+.card-footer {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid #eff3f4;
+}
 
-.dispense-btn {
-  padding: 12px 60px;
-  background: #444;
+.dispense-main-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #0f1419; /* Solid black button */
   color: white;
-  border-radius: 8px;
-  font-weight: bold;
+  border: none;
+  font-weight: 700;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: transform 0.2s;
 }
-.dispense-btn:hover { transform: scale(1.05); background: #222; }
 
-/* Image Modal */
-.image-modal {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-  z-index: 2000; display: flex; align-items: center; justify-content: center;
-}
-.image-modal img { max-width: 90%; max-height: 90%; border-radius: 8px; }
-.close-modal {
-  position: absolute; top: 40px; right: 40px; background: none; border: none;
-  color: white; font-size: 3rem; cursor: pointer;
-}
+.dispense-main-btn:hover { background-color: #272c30; }

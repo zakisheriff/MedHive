@@ -3,21 +3,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './css/Prescriptions.css';
 
 const Prescriptions = () => {
-  // Initial state mimicking incoming orders from a mobile app
   const [orders, setOrders] = useState([
     {
       id: 1,
       patientName: "Abdul Raheem",
+      medHiveId: "@mh001",
       image: "/prescription-sample-1.jpg",
       medicines: [
         { name: "Amoxicillin 500mg", quantity: "x 7 Days", status: null },
-        { name: "Sitricin 200mg", quantity: "x 3 days", status: null },
-        { name: "Loridin 100mg", quantity: "x 10 days", status: null }
+        { name: "Sitricin 200mg", quantity: "x 3 days", status: null }
       ]
     },
     {
       id: 2,
       patientName: "Sarah Firthouse",
+      medHiveId: "@mh042",
       image: "/prescription-sample-2.jpg",
       medicines: [
         { name: "Paracetamol 500mg", quantity: "x 5 Days", status: null }
@@ -25,9 +25,6 @@ const Prescriptions = () => {
     }
   ]);
 
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  // Update availability (This data would be sent to History/Database later)
   const toggleStatus = (orderId, medIndex, status) => {
     setOrders(prev => prev.map(order => 
       order.id === orderId 
@@ -36,49 +33,52 @@ const Prescriptions = () => {
     ));
   };
 
-  // Remove the order from queue (Dispense)
   const handleDispense = (orderId) => {
     setOrders(prev => prev.filter(order => order.id !== orderId));
   };
 
   return (
     <div className="prescriptions-container">
-      <h1 className="page-heading">Incoming Prescriptions</h1>
+      <header className="page-header">
+        <h1>Incoming Prescriptions</h1>
+      </header>
 
-      <div className="orders-list">
+      <div className="orders-feed">
         <AnimatePresence>
           {orders.map((order) => (
             <motion.div 
               key={order.id}
               layout
-              initial={{ opacity: 0, scale: 1.0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, y: 0 }}
-              className="order-card"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="prescription-card"
             >
-              <div className="order-header">{order.patientName}</div>
-              
-              <div className="order-body">
-                {/* Prescription Image Preview */}
-                <div className="image-preview-container" onClick={() => setSelectedImage(order.image)}>
-                  <img src={order.image} alt="Prescription" className="order-img" />
-                  <div className="zoom-overlay">Click to View</div>
+              {/* Left Side: Full Height Image Area */}
+              <div className="prescription-image-area">
+                <img src={order.image} alt="Prescription" />
+              </div>
+
+              {/* Right Side: Content Area */}
+              <div className="prescription-content">
+                <div className="patient-meta">
+                  <span className="name">{order.patientName}</span>
+                  <span className="handle">{order.medHiveId}</span>
                 </div>
 
-                {/* Medicine List */}
-                <div className="medicines-column">
+                <div className="medicine-list">
                   {order.medicines.map((med, index) => (
-                    <div key={index} className="medicine-row">
-                      <span className="med-info"><strong>{med.name}</strong> {med.quantity}</span>
-                      <div className="status-buttons">
+                    <div key={index} className="med-row">
+                      <p className="med-text"><strong>{med.name}</strong> • {med.quantity}</p>
+                      <div className="btn-group">
                         <button 
-                          className={`status-btn available ${med.status === 'available' ? 'active' : ''}`}
+                          className={`action-btn avail ${med.status === 'available' ? 'active' : ''}`}
                           onClick={() => toggleStatus(order.id, index, 'available')}
                         >
                           Available
                         </button>
                         <button 
-                          className={`status-btn unavailable ${med.status === 'unavailable' ? 'active' : ''}`}
+                          className={`action-btn unavail ${med.status === 'unavailable' ? 'active' : ''}`}
                           onClick={() => toggleStatus(order.id, index, 'unavailable')}
                         >
                           Not Available
@@ -87,30 +87,17 @@ const Prescriptions = () => {
                     </div>
                   ))}
                 </div>
-              </div>
 
-              <div className="order-footer">
-                <button className="dispense-btn" onClick={() => handleDispense(order.id)}>
-                  DISPENSE
-                </button>
+                <div className="card-footer">
+                  <button className="dispense-main-btn" onClick={() => handleDispense(order.id)}>
+                    Dispense Order
+                  </button>
+                </div>
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
       </div>
-
-      {/* Fullscreen Image Modal */}
-      <AnimatePresence>
-        {selectedImage && (
-          <motion.div 
-            className="image-modal"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          >
-            <button className="close-modal" onClick={() => setSelectedImage(null)}>&times;</button>
-            <img src={selectedImage} alt="Full Prescription" />
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
