@@ -4,8 +4,6 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    Animated,
-    LayoutAnimation,
     Platform,
     UIManager,
     Share,
@@ -16,7 +14,6 @@ import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
 import { Colors } from '../constants/theme';
 import { HistoryItem, Medicine, LabTest } from '../types/history';
-import { ImagePreviewModal } from './ImagePreviewModal';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -28,21 +25,9 @@ interface HistoryCardProps {
 }
 
 export function HistoryCard({ item, onPress }: HistoryCardProps) {
-    const [expanded, setExpanded] = useState(false);
-    const [previewVisible, setPreviewVisible] = useState(false);
-    const [animation] = useState(new Animated.Value(0));
-
-    const toggleExpand = () => {
+    const handlePress = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        setExpanded(!expanded);
-
-        Animated.spring(animation, {
-            toValue: expanded ? 0 : 1,
-            useNativeDriver: false,
-            tension: 65,
-            friction: 11,
-        }).start();
+        onPress?.();
     };
 
     const handleShare = async () => {
@@ -88,15 +73,10 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
         }
     };
 
-    const rotateInterpolate = animation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0deg', '180deg'],
-    });
-
     return (
         <TouchableOpacity
-            activeOpacity={0.95}
-            onPress={toggleExpand}
+            activeOpacity={0.7}
+            onPress={handlePress}
             style={styles.card}
         >
             {/* Card Header */}
@@ -149,104 +129,6 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                     </View>
                 )}
             </View>
-
-            {/* Expandable Details */}
-            {expanded && (
-                <View style={styles.detailsContainer}>
-                    {/* Medicines Section */}
-                    {isPrescription && item.medicines && item.medicines.length > 0 && (
-                        <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Medications</Text>
-                            {item.medicines.map((medicine, index) => (
-                                <MedicineItem key={index} medicine={medicine} />
-                            ))}
-                        </View>
-                    )}
-
-                    {/* Lab Tests Section */}
-                    {!isPrescription && item.labTests && item.labTests.length > 0 && (
-                        <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Test Results</Text>
-                            {item.labTests.map((test, index) => (
-                                <LabTestItem key={index} test={test} />
-                            ))}
-                        </View>
-                    )}
-
-                    {/* Document Image */}
-                    {item.imageUri && (
-                        <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>
-                                {isPrescription ? 'Prescription' : 'Lab Report Document'}
-                            </Text>
-                            <TouchableOpacity
-                                activeOpacity={0.9}
-                                onPress={() => {
-                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                                    setPreviewVisible(true);
-                                }}
-                            >
-                                <Image
-                                    source={item.imageUri}
-                                    style={styles.prescriptionImage}
-                                    contentFit="cover"
-                                    transition={1000}
-                                />
-                                <View style={styles.imgExpandHint}>
-                                    <Ionicons name="expand" size={14} color="#fff" />
-                                    <Text style={styles.imgExpandText}>Tap to enlarge</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    )}
-
-                    {/* Notes */}
-                    {item.notes && (
-                        <View style={styles.notesContainer}>
-                            <Ionicons name="document-text-outline" size={16} color={Colors.light.primary} />
-                            <Text style={styles.notesText}>{item.notes}</Text>
-                        </View>
-                    )}
-
-                    {/* Actions */}
-                    <View style={styles.actionsContainer}>
-                        <TouchableOpacity
-                            style={styles.actionButton}
-                            onPress={() => {
-                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                onPress?.();
-                            }}
-                        >
-                            <Ionicons name="eye-outline" size={16} color={Colors.light.primary} />
-                            <Text style={styles.actionText}>View Details</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.actionButton, styles.shareButton]}
-                            onPress={handleShare}
-                        >
-                            <Ionicons name="share-outline" size={16} color="#fff" />
-                            <Text style={[styles.actionText, styles.shareText]}>Share</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            )}
-
-            {/* Expand Indicator */}
-            <View style={styles.expandIndicator}>
-                <Animated.View style={{ transform: [{ rotate: rotateInterpolate }] }}>
-                    <Ionicons
-                        name="chevron-down"
-                        size={18}
-                        color={Colors.light.primary}
-                    />
-                </Animated.View>
-            </View>
-
-            <ImagePreviewModal
-                isVisible={previewVisible}
-                imageUri={item.imageUri || null}
-                onClose={() => setPreviewVisible(false)}
-            />
         </TouchableOpacity>
     );
 }
@@ -414,7 +296,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     medicineName: {
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: '600',
         color: Colors.light.text,
         flex: 1,
@@ -426,7 +308,7 @@ const styles = StyleSheet.create({
         borderRadius: 17.5,
     },
     dosageText: {
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: '700',
         color: '#fff',
     },
@@ -440,7 +322,7 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     detailText: {
-        fontSize: 12,
+        fontSize: 11,
         color: '#6B7280',
     },
     labTestCard: {
@@ -458,7 +340,7 @@ const styles = StyleSheet.create({
         marginBottom: 6,
     },
     labTestName: {
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: '600',
         color: Colors.light.text,
         flex: 1,
@@ -475,12 +357,12 @@ const styles = StyleSheet.create({
         gap: 6,
     },
     valueText: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: '700',
         color: Colors.light.text,
     },
     unitText: {
-        fontSize: 14,
+        fontSize: 12,
         color: '#6B7280',
     },
     referenceText: {
@@ -502,62 +384,5 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: '#92400E',
         lineHeight: 18,
-    },
-    actionsContainer: {
-        flexDirection: 'row',
-        gap: 10,
-        marginTop: 8,
-    },
-    actionButton: {
-        flex: 1,
-        height: 35,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 17.5,
-        backgroundColor: '#F8FAFC',
-        gap: 6,
-    },
-    shareButton: {
-        backgroundColor: Colors.light.primary,
-    },
-    actionText: {
-        fontSize: 13,
-        fontWeight: '700',
-        color: Colors.light.primary,
-    },
-    shareText: {
-        color: '#fff',
-    },
-    expandIndicator: {
-        alignItems: 'center',
-        marginTop: 12,
-        paddingTop: 12,
-        borderTopWidth: 1,
-        borderTopColor: '#F1F5F9',
-    },
-    prescriptionImage: {
-        width: '100%',
-        height: 200,
-        borderRadius: 12,
-        marginTop: 8,
-        backgroundColor: '#F1F5F9',
-    },
-    imgExpandHint: {
-        position: 'absolute',
-        bottom: 12,
-        right: 12,
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.6)',
-        paddingHorizontal: 10,
-        paddingVertical: 6,
-        borderRadius: 20,
-        gap: 6,
-    },
-    imgExpandText: {
-        color: '#fff',
-        fontSize: 12,
-        fontWeight: '600',
     },
 });

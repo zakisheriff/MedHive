@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     detailCardTitle: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: '700',
         color: Colors.light.text,
         flex: 1,
@@ -313,15 +313,15 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
     detailSubText: {
-        fontSize: 14,
+        fontSize: 13,
         color: '#64748B',
     },
     resultValue: {
-        fontSize: 17,
+        fontSize: 16,
         fontWeight: '800',
     },
     referenceRange: {
-        fontSize: 12,
+        fontSize: 11,
         color: '#94A3B8',
         marginTop: 4,
     },
