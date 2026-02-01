@@ -164,7 +164,6 @@ const styles = StyleSheet.create({
     statusText: {
         fontSize: 11,
         fontWeight: '700',
-        textTransform: 'uppercase',
     },
     limitedText: {
         color: '#D97706',
