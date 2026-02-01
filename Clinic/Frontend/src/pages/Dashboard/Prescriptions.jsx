@@ -8,7 +8,7 @@ const Prescriptions = () => {
       id: 1,
       patientName: "Abdul Raheem",
       medHiveId: "@mh001",
-      profilePic: "https://i.pravatar.cc/150?u=mh001",
+      profilePic: "/icons/male.jpg",
       dateTime: "Wed, July 12, 2023 06:12 PM",
       image: "/prescription-sample-1.jpg",
       medicines: [
@@ -21,7 +21,7 @@ const Prescriptions = () => {
       id: 2,
       patientName: "Sarah Firthouse",
       medHiveId: "@mh042",
-      profilePic: "https://i.pravatar.cc/150?u=mh042",
+      profilePic: "/icons/female.jpg",
       dateTime: "Wed, July 12, 2023 08:45 PM",
       image: "/prescription-sample-2.jpg",
       medicines: [
