@@ -11,9 +11,12 @@ import {
     Dimensions,
     Platform,
     Modal,
-    Clipboard
+    Clipboard,
+    Animated,
+    Easing
 } from 'react-native';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
+import { useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/theme';
 import { API_ENDPOINTS } from '../constants/config';
@@ -34,6 +37,30 @@ export default function PrescriptionResultScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalType, setModalType] = useState<'details' | 'summary'>('details');
     const [hasError, setHasError] = useState(false);
+    const scanAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        if (loading) {
+            Animated.loop(
+                Animated.sequence([
+                    Animated.timing(scanAnim, {
+                        toValue: 1,
+                        duration: 2500,
+                        easing: Easing.inOut(Easing.sin),
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(scanAnim, {
+                        toValue: 0,
+                        duration: 2500,
+                        easing: Easing.inOut(Easing.sin),
+                        useNativeDriver: true,
+                    }),
+                ])
+            ).start();
+        } else {
+            scanAnim.stopAnimation();
+        }
+    }, [loading]);
 
     useEffect(() => {
         if (imageUri) {
@@ -168,9 +195,36 @@ export default function PrescriptionResultScreen() {
 
     if (loading) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color={Colors.light.primary} />
-                <Text style={styles.loadingText}>MedHive AI analyzing...</Text>
+            <View style={styles.loadingMainContainer}>
+                <Stack.Screen options={{ headerShown: false }} />
+                <SafeAreaView style={styles.loadingSafeArea}>
+                    <View style={styles.loadingContentPill}>
+                        <View style={styles.scanContainer}>
+                            <View style={styles.loadingImagePill}>
+                                <Image source={{ uri: imageUri }} style={styles.loadingImage} resizeMode="cover" />
+                                <Animated.View
+                                    style={[
+                                        styles.scanLine,
+                                        {
+                                            transform: [{
+                                                translateY: scanAnim.interpolate({
+                                                    inputRange: [0, 1],
+                                                    outputRange: [0, 200]
+                                                })
+                                            }]
+                                        }
+                                    ]}
+                                />
+                            </View>
+                        </View>
+
+                        <View style={styles.loadingStatusArea}>
+                            <ActivityIndicator size="small" color="#fff" style={{ marginBottom: 15 }} />
+                            <Text style={styles.loadingTitle}>MedHive AI Analyzing...</Text>
+                            <Text style={styles.loadingSubtext}>Extracting medical details from your image</Text>
+                        </View>
+                    </View>
+                </SafeAreaView>
             </View>
         );
     }
@@ -347,6 +401,78 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F8FAFC',
+    },
+    loadingMainContainer: {
+        flex: 1,
+        backgroundColor: '#F8FAFC',
+    },
+    loadingSafeArea: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    loadingContentPill: {
+        width: width * 0.95,
+        maxWidth: 420,
+        backgroundColor: Colors.light.primary,
+        borderRadius: 40,
+        padding: 20,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.1,
+        shadowRadius: 15,
+        elevation: 10,
+    },
+    scanContainer: {
+        width: '100%',
+        alignItems: 'center',
+        paddingVertical: 10,
+    },
+    loadingImagePill: {
+        width: '100%',
+        height: 200,
+        borderRadius: 32,
+        overflow: 'hidden',
+        backgroundColor: '#fff',
+        borderWidth: 4,
+        borderColor: 'rgba(255,255,255,0.3)',
+        position: 'relative',
+    },
+    loadingImage: {
+        width: '100%',
+        height: '100%',
+        opacity: 0.9,
+    },
+    scanLine: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 4,
+        backgroundColor: '#fff',
+        shadowColor: '#fff',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 1,
+        shadowRadius: 10,
+        elevation: 10,
+        zIndex: 10,
+    },
+    loadingStatusArea: {
+        paddingVertical: 20,
+        alignItems: 'center',
+    },
+    loadingTitle: {
+        fontSize: 20,
+        fontWeight: '900',
+        color: '#fff',
+        marginBottom: 6,
+    },
+    loadingSubtext: {
+        fontSize: 14,
+        color: 'rgba(255,255,255,0.8)',
+        textAlign: 'center',
+        paddingHorizontal: 20,
     },
     loadingText: {
         marginTop: 20,
