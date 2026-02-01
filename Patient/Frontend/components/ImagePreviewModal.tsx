@@ -7,6 +7,7 @@ import {
     Dimensions,
     SafeAreaView,
     StatusBar,
+    Platform,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
@@ -69,9 +70,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.9)',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     safeArea: {
         flex: 1,
+        width: '100%',
+        maxWidth: Platform.OS === 'web' ? 500 : '100%',
     },
     header: {
         width: '100%',
@@ -92,9 +97,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        padding: 20,
     },
     image: {
-        width: width,
-        height: height * 0.8,
+        width: '100%',
+        height: '100%',
     },
 });
