@@ -119,7 +119,7 @@ const Hero = ({ focusTrigger }) => {
                     setUploadStatus('completed');
                     setActiveAlert({
                         title: "Coming Soon!",
-                        message: "The AI Prescription Reader is currently in private beta. We're refining the model to ensure 99.9% accuracy before public release.",
+                        message: "MedHive's Prescription Reader is Currently in Private Beta. We're Refining the Model to Ensure 99.9% Accuracy Before Public Release.",
                         confirmText: "Notify Me When Ready",
                         onConfirm: () => {
                             setActiveAlert(null);
