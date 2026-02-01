@@ -194,33 +194,33 @@ export default function PrescriptionResultScreen() {
                         <Text style={styles.subText}>Select an option below to view extracted data or get a detailed AI summary.</Text>
 
                         <View style={styles.primaryActionGrid}>
-                            <TouchableOpacity style={styles.mainActionBtn} onPress={handleOpenDetails}>
-                                <LinearGradient colors={['#6B7280', '#374151']} style={styles.actionBtnGradient}>
+                            <TouchableOpacity style={styles.buttonBase} onPress={handleOpenDetails}>
+                                <LinearGradient colors={['#6B7280', '#374151']} style={styles.buttonGradientBase}>
                                     <Ionicons name="list" size={18} color="#fff" />
-                                    <Text style={styles.actionBtnLabel}>View Details</Text>
+                                    <Text style={styles.buttonTextBase}>View Details</Text>
                                 </LinearGradient>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={styles.mainActionBtn} onPress={handleOpenSummary}>
-                                <LinearGradient colors={['#818cf8', '#4f46e5']} style={styles.actionBtnGradient}>
+                            <TouchableOpacity style={styles.buttonBase} onPress={handleOpenSummary}>
+                                <LinearGradient colors={['#818cf8', '#4f46e5']} style={styles.buttonGradientBase}>
                                     <Ionicons name="sparkles" size={18} color="#fff" />
-                                    <Text style={styles.actionBtnLabel}>AI Summary</Text>
+                                    <Text style={styles.buttonTextBase}>AI Summary</Text>
                                 </LinearGradient>
                             </TouchableOpacity>
                         </View>
 
                         <View style={styles.footerActions}>
-                            <TouchableOpacity style={styles.footerBtn} onPress={handleSendToClinic}>
-                                <LinearGradient colors={['#4A4A4A', '#2D2D2D']} style={styles.footerBtnGradient}>
+                            <TouchableOpacity style={styles.buttonBase} onPress={handleSendToClinic}>
+                                <LinearGradient colors={['#4A4A4A', '#2D2D2D']} style={styles.buttonGradientBase}>
                                     <Ionicons name="business" size={18} color="#fff" />
-                                    <Text style={styles.footerBtnText}>Send to Clinic</Text>
+                                    <Text style={styles.buttonTextBase}>Send to Clinic</Text>
                                 </LinearGradient>
                             </TouchableOpacity>
 
-                            <TouchableOpacity style={styles.footerBtn} onPress={handleAddToHistory}>
-                                <LinearGradient colors={['#ADC178', '#8A9A5B']} style={styles.footerBtnGradient}>
+                            <TouchableOpacity style={styles.buttonBase} onPress={handleAddToHistory}>
+                                <LinearGradient colors={['#ADC178', '#8A9A5B']} style={styles.buttonGradientBase}>
                                     <Ionicons name="archive" size={18} color="#fff" />
-                                    <Text style={styles.footerBtnText}>Add to History</Text>
+                                    <Text style={styles.buttonTextBase}>Add to History</Text>
                                 </LinearGradient>
                             </TouchableOpacity>
                         </View>
@@ -229,7 +229,9 @@ export default function PrescriptionResultScreen() {
 
                 {/* Close Button */}
                 <TouchableOpacity style={styles.floatingClose} onPress={() => router.back()}>
-                    <Ionicons name="close-outline" size={32} color="#fff" />
+                    <LinearGradient colors={['#F5B25F', '#dca349']} style={styles.closeGradient}>
+                        <Ionicons name="close-outline" size={34} color="#fff" />
+                    </LinearGradient>
                 </TouchableOpacity>
             </SafeAreaView>
 
@@ -366,63 +368,51 @@ const styles = StyleSheet.create({
         marginBottom: 25,
     },
     primaryActionGrid: {
-        gap: 10,
+        gap: 12,
         marginBottom: 20,
     },
-    mainActionBtn: {
+    footerActions: {
+        gap: 12,
+        marginTop: 10,
+    },
+    buttonBase: {
         borderRadius: 22,
         overflow: 'hidden',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 4,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.15,
+        shadowRadius: 10,
+        elevation: 6,
     },
-    actionBtnGradient: {
-        paddingVertical: 16,
+    buttonGradientBase: {
+        paddingVertical: 18,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 10,
+        gap: 12,
     },
-    actionBtnLabel: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#fff',
-    },
-    footerActions: {
-        gap: 10,
-        marginTop: 'auto',
-    },
-    footerBtn: {
-        borderRadius: 22,
-        overflow: 'hidden',
-    },
-    footerBtnGradient: {
-        paddingVertical: 16,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 10,
-    },
-    footerBtnText: {
+    buttonTextBase: {
         color: '#fff',
         fontSize: 16,
-        fontWeight: '700',
+        fontWeight: '800',
+        letterSpacing: 0.3,
     },
     floatingClose: {
         marginTop: 25,
         width: 64,
         height: 64,
         borderRadius: 32,
-        backgroundColor: '#dca349',
+        overflow: 'hidden',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.25,
+        shadowRadius: 12,
+        elevation: 10,
+    },
+    closeGradient: {
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 0.2,
-        shadowRadius: 10,
-        elevation: 8,
     },
     // Modal Styles matching design
     modalOverlay: {
