@@ -48,7 +48,7 @@ app.post('/api/extract', upload.single('image'), async (req, res) => {
             return res.status(400).json({ error: 'No image uploaded' });
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         // Convert image to base64
         const imageBuffer = fs.readFileSync(req.file.path);
@@ -102,8 +102,11 @@ app.post('/api/extract', upload.single('image'), async (req, res) => {
 
         res.json(extractedData);
     } catch (error) {
-        console.error('Error extracting data:', error);
-        res.status(500).json({ error: 'Failed to process image' });
+        console.log('Error extracting data:', error.message || error);
+        res.status(error.status || 500).json({
+            error: error.message || 'Failed to process image',
+            details: error.errorDetails || []
+        });
     }
 });
 
@@ -115,7 +118,7 @@ app.post('/api/summary', async (req, res) => {
             return res.status(400).json({ error: 'Medicine name is required' });
         }
 
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
         const prompt = `Provide a professional, concise summary for the medicine: ${medicineName}. Include what it is used for, common side effects, and important precautions. Format it with clear headings.`;
 
         const result = await model.generateContent(prompt);

@@ -20,11 +20,12 @@ import { API_ENDPOINTS } from '../constants/config';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
 export default function PrescriptionResultScreen() {
+    const insets = useSafeAreaInsets();
     const { imageUri } = useLocalSearchParams<{ imageUri: string }>();
     const [loading, setLoading] = useState(true);
     const [summaryLoading, setSummaryLoading] = useState(false);
@@ -82,7 +83,7 @@ export default function PrescriptionResultScreen() {
             setData(result);
             setHasError(false);
         } catch (error: any) {
-            console.error('Extraction error:', error);
+            console.log('Extraction error (Handled):', error.message);
             setHasError(true);
 
             // Soft alert instead of forcing a back navigation
@@ -178,15 +179,29 @@ export default function PrescriptionResultScreen() {
         <View style={styles.mainContainer}>
             <Stack.Screen options={{ headerShown: false }} />
 
-            <SafeAreaView style={styles.safeArea}>
-                <View style={styles.contentPill}>
+            <SafeAreaView style={styles.safeArea} edges={['bottom', 'left', 'right']}>
+                {/* Sticky "Close" Button Unit - Matching Profile Modal */}
+                <View style={[styles.closeHeader, { top: insets.top + 10, pointerEvents: 'box-none' }]}>
+                    <View style={styles.closeHeaderInner}>
+                        <View style={styles.headerSpacer} />
+                        <BlurView intensity={60} tint="light" style={styles.blurWrapper}>
+                            <TouchableOpacity
+                                style={styles.doneBtn}
+                                onPress={() => {
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                    router.back();
+                                }}
+                            >
+                                <Text style={styles.doneText}>Close</Text>
+                            </TouchableOpacity>
+                        </BlurView>
+                    </View>
+                </View>
+
+                <View style={[styles.contentPill, { marginTop: insets.top + 60 }]}>
                     {/* Header Image */}
                     <View style={styles.imageWrapper}>
                         <Image source={{ uri: imageUri }} style={styles.mainImage} resizeMode="cover" />
-                        <BlurView intensity={20} tint="dark" style={styles.imageOverlay}>
-                            <Ionicons name="scan-outline" size={24} color="#fff" />
-                            <Text style={styles.overlayText}>AI Scanned Document</Text>
-                        </BlurView>
                     </View>
 
                     {/* Action Area */}
@@ -254,11 +269,6 @@ export default function PrescriptionResultScreen() {
                         </View>
                     </View>
                 </View>
-
-                {/* Close Button */}
-                <TouchableOpacity style={styles.floatingClose} onPress={() => router.back()}>
-                    <Ionicons name="close-circle-outline" size={52} color="#dca349" />
-                </TouchableOpacity>
             </SafeAreaView>
 
             {/* Elegant Charcoal Modal */}
@@ -339,11 +349,11 @@ const styles = StyleSheet.create({
     },
     contentPill: {
         width: width * 0.95,
-        height: height * 0.8,
-        backgroundColor: '#F5B25F',
+        flex: 1, // Let it fill space naturally
+        marginBottom: 20,
+        backgroundColor: Colors.light.primary,
         borderRadius: 40,
         padding: 10,
-        marginTop: 15,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.1,
@@ -351,7 +361,7 @@ const styles = StyleSheet.create({
         elevation: 10,
     },
     imageWrapper: {
-        height: '35%',
+        height: height * 0.28,
         width: '100%',
         borderRadius: 32,
         overflow: 'hidden',
@@ -367,7 +377,7 @@ const styles = StyleSheet.create({
         left: 15,
         paddingHorizontal: 12,
         paddingVertical: 8,
-        borderRadius: 15,
+        borderRadius: 120,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 8,
@@ -434,18 +444,40 @@ const styles = StyleSheet.create({
     textDisabled: {
         color: 'rgba(255,255,255,0.5)',
     },
-    floatingClose: {
-        marginTop: 20,
-        width: 52,
-        height: 52,
-        borderRadius: 26,
+    // Matching Profile Modal Close Button
+    closeHeader: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        zIndex: 100,
         alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 5,
+    },
+    closeHeaderInner: {
+        width: '100%',
+        paddingHorizontal: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+    },
+    headerSpacer: {
+        flex: 1,
+    },
+    blurWrapper: {
+        borderRadius: 22,
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.4)',
+    },
+    doneBtn: {
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        borderRadius: 22,
+    },
+    doneText: {
+        fontSize: 17,
+        fontWeight: '600',
+        color: Colors.light.primary,
     },
     // Modal Styles matching design
     modalOverlay: {
