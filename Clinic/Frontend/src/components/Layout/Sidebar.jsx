@@ -1,15 +1,21 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import './Sidebar.css';
 
 const Sidebar = ({ isExpanded, setIsExpanded }) => {
+  const navigate = useNavigate();
+
   const menuItems = [
     { name: 'Home', path: '/dashboard/home', icon: '/icons/home.png' },
     { name: 'Search', path: '/dashboard/search', icon: '/icons/search.png' },
     { name: 'Prescription', path: '/dashboard/prescription', icon: '/icons/prescription.png' },
     { name: 'History', path: '/dashboard/history', icon: '/icons/history.png' },
   ];
+
+  const handleLogout = () =>{
+      navigate("/auth");
+  }
 
   return (
     <motion.aside 
@@ -81,7 +87,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
 
       {/* 3. Footer: Logout */}
       <div className="sidebar-footer">
-        <div className="nav-item logout-link" title={!isExpanded ? "Logout" : ""}>
+        <div className="nav-item logout-link" title={!isExpanded ? "Logout" : ""} onClick={handleLogout} style={{ cursor: 'pointer' }} >
           <div className="icon-box">
             <img src="/icons/logout.png" className="custom-icon" alt="Logout" />
           </div>
