@@ -27,6 +27,39 @@
     z-index: 1;
 }
 
+.stack-thread-progress {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom,
+            var(--color-primary),
+            #ffffff,
+            var(--color-primary));
+    transform: translateX(-50%) scaleY(var(--scroll-progress, 0));
+    transform-origin: top;
+    z-index: 1;
+    box-shadow: 0 0 15px var(--color-primary);
+    will-change: transform;
+}
+
+/* Glowing head of the progress line */
+.stack-thread-progress::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 30px;
+    background: linear-gradient(to bottom, transparent, #ffffff, var(--color-primary));
+    filter: blur(2px);
+    box-shadow: 0 0 20px #ffffff;
+    border-radius: 3px;
+    opacity: 0.8;
+}
+
 .ecosystem-stack-flow {
     display: flex;
     flex-direction: column;
@@ -148,6 +181,11 @@
     .stack-thread-line {
         left: 20px;
         transform: none;
+    }
+
+    .stack-thread-progress {
+        left: 20px;
+        transform: scaleY(var(--scroll-progress, 0));
     }
 
     .stack-connector {
