@@ -6,6 +6,7 @@ const Home = () => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+  const hasStarted = messages.length > 0;
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -69,7 +70,7 @@ const Home = () => {
         )}
       </div>
 
-      <div className="input-sticky-bottom">
+      <div className={`input-sticky-bottom ${hasStarted ? 'has-started' : ''}`}>
         <form className="input-pill" onSubmit={handleSend}>
           <input 
             type="text" 
