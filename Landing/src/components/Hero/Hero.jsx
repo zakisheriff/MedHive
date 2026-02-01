@@ -11,6 +11,7 @@ const Hero = ({ focusTrigger }) => {
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [highlightMockup, setHighlightMockup] = useState(false);
     const [localTrigger, setLocalTrigger] = useState(0);
+    const [uploadType, setUploadType] = useState('prescription');
     const fileInputRef = useRef(null);
 
     // Trigger highlight when focusTrigger or localTrigger changes
@@ -102,7 +103,10 @@ const Hero = ({ focusTrigger }) => {
         })).filter(yearGroup => yearGroup.months.length > 0);
     }, [searchQuery, selectedFilter]);
 
-    const handleUploadClick = () => { fileInputRef.current.click(); };
+    const handleUploadClick = (type = 'prescription') => {
+        setUploadType(type);
+        fileInputRef.current.click();
+    };
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
@@ -117,9 +121,10 @@ const Hero = ({ focusTrigger }) => {
 
                 setTimeout(() => {
                     setUploadStatus('completed');
+                    const isLab = uploadType === 'lab';
                     setActiveAlert({
                         title: "Coming Soon!",
-                        message: "MedHive's Prescription Reader is Currently in Private Beta. We're Refining the Model to Ensure 99.9% Accuracy Before Public Release.",
+                        message: `MedHive's ${isLab ? 'Lab Analyzer' : 'Prescription Reader'} is Currently in Private Beta. We're Refining the Model to Ensure 99.9% Accuracy Before Public Release.`,
                         confirmText: "Notify Me",
                         onConfirm: () => {
                             setActiveAlert(null);
@@ -280,14 +285,14 @@ const Hero = ({ focusTrigger }) => {
                                                 <p>Upload an Image to Extract Medicine Name, Dosage, and Duration</p>
 
                                                 <div className="upload-actions-list">
-                                                    <div className="upload-action-item" onClick={handleUploadClick}>
+                                                    <div className="upload-action-item" onClick={() => handleUploadClick('prescription')}>
                                                         <div className="ua-content">
                                                             <h4>Prescription Reader</h4>
                                                             <span>Extract Medicine Details</span>
                                                         </div>
                                                         <i className="fa-solid fa-chevron-right ua-arrow"></i>
                                                     </div>
-                                                    <div className="upload-action-item">
+                                                    <div className="upload-action-item" onClick={() => handleUploadClick('lab')}>
                                                         <div className="ua-content">
                                                             <h4>Lab Report Analyzer</h4>
                                                             <span>Analyze Test Results</span>
@@ -512,7 +517,7 @@ const Hero = ({ focusTrigger }) => {
                                         )}
                                         <div className="upload-status-box">
                                             <div className="status-spinner"></div>
-                                            <h3>{uploadStatus === 'uploading' ? 'Uploading...' : 'Analyzing with AI...'}</h3>
+                                            <h3>{uploadStatus === 'uploading' ? 'Uploading...' : uploadType === 'lab' ? 'Analyzing Lab Report...' : 'Analyzing Prescription...'}</h3>
                                             <p>Extracting medical details from your image</p>
                                         </div>
                                     </div>
