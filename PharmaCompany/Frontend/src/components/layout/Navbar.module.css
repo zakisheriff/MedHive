@@ -1,0 +1,113 @@
+.navbar {
+    height: var(--header-height);
+    background-color: var(--color-bg-dark);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-lg);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 101;
+    /* Above sidebar if sidebar is top-aligned, but usually sidebar is full height. */
+}
+
+/* If sidebar is full height, navbar should be pushed? 
+   Let's assume Sidebar is Left Fixed, Navbar is Top Fixed.
+   If Navbar has Logo, it might span full width.
+*/
+
+.leftSection {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xl);
+    width: var(--sidebar-width);
+    /* Match sidebar width for alignment */
+}
+
+.logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.logo span {
+    color: var(--color-primary);
+}
+
+.centerSection {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    padding-left: var(--spacing-lg);
+}
+
+.companySelector {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-bg-dark-secondary);
+    font-family: inherit;
+    color: var(--color-text-primary);
+    min-width: 200px;
+}
+
+.rightSection {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.iconButton {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconButton:hover {
+    color: var(--color-primary);
+}
+
+.badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background-color: var(--color-danger);
+    color: white;
+    font-size: 0.7rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.userProfile {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--color-bg-dark-secondary);
+    border: 1px solid var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--color-primary);
+}
