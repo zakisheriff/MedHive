@@ -1,16 +1,41 @@
-# React + Vite
+# MedHive Pharma Intelligence Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An executive-grade frontend dashboard for MedHive - Pharma, visualizing AI-driven insights for pharmaceutical decision-making.
 
-Currently, two official plugins are available:
+## Features implemented
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1.  **AI Disease Trend Intelligence**: Real-time analysis of prescription data to detect rising disease trends.
+2.  **Climate & Geo Forecasting**: 2-Month outlook for disease risk based on weather correlations.
+3.  **Smart Manufacturing**: Demand forecasting and district-wise allocation planning.
+4.  **Expiry Risk Management**: Tracking expiring batches and optimizing stock recovery.
+5.  **Waste & Compliance**: Medical waste classification and disposal compliance tracking.
+6.  **Executive Dashboard**: High-level summary of all systems with critical alert feeds.
 
-## React Compiler
+## Technology Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+-   **Framework**: React + TypeScript + Vite
+-   **Styling**: Vanilla CSS (CSS Modules) with Strict Design System variables
+-   **Icons**: Lucide React
+-   **Charts**: Chart.js / React-Chartjs-2
 
-## Expanding the ESLint configuration
+## Design System
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The system adheres to a strict "Executive Gold/Dark" theme:
+-   **Primary**: `#dca349` (Gold)
+-   **Background**: Clean Light/Off-White for readability
+-   **Typography**: Apple System / Sans-serif for modern enterprise feel.
+
+## Getting Started
+
+1.  Install dependencies:
+    ```bash
+    npm install
+    ```
+2.  Run the development server:
+    ```bash
+    npm run dev
+    ```
+3.  Build for production:
+    ```bash
+    npm run build
+    ```
