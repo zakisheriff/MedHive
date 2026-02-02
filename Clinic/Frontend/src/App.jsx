@@ -6,6 +6,7 @@ import Home from './pages/Dashboard/Home';
 import Prescriptions from './pages/Dashboard/Prescriptions';
 import SearchPage from './pages/Dashboard/Search';
 import PatientProfile from './pages/Dashboard/PatientProfile';
+import History from './pages/Dashboard/History';
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
           <Route path="search" element={<SearchPage />} />
           <Route path="patientProfile" element={<PatientProfile />} />
           <Route path="prescription" element={<Prescriptions/>} />
-          <Route path="history" element={<div></div>} />
+          <Route path="history" element={<History/>} />
         </Route>
       </Routes>
     </Router>

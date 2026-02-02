@@ -12,7 +12,7 @@ const SearchPage = () => {
 
   // Simulated User Data
   const mockPatients = {
-    "mh001": { id: "mh001", name: "Abdul Raheem", profilePic: "https://i.pravatar.cc/150?u=mh001" }
+    "mh001": { id: "mh001", name: "Abdul Raheem", profilePic: "/icons/male.jpg" }
   };
 
   const handleSearch = (e) => {
