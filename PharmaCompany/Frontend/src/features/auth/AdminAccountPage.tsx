@@ -103,7 +103,6 @@ export const AdminAccountPage = ({ companyData: _companyData, onBack, onNext }: 
     e.preventDefault();
     if (validateForm()) {
       onNext(formData);
-      console.log("Yooo");
     }
   };
 
