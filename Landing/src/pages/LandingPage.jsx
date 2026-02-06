@@ -6,6 +6,8 @@ import FeaturesSection from '../components/FeaturesSection/FeaturesSection';
 import TeamSection from '../components/TeamSection/TeamSection';
 import CTASection from '../components/CTASection/CTASection';
 
+import CountdownClock from '../components/CountdownClock/CountdownClock';
+
 const LandingPage = () => {
     const [mockupFocusTrigger, setMockupFocusTrigger] = useState(0);
 
@@ -27,13 +29,14 @@ const LandingPage = () => {
     };
 
     return (
-        <main>
-            <Hero focusTrigger={mockupFocusTrigger} />
-            <ProblemSection />
+        <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-dark)' }}>
+            {/* <Hero focusTrigger={mockupFocusTrigger} /> */}
+            <CountdownClock />
+            {/* <ProblemSection />
             <SolutionSection />
             <FeaturesSection />
             <TeamSection />
-            <CTASection onCTAClick={handleCTAClick} />
+            <CTASection onCTAClick={handleCTAClick} /> */}
         </main >
     );
 };

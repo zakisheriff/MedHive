@@ -1,0 +1,116 @@
+.countdown-container {
+    padding: 40px 20px;
+    background: #ffffff;
+    color: var(--color-text-primary);
+    text-align: center;
+    position: relative;
+    max-width: 90%;
+    width: 600px;
+    /* Restrict width for better card shape */
+    border-radius: 35px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    /* Soft shadow for depth */
+    margin: 20px;
+}
+
+.countdown-title {
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 30px;
+    color: var(--color-text-primary);
+    font-weight: 800;
+}
+
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* Align to top so numbers and colons share a baseline reference */
+    gap: 20px;
+    flex-wrap: nowrap;
+}
+
+.time-segment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-width: 80px;
+}
+
+.time-value {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1;
+    font-family: var(--font-family);
+    color: var(--color-primary);
+    background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.time-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 10px;
+    color: var(--color-text-secondary);
+    font-weight: 600;
+}
+
+.divider {
+    font-size: 4rem;
+    /* Match number size for easy alignment */
+    line-height: 1;
+    /* Match number line-height */
+    color: var(--color-primary);
+    /* Match number color */
+    font-weight: 700;
+    margin-top: -5px;
+    /* Slight optical adjustment if needed, or 0 */
+    display: block;
+    margin-left: -10px;
+    margin-right: -10px;
+    opacity: 0.8;
+}
+
+/* Warning pulsing effect for the last few hours/minutes if needed, 
+   but for now just a subtle ambient pulse for the container */
+
+/* Mobile specific styles */
+@media (max-width: 768px) {
+    .countdown-container {
+        padding: 30px 15px;
+        width: 95%;
+        /* Use more width on mobile */
+    }
+
+    .countdown-timer {
+        flex-wrap: wrap;
+        /* Allow wrapping for 2x2 grid effect if needed */
+        gap: 10px;
+    }
+
+    /* Force a 2x2 grid layout on mobile */
+    .time-segment {
+        min-width: 70px;
+        flex: 1 1 40%;
+        /* Take up roughly half width minus gap */
+    }
+
+    .divider {
+        display: none;
+        /* Hide colons on mobile for cleaner grid look */
+    }
+
+    .time-value {
+        font-size: 3.5rem;
+    }
+
+    .countdown-title {
+        font-size: 1.2rem;
+        letter-spacing: 3px;
+    }
+}
