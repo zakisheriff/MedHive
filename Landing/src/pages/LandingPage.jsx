@@ -5,7 +5,6 @@ import SolutionSection from '../components/SolutionSection/SolutionSection';
 import FeaturesSection from '../components/FeaturesSection/FeaturesSection';
 import TeamSection from '../components/TeamSection/TeamSection';
 import CTASection from '../components/CTASection/CTASection';
-
 import CountdownClock from '../components/CountdownClock/CountdownClock';
 
 const LandingPage = () => {
@@ -29,7 +28,7 @@ const LandingPage = () => {
     };
 
     return (
-        <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg-dark)' }}>
+        <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
             {/* <Hero focusTrigger={mockupFocusTrigger} /> */}
             <CountdownClock />
             {/* <ProblemSection />

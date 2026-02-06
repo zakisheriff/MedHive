@@ -64,7 +64,7 @@ const PrivacyPolicy = () => {
                     min-height: 100vh;
                 }
                 .legal-header {
-                    background: linear-gradient(135deg, #fdfbf7 0%, #fff 100%);
+                    background: #fff;
                     padding: 60px 0 40px; /* Reduced padding */
                     text-align: center;
                     border-bottom: 1px solid rgba(220, 163, 73, 0.1);

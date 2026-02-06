@@ -3,7 +3,7 @@ import './CountdownClock.css';
 
 const CountdownClock = () => {
     const calculateTimeLeft = () => {
-        const launchDate = new Date('2026-02-08T00:00:00'); // Feb 8th, 2026
+        const launchDate = new Date('2026-02-08T18:00:00'); // Feb 8th, 2026 at 6 PM
         const now = new Date();
         const difference = launchDate - now;
 
@@ -51,7 +51,7 @@ const CountdownClock = () => {
                 <div className="countdown-timer">
                     <div className="time-segment">
                         <span className="time-value">{formatNumber(timeLeft.days)}</span>
-                        <span className="time-label">Days</span>
+                        <span className="time-label">Day</span>
                     </div>
 
                     <span className="divider">:</span>

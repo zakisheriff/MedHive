@@ -70,7 +70,7 @@ const AboutUs = () => {
                     min-height: 100vh;
                 }
                 .about-header {
-                    background: linear-gradient(135deg, #fdfbf7 0%, #fff 100%);
+                    background: #fff;
                     padding: 60px 0 50px; /* Reduced from 100px 0 80px */
                     text-align: center;
                     margin-bottom: 50px; /* Reduced margin */
