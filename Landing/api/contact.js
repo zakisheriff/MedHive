@@ -42,7 +42,7 @@ export default async function handler(req, res) {
         subject: `New Inquiry from ${orgName}`,
         html: `
             <div style="font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f4; padding: 40px 20px; color: #333;">
-                <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e0e0e0;">
+                <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e0e0e0;">
                     <div style="background-color: #1a1a1a; padding: 30px 20px; text-align: center;">
                         <h1 style="color: #DCA349; margin: 0; font-size: 28px; letter-spacing: 1px;">MedHive</h1>
                         <p style="color: #ffffff; margin: 5px 0 0; font-size: 14px; opacity: 0.8;">New Partnership Inquiry</p>
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
         subject: `We received your inquiry - MedHive`,
         html: `
             <div style="font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f4f4f4; padding: 40px 20px; color: #333;">
-                <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e0e0e0;">
+                <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 35px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #e0e0e0;">
                     <div style="background-color: #1a1a1a; padding: 30px 20px; text-align: center;">
                         <h1 style="color: #DCA349; margin: 0; font-size: 28px; letter-spacing: 1px;">MedHive</h1>
                     </div>
