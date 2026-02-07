@@ -61,6 +61,19 @@ const MobileMenu = ({ isOpen, onClose, onScrollToTop }) => {
                         Contact
                     </a>
                 </div>
+                <div className="mobile-menu-action">
+                    <button
+                        className="nav-btn"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            const el = document.getElementById('join');
+                            if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            onClose();
+                        }}
+                    >
+                        Partner with Us
+                    </button>
+                </div>
             </div>
         </>
     );

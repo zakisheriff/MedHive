@@ -47,7 +47,7 @@ const Navbar = ({ scrolled, onLogoClick }) => {
         // On home page, smooth scroll
         const element = document.getElementById(sectionId);
         if (element) {
-            const navbarHeight = 20;
+            const navbarHeight = 30;
             const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
             window.scrollTo({
                 top: elementPosition - navbarHeight,
@@ -96,8 +96,14 @@ const Navbar = ({ scrolled, onLogoClick }) => {
                         <a onClick={(e) => handleNavClick(e, 'problems')} style={{ cursor: 'pointer' }}>Problems</a>
                         <a onClick={(e) => handleNavClick(e, 'ai')} style={{ cursor: 'pointer' }}>Solutions</a>
                         <a onClick={(e) => handleNavClick(e, 'features')} style={{ cursor: 'pointer' }}>Features</a>
+                        <button className="nav-btn mobile-only" onClick={(e) => handleNavClick(e, 'join')} style={{ marginTop: '10px' }}>
+                            Partner with Us
+                        </button>
                     </div>
                     <div className="nav-actions mobile-hidden">
+                        <button className="nav-btn" onClick={(e) => handleNavClick(e, 'join')}>
+                            Partner with Us
+                        </button>
                     </div>
                 </div>
             </nav>

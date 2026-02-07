@@ -90,35 +90,40 @@
 /* Mobile specific styles */
 @media (max-width: 768px) {
     .countdown-container {
-        padding: 30px 15px;
+        padding: 30px 10px;
         width: 95%;
-        /* Use more width on mobile */
     }
 
     .countdown-timer {
-        flex-wrap: wrap;
-        /* Allow wrapping for 2x2 grid effect if needed */
-        gap: 10px;
+        flex-wrap: nowrap;
+        gap: 5px;
     }
 
-    /* Force a 2x2 grid layout on mobile */
     .time-segment {
-        min-width: 70px;
-        flex: 1 1 40%;
-        /* Take up roughly half width minus gap */
+        min-width: auto;
+        flex: 1;
     }
 
     .divider {
-        display: none;
-        /* Hide colons on mobile for cleaner grid look */
+        display: block;
+        font-size: 2.5rem;
+        margin: 0;
+        align-self: flex-start;
+        margin-top: 5px;
     }
 
     .time-value {
-        font-size: 3.5rem;
+        font-size: 2.8rem;
+    }
+
+    .time-label {
+        font-size: 0.7rem;
+        letter-spacing: 1px;
     }
 
     .countdown-title {
-        font-size: 1.2rem;
-        letter-spacing: 3px;
+        font-size: 1.1rem;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
     }
 }

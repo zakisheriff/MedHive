@@ -74,3 +74,11 @@
     opacity: 1;
     visibility: visible;
 }
+
+.mobile-menu-action {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid var(--color-border);
+    margin-top: 10px;
+}

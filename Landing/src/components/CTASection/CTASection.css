@@ -1,6 +1,7 @@
 /* CTA Section Styles */
 .cta-section {
     padding: 80px 40px;
+    scroll-margin-top: 120px;
     margin-bottom: 60px;
     /* Added margin before footer */
     display: flex;

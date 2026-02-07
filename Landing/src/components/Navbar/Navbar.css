@@ -194,7 +194,6 @@
 }
 
 .nav-btn:hover {
-    transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(220, 163, 73, 0.5);
     background: var(--color-primary-dark);
 }

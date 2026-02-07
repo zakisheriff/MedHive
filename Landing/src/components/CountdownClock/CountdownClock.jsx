@@ -3,22 +3,27 @@ import './CountdownClock.css';
 
 const CountdownClock = () => {
     const calculateTimeLeft = () => {
-        const launchDate = new Date('2026-02-08T18:00:00'); // Feb 8th, 2026 at 6 PM
+        const launchDate = new Date(2026, 1, 8, 18, 0, 0); // Feb 8th, 2026 at 6 PM Local Time
         const now = new Date();
         const difference = launchDate - now;
+
+        console.log('Countdown Debug:', {
+            launchDate: launchDate.toString(),
+            now: now.toString(),
+            difference,
+            calculatedHours: Math.floor(difference / (1000 * 60 * 60))
+        });
 
         let timeLeft = {};
 
         if (difference > 0) {
             timeLeft = {
-                days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-                hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                hours: Math.floor(difference / (1000 * 60 * 60)),
                 minutes: Math.floor((difference / 1000 / 60) % 60),
                 seconds: Math.floor((difference / 1000) % 60)
             };
         } else {
             timeLeft = {
-                days: 0,
                 hours: 0,
                 minutes: 0,
                 seconds: 0
@@ -49,13 +54,6 @@ const CountdownClock = () => {
                 <h2 className="countdown-title">Launch Initiating In</h2>
 
                 <div className="countdown-timer">
-                    <div className="time-segment">
-                        <span className="time-value">{formatNumber(timeLeft.days)}</span>
-                        <span className="time-label">Day</span>
-                    </div>
-
-                    <span className="divider">:</span>
-
                     <div className="time-segment">
                         <span className="time-value">{formatNumber(timeLeft.hours)}</span>
                         <span className="time-label">Hours</span>
