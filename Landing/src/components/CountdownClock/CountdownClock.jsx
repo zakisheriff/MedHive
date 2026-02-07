@@ -44,7 +44,7 @@ const CountdownClock = () => {
     };
 
     return (
-        <section className="container">
+        <section className="countdown-wrapper">
             <div className="countdown-container scroll-fade-in" style={{ opacity: 1, transform: 'translateY(0)' }}> {/* Force visible for now, or rely on scroll animation classes if they trigger automatically */}
                 <h2 className="countdown-title">Launch Initiating In</h2>
 
