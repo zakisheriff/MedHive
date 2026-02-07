@@ -78,40 +78,71 @@ const solutions = [
 
 const SolutionSection = () => {
     const sectionRef = useRef(null);
-    const containerRef = useRef(null);
+    const stackRef = useRef(null); // Ref for the actual stack/timeline, not the wrapper
+    const itemsRef = useRef([]);
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         let requestRef;
+        let isLooping = false;
 
         const updateScroll = () => {
-            if (!containerRef.current) return;
+            if (!stackRef.current) return;
 
-            const rect = containerRef.current.getBoundingClientRect();
+            const rect = stackRef.current.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
 
-            // Calculate progress: 0 when top of container enters, 1 when bottom leaves
-            const start = viewportHeight * 0.8;
-            const end = viewportHeight * 0.2;
+            const start = viewportHeight * 0.75;
+            const end = viewportHeight * 0.25;
 
-            const progress = (start - rect.top) / (rect.height + start - end);
+            const totalDistance = rect.height + start - end;
+            const scrolledDistance = start - rect.top;
+
+            const progress = scrolledDistance / totalDistance;
             const clampedProgress = Math.max(0, Math.min(1, progress));
 
-            // Direct DOM manipulation for maximum smoothness
-            containerRef.current.style.setProperty('--scroll-progress', clampedProgress);
+            stackRef.current.style.setProperty('--scroll-progress', clampedProgress);
 
-            requestRef = requestAnimationFrame(updateScroll);
+            // Check which items are passed
+            const threshold = rect.height * clampedProgress;
+
+            itemsRef.current.forEach(item => {
+                if (!item) return;
+                // offsetTop is relative to the parent (.ecosystem-stack-flow), which is aligned with container
+                const itemCenter = item.offsetTop + (item.offsetHeight / 2);
+
+                // Add a small buffer so it lights up only when the line TANGIBLY reaches the center
+                if (threshold >= itemCenter + 10) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            if (isLooping) {
+                requestRef = requestAnimationFrame(updateScroll);
+            }
         };
-
-        requestRef = requestAnimationFrame(updateScroll);
 
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-                    setIsVisible(true);
+                    setIsVisible(true); // Keep existing fade-in logic
+
+                    // Start loop if not running
+                    if (!isLooping) {
+                        isLooping = true;
+                        updateScroll();
+                    }
+                } else {
+                    // Stop loop when out of view
+                    isLooping = false;
+                    if (requestRef) {
+                        cancelAnimationFrame(requestRef);
+                    }
                 }
             },
-            { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+            { threshold: 0, rootMargin: '200px 0px 200px 0px' } // Expanded margin to start updating slightly before/after
         );
 
         if (sectionRef.current) {
@@ -119,19 +150,22 @@ const SolutionSection = () => {
         }
 
         return () => {
-            cancelAnimationFrame(requestRef);
+            isLooping = false;
+            if (requestRef) {
+                cancelAnimationFrame(requestRef);
+            }
             observer.disconnect();
         };
     }, []);
 
     return (
         <section className="solution-section" id="ai" ref={sectionRef}>
-            <div className="container" ref={containerRef}>
+            <div className="container">
                 <h2 className={`section-title scroll-fade-in ${isVisible ? 'visible' : ''}`}>
                     The MedHive Ecosystem
                 </h2>
 
-                <div className="ecosystem-stack-container">
+                <div className="ecosystem-stack-container" ref={stackRef}>
                     <div className="stack-thread-line"></div>
                     <div className="stack-thread-progress"></div>
 
@@ -139,6 +173,7 @@ const SolutionSection = () => {
                         {solutions.map((solution, index) => (
                             <div
                                 key={index}
+                                ref={el => itemsRef.current[index] = el}
                                 className={`stack-item ${index % 2 === 0 ? 'left' : 'right'} scroll-slide-up stagger-${index + 1} ${isVisible ? 'visible' : ''}`}
                             >
                                 <div className="stack-connector">

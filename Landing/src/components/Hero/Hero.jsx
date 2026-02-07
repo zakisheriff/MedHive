@@ -275,9 +275,43 @@ const Hero = ({ focusTrigger }) => {
                                                     </div>
                                                 </div>
 
-                                                <div className="login-forgot">Forgot Password?</div>
+                                                <div className="login-forgot" onClick={() => setScreen('forgot_password')} style={{ cursor: 'pointer' }}>Forgot Password?</div>
 
                                                 <button className="btn-login-mockup" onClick={handleLogin}>Sign In</button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* FORGOT PASSWORD SCREEN */}
+                                    {screen === 'forgot_password' && (
+                                        <div className="screen-login animate-fade-in">
+                                            <div className="login-logo-container">
+                                                <img src="/logode.png" alt="MedHive Logo" className="login-logo-img" />
+                                            </div>
+
+                                            <h2 className="login-title">Reset Password</h2>
+                                            <p className="login-subtitle" style={{ textAlign: 'center', color: '#666', fontSize: '13px', margin: '-10px 20px 20px', lineHeight: '1.4' }}>
+                                                Enter your email address to receive a password reset link.
+                                            </p>
+
+                                            <div className="login-form">
+                                                <div className="login-field">
+                                                    <label>Email</label>
+                                                    <div className="login-input-wrapper">
+                                                        <i className="fa-regular fa-envelope"></i>
+                                                        <input type="email" placeholder="Enter your email" />
+                                                    </div>
+                                                </div>
+
+                                                <button className="btn-login-mockup" onClick={() => setScreen('login')}>Send Reset Link</button>
+
+                                                <div
+                                                    className="login-forgot"
+                                                    onClick={() => setScreen('login')}
+                                                    style={{ cursor: 'pointer', textAlign: 'center', marginTop: '15px', color: 'var(--color-primary)', fontWeight: '600', alignSelf: 'center' }}
+                                                >
+                                                    Back to Sign In
+                                                </div>
                                             </div>
                                         </div>
                                     )}

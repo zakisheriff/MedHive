@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './CTASection.css';
+import ContactForm from '../ContactForm/ContactForm';
 
-const CTASection = ({ onCTAClick }) => {
+const CTASection = () => {
     const sectionRef = useRef(null);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -24,10 +25,14 @@ const CTASection = ({ onCTAClick }) => {
 
     return (
         <section className="cta-section" id="join" ref={sectionRef}>
-            <div className={`cta-card glass-card scroll-scale-in ${isVisible ? 'visible' : ''}`}>
-                <h2>Join the future of connected healthcare.</h2>
-                <p>Be among the first to experience the power of AI-driven health management</p>
-                <button className="btn-cta glass-btn" onClick={onCTAClick}>Try the Demo</button>
+            <div className={`cta-card glass-card scroll-fade-in ${isVisible ? 'visible' : ''}`}>
+                <div className="cta-content">
+                    <h2>Partner with MedHive</h2>
+                    <p>Empowering clinics, pharmacies, and healthcare providers with AI-driven solutions.<br />Transform your patient care today.</p>
+                </div>
+                <div className="cta-form-wrapper">
+                    <ContactForm />
+                </div>
             </div>
         </section>
     );

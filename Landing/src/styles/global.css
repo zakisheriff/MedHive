@@ -49,6 +49,7 @@ body {
 html {
     scroll-behavior: smooth;
     scroll-padding-top: 100px;
+    background-color: #ffffff;
 }
 
 /* App Container */

@@ -82,39 +82,54 @@
     width: 24px;
     height: 24px;
     background: #0D0D0D;
-    border: 2px solid var(--color-primary);
+    border: 2px solid rgba(220, 163, 73, 0.3);
+    /* Dim border by default */
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 20px rgba(220, 163, 73, 0.4);
+    box-shadow: none;
+    transition: all 0.5s ease;
 }
 
 .connector-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--color-primary);
+    width: 10px;
+    height: 10px;
+    background: transparent;
+    /* Invisible by default */
     border-radius: 50%;
-    animation: connectorPulse 2s infinite;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: scale(0);
+    /* Scaled down */
+    box-shadow: none;
+}
+
+.stack-item.active .connector-dot {
+    background: var(--color-primary);
+    /* Gold when active */
+    transform: scale(1);
+    box-shadow: 0 0 10px var(--color-primary), 0 0 20px rgba(220, 163, 73, 0.6);
+}
+
+.stack-item.active .stack-connector {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 25px rgba(220, 163, 73, 0.4);
 }
 
 @keyframes connectorPulse {
     0% {
         transform: scale(1);
-        opacity: 1;
-        box-shadow: 0 0 0 0 rgba(220, 163, 73, 0.4);
+        opacity: 0.5;
     }
 
-    70% {
+    50% {
         transform: scale(1.5);
         opacity: 0;
-        box-shadow: 0 0 0 10px rgba(220, 163, 73, 0);
     }
 
     100% {
         transform: scale(1);
         opacity: 0;
-        box-shadow: 0 0 0 0 rgba(220, 163, 73, 0);
     }
 }
 

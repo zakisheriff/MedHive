@@ -51,10 +51,19 @@ const features = [
     },
     {
         title: 'Real-Time Analytics',
-        description: 'Clinics and Pharma Companies Gain Actionable Insights from Aggregated Data',
+        description: 'Clinics and Pharma Companies Gain Actionable Insights from Data',
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" strokeWidth="2" />
+            </svg>
+        )
+    },
+    {
+        title: 'Pharma AI Chatbot',
+        description: 'Ask Questions About Regional Medicine Sales and Trends via an Intelligent Chat Interface.',
+        icon: (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
         )
     }
@@ -94,6 +103,8 @@ const FeaturesSection = () => {
                         let bentoClass = 'bento-standard';
                         if (index === 0) bentoClass = 'bento-tall';   // Scan Prescription
                         if (index === 3) bentoClass = 'bento-wide';   // Health History
+                        if (index === 4) bentoClass = 'bento-wide';   // Doctor Insights (New Unique Row)
+                        if (index === 6) bentoClass = 'bento-full';   // Pharma Chatbot (Full Width Footer)
 
                         return (
                             <div

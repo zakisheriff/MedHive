@@ -44,7 +44,7 @@
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid var(--color-border-accent);
     box-shadow: 0 4px 20px rgba(220, 163, 73, 0.15);
-    margin: 0 20px;
+    margin: 0 auto;
 }
 
 .nav-logo-image {

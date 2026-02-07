@@ -47,7 +47,12 @@
     grid-column: span 2;
 }
 
-.bento-wide .bento-content {
+.bento-full {
+    grid-column: span 3;
+}
+
+.bento-wide .bento-content,
+.bento-full .bento-content {
     flex-direction: row;
     align-items: center;
     gap: 40px;
@@ -75,7 +80,8 @@
     /* Push text to the bottom in tall cards */
 }
 
-.bento-wide .feature-icon-wrapper {
+.bento-wide .feature-icon-wrapper,
+.bento-full .feature-icon-wrapper {
     margin-bottom: 0;
 }
 
@@ -144,6 +150,34 @@
         grid-column: span 2;
     }
 
+    .bento-full {
+        grid-column: span 2;
+    }
+
+    /* Fix gap on tablet: Make the 6th item (Real-Time Analytics) span 2 cols */
+    .feature-bento-card:nth-child(6) {
+        grid-column: span 2;
+        /* Force wide on tablet */
+    }
+
+    /* Ensure flex direction allows row for the forced wide item */
+    .feature-bento-card:nth-child(6) .bento-content {
+        flex-direction: row;
+        align-items: center;
+        gap: 40px;
+    }
+
+    .feature-bento-card:nth-child(6) .feature-icon-wrapper {
+        margin-bottom: 0;
+    }
+
+    .bento-wide .bento-content,
+    .bento-full .bento-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+    }
+
     .bento-wide .bento-content {
         flex-direction: column;
         align-items: flex-start;
@@ -168,9 +202,21 @@
 
     .bento-tall,
     .bento-wide,
-    .bento-standard {
+    .bento-standard,
+    .bento-full,
+    .feature-bento-card:nth-child(6) {
         grid-column: auto;
         grid-row: auto;
+    }
+
+    .feature-bento-card:nth-child(6) .bento-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+    }
+
+    .feature-bento-card:nth-child(6) .feature-icon-wrapper {
+        margin-bottom: 15px;
     }
 
     .feature-bento-card {

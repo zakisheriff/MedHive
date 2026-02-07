@@ -28,7 +28,12 @@ const Footer = ({ onScrollToTop }) => {
         } else {
             const element = document.getElementById(sectionId);
             if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
+                const navbarHeight = 20;
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                window.scrollTo({
+                    top: elementPosition - navbarHeight,
+                    behavior: 'smooth'
+                });
             }
         }
     };
