@@ -43,7 +43,26 @@ export default function RegisterScreen() {
     }, [dob.year]);
 
     const handleRegister = () => {
-        console.log('Register with:', name, medId, email);
+        if (!name || !email || !password || !medId) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+
+        router.push({
+            pathname: '/medical-history',
+            params: {
+                name,
+                email,
+                dob: JSON.stringify(dob),
+                medId,
+                password
+            }
+        });
     };
 
     const handleDateChange = (day: string, month: string, year: string) => {
@@ -128,7 +147,7 @@ export default function RegisterScreen() {
                         />
 
                         <PrimaryButton
-                            title="Sign Up"
+                            title="Next"
                             onPress={handleRegister}
                             style={styles.registerBtn}
                         />
