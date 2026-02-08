@@ -172,6 +172,14 @@
     transition: width 0.4s ease;
 }
 
+.member-bio {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.5;
+    margin-top: 15px;
+    font-weight: 500;
+}
+
 
 /* Pagination Dots */
 .team-pagination {

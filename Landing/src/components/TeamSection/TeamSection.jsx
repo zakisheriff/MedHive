@@ -6,6 +6,7 @@ const teamMembers = [
         id: 1,
         name: 'Zaki Sheriff',
         role: 'App Frontend',
+        bio: 'Building The Future of Digital Health on Mobile.',
         image: '/Team/Zaki.png',
         social: {
             linkedin: 'https://www.linkedin.com/in/zakisheriff',
@@ -16,6 +17,7 @@ const teamMembers = [
         id: 2,
         name: 'Abdul Raheem',
         role: 'Clinic Frontend',
+        bio: 'Building Responsive and Accessible Clinic Interfaces.',
         image: '/Team/Raheem.jpeg',
         social: {
             linkedin: 'https://www.linkedin.com/in/abdul-raheem-aouffan',
@@ -26,26 +28,19 @@ const teamMembers = [
         id: 3,
         name: 'Hanaa Ajuward',
         role: 'Clinic Backend',
+        bio: 'Architecting Robust and Scalable Server-Side Logic.',
         image: '/Team/Hanaa.jpeg',
         social: {
             linkedin: '#',
             github: '#'
         }
     },
-    {
-        id: 4,
-        name: 'Abdul Rahman',
-        role: 'App Backend',
-        image: '/Team/Rahman.png',
-        social: {
-            linkedin: '#',
-            github: '#'
-        }
-    },
+
     {
         id: 5,
         name: 'Kausian Senthan',
         role: 'Pharma Company Frontend',
+        bio: 'Designing Efficient Portals for Pharmaceutical Partners.',
         image: '/Team/Kausian.png',
         social: {
             linkedin: 'https://www.linkedin.com/in/kausian-senthan',
@@ -56,6 +51,7 @@ const teamMembers = [
         id: 6,
         name: 'Afker Thowfeek',
         role: 'Pharma Company Backend',
+        bio: 'Managing Secure Supply Chain Data Integrations.',
         image: '/Team/Afker.jpeg',
         social: {
             linkedin: '#',
@@ -238,6 +234,7 @@ const TeamSection = () => {
                                     <span className="member-role-badge">{member.role}</span>
                                     <h3 className="member-full-name">{member.name}</h3>
                                     <div className="member-accent-line"></div>
+                                    <p className="member-bio">{member.bio}</p>
                                 </div>
                             </div>
                         ))}

@@ -102,15 +102,13 @@ function AppContent() {
   return (
     <div className="app page-fade-in">
       <ScrollToTop />
-      {/* <Navbar scrolled={scrolled} onLogoClick={handleLogoClick} /> */}
+      <Navbar scrolled={scrolled} onLogoClick={handleLogoClick} />
 
-      {/* 
       <MobileMenu
         isOpen={mobileMenuOpen}
         onClose={closeMobileMenu}
         onScrollToTop={scrollToTop}
       />
-      */}
 
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -119,7 +117,7 @@ function AppContent() {
         <Route path="/about-us" element={<AboutUs />} />
       </Routes>
 
-      {/* <Footer onScrollToTop={scrollToTop} /> */}
+      <Footer onScrollToTop={scrollToTop} />
     </div>
   );
 }

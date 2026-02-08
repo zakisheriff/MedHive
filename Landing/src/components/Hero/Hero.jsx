@@ -587,7 +587,7 @@ const Hero = ({ focusTrigger }) => {
                                 )}
 
                                 {/* BOTTOM NAV - HIDDEN ON LOGIN */}
-                                {screen !== 'login' && (
+                                {screen !== 'login' && screen !== 'forgot_password' && (
                                     <div className="floating-nav">
                                         <div className="nav-indicator" style={{
                                             left: screen === 'history' ? '10px' : (screen === 'upload' || screen === 'profile') ? 'calc(33.33% + 5px)' : 'calc(66.66% + 5px)',
