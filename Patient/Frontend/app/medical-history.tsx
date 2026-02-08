@@ -31,9 +31,13 @@ export default function MedicalHistoryScreen() {
 
         console.log('Creating Account with Profile:', JSON.stringify(completeProfile, null, 2));
 
-        // Navigate to home or login after successful creation
-        // For now, let's go to login so they can sign in with new credentials
-        router.replace('/login');
+        // Navigate to upload screen
+        router.push({
+            pathname: '/upload',
+            params: {
+                // Pass user ID or token if you had real auth
+            }
+        });
     };
 
     return (
