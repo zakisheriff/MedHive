@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     width: '100%',
-    backgroundColor: Platform.OS === 'web' ? '#F1F5F9' : Colors.light.background,
+    backgroundColor: Platform.OS === 'web' ? Colors.light.background : Colors.light.background,
     alignItems: 'center',
   },
   container: {
@@ -45,13 +45,13 @@ const styles = StyleSheet.create({
     // Add shadow/border on web to look like a phone
     ...Platform.select({
       web: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.08,
-        shadowRadius: 30,
-        borderLeftWidth: 1,
-        borderRightWidth: 1,
-        borderColor: '#E2E8F0',
+        // shadowColor: '#000',
+        // shadowOffset: { width: 0, height: 0 },
+        // shadowOpacity: 0.08,
+        // shadowRadius: 30,
+        // borderLeftWidth: 1,
+        // borderRightWidth: 1,
+        // borderColor: '#E2E8F0',
       },
       default: {},
     }),
