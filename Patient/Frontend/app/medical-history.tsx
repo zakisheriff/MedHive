@@ -33,7 +33,7 @@ export default function MedicalHistoryScreen() {
 
         // Navigate to upload screen
         router.push({
-            pathname: '/upload',
+            pathname: '/(tabs)/upload',
             params: {
                 // Pass user ID or token if you had real auth
             }
