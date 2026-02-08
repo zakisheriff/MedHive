@@ -35,6 +35,17 @@ const teamMembers = [
             github: '#'
         }
     },
+    {
+        id: 4,
+        name: 'Abdul Rahman Nazar',
+        role: 'App Backend',
+        bio: 'Engineering Secure and High-Performance Backend Infrastructure for Patients.',
+        image: '/Team/Rahman.png',
+        social: {
+            linkedin: '#',
+            github: '#'
+        }
+    },
 
     {
         id: 5,
