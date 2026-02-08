@@ -2,7 +2,7 @@
 
 /* Hero Section Styles */
 .hero {
-    min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     align-items: center;
     position: relative;
@@ -2081,7 +2081,7 @@
         justify-content: center;
         order: 1;
         min-height: 100vh;
-        min-height: 100dvh;
+        min-height: var(--hero-height, 100svh);
     }
 
     .hero-right {

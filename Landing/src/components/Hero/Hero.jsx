@@ -25,6 +25,28 @@ const Hero = ({ focusTrigger }) => {
         }
     }, [focusTrigger, localTrigger]);
 
+    // Fix mobile viewport height jump
+    useEffect(() => {
+        const setHeroHeight = () => {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--hero-height', `${window.innerHeight}px`);
+        };
+
+        setHeroHeight();
+
+        // Only update on width change to avoid resize loop on mobile scroll
+        let width = window.innerWidth;
+        const handleResize = () => {
+            if (window.innerWidth !== width) {
+                width = window.innerWidth;
+                setHeroHeight();
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     // History Detail State
     const [activeHistoryItem, setActiveHistoryItem] = useState(null);
 
