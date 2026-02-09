@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const newUser = await pool.query(
-            'INSERT INTO patients (patient_id, fname, lname, date_of_birth, email, password, gender, phone_number, district, province) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING patient_id, email',
+            'INSERT INTO patients (med_id, fname, lname, date_of_birth, email, password, gender, phone_number, district, province) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING med_id, email',
             [generatedMedId, fname, lname, date_of_birth, email, hashedPassword, gender, phone_number, district, province]
         );
 
