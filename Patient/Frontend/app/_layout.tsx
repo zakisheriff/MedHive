@@ -1,34 +1,37 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet, Platform } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AlertProvider } from '../context/AlertContext';
 import { CustomAlert } from '../components/CustomAlert';
 import { Colors } from '../constants/theme';
 
 export default function RootLayout() {
   return (
-    <AlertProvider>
-      <View style={styles.root}>
-        <View style={styles.container}>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="login" />
-            <Stack.Screen name="register" />
-            <Stack.Screen name="medical-history" />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AlertProvider>
+        <View style={styles.root}>
+          <View style={styles.container}>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="login" />
+              <Stack.Screen name="register" />
+              <Stack.Screen name="medical-history" />
 
-            <Stack.Screen
-              name="profile"
-              options={{
-                presentation: 'modal',
-                animation: 'slide_from_bottom'
-              }}
-            />
-          </Stack>
-          <StatusBar style="dark" />
-          <CustomAlert />
+              <Stack.Screen
+                name="profile"
+                options={{
+                  presentation: 'modal',
+                  animation: 'slide_from_bottom'
+                }}
+              />
+            </Stack>
+            <StatusBar style="dark" />
+            <CustomAlert />
+          </View>
         </View>
-      </View>
-    </AlertProvider>
+      </AlertProvider>
+    </GestureHandlerRootView>
   );
 }
 

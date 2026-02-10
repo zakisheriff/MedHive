@@ -330,14 +330,14 @@ export default function PrescriptionResultScreen() {
             {/* Header */}
             <SafeAreaView style={styles.safeArea}>
                 <View style={styles.header}>
+                    <View style={{ width: 40 }} />
+                    <Text style={styles.headerTitle}>Analysis Result</Text>
                     <TouchableOpacity
                         onPress={() => router.back()}
                         style={styles.backButton}
                     >
                         <Ionicons name="close" size={24} color={Colors.light.text} />
                     </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Analysis Result</Text>
-                    <View style={{ width: 40 }} />
                 </View>
 
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
