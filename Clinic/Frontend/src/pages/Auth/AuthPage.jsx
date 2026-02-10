@@ -61,7 +61,7 @@ const AuthPage = () => {
 
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("clinic", JSON.stringify(res.data.clinic));
-        navigate("/dashboard/home");
+        navigate("/dashboard/pending-verification");
       } else {
         const formData = new FormData();
         formData.append("clinicName", clinicName);
@@ -76,7 +76,7 @@ const AuthPage = () => {
 
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("clinic", JSON.stringify(res.data.clinic));
-        navigate("/dashboard/home");
+        navigate("/dashboard/pending-verification");
       }
     } catch (err) {
       const msg =
