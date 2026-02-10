@@ -165,7 +165,8 @@ export default function PrescriptionResultScreen() {
                 // For Web: specific handling to create a Blob
                 const response = await fetch(imageUri);
                 const blob = await response.blob();
-                formData.append('image', blob, 'prescription.jpg');
+                const imageBlob = new Blob([blob], { type: 'image/jpeg' });
+                formData.append('image', imageBlob, 'prescription.jpg');
             } else {
                 // For Native: standard React Native FormData handling
                 // @ts-ignore
@@ -506,7 +507,7 @@ export default function PrescriptionResultScreen() {
                             {
                                 height: modalHeight,
                                 paddingBottom: insets.bottom + 20,
-                                width: isWeb ? '100%' : undefined,
+                                width: '100%',
                                 maxWidth: isWeb ? 600 : undefined,
                                 alignSelf: 'center',
                             }
@@ -548,9 +549,16 @@ export default function PrescriptionResultScreen() {
                                             </View>
                                             <View style={styles.detailInfo}>
                                                 <Text style={styles.medName}>{med.name}</Text>
-                                                <Text style={styles.medDosage}>
-                                                    {med.dosage} {med.frequency ? `• ${med.frequency}` : ''}
-                                                </Text>
+                                                <View style={styles.medDetailsRow}>
+                                                    <View style={styles.medDosageChip}>
+                                                        <Text style={styles.medDosageText}>{med.dosage}</Text>
+                                                    </View>
+                                                    {med.frequency && (
+                                                        <View style={styles.medFrequencyChip}>
+                                                            <Text style={styles.medFrequencyText}>{med.frequency}</Text>
+                                                        </View>
+                                                    )}
+                                                </View>
                                             </View>
                                         </View>
                                     ))}
@@ -925,20 +933,38 @@ const styles = StyleSheet.create({
     },
     medName: {
         fontSize: 18,
-        fontWeight: 'bold',
+        fontWeight: '700',
         color: Colors.light.text,
-        marginBottom: 6,
+        marginBottom: 8,
     },
-    medDosage: {
-        fontSize: 15,
-        fontWeight: '500',
+    medDetailsRow: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+    },
+    medDosageChip: {
+        backgroundColor: 'rgba(220, 163, 73, 0.08)',
+        paddingHorizontal: 12,
+        paddingVertical: 5,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: 'rgba(220, 163, 73, 0.2)',
+    },
+    medDosageText: {
+        fontSize: 14,
+        fontWeight: '600',
         color: Colors.light.primary,
-        backgroundColor: 'rgba(220, 163, 73, 0.1)',
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 35,
-        alignSelf: 'flex-start',
-        overflow: 'hidden',
+    },
+    medFrequencyChip: {
+        backgroundColor: '#F3F4F6',
+        paddingHorizontal: 12,
+        paddingVertical: 5,
+        borderRadius: 12,
+    },
+    medFrequencyText: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#6B7280',
     },
     emptyText: {
         textAlign: 'center',
