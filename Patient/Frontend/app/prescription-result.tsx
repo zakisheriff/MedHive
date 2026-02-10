@@ -292,10 +292,20 @@ export default function PrescriptionResultScreen() {
 
     const handleAddToHistory = async () => {
         try {
+            // Prepare payload even if extraction failed
+            const historyData = hasError ? {
+                type: 'prescription',
+                date: new Date().toISOString(),
+                clinicName: 'Manual Upload',
+                medicines: [],
+                notes: 'AI extraction unavailable',
+                imageUri
+            } : { ...data, imageUri };
+
             const response = await fetch(API_ENDPOINTS.HISTORY, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...data, imageUri }),
+                body: JSON.stringify(historyData),
             });
             if (response.ok) {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -449,21 +459,27 @@ export default function PrescriptionResultScreen() {
                             <TouchableOpacity
                                 style={styles.secondaryButton}
                                 onPress={handleAddToHistory}
-                                disabled={hasError}
                             >
-                                <Text style={[styles.secondaryButtonText, hasError && { color: '#999' }]}>Save to Medical History</Text>
+                                <View style={styles.secondaryButtonContent}>
+                                    <Ionicons name="save-outline" size={20} color={Colors.light.primary} />
+                                    <Text style={styles.secondaryButtonText}>Save to Medical History</Text>
+                                </View>
                             </TouchableOpacity>
+
+                            {/* Spacer for Mobile Web Browser Bar - Increased height */}
+                            {isWeb && <View style={{ height: 150 }} />}
                         </View>
                     </ScrollView>
                 </View>
-            </SafeAreaView>
+            </SafeAreaView >
 
             {/* Resizable Modal */}
-            <Modal
+            < Modal
                 animationType="fade"
                 transparent={true}
                 visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
+                onRequestClose={() => setModalVisible(false)
+                }
             >
                 <View style={styles.modalOverlay}>
                     <TouchableOpacity style={styles.modalBackdrop} onPress={() => setModalVisible(false)} activeOpacity={1} />
@@ -547,15 +563,15 @@ export default function PrescriptionResultScreen() {
                         </View>
                     </Animated.View>
                 </View>
-            </Modal>
+            </Modal >
 
             {/* Full Screen Image Modal */}
-            <ImagePreviewModal
+            < ImagePreviewModal
                 isVisible={fullScreenVisible}
                 imageUri={imageUri}
                 onClose={() => setFullScreenVisible(false)}
             />
-        </View>
+        </View >
     );
 }
 
@@ -580,11 +596,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 20,
-        paddingVertical: 15,
+        paddingVertical: isWeb ? 12 : 15,
     },
     backButton: {
-        width: 40,
-        height: 40,
+        width: isWeb ? 38 : 40,
+        height: isWeb ? 38 : 40,
         borderRadius: 35,
         backgroundColor: '#fff',
         alignItems: 'center',
@@ -596,25 +612,25 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     headerTitle: {
-        fontSize: 18,
+        fontSize: isWeb ? 17 : 18,
         fontWeight: '600',
         color: Colors.light.text,
     },
     scrollContent: {
         paddingHorizontal: 20,
-        paddingBottom: 40,
+        paddingBottom: isWeb ? 100 : 40,
     },
     imageCard: {
         width: '100%',
-        height: 220, // Reduced from 280 to fit content
-        borderRadius: 35,
+        height: isWeb ? 190 : 220,
+        borderRadius: isWeb ? 30 : 35,
         backgroundColor: '#fff',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
+        shadowOffset: { width: 0, height: isWeb ? 7 : 10 },
         shadowOpacity: 0.08,
-        shadowRadius: 20,
+        shadowRadius: isWeb ? 18 : 20,
         elevation: 5,
-        marginBottom: 20, // Reduced margin
+        marginBottom: isWeb ? 18 : 20,
         overflow: 'hidden',
         position: 'relative'
     },
@@ -624,55 +640,55 @@ const styles = StyleSheet.create({
     },
     statusBadge: {
         position: 'absolute',
-        bottom: 15,
-        right: 15,
+        bottom: isWeb ? 12 : 15,
+        right: isWeb ? 12 : 15,
         backgroundColor: 'rgba(255,255,255,0.9)',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
+        paddingHorizontal: isWeb ? 11 : 12,
+        paddingVertical: isWeb ? 5 : 6,
         borderRadius: 35,
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 6,
+        gap: isWeb ? 5 : 6,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
     },
     statusText: {
-        fontSize: 12,
+        fontSize: isWeb ? 11.5 : 12,
         fontWeight: '600',
         color: '#111827',
     },
     titleSection: {
-        marginBottom: 20, // Reduced from 30
+        marginBottom: isWeb ? 18 : 20,
     },
     mainTitle: {
-        fontSize: 24, // Reduced from 28
+        fontSize: isWeb ? 22 : 24,
         fontWeight: 'bold',
         color: Colors.light.text,
-        marginBottom: 6,
+        marginBottom: isWeb ? 5 : 6,
         letterSpacing: -0.5,
     },
     subTitle: {
-        fontSize: 15, // Reduced from 16
+        fontSize: isWeb ? 14 : 15,
         color: Colors.light.icon,
-        lineHeight: 22,
+        lineHeight: isWeb ? 20 : 22,
     },
     actionsContainer: {
-        gap: 12, // Reduced gap
+        gap: isWeb ? 11 : 12,
     },
     actionCard: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#fff',
-        padding: 14, // Reduced padding
-        borderRadius: 35,
+        padding: isWeb ? 13 : 14,
+        borderRadius: isWeb ? 30 : 35,
         borderWidth: 1,
         borderColor: '#EDE9FE',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.03,
-        shadowRadius: 8,
+        shadowRadius: isWeb ? 6 : 8,
         elevation: 1,
     },
     cardDisabled: {
@@ -680,30 +696,30 @@ const styles = StyleSheet.create({
         backgroundColor: '#F3F4F6',
     },
     iconBox: {
-        width: 48,
-        height: 48,
+        width: isWeb ? 40 : 48,
+        height: isWeb ? 40 : 48,
         borderRadius: 35,
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 16,
+        marginRight: isWeb ? 12 : 16,
     },
     actionTextContainer: {
         flex: 1,
     },
     actionTitle: {
-        fontSize: 16,
+        fontSize: isWeb ? 15 : 16,
         fontWeight: '600',
         color: Colors.light.text,
         marginBottom: 2,
     },
     actionDesc: {
-        fontSize: 13,
+        fontSize: isWeb ? 12 : 13,
         color: Colors.light.icon,
     },
     divider: {
         height: 1,
         backgroundColor: '#E5E7EB',
-        marginVertical: 10,
+        marginVertical: isWeb ? 8 : 10,
     },
     primaryButton: {
         width: '100%',
@@ -711,30 +727,40 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         shadowColor: Colors.light.primary,
         shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.2,
         shadowRadius: 16,
         elevation: 8,
     },
     primaryButtonGradient: {
-        paddingVertical: 18,
+        paddingVertical: isWeb ? 15 : 18,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 10,
     },
     primaryButtonText: {
-        fontSize: 16,
+        fontSize: isWeb ? 15 : 16,
         fontWeight: '700',
         color: '#fff',
     },
     secondaryButton: {
-        paddingVertical: 16,
+        width: '100%',
+        borderRadius: 35,
+        backgroundColor: '#F8FAFC',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        overflow: 'hidden',
+    },
+    secondaryButtonContent: {
+        paddingVertical: isWeb ? 15 : 18,
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        gap: 10,
     },
     secondaryButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
+        fontSize: isWeb ? 15 : 16,
+        fontWeight: '700',
         color: Colors.light.primary,
     },
 
