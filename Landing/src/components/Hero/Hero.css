@@ -642,6 +642,7 @@
 }
 
 .login-input-wrapper i {
+    z-index: 10;
     position: absolute;
     left: 15px;
     top: 50%;
