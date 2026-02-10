@@ -47,7 +47,7 @@ export default function UploadScreen() {
                         if (!result.canceled) {
                             router.push({
                                 pathname: '/prescription-result',
-                                params: { imageUri: result.assets[0].uri }
+                                params: { imageUri: result.assets[0].uri, type }
                             } as any);
                         }
                     }
@@ -72,7 +72,7 @@ export default function UploadScreen() {
                         if (!result.canceled) {
                             router.push({
                                 pathname: '/prescription-result',
-                                params: { imageUri: result.assets[0].uri }
+                                params: { imageUri: result.assets[0].uri, type }
                             } as any);
                         }
                     }

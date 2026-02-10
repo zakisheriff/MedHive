@@ -31,7 +31,7 @@ const isWeb = Platform.OS === 'web';
 
 export default function PrescriptionResultScreen() {
     const insets = useSafeAreaInsets();
-    const { imageUri } = useLocalSearchParams<{ imageUri: string }>();
+    const { imageUri, type = 'prescription' } = useLocalSearchParams<{ imageUri: string, type?: string }>();
     const [loading, setLoading] = useState(true);
     const [summaryLoading, setSummaryLoading] = useState(false);
     const [data, setData] = useState<any>(null);
@@ -189,15 +189,25 @@ export default function PrescriptionResultScreen() {
             clearTimeout(timeoutId);
             const result = await response.json();
 
-            if (!response.status.toString().startsWith('2')) {
-                throw new Error(result.error || `Server error: ${response.status}`);
-            }
-
-            if (result.error === 'not_medical_record') {
+            if (result.is_medical === false || result.error === 'not_medical_record') {
                 setLoading(false);
                 Alert.alert(
                     'Invalid Document',
-                    'MedHive AI: This image doesn\'t appear to be a medical prescription or lab report. Please upload a clear medical document.',
+                    `MedHive AI: This image doesn't appear to be a medical ${type === 'prescription' ? 'prescription' : 'lab report'}. Please upload a clear medical document.`,
+                    [{ text: 'OK', onPress: () => router.back() }]
+                );
+                return;
+            }
+
+            // Stricter Success Validation: No data found
+            const hasMedicines = result.medicines && result.medicines.length > 0;
+            const hasLabTests = result.labTests && result.labTests.length > 0;
+
+            if (!hasMedicines && !hasLabTests) {
+                setLoading(false);
+                Alert.alert(
+                    'No Details Found',
+                    `MedHive AI couldn't detect any medical details in this image. Please ensure it's a clear ${type === 'prescription' ? 'prescription' : 'lab report'}.`,
                     [{ text: 'OK', onPress: () => router.back() }]
                 );
                 return;
@@ -231,8 +241,11 @@ export default function PrescriptionResultScreen() {
             // Soft alert instead of forcing a back navigation
             Alert.alert(
                 'Server Busy',
-                'MedHive AI is temporarily unavailable (Free Tier limit). You can still securely send your prescription image directly to the clinic below.',
-                [{ text: 'Continue' }]
+                'MedHive AI is temporarily unavailable. You can still securely send your prescription image directly to the clinic or go back.',
+                [
+                    { text: 'Go Back', onPress: () => router.back(), style: 'cancel' },
+                    { text: 'Continue' }
+                ]
             );
         }
     };
@@ -398,49 +411,53 @@ export default function PrescriptionResultScreen() {
                         {/* Title Section */}
                         <View style={styles.titleSection}>
                             <Text style={styles.mainTitle}>
-                                {hasError ? 'Manual Verification Required' : 'Prescription Decoded'}
+                                {hasError
+                                    ? 'Manual Verification Required'
+                                    : `${type === 'prescription' ? 'Prescription' : 'Lab Report'} Decoded`}
                             </Text>
                             <Text style={styles.subTitle}>
                                 {hasError
-                                    ? 'We couldn\'t automatically read the prescription. You can still forward it to your clinic.'
+                                    ? `We couldn't automatically read the ${type === 'prescription' ? 'prescription' : 'lab report'}. You can still forward it to your clinic.`
                                     : 'AI has successfully extracted the details. Choose an action below.'}
                             </Text>
                         </View>
 
-                        {/* Action Cards */}
-                        <View style={styles.actionsContainer}>
-                            <TouchableOpacity
-                                style={[styles.actionCard, hasError && styles.cardDisabled]}
-                                onPress={handleOpenDetails}
-                                disabled={hasError}
-                            >
-                                <View style={[styles.iconBox, { backgroundColor: '#E3F2FD' }]}>
-                                    <Ionicons name="list" size={24} color="#2196F3" />
-                                </View>
-                                <View style={styles.actionTextContainer}>
-                                    <Text style={styles.actionTitle}>View Medical Details</Text>
-                                    <Text style={styles.actionDesc}>Check extracted medicines & dosage</Text>
-                                </View>
-                                <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
-                            </TouchableOpacity>
+                        {/* Action Cards - Only show if not in error mode */}
+                        {!hasError && (
+                            <View style={styles.actionsContainer}>
+                                <TouchableOpacity
+                                    style={styles.actionCard}
+                                    onPress={handleOpenDetails}
+                                >
+                                    <View style={[styles.iconBox, { backgroundColor: '#E3F2FD' }]}>
+                                        <Ionicons name="list" size={24} color="#2196F3" />
+                                    </View>
+                                    <View style={styles.actionTextContainer}>
+                                        <Text style={styles.actionTitle}>View Medical Details</Text>
+                                        <Text style={styles.actionDesc}>Check extracted medicines & dosage</Text>
+                                    </View>
+                                    <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
+                                </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={[styles.actionCard, hasError && styles.cardDisabled]}
-                                onPress={handleOpenSummary}
-                                disabled={hasError}
-                            >
-                                <View style={[styles.iconBox, { backgroundColor: '#F3E5F5' }]}>
-                                    <Ionicons name="sparkles" size={24} color="#9C27B0" />
-                                </View>
-                                <View style={styles.actionTextContainer}>
-                                    <Text style={styles.actionTitle}>AI Summary</Text>
-                                    <Text style={styles.actionDesc}>Get a simple explanation of meds</Text>
-                                </View>
-                                <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
-                            </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.actionCard}
+                                    onPress={handleOpenSummary}
+                                >
+                                    <View style={[styles.iconBox, { backgroundColor: '#F3E5F5' }]}>
+                                        <Ionicons name="sparkles" size={24} color="#9C27B0" />
+                                    </View>
+                                    <View style={styles.actionTextContainer}>
+                                        <Text style={styles.actionTitle}>AI Summary</Text>
+                                        <Text style={styles.actionDesc}>Get a simple explanation of meds</Text>
+                                    </View>
+                                    <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
+                                </TouchableOpacity>
+                            </View>
+                        )}
 
-                            <View style={styles.divider} />
+                        <View style={styles.divider} />
 
+                        <View style={[styles.actionsContainer, { marginTop: 12 }]}>
                             <TouchableOpacity
                                 style={styles.primaryButton}
                                 onPress={handleSendToClinic}
@@ -465,21 +482,20 @@ export default function PrescriptionResultScreen() {
                                     <Text style={styles.secondaryButtonText}>Save to Medical History</Text>
                                 </View>
                             </TouchableOpacity>
-
-                            {/* Spacer for Mobile Web Browser Bar - Increased height */}
-                            {isWeb && <View style={{ height: 150 }} />}
                         </View>
+
+                        {/* Spacer for Mobile Web Browser Bar - Increased height */}
+                        {isWeb && <View style={{ height: 150 }} />}
                     </ScrollView>
                 </View>
-            </SafeAreaView >
+            </SafeAreaView>
 
             {/* Resizable Modal */}
-            < Modal
+            <Modal
                 animationType="fade"
                 transparent={true}
                 visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)
-                }
+                onRequestClose={() => setModalVisible(false)}
             >
                 <View style={styles.modalOverlay}>
                     <TouchableOpacity style={styles.modalBackdrop} onPress={() => setModalVisible(false)} activeOpacity={1} />
@@ -563,15 +579,15 @@ export default function PrescriptionResultScreen() {
                         </View>
                     </Animated.View>
                 </View>
-            </Modal >
+            </Modal>
 
             {/* Full Screen Image Modal */}
-            < ImagePreviewModal
+            <ImagePreviewModal
                 isVisible={fullScreenVisible}
                 imageUri={imageUri}
                 onClose={() => setFullScreenVisible(false)}
             />
-        </View >
+        </View>
     );
 }
 
@@ -780,7 +796,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.6)',
     },
     scanCard: {
-        width: isWeb ? '100%' : width * 0.85,
+        width: isWeb ? '92%' : width * 0.85,
         maxWidth: isWeb ? 400 : undefined,
         alignSelf: 'center',
         height: 260,
