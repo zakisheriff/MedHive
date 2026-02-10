@@ -275,25 +275,39 @@ const Hero = ({ focusTrigger }) => {
                                     {screen === 'login' && (
                                         <div className="screen-login animate-fade-in">
                                             <div className="login-logo-container">
-                                                <img src="/logode.png" alt="MedHive Logo" className="login-logo-img" />
+                                                <img src="/logode.png" alt="MedHive Logo" className="login-logo-img" width="80" height="80" />
                                             </div>
 
                                             <h2 className="login-title">Login</h2>
 
                                             <div className="login-form">
                                                 <div className="login-field">
-                                                    <label>Email</label>
+                                                    <label htmlFor="login-email">Email</label>
                                                     <div className="login-input-wrapper">
                                                         <i className="fa-regular fa-envelope"></i>
-                                                        <input type="email" placeholder="Enter your email" />
+                                                        <input
+                                                            id="login-email"
+                                                            name="email"
+                                                            type="email"
+                                                            placeholder="Enter your email"
+                                                            autoComplete="email"
+                                                            aria-label="Email Address"
+                                                        />
                                                     </div>
                                                 </div>
 
                                                 <div className="login-field">
-                                                    <label>Password</label>
+                                                    <label htmlFor="login-password">Password</label>
                                                     <div className="login-input-wrapper">
                                                         <i className="fa-solid fa-lock"></i>
-                                                        <input type="password" placeholder="Enter your password" />
+                                                        <input
+                                                            id="login-password"
+                                                            name="password"
+                                                            type="password"
+                                                            placeholder="Enter your password"
+                                                            autoComplete="current-password"
+                                                            aria-label="Password"
+                                                        />
                                                     </div>
                                                 </div>
 
@@ -308,7 +322,7 @@ const Hero = ({ focusTrigger }) => {
                                     {screen === 'forgot_password' && (
                                         <div className="screen-login animate-fade-in">
                                             <div className="login-logo-container">
-                                                <img src="/logode.png" alt="MedHive Logo" className="login-logo-img" />
+                                                <img src="/logode.png" alt="MedHive Logo" className="login-logo-img" width="80" height="80" />
                                             </div>
 
                                             <h2 className="login-title">Reset Password</h2>
@@ -318,10 +332,17 @@ const Hero = ({ focusTrigger }) => {
 
                                             <div className="login-form">
                                                 <div className="login-field">
-                                                    <label>Email</label>
+                                                    <label htmlFor="forgot-email">Email</label>
                                                     <div className="login-input-wrapper">
                                                         <i className="fa-regular fa-envelope"></i>
-                                                        <input type="email" placeholder="Enter your email" />
+                                                        <input
+                                                            id="forgot-email"
+                                                            name="email"
+                                                            type="email"
+                                                            placeholder="Enter your email"
+                                                            autoComplete="email"
+                                                            aria-label="Email Address for Password Reset"
+                                                        />
                                                     </div>
                                                 </div>
 
@@ -341,7 +362,7 @@ const Hero = ({ focusTrigger }) => {
                                     {screen === 'upload' && (
                                         <div className="screen-home animate-fade-in">
                                             <div className="home-header">
-                                                <h1>Upload</h1>
+                                                <h2>Upload</h2>
                                                 <div className="profile-circle" onClick={() => setScreen('profile')} style={{ cursor: 'pointer' }}>JD</div>
                                             </div>
 
@@ -349,7 +370,7 @@ const Hero = ({ focusTrigger }) => {
                                                 <div className="upload-icon-circle">
                                                     <i className="fa-regular fa-file-lines"></i>
                                                 </div>
-                                                <h2>Upload Your Health Record</h2>
+                                                <h3>Upload Your Health Record</h3>
                                                 <p>Upload an Image to Extract Medicine Name, Dosage, and Duration</p>
 
                                                 <div className="upload-actions-list">
@@ -376,7 +397,7 @@ const Hero = ({ focusTrigger }) => {
                                     {screen === 'history' && !activeHistoryItem && (
                                         <div className="screen-history animate-fade-in">
                                             <div className="home-header">
-                                                <h1>History</h1>
+                                                <h2>History</h2>
                                                 <div className="profile-circle" onClick={() => setScreen('profile')} style={{ cursor: 'pointer' }}>JD</div>
                                             </div>
 
@@ -387,6 +408,7 @@ const Hero = ({ focusTrigger }) => {
                                                     placeholder="Search by medicine, doctor, clinic..."
                                                     value={searchQuery}
                                                     onChange={(e) => setSearchQuery(e.target.value)}
+                                                    aria-label="Search History"
                                                 />
                                                 {searchQuery && (
                                                     <i

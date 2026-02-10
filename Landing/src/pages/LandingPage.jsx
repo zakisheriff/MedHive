@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 // import CountdownClock from '../components/CountdownClock/CountdownClock';
 import Hero from '../components/Hero/Hero';
-import ProblemSection from '../components/ProblemSection/ProblemSection';
-import SolutionSection from '../components/SolutionSection/SolutionSection';
-import FeaturesSection from '../components/FeaturesSection/FeaturesSection';
-import TeamSection from '../components/TeamSection/TeamSection';
-import CTASection from '../components/CTASection/CTASection';
+
+// Lazy load components below the fold
+const ProblemSection = lazy(() => import('../components/ProblemSection/ProblemSection'));
+const SolutionSection = lazy(() => import('../components/SolutionSection/SolutionSection'));
+const FeaturesSection = lazy(() => import('../components/FeaturesSection/FeaturesSection'));
+const TeamSection = lazy(() => import('../components/TeamSection/TeamSection'));
+const CTASection = lazy(() => import('../components/CTASection/CTASection'));
 
 const LandingPage = () => {
     const [mockupFocusTrigger, setMockupFocusTrigger] = useState(0);
@@ -31,11 +33,13 @@ const LandingPage = () => {
         <main>
             {/* <CountdownClock targetDate="2026-02-08T18:00:00" /> */}
             <Hero focusTrigger={mockupFocusTrigger} />
-            <ProblemSection />
-            <SolutionSection />
-            <FeaturesSection />
-            <TeamSection />
-            <CTASection onCTAClick={handleCTAClick} />
+            <Suspense fallback={<div style={{ height: '50vh' }}></div>}>
+                <ProblemSection />
+                <SolutionSection />
+                <FeaturesSection />
+                <TeamSection />
+                <CTASection onCTAClick={handleCTAClick} />
+            </Suspense>
         </main >
     );
 };

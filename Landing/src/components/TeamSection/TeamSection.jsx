@@ -91,18 +91,23 @@ const TeamSection = () => {
                                     className="member-image"
                                 />
                                 <div className="member-social-overlay">
-                                    {Object.keys(member.social).map((platform) => (
-                                        <a
-                                            key={platform}
-                                            href={member.social[platform]}
-                                            className="social-icon-btn"
-                                            aria-label={`${member.name}'s ${platform}`}
-                                            target='_blank'
-                                            rel="noopener noreferrer"
-                                        >
-                                            <i className={`fab fa-${platform}`}></i>
-                                        </a>
-                                    ))}
+                                    {Object.keys(member.social).map((platform) => {
+                                        const link = member.social[platform];
+                                        if (!link || link === '#') return null;
+
+                                        return (
+                                            <a
+                                                key={platform}
+                                                href={link}
+                                                className="social-icon-btn"
+                                                aria-label={`${member.name}'s ${platform}`}
+                                                target='_blank'
+                                                rel="noopener noreferrer"
+                                            >
+                                                <i className={`fab fa-${platform}`}></i>
+                                            </a>
+                                        );
+                                    })}
                                 </div>
                             </div>
                             <div className="member-details">
