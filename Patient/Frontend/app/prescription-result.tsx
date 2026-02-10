@@ -288,19 +288,21 @@ export default function PrescriptionResultScreen() {
                 <View style={styles.loadingOverlay}>
                     <View style={styles.scanCard}>
                         <Image source={{ uri: imageUri }} style={styles.scanImage} resizeMode="cover" />
-                        <Animated.View
-                            style={[
-                                styles.scanLine,
-                                {
-                                    transform: [{
-                                        translateY: scanAnim.interpolate({
-                                            inputRange: [0, 1],
-                                            outputRange: [0, 260] // Match scanImage height
-                                        })
-                                    }]
-                                }
-                            ]}
-                        />
+                        {!showSuccess && loading && (
+                            <Animated.View
+                                style={[
+                                    styles.scanLine,
+                                    {
+                                        transform: [{
+                                            translateY: scanAnim.interpolate({
+                                                inputRange: [0, 1],
+                                                outputRange: [0, 260] // Match scanImage height
+                                            })
+                                        }]
+                                    }
+                                ]}
+                            />
+                        )}
                     </View>
                     <View style={styles.loadingTextContainer}>
                         {showSuccess ? (
