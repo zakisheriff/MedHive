@@ -24,6 +24,7 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ImagePreviewModal } from '../components/ImagePreviewModal';
 
 const { width, height } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
@@ -549,26 +550,11 @@ export default function PrescriptionResultScreen() {
             </Modal>
 
             {/* Full Screen Image Modal */}
-            <Modal
-                visible={fullScreenVisible}
-                transparent={true}
-                animationType="fade"
-                onRequestClose={() => setFullScreenVisible(false)}
-            >
-                <View style={styles.fullScreenContainer}>
-                    <TouchableOpacity
-                        style={[styles.fullScreenCloseBtn, { top: insets.top + 20 }]}
-                        onPress={() => setFullScreenVisible(false)}
-                    >
-                        <Ionicons name="close" size={28} color="#fff" />
-                    </TouchableOpacity>
-                    <Image
-                        source={{ uri: imageUri }}
-                        style={styles.fullScreenImage}
-                        resizeMode="contain"
-                    />
-                </View>
-            </Modal>
+            <ImagePreviewModal
+                isVisible={fullScreenVisible}
+                imageUri={imageUri}
+                onClose={() => setFullScreenVisible(false)}
+            />
         </View>
     );
 }
@@ -688,28 +674,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.03,
         shadowRadius: 8,
         elevation: 1,
-    },
-    // ... (rest of styles)
-
-    // Full Screen Image Styles
-    fullScreenContainer: {
-        flex: 1,
-        backgroundColor: '#000',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    fullScreenImage: {
-        width: width,
-        height: height,
-    },
-    fullScreenCloseBtn: {
-        position: 'absolute',
-        top: 50,
-        right: 20,
-        zIndex: 10,
-        padding: 10,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        borderRadius: 35,
     },
     cardDisabled: {
         opacity: 0.6,
