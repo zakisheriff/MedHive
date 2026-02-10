@@ -39,12 +39,10 @@ const AdminDashboard = () => {
     <div className="admin-page-wrapper">
       <header className="admin-header">
         <div className="header-content">
-          <img src="./admin.png" alt="" />
+          <img src="./admin - Copy.png" alt="Portal logo" className="admin-portal-icon" />
           <p>Review and approve PHSRC certifications for new MedHive clinics.</p>
         </div>
-        <div className="pending-badge">
-          {pending.length} Pending
-        </div>
+        
       </header>
 
       <main className="admin-main-content">
@@ -62,7 +60,7 @@ const AdminDashboard = () => {
                   <th>Clinic Identity</th>
                   <th>Contact Information</th>
                   <th>PHSRC Document</th>
-                  <th className="text-center">Review Action</th>
+                  <th >Review Action</th>
                 </tr>
               </thead>
               <tbody>

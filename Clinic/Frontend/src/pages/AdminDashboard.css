@@ -7,9 +7,21 @@
 
 .admin-header {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
+  align-items: center; 
+  margin-bottom: 20px;    
+}
+
+.header-content {
+    display: flex;
+    flex-direction: column; /* This puts the text UNDER the logo */
+    align-items: center;
+                /* Tightens the space between logo and text */
+}
+
+.header-content p{
+    align-items:center;
 }
 
 .admin-header h1 {
@@ -21,6 +33,11 @@
 .admin-header p {
   color: #64748b;
   font-size: 14px;
+}
+
+.admin-portal-icon {
+  height: 136px;
+  object-fit: contain;
 }
 
 .pending-badge {
