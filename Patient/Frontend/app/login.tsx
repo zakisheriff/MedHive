@@ -15,6 +15,8 @@ export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    
+
     const handleLogin = () => {
         // TODO: Implement actual login logic
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
