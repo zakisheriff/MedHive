@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Platform } from 'react-native';
 import { Colors } from '../../constants/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProfileAvatar } from '../../components/ProfileAvatar';
@@ -183,6 +183,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: Colors.light.text,
         padding: 0,
+        ...Platform.select({
+            web: {
+                outlineStyle: 'none',
+            } as any,
+        }),
     },
     clearButton: {
         padding: 2,

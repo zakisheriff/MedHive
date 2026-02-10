@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, TextInput, StyleSheet, Text } from 'react-native';
+import { View, TextInput, StyleSheet, Text, Platform } from 'react-native';
 import { Colors } from '../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -136,6 +136,11 @@ const styles = StyleSheet.create({
         color: Colors.light.text,
         textAlign: 'center',
         minWidth: 0, // CRITICAL: Allows flex items to shrink on Web
+        ...Platform.select({
+            web: {
+                outlineStyle: 'none',
+            } as any,
+        }),
     },
     separator: {
         fontSize: 16,

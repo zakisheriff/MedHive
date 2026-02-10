@@ -10,7 +10,8 @@ import {
     Linking,
     TextInput,
     Modal,
-    Alert
+    Alert,
+    Platform
 } from 'react-native';
 import { useAlert } from '../context/AlertContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -697,6 +698,11 @@ const styles = StyleSheet.create({
         color: '#1C1C1E',
         borderWidth: 1,
         borderColor: '#E5E5EA',
+        ...Platform.select({
+            web: {
+                outlineStyle: 'none',
+            } as any,
+        }),
     },
     saveBtn: {
         borderRadius: 20,

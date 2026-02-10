@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput, StyleSheet, View, Text, TextInputProps, StyleProp, ViewStyle, TextStyle } from 'react-native';
+import { TextInput, StyleSheet, View, Text, TextInputProps, StyleProp, ViewStyle, TextStyle, Platform } from 'react-native';
 import { Colors } from '../constants/theme';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -60,6 +60,11 @@ const styles = StyleSheet.create({
         padding: 16,
         fontSize: 16,
         color: Colors.light.text,
+        ...Platform.select({
+            web: {
+                outlineStyle: 'none',
+            } as any,
+        }),
     },
     iconContainer: {
         paddingLeft: 16,
