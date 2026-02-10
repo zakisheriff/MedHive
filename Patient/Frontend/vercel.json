@@ -32,7 +32,7 @@
                 },
                 {
                     "key": "Content-Security-Policy",
-                    "value": "default-src 'self' https://medhive-backend.azurewebsites.net https://patient.medhive.lk https://user.medhive.lk; img-src 'self' blob: data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://medhive-backend.azurewebsites.net https://patient.medhive.lk https://user.medhive.lk https://vitals.vercel-insights.com;"
+                    "value": "default-src 'self' https://medhive-backend.azurewebsites.net https://patient.medhive.lk https://user.medhive.lk https://medhive-patient-backend-fjaad9afdkc4hvfx.southeastasia-01.azurewebsites.net; img-src 'self' blob: data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; connect-src 'self' blob: https://medhive-backend.azurewebsites.net https://patient.medhive.lk https://user.medhive.lk https://vitals.vercel-insights.com https://medhive-patient-backend-fjaad9afdkc4hvfx.southeastasia-01.azurewebsites.net;"
                 }
             ]
         }
