@@ -97,6 +97,34 @@ export default function UploadScreen() {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
+                {/* Scan Process Guide Moved to Top */}
+                <View style={styles.processContainer}>
+                    <View style={styles.processItem}>
+                        <View style={styles.processIcon}>
+                            <Ionicons name="camera" size={18} color={Colors.light.primary} />
+                        </View>
+                        <Text style={styles.processText}>Snap It</Text>
+                    </View>
+                    <View style={styles.arrowWrapper}>
+                        <Ionicons name="arrow-forward" size={14} color="#C7C7CC" />
+                    </View>
+                    <View style={styles.processItem}>
+                        <View style={styles.processIcon}>
+                            <Ionicons name="scan" size={18} color={Colors.light.primary} />
+                        </View>
+                        <Text style={styles.processText}>AI Scan</Text>
+                    </View>
+                    <View style={styles.arrowWrapper}>
+                        <Ionicons name="arrow-forward" size={14} color="#C7C7CC" />
+                    </View>
+                    <View style={styles.processItem}>
+                        <View style={styles.processIcon}>
+                            <Ionicons name="save-outline" size={18} color={Colors.light.primary} />
+                        </View>
+                        <Text style={styles.processText}>Save</Text>
+                    </View>
+                </View>
+
                 {/* Main Upload Card */}
                 <View style={styles.uploadCard}>
                     {/* Header */}
@@ -151,34 +179,6 @@ export default function UploadScreen() {
                         For better result, ensure good lighting and steady scan.
                     </Text>
                 </View>
-
-                {/* Scan Process Guide (Individual pill icons, moved below !) */}
-                <View style={styles.processContainer}>
-                    <View style={styles.processItem}>
-                        <View style={styles.processIcon}>
-                            <Ionicons name="camera" size={18} color={Colors.light.primary} />
-                        </View>
-                        <Text style={styles.processText}>Snap It</Text>
-                    </View>
-                    <View style={styles.arrowWrapper}>
-                        <Ionicons name="arrow-forward" size={14} color="#C7C7CC" />
-                    </View>
-                    <View style={styles.processItem}>
-                        <View style={styles.processIcon}>
-                            <Ionicons name="scan" size={18} color={Colors.light.primary} />
-                        </View>
-                        <Text style={styles.processText}>AI Scan</Text>
-                    </View>
-                    <View style={styles.arrowWrapper}>
-                        <Ionicons name="arrow-forward" size={14} color="#C7C7CC" />
-                    </View>
-                    <View style={styles.processItem}>
-                        <View style={styles.processIcon}>
-                            <Ionicons name="save-outline" size={18} color={Colors.light.primary} />
-                        </View>
-                        <Text style={styles.processText}>Save</Text>
-                    </View>
-                </View>
             </ScrollView>
         </View>
     );
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'center',
         gap: 12,
-        marginTop: 16, // Space below the ! note
+        marginBottom: 24, // Space above the upload card
     },
     processItem: {
         alignItems: 'center',
