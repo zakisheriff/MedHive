@@ -8,6 +8,11 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
+// Add this Root Route for Azure Health Check
+app.get('/', (req, res) => {
+    res.send("MedHive Backend is Live! 🚀");
+});
+
 // Routes
 const registerRoute = require('./routes/register');
 const loginRoute = require('./routes/login');
