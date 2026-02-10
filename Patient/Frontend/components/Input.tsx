@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
         marginLeft: 4,
     },
     inputContainer: {
-        backgroundColor: '#fff',
+        backgroundColor: Colors.light.background,
         borderWidth: 1,
-        borderColor: '#e5e5e5',
+        borderColor: Colors.light.border,
         borderRadius: 35, // Pill shape
         flexDirection: 'row',
         alignItems: 'center',

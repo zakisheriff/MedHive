@@ -43,7 +43,7 @@ export default function MedicalHistoryScreen() {
 
     return (
         <LinearGradient
-            colors={['#F8FAFC', '#FFFFFF', '#F8FAFC']}
+            colors={[Colors.light.background, Colors.light.background]}
             style={styles.background}
         >
             <StatusBar style="dark" />

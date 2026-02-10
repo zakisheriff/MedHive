@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import Head from 'expo-router/head';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet, Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -9,10 +10,17 @@ import { Colors } from '../constants/theme';
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <Head>
+        <meta name="theme-color" content={Colors.light.background} />
+        <meta name="msapplication-TileColor" content={Colors.light.background} />
+      </Head>
       <AlertProvider>
         <View style={styles.root}>
           <View style={styles.container}>
-            <Stack screenOptions={{ headerShown: false }}>
+            <Stack screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: Colors.light.background }
+            }}>
               <Stack.Screen name="index" />
               <Stack.Screen name="login" />
               <Stack.Screen name="register" />
