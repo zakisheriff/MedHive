@@ -42,16 +42,21 @@ router.post('/extract', upload.single('image'), async (req, res) => {
         const prompt = `
         You are an expert pharmacist and medical data extractor. Your job is to extract medicine details from the provided prescription image and correct any spelling errors (e.g., "Amoxirillin" -> "Amoxicillin").
         
-        Strictly follow these rules:
+        STRICT VALIDATION RULE:
+        First, determine if the image is a valid medical document (Prescription or Lab Report).
+        If the image is NOT a medical document (e.g., flowers, landscapes, animals, random objects, food, etc.), you MUST set "is_medical": false and leave "medicines" and "labTests" as empty arrays.
+        
+        Strictly follow these rules for extraction:
         1. Identify all medicines, dosages, frequencies, and durations.
-        2. If a medicine name is misspelled, output the CORRECTED name.
-        3. Determine the user's likely intent (e.g., "Take 1 pill 3 times a day").
-        4. Omit any preambles, "Here is the JSON", or markdown code blocks. Just return the raw JSON.
-        5. For the summary, provide a direct professional explanation of the medicine. DO NOT include "Please note", "Disclaimer", "Important", or any separator lines like "---". Go straight to the point.
-        6. If the image is NOT a prescription, return {"error": "not_medical_record"}.
+        2. Identify all lab tests if it is a lab report.
+        3. If a medicine/test name is misspelled, output the CORRECTED name.
+        4. Omit any preambles, disclaimers, or markdown code blocks. Just return the raw JSON.
+        5. For the summary, provide a direct professional explanation.
+        6. Set "is_medical" to true only if it is a legitimate medical document.
 
         Output Format (JSON):
         {
+          "is_medical": boolean,
           "medicines": [
             {
               "name": "Corrected Name",
@@ -61,7 +66,10 @@ router.post('/extract', upload.single('image'), async (req, res) => {
               "instructions": "Take after food"
             }
           ],
-          "summary": "Amoxicillin is a penicillin antibiotic used to treat bacterial infections..."
+          "labTests": [
+             {"name": "CBC", "result": "Normal"}
+          ],
+          "summary": "Professional summary here..."
         }
         `;
 
