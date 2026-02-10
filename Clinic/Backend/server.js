@@ -151,7 +151,7 @@ app.post("/api/auth/register", upload.single("certificate"), async (req, res) =>
         email.toLowerCase(),
         passwordHash,
         certificateUrl,
-        "APPROVED",
+        "PENDING",
       ]
     );
 
