@@ -39,6 +39,72 @@ export default function PrescriptionResultScreen() {
     const [hasError, setHasError] = useState(false);
     const scanAnim = useRef(new Animated.Value(0)).current;
 
+    const [fullScreenVisible, setFullScreenVisible] = useState(false);
+
+    // Resizable Modal State
+    const [isExpanded, setIsExpanded] = useState(false);
+    const modalHeight = useRef(new Animated.Value(height * 0.5)).current;
+
+    const renderMarkdown = (text: string) => {
+        if (!text) return null;
+
+        return text.split('\n').map((line, index) => {
+            // Headers (### or ##)
+            if (line.startsWith('### ')) {
+                return (
+                    <Text key={index} style={[styles.mdH3, { marginTop: index === 0 ? 0 : 12 }]}>
+                        {line.replace('### ', '')}
+                    </Text>
+                );
+            }
+            if (line.startsWith('## ')) {
+                return (
+                    <Text key={index} style={[styles.mdH2, { marginTop: index === 0 ? 0 : 16 }]}>
+                        {line.replace('## ', '')}
+                    </Text>
+                );
+            }
+
+            // Bullet points (* )
+            if (line.trim().startsWith('* ')) {
+                const content = line.trim().substring(2);
+                return (
+                    <View key={index} style={styles.mdListItem}>
+                        <Text style={styles.mdBullet}>•</Text>
+                        <Text style={styles.mdListText}>
+                            {parseBold(content)}
+                        </Text>
+                    </View>
+                );
+            }
+
+            // Regular paragraph
+            if (line.trim() === '') {
+                return <View key={index} style={{ height: 8 }} />;
+            }
+
+            return (
+                <Text key={index} style={styles.mdParagraph}>
+                    {parseBold(line)}
+                </Text>
+            );
+        });
+    };
+
+    const parseBold = (text: string) => {
+        const parts = text.split(/(\*\*.*?\*\*)/g);
+        return parts.map((part, i) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+                return (
+                    <Text key={i} style={styles.mdBold}>
+                        {part.slice(2, -2)}
+                    </Text>
+                );
+            }
+            return <Text key={i}>{part}</Text>;
+        });
+    };
+
     useEffect(() => {
         if (loading) {
             Animated.loop(
@@ -67,6 +133,9 @@ export default function PrescriptionResultScreen() {
             extractData();
         }
     }, [imageUri]);
+
+    const [showSuccess, setShowSuccess] = useState(false);
+    const successAnim = useRef(new Animated.Value(0)).current;
 
     const extractData = async () => {
         const controller = new AbortController();
@@ -99,6 +168,7 @@ export default function PrescriptionResultScreen() {
             }
 
             if (result.error === 'not_medical_record') {
+                setLoading(false);
                 Alert.alert(
                     'Invalid Document',
                     'MedHive AI: This image doesn\'t appear to be a medical prescription or lab report. Please upload a clear medical document.',
@@ -109,9 +179,28 @@ export default function PrescriptionResultScreen() {
 
             setData(result);
             setHasError(false);
+
+            // Success Animation
+            setShowSuccess(true);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+            Animated.spring(successAnim, {
+                toValue: 1,
+                friction: 6,
+                tension: 40,
+                useNativeDriver: true
+            }).start();
+
+            // Delay before showing results
+            setTimeout(() => {
+                setLoading(false);
+                setShowSuccess(false);
+            }, 2000);
+
         } catch (error: any) {
             console.log('Extraction error (Handled):', error.message);
             setHasError(true);
+            setLoading(false);
 
             // Soft alert instead of forcing a back navigation
             Alert.alert(
@@ -119,8 +208,6 @@ export default function PrescriptionResultScreen() {
                 'MedHive AI is temporarily unavailable (Free Tier limit). You can still securely send your prescription image directly to the clinic below.',
                 [{ text: 'Continue' }]
             );
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -208,7 +295,7 @@ export default function PrescriptionResultScreen() {
                                     transform: [{
                                         translateY: scanAnim.interpolate({
                                             inputRange: [0, 1],
-                                            outputRange: [0, 240] // Match scanImage height
+                                            outputRange: [0, 260] // Match scanImage height
                                         })
                                     }]
                                 }
@@ -216,9 +303,20 @@ export default function PrescriptionResultScreen() {
                         />
                     </View>
                     <View style={styles.loadingTextContainer}>
-                        <ActivityIndicator size="large" color="#fff" />
-                        <Text style={styles.loadingTitle}>Analyzing Prescription...</Text>
-                        <Text style={styles.loadingSubtitle}>MedHive AI is extracting medical details</Text>
+                        {showSuccess ? (
+                            <Animated.View style={{ alignItems: 'center', transform: [{ scale: successAnim }] }}>
+                                <View style={styles.successCircle}>
+                                    <Ionicons name="checkmark" size={50} color="#fff" />
+                                </View>
+                                <Text style={styles.loadingTitle}>Scan Complete</Text>
+                            </Animated.View>
+                        ) : (
+                            <>
+                                <ActivityIndicator size="large" color="#fff" />
+                                <Text style={styles.loadingTitle}>Analyzing Prescription...</Text>
+                                <Text style={styles.loadingSubtitle}>MedHive AI is extracting medical details</Text>
+                            </>
+                        )}
                     </View>
                 </View>
             </View>
@@ -243,14 +341,21 @@ export default function PrescriptionResultScreen() {
                 </View>
 
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                    {/* Image Card */}
-                    <View style={styles.imageCard}>
+                    {/* Image Card - Click to Expand */}
+                    <TouchableOpacity
+                        style={styles.imageCard}
+                        onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            setFullScreenVisible(true);
+                        }}
+                        activeOpacity={0.7}
+                    >
                         <Image source={{ uri: imageUri }} style={styles.resultImage} resizeMode="cover" />
                         <View style={styles.statusBadge}>
-                            <Ionicons name="checkmark-circle" size={16} color="#4CAF50" />
-                            <Text style={styles.statusText}>Scan Complete</Text>
+                            <Ionicons name="expand" size={12} color="#111827" />
+                            <Text style={styles.statusText}>Tap to View</Text>
                         </View>
-                    </View>
+                    </TouchableOpacity>
 
                     {/* Title Section */}
                     <View style={styles.titleSection}>
@@ -324,22 +429,47 @@ export default function PrescriptionResultScreen() {
                 </ScrollView>
             </SafeAreaView>
 
-            {/* Modern Bottom Sheet Modal */}
+            {/* Resizable Modal */}
             <Modal
-                animationType="slide"
+                animationType="fade"
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
                 <View style={styles.modalOverlay}>
                     <TouchableOpacity style={styles.modalBackdrop} onPress={() => setModalVisible(false)} activeOpacity={1} />
-                    <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]}>
+
+                    <Animated.View
+                        style={[
+                            styles.modalContent,
+                            {
+                                height: modalHeight,
+                                paddingBottom: insets.bottom + 20
+                            }
+                        ]}
+                    >
                         <View style={styles.modalHeader}>
-                            <View style={styles.dragIndicator} />
+                            <TouchableOpacity
+                                style={styles.headerIconButton}
+                                onPress={() => {
+                                    const toValue = isExpanded ? height * 0.5 : height * 0.9;
+                                    setIsExpanded(!isExpanded);
+                                    Animated.spring(modalHeight, {
+                                        toValue,
+                                        useNativeDriver: false,
+                                        friction: 6
+                                    }).start();
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                }}
+                            >
+                                <Ionicons name={isExpanded ? "contract" : "expand"} size={20} color={Colors.light.text} />
+                            </TouchableOpacity>
+
                             <Text style={styles.modalTitle}>
                                 {modalType === 'details' ? 'Extracted Details' : 'AI Summary'}
                             </Text>
-                            <TouchableOpacity style={styles.modalCloseBtn} onPress={() => setModalVisible(false)}>
+
+                            <TouchableOpacity style={styles.headerIconButton} onPress={() => setModalVisible(false)}>
                                 <Ionicons name="close" size={24} color={Colors.light.text} />
                             </TouchableOpacity>
                         </View>
@@ -369,7 +499,9 @@ export default function PrescriptionResultScreen() {
                                     {summaryLoading ? (
                                         <ActivityIndicator color={Colors.light.primary} size="large" />
                                     ) : (
-                                        <Text style={styles.summaryText}>{summary || 'Analyzing...'}</Text>
+                                        <View>
+                                            {summary ? renderMarkdown(summary) : <Text style={styles.summaryText}>Analyzing...</Text>}
+                                        </View>
                                     )}
                                 </View>
                             )}
@@ -381,7 +513,29 @@ export default function PrescriptionResultScreen() {
                                 <Text style={styles.copyButtonText}>Copy to Clipboard</Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
+                    </Animated.View>
+                </View>
+            </Modal>
+
+            {/* Full Screen Image Modal */}
+            <Modal
+                visible={fullScreenVisible}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setFullScreenVisible(false)}
+            >
+                <View style={styles.fullScreenContainer}>
+                    <TouchableOpacity
+                        style={[styles.fullScreenCloseBtn, { top: insets.top + 20 }]}
+                        onPress={() => setFullScreenVisible(false)}
+                    >
+                        <Ionicons name="close" size={28} color="#fff" />
+                    </TouchableOpacity>
+                    <Image
+                        source={{ uri: imageUri }}
+                        style={styles.fullScreenImage}
+                        resizeMode="contain"
+                    />
                 </View>
             </Modal>
         </View>
@@ -427,7 +581,7 @@ const styles = StyleSheet.create({
     },
     imageCard: {
         width: '100%',
-        height: 280,
+        height: 220, // Reduced from 280 to fit content
         borderRadius: 35,
         backgroundColor: '#fff',
         shadowColor: '#000',
@@ -435,7 +589,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.08,
         shadowRadius: 20,
         elevation: 5,
-        marginBottom: 25,
+        marginBottom: 20, // Reduced margin
         overflow: 'hidden',
         position: 'relative'
     },
@@ -465,36 +619,58 @@ const styles = StyleSheet.create({
         color: '#111827',
     },
     titleSection: {
-        marginBottom: 30,
+        marginBottom: 20, // Reduced from 30
     },
     mainTitle: {
-        fontSize: 28,
+        fontSize: 24, // Reduced from 28
         fontWeight: 'bold',
         color: Colors.light.text,
-        marginBottom: 8,
+        marginBottom: 6,
         letterSpacing: -0.5,
     },
     subTitle: {
-        fontSize: 16,
+        fontSize: 15, // Reduced from 16
         color: Colors.light.icon,
-        lineHeight: 24,
+        lineHeight: 22,
     },
     actionsContainer: {
-        gap: 16,
+        gap: 12, // Reduced gap
     },
     actionCard: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#fff',
-        padding: 16,
+        padding: 14, // Reduced padding
         borderRadius: 35,
         borderWidth: 1,
-        borderColor: '#EDE9FE', // Very subtle tint
+        borderColor: '#EDE9FE',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.03,
         shadowRadius: 8,
         elevation: 1,
+    },
+    // ... (rest of styles)
+
+    // Full Screen Image Styles
+    fullScreenContainer: {
+        flex: 1,
+        backgroundColor: '#000',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    fullScreenImage: {
+        width: width,
+        height: height,
+    },
+    fullScreenCloseBtn: {
+        position: 'absolute',
+        top: 50,
+        right: 20,
+        zIndex: 10,
+        padding: 10,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        borderRadius: 35,
     },
     cardDisabled: {
         opacity: 0.6,
@@ -575,8 +751,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.6)',
     },
     scanCard: {
-        width: width * 0.7,
-        height: 240,
+        width: width * 0.85,
+        height: 260,
         borderRadius: 35,
         overflow: 'hidden',
         borderWidth: 2,
@@ -614,6 +790,21 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: 'rgba(255,255,255,0.7)',
     },
+    successCircle: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: Colors.light.primary,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 16,
+        borderWidth: 4,
+        borderColor: '#fff',
+        shadowColor: Colors.light.primary,
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 20,
+    },
 
     // Modal
     modalOverlay: {
@@ -626,10 +817,8 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         backgroundColor: '#fff',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        maxHeight: height * 0.85,
-        minHeight: height * 0.5,
+        borderTopLeftRadius: 35,
+        borderTopRightRadius: 35,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: -5 },
         shadowOpacity: 0.1,
@@ -637,29 +826,30 @@ const styles = StyleSheet.create({
         elevation: 20,
     },
     modalHeader: {
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
         paddingVertical: 15,
         paddingHorizontal: 20,
         borderBottomWidth: 1,
         borderBottomColor: '#F3F4F6',
     },
-    dragIndicator: {
-        width: 40,
-        height: 5,
-        borderRadius: 3,
-        backgroundColor: '#E5E7EB',
-        marginBottom: 15,
-    },
+
     modalTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         color: Colors.light.text,
+        textAlign: 'center',
+        flex: 1,
     },
-    modalCloseBtn: {
-        position: 'absolute',
-        right: 20,
-        top: 20,
-        padding: 5,
+    headerIconButton: {
+        padding: 8,
+        backgroundColor: '#F3F4F6',
+        borderRadius: 20,
+        width: 40,
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     modalScroll: {
         padding: 20,
@@ -735,4 +925,46 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: Colors.light.primary,
     },
+    // Markdown Styles
+    mdH2: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: Colors.light.text,
+        marginBottom: 8,
+    },
+    mdH3: {
+        fontSize: 17,
+        fontWeight: '600',
+        color: Colors.light.text,
+        marginBottom: 6,
+    },
+    mdParagraph: {
+        fontSize: 15,
+        lineHeight: 24,
+        color: '#374151',
+        marginBottom: 4,
+    },
+    mdBold: {
+        fontWeight: '700',
+        color: '#111827',
+    },
+    mdListItem: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: 6,
+        paddingLeft: 4,
+    },
+    mdBullet: {
+        fontSize: 16,
+        lineHeight: 24,
+        marginRight: 8,
+        color: Colors.light.primary,
+    },
+    mdListText: {
+        flex: 1,
+        fontSize: 15,
+        lineHeight: 24,
+        color: '#374151',
+    },
+
 });

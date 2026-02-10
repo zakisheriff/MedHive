@@ -254,8 +254,8 @@ const styles = StyleSheet.create({
     // Optional: add decorative styles here if needed later
     uploadCard: {
         backgroundColor: Colors.light.primary,
-        borderRadius: 32,
-        padding: 32,
+        borderRadius: 35,
+        padding: 30,
     },
     cardHeader: {
         alignItems: 'center',
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.12)',
         paddingVertical: 16,
         paddingHorizontal: 18,
-        borderRadius: 24,
+        borderRadius: 35,
     },
     optionIcon: {
         width: 40,
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         paddingVertical: 12,
         paddingHorizontal: 20,
-        borderRadius: 20,
+        borderRadius: 35,
         gap: 10,
         marginTop: 24,
         alignSelf: 'center',

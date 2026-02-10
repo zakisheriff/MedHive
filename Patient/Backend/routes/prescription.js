@@ -40,39 +40,29 @@ router.post('/extract', upload.single('image'), async (req, res) => {
         const imageBase64 = imageBuffer.toString('base64');
 
         const prompt = `
-            Analyze this medical image carefully. 
-            
-            ROLE: You are an expert pharmacist and medical data extractor. Your job is to extract prescription details with 100% accuracy, correcting minor OCR errors in medicine names based on known drug names (e.g., "Amoxirillin" -> "Amoxicillin").
+        You are an expert pharmacist and medical data extractor. Your job is to extract medicine details from the provided prescription image and correct any spelling errors (e.g., "Amoxirillin" -> "Amoxicillin").
+        
+        Strictly follow these rules:
+        1. Identify all medicines, dosages, frequencies, and durations.
+        2. If a medicine name is misspelled, output the CORRECTED name.
+        3. Determine the user's likely intent (e.g., "Take 1 pill 3 times a day").
+        4. Omit any preambles, "Here is the JSON", or markdown code blocks. Just return the raw JSON.
+        5. For the summary, provide a direct professional explanation of the medicine. DO NOT include "Please note", "Disclaimer", "Important", or any separator lines like "---". Go straight to the point.
+        6. If the image is NOT a prescription, return {"error": "not_medical_record"}.
 
-            TASK:
-            1. Identify if the image is a prescription or lab report.
-            2. If NOT medical, return {"error": "not_medical_record"}.
-            3. If medical, extract the data into the JSON format below.
-
-            EXTRACTION RULES:
-            - Medicine Name: Extract the full generic or brand name. CORRRECT SPELLING ERRORS.
-            - Dosage: Extract strength (e.g., 500mg, 10ml). If mixed with name, separate it.
-            - Frequency: Extract how often to take (e.g., "3x a day", "BID", "every 8 hours").
-            - Duration: Extract how long to take (e.g., "7 days", "1 week").
-            - Instructions: Any special notes (e.g., "after food").
-
-            OUTPUT JSON FORMAT:
+        Output Format (JSON):
+        {
+          "medicines": [
             {
-                "type": "prescription" | "lab_report",
-                "medicines": [
-                    {
-                        "name": "string (Corrected Medicine Name)",
-                        "dosage": "string (e.g. 500mg)",
-                        "frequency": "string (e.g. 3 times daily)",
-                        "duration": "string (e.g. 7 days)",
-                        "instructions": "string"
-                    }
-                ],
-                "patient_name": "string or null",
-                "date": "string or null"
+              "name": "Corrected Name",
+              "dosage": "500mg",
+              "frequency": "3x a day",
+              "duration": "7 days",
+              "instructions": "Take after food"
             }
-            
-            Return ONLY the raw JSON. No markdown formatting.
+          ],
+          "summary": "Amoxicillin is a penicillin antibiotic used to treat bacterial infections..."
+        }
         `;
 
         const result = await model.generateContent([
@@ -88,15 +78,20 @@ router.post('/extract', upload.single('image'), async (req, res) => {
         const response = await result.response;
         let text = response.text();
 
-        // Clean up JSON response if Gemini adds markdown blocks
-        text = text.replace(/```json| ```/g, '').trim();
+        // Robust JSON cleanup: find the first '{' and last '}'
+        const jsonStart = text.indexOf('{');
+        const jsonEnd = text.lastIndexOf('}');
+
+        if (jsonStart !== -1 && jsonEnd !== -1) {
+            text = text.substring(jsonStart, jsonEnd + 1);
+        }
 
         let extractedData;
         try {
             extractedData = JSON.parse(text);
         } catch (e) {
             console.error("JSON Parse Error:", e);
-            // Fallback if JSON is malformed, though usually prompt engineering handles this
+            console.error("Raw Text:", text);
             return res.status(500).json({ error: "Failed to parse AI response" });
         }
 
