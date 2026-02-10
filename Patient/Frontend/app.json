@@ -21,7 +21,14 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/logo.jpeg"
+      "favicon": "./assets/images/logo.jpeg",
+      "name": "MedHive Patient App",
+      "shortName": "MedHive",
+      "description": "MedHive Patient Portal - Manage Your Prescriptions and Medical History.",
+      "startUrl": "/",
+      "display": "standalone",
+      "backgroundColor": "#ffffff",
+      "themeColor": "#4F46E5"
     },
     "plugins": [
       "expo-router",
