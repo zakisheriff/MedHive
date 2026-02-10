@@ -7,6 +7,7 @@ import Prescriptions from './pages/Dashboard/Prescriptions';
 import SearchPage from './pages/Dashboard/Search';
 import PatientProfile from './pages/Dashboard/PatientProfile';
 import History from './pages/Dashboard/History';
+import PendingVerification from "./pages/Auth/PendingVerification";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="prescription" element={<Prescriptions/>} />
           <Route path="history" element={<History/>} />
         </Route>
+        <Route path="/pending-verification" element={<PendingVerification />} />
       </Routes>
     </Router>
   );
