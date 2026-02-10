@@ -195,36 +195,32 @@ export default function PrescriptionResultScreen() {
 
     if (loading) {
         return (
-            <View style={styles.loadingMainContainer}>
+            <View style={styles.loadingContainer}>
                 <Stack.Screen options={{ headerShown: false }} />
-                <SafeAreaView style={styles.loadingSafeArea}>
-                    <View style={styles.loadingContentPill}>
-                        <View style={styles.scanContainer}>
-                            <View style={styles.loadingImagePill}>
-                                <Image source={{ uri: imageUri }} style={styles.loadingImage} resizeMode="cover" />
-                                <Animated.View
-                                    style={[
-                                        styles.scanLine,
-                                        {
-                                            transform: [{
-                                                translateY: scanAnim.interpolate({
-                                                    inputRange: [0, 1],
-                                                    outputRange: [0, 200]
-                                                })
-                                            }]
-                                        }
-                                    ]}
-                                />
-                            </View>
-                        </View>
-
-                        <View style={styles.loadingStatusArea}>
-                            <ActivityIndicator size="small" color="#fff" style={{ marginBottom: 15 }} />
-                            <Text style={styles.loadingTitle}>MedHive AI Analyzing...</Text>
-                            <Text style={styles.loadingSubtext}>Extracting medical details from your image</Text>
-                        </View>
+                <Image source={{ uri: imageUri }} style={styles.loadingBgImage} resizeMode="cover" blurRadius={10} />
+                <View style={styles.loadingOverlay}>
+                    <View style={styles.scanCard}>
+                        <Image source={{ uri: imageUri }} style={styles.scanImage} resizeMode="cover" />
+                        <Animated.View
+                            style={[
+                                styles.scanLine,
+                                {
+                                    transform: [{
+                                        translateY: scanAnim.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [0, 240] // Match scanImage height
+                                        })
+                                    }]
+                                }
+                            ]}
+                        />
                     </View>
-                </SafeAreaView>
+                    <View style={styles.loadingTextContainer}>
+                        <ActivityIndicator size="large" color="#fff" />
+                        <Text style={styles.loadingTitle}>Analyzing Prescription...</Text>
+                        <Text style={styles.loadingSubtitle}>MedHive AI is extracting medical details</Text>
+                    </View>
+                </View>
             </View>
         );
     }
@@ -233,105 +229,102 @@ export default function PrescriptionResultScreen() {
         <View style={styles.mainContainer}>
             <Stack.Screen options={{ headerShown: false }} />
 
-            <SafeAreaView style={styles.safeArea} edges={['bottom', 'left', 'right']}>
-                {/* Sticky "Close" Button Unit - Matching Profile Modal */}
-                <View style={[
-                    styles.closeHeader,
-                    { top: Platform.OS === 'web' ? 65 : insets.top + 10, pointerEvents: 'box-none' }
-                ]}>
-                    <View style={styles.closeHeaderInner}>
-                        <View style={styles.headerSpacer} />
-                        <BlurView intensity={60} tint="light" style={styles.blurWrapper}>
-                            <TouchableOpacity
-                                style={styles.doneBtn}
-                                onPress={() => {
-                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                    router.back();
-                                }}
-                            >
-                                <Text style={styles.doneText}>Close</Text>
-                            </TouchableOpacity>
-                        </BlurView>
-                    </View>
+            {/* Header */}
+            <SafeAreaView style={styles.safeArea}>
+                <View style={styles.header}>
+                    <TouchableOpacity
+                        onPress={() => router.back()}
+                        style={styles.backButton}
+                    >
+                        <Ionicons name="close" size={24} color={Colors.light.text} />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>Analysis Result</Text>
+                    <View style={{ width: 40 }} />
                 </View>
 
-                <View style={[
-                    styles.contentPill,
-                    Platform.OS !== 'web' && { marginTop: insets.top + 60 }
-                ]}>
-                    {/* Header Image */}
-                    <View style={styles.imageWrapper}>
-                        <Image source={{ uri: imageUri }} style={styles.mainImage} resizeMode="cover" />
-                    </View>
-
-                    {/* Action Area */}
-                    <View style={styles.resultsArea}>
-                        <Text style={styles.welcomeText}>
-                            {hasError ? 'Direct Send Mode' : 'Scan Complete'}
-                        </Text>
-                        <Text style={styles.subText}>
-                            {hasError
-                                ? 'AI extraction hit its limit. You can still forward the image to your clinic for manual verification.'
-                                : 'Select an option below to view extracted data or get a detailed AI summary.'}
-                        </Text>
-
-                        <View style={styles.actionGridContainer}>
-                            <TouchableOpacity
-                                style={[styles.buttonBase, hasError && styles.buttonDisabled]}
-                                onPress={handleOpenDetails}
-                                disabled={hasError}
-                            >
-                                <LinearGradient
-                                    colors={hasError ? ['#9CA3AF', '#6B7280'] : ['#4A4A4A', '#2D2D2D']}
-                                    style={styles.buttonGradientBase}
-                                >
-                                    <Ionicons name="list" size={18} color={hasError ? 'rgba(255,255,255,0.5)' : "#fff"} />
-                                    <Text style={[styles.buttonTextBase, hasError && styles.textDisabled]}>View Medical Details</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={[styles.buttonBase, hasError && styles.buttonDisabled]}
-                                onPress={handleOpenSummary}
-                                disabled={hasError}
-                            >
-                                <LinearGradient
-                                    colors={hasError ? ['#9CA3AF', '#6B7280'] : ['#4A4A4A', '#2D2D2D']}
-                                    style={styles.buttonGradientBase}
-                                >
-                                    <Ionicons name="sparkles" size={18} color={hasError ? 'rgba(255,255,255,0.5)' : "#fff"} />
-                                    <Text style={[styles.buttonTextBase, hasError && styles.textDisabled]}>View AI Summary</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-
-                            <View style={styles.divider} />
-
-                            <TouchableOpacity style={styles.buttonBase} onPress={handleSendToClinic}>
-                                <LinearGradient colors={['#ADC178', '#8A9A5B']} style={styles.buttonGradientBase}>
-                                    <Ionicons name="business" size={18} color="#fff" />
-                                    <Text style={styles.buttonTextBase}>Send to Clinic</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={[styles.buttonBase, hasError && styles.buttonDisabled]}
-                                onPress={handleAddToHistory}
-                                disabled={hasError}
-                            >
-                                <LinearGradient
-                                    colors={hasError ? ['#9CA3AF', '#6B7280'] : ['#ADC178', '#8A9A5B']}
-                                    style={styles.buttonGradientBase}
-                                >
-                                    <Ionicons name="archive" size={18} color={hasError ? 'rgba(255,255,255,0.5)' : "#fff"} />
-                                    <Text style={[styles.buttonTextBase, hasError && styles.textDisabled]}>Add to History</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
+                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                    {/* Image Card */}
+                    <View style={styles.imageCard}>
+                        <Image source={{ uri: imageUri }} style={styles.resultImage} resizeMode="cover" />
+                        <View style={styles.statusBadge}>
+                            <Ionicons name="checkmark-circle" size={16} color="#4CAF50" />
+                            <Text style={styles.statusText}>Scan Complete</Text>
                         </View>
                     </View>
-                </View>
+
+                    {/* Title Section */}
+                    <View style={styles.titleSection}>
+                        <Text style={styles.mainTitle}>
+                            {hasError ? 'Manual Verification Required' : 'Prescription Decoded'}
+                        </Text>
+                        <Text style={styles.subTitle}>
+                            {hasError
+                                ? 'We couldn\'t automatically read the prescription. You can still forward it to your clinic.'
+                                : 'AI has successfully extracted the details. Choose an action below.'}
+                        </Text>
+                    </View>
+
+                    {/* Action Cards */}
+                    <View style={styles.actionsContainer}>
+                        <TouchableOpacity
+                            style={[styles.actionCard, hasError && styles.cardDisabled]}
+                            onPress={handleOpenDetails}
+                            disabled={hasError}
+                        >
+                            <View style={[styles.iconBox, { backgroundColor: '#E3F2FD' }]}>
+                                <Ionicons name="list" size={24} color="#2196F3" />
+                            </View>
+                            <View style={styles.actionTextContainer}>
+                                <Text style={styles.actionTitle}>View Medical Details</Text>
+                                <Text style={styles.actionDesc}>Check extracted medicines & dosage</Text>
+                            </View>
+                            <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[styles.actionCard, hasError && styles.cardDisabled]}
+                            onPress={handleOpenSummary}
+                            disabled={hasError}
+                        >
+                            <View style={[styles.iconBox, { backgroundColor: '#F3E5F5' }]}>
+                                <Ionicons name="sparkles" size={24} color="#9C27B0" />
+                            </View>
+                            <View style={styles.actionTextContainer}>
+                                <Text style={styles.actionTitle}>AI Summary</Text>
+                                <Text style={styles.actionDesc}>Get a simple explanation of meds</Text>
+                            </View>
+                            <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
+                        </TouchableOpacity>
+
+                        <View style={styles.divider} />
+
+                        <TouchableOpacity
+                            style={styles.primaryButton}
+                            onPress={handleSendToClinic}
+                        >
+                            <LinearGradient
+                                colors={[Colors.light.primary, Colors.light.primaryDark]}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 0 }}
+                                style={styles.primaryButtonGradient}
+                            >
+                                <Ionicons name="paper-plane" size={20} color="#fff" />
+                                <Text style={styles.primaryButtonText}>Send to Clinic Pharmacy</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.secondaryButton}
+                            onPress={handleAddToHistory}
+                            disabled={hasError}
+                        >
+                            <Text style={[styles.secondaryButtonText, hasError && { color: '#999' }]}>Save to Medical History</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
             </SafeAreaView>
 
-            {/* Elegant Charcoal Modal */}
+            {/* Modern Bottom Sheet Modal */}
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -339,46 +332,55 @@ export default function PrescriptionResultScreen() {
                 onRequestClose={() => setModalVisible(false)}
             >
                 <View style={styles.modalOverlay}>
-                    <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalBrand}>MedHive's Prescription Reader</Text>
-
-                        <View style={styles.dataContainer}>
-                            <Text style={styles.dataTitle}>
-                                {modalType === 'details' ? 'Medicine Data' : 'Medicine Summary'}
+                    <TouchableOpacity style={styles.modalBackdrop} onPress={() => setModalVisible(false)} activeOpacity={1} />
+                    <View style={[styles.modalContent, { paddingBottom: insets.bottom + 20 }]}>
+                        <View style={styles.modalHeader}>
+                            <View style={styles.dragIndicator} />
+                            <Text style={styles.modalTitle}>
+                                {modalType === 'details' ? 'Extracted Details' : 'AI Summary'}
                             </Text>
-
-                            <ScrollView style={styles.dataScroll} showsVerticalScrollIndicator={false}>
-                                {modalType === 'details' ? (
-                                    <View>
-                                        {data?.medicines?.map((med: any, index: number) => (
-                                            <View key={index} style={styles.modalMedItem}>
-                                                <Text style={styles.modalMedText}>• {med.name} {med.dosage ? `${med.dosage}` : ''} {med.duration ? `x ${med.duration}` : ''}</Text>
-                                            </View>
-                                        ))}
-                                        {(!data?.medicines || data?.medicines.length === 0) && (
-                                            <Text style={styles.modalEmptyText}>No medicines detected.</Text>
-                                        )}
-                                    </View>
-                                ) : (
-                                    <View>
-                                        {summaryLoading ? (
-                                            <ActivityIndicator color="#fff" style={{ marginTop: 20 }} />
-                                        ) : (
-                                            <Text style={styles.modalSummaryText}>{summary || 'Analyzing...'}</Text>
-                                        )}
-                                    </View>
-                                )}
-                            </ScrollView>
+                            <TouchableOpacity style={styles.modalCloseBtn} onPress={() => setModalVisible(false)}>
+                                <Ionicons name="close" size={24} color={Colors.light.text} />
+                            </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity style={styles.copyBtn} onPress={handleCopy}>
-                            <Text style={styles.copyBtnText}>Copy</Text>
-                        </TouchableOpacity>
+                        <ScrollView style={styles.modalScroll}>
+                            {modalType === 'details' ? (
+                                <View style={styles.detailsList}>
+                                    {data?.medicines?.map((med: any, index: number) => (
+                                        <View key={index} style={styles.detailItem}>
+                                            <View style={styles.detailIcon}>
+                                                <Ionicons name="medkit-outline" size={20} color={Colors.light.primary} />
+                                            </View>
+                                            <View style={styles.detailInfo}>
+                                                <Text style={styles.medName}>{med.name}</Text>
+                                                <Text style={styles.medDosage}>
+                                                    {med.dosage} {med.frequency ? `• ${med.frequency}` : ''}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    ))}
+                                    {(!data?.medicines || data?.medicines.length === 0) && (
+                                        <Text style={styles.emptyText}>No medicines found in this document.</Text>
+                                    )}
+                                </View>
+                            ) : (
+                                <View style={styles.summaryContainer}>
+                                    {summaryLoading ? (
+                                        <ActivityIndicator color={Colors.light.primary} size="large" />
+                                    ) : (
+                                        <Text style={styles.summaryText}>{summary || 'Analyzing...'}</Text>
+                                    )}
+                                </View>
+                            )}
+                        </ScrollView>
 
-                        <TouchableOpacity style={styles.modalBackBtn} onPress={() => setModalVisible(false)}>
-                            <Ionicons name="chevron-back" size={24} color="rgba(255,255,255,0.7)" />
-                        </TouchableOpacity>
+                        <View style={styles.modalActions}>
+                            <TouchableOpacity style={styles.copyButton} onPress={handleCopy}>
+                                <Ionicons name="copy-outline" size={20} color={Colors.light.primary} />
+                                <Text style={styles.copyButtonText}>Copy to Clipboard</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </Modal>
@@ -389,332 +391,348 @@ export default function PrescriptionResultScreen() {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        backgroundColor: '#F8FAFC',
+        backgroundColor: Colors.light.background,
     },
     safeArea: {
         flex: 1,
+    },
+    header: {
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: Platform.OS === 'web' ? 'center' : 'flex-start',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingVertical: 15,
     },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F8FAFC',
-    },
-    loadingMainContainer: {
-        flex: 1,
-        backgroundColor: '#F8FAFC',
-    },
-    loadingSafeArea: {
-        flex: 1,
+    backButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 35,
+        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
+        elevation: 2,
     },
-    loadingContentPill: {
-        width: width * 0.95,
-        maxWidth: 420,
-        backgroundColor: Colors.light.primary,
-        borderRadius: 40,
-        padding: 20,
-        alignItems: 'center',
+    headerTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: Colors.light.text,
+    },
+    scrollContent: {
+        paddingHorizontal: 20,
+        paddingBottom: 40,
+    },
+    imageCard: {
+        width: '100%',
+        height: 280,
+        borderRadius: 35,
+        backgroundColor: '#fff',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 15,
-        elevation: 10,
-    },
-    scanContainer: {
-        width: '100%',
-        alignItems: 'center',
-        paddingVertical: 10,
-    },
-    loadingImagePill: {
-        width: '100%',
-        height: 200,
-        borderRadius: 32,
+        shadowOpacity: 0.08,
+        shadowRadius: 20,
+        elevation: 5,
+        marginBottom: 25,
         overflow: 'hidden',
-        backgroundColor: '#fff',
-        borderWidth: 4,
-        borderColor: 'rgba(255,255,255,0.3)',
-        position: 'relative',
+        position: 'relative'
     },
-    loadingImage: {
+    resultImage: {
         width: '100%',
         height: '100%',
-        opacity: 0.9,
+    },
+    statusBadge: {
+        position: 'absolute',
+        bottom: 15,
+        right: 15,
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 35,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    statusText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: '#111827',
+    },
+    titleSection: {
+        marginBottom: 30,
+    },
+    mainTitle: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: Colors.light.text,
+        marginBottom: 8,
+        letterSpacing: -0.5,
+    },
+    subTitle: {
+        fontSize: 16,
+        color: Colors.light.icon,
+        lineHeight: 24,
+    },
+    actionsContainer: {
+        gap: 16,
+    },
+    actionCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        padding: 16,
+        borderRadius: 35,
+        borderWidth: 1,
+        borderColor: '#EDE9FE', // Very subtle tint
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.03,
+        shadowRadius: 8,
+        elevation: 1,
+    },
+    cardDisabled: {
+        opacity: 0.6,
+        backgroundColor: '#F3F4F6',
+    },
+    iconBox: {
+        width: 48,
+        height: 48,
+        borderRadius: 35,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 16,
+    },
+    actionTextContainer: {
+        flex: 1,
+    },
+    actionTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: Colors.light.text,
+        marginBottom: 2,
+    },
+    actionDesc: {
+        fontSize: 13,
+        color: Colors.light.icon,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#E5E7EB',
+        marginVertical: 10,
+    },
+    primaryButton: {
+        width: '100%',
+        borderRadius: 35,
+        overflow: 'hidden',
+        shadowColor: Colors.light.primary,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.3,
+        shadowRadius: 16,
+        elevation: 8,
+    },
+    primaryButtonGradient: {
+        paddingVertical: 18,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+    },
+    primaryButtonText: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#fff',
+    },
+    secondaryButton: {
+        paddingVertical: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    secondaryButtonText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: Colors.light.primary,
+    },
+
+    // Loading State
+    loadingContainer: {
+        flex: 1,
+        backgroundColor: '#000',
+    },
+    loadingBgImage: {
+        flex: 1,
+        opacity: 0.4,
+    },
+    loadingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.6)',
+    },
+    scanCard: {
+        width: width * 0.7,
+        height: 240,
+        borderRadius: 35,
+        overflow: 'hidden',
+        borderWidth: 2,
+        borderColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: '#000',
+        marginBottom: 40,
+    },
+    scanImage: {
+        width: '100%',
+        height: '100%',
+        opacity: 0.8,
     },
     scanLine: {
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
-        height: 4,
-        backgroundColor: '#fff',
-        shadowColor: '#fff',
+        height: 3,
+        backgroundColor: Colors.light.primary,
+        shadowColor: Colors.light.primary,
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 1,
         shadowRadius: 10,
-        elevation: 10,
-        zIndex: 10,
     },
-    loadingStatusArea: {
-        paddingVertical: 20,
+    loadingTextContainer: {
         alignItems: 'center',
     },
     loadingTitle: {
         fontSize: 20,
-        fontWeight: '900',
-        color: '#fff',
-        marginBottom: 6,
-    },
-    loadingSubtext: {
-        fontSize: 14,
-        color: 'rgba(255,255,255,0.8)',
-        textAlign: 'center',
-        paddingHorizontal: 20,
-    },
-    loadingText: {
-        marginTop: 20,
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#4A4A4A',
-    },
-    contentPill: {
-        width: width * 0.95,
-        maxWidth: 420,
-        alignSelf: 'center',
-        backgroundColor: Colors.light.primary,
-        borderRadius: 40,
-        padding: 15, // Increased padding
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 15,
-        elevation: 10,
-        // Web optimization
-        ...Platform.select({
-            web: {
-                marginVertical: 40,
-                minHeight: 500,
-            },
-            default: {
-                flex: 1,
-                marginBottom: 20,
-            }
-        })
-    },
-    imageWrapper: {
-        height: Platform.OS === 'web' ? 160 : height * 0.28, // Compact image for web
-        width: '100%',
-        borderRadius: 32,
-        overflow: 'hidden',
-        backgroundColor: '#fff',
-    },
-    mainImage: {
-        width: '100%',
-        height: '100%',
-    },
-    imageOverlay: {
-        position: 'absolute',
-        bottom: 15,
-        left: 15,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        borderRadius: 120,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    overlayText: {
-        color: '#fff',
-        fontSize: 13,
         fontWeight: '700',
-    },
-    resultsArea: {
-        flex: 1,
-        paddingVertical: 15,
-        paddingHorizontal: 15,
-    },
-    welcomeText: {
-        fontSize: 22,
-        fontWeight: '900',
         color: '#fff',
         marginBottom: 8,
-        textAlign: 'center',
     },
-    subText: {
+    loadingSubtitle: {
         fontSize: 14,
-        color: 'rgba(255,255,255,0.9)',
-        lineHeight: 20,
-        marginBottom: 20,
-        textAlign: 'center',
+        color: 'rgba(255,255,255,0.7)',
     },
-    actionGridContainer: {
-        gap: 12,
-        marginTop: 5,
+
+    // Modal
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'flex-end',
     },
-    divider: {
-        height: 1,
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        marginVertical: 5,
+    modalBackdrop: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0,0,0,0.4)',
     },
-    buttonBase: {
-        width: '100%',
-        borderRadius: 22,
-        overflow: 'hidden',
+    modalContent: {
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        maxHeight: height * 0.85,
+        minHeight: height * 0.5,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
+        shadowOffset: { width: 0, height: -5 },
         shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 5,
+        shadowRadius: 20,
+        elevation: 20,
     },
-    buttonGradientBase: {
-        paddingVertical: Platform.OS === 'web' ? 14 : 17, // Slimmer buttons on web
+    modalHeader: {
+        alignItems: 'center',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6',
+    },
+    dragIndicator: {
+        width: 40,
+        height: 5,
+        borderRadius: 3,
+        backgroundColor: '#E5E7EB',
+        marginBottom: 15,
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: Colors.light.text,
+    },
+    modalCloseBtn: {
+        position: 'absolute',
+        right: 20,
+        top: 20,
+        padding: 5,
+    },
+    modalScroll: {
+        padding: 20,
+    },
+    detailsList: {
+        gap: 15,
+    },
+    detailItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 15,
+        backgroundColor: '#F9FAFB',
+        borderRadius: 35,
+    },
+    detailIcon: {
+        width: 40,
+        height: 40,
+        borderRadius: 35,
+        backgroundColor: '#FEF3C7', // Light orange/yellow bg
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 15,
+    },
+    detailInfo: {
+        flex: 1,
+    },
+    medName: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: Colors.light.text,
+        marginBottom: 6,
+    },
+    medDosage: {
+        fontSize: 15,
+        fontWeight: '500',
+        color: Colors.light.primary,
+        backgroundColor: 'rgba(220, 163, 73, 0.1)',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 35,
+        alignSelf: 'flex-start',
+        overflow: 'hidden',
+    },
+    emptyText: {
+        textAlign: 'center',
+        color: '#9CA3AF',
+        marginTop: 20,
+    },
+    summaryContainer: {
+        paddingTop: 10,
+    },
+    summaryText: {
+        fontSize: 16,
+        lineHeight: 26,
+        color: '#374151',
+    },
+    modalActions: {
+        padding: 20,
+        borderTopWidth: 1,
+        borderTopColor: '#F3F4F6',
+    },
+    copyButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 12,
+        gap: 8,
+        paddingVertical: 15,
+        backgroundColor: '#F0F9FF',
+        borderRadius: 35,
     },
-    buttonTextBase: {
-        color: '#fff',
+    copyButtonText: {
         fontSize: 16,
-        fontWeight: '800',
-        letterSpacing: 0.3,
-    },
-    buttonDisabled: {
-        opacity: 0.6,
-    },
-    textDisabled: {
-        color: 'rgba(255,255,255,0.5)',
-    },
-    // Matching Profile Modal Close Button
-    closeHeader: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        zIndex: 100,
-        alignItems: 'center',
-    },
-    closeHeaderInner: {
-        width: '100%',
-        maxWidth: 420, // Match new contentPill width
-        paddingHorizontal: 15,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-    },
-    headerSpacer: {
-        flex: 1,
-    },
-    blurWrapper: {
-        borderRadius: 22,
-        overflow: 'hidden',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.4)',
-    },
-    doneBtn: {
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        borderRadius: 22,
-    },
-    doneText: {
-        fontSize: 17,
         fontWeight: '600',
         color: Colors.light.primary,
     },
-    // Modal Styles matching design
-    modalOverlay: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalContent: {
-        width: width * 0.92,
-        maxWidth: 450, // UX: Premium focused width on Web
-        backgroundColor: '#2D2D2A', // Deep charcoal
-        borderRadius: 40,
-        padding: 25,
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.1)',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 20 },
-        shadowOpacity: 0.5,
-        shadowRadius: 30,
-        elevation: 20,
-    },
-    modalBrand: {
-        fontSize: 15,
-        fontWeight: '700',
-        color: '#fff',
-        marginBottom: 20,
-        letterSpacing: 0.5,
-    },
-    dataContainer: {
-        width: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-        borderRadius: 30,
-        padding: 20,
-        height: height * 0.45,
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.08)',
-    },
-    dataTitle: {
-        fontSize: 18,
-        fontWeight: '800',
-        color: 'rgba(255,255,255,0.7)',
-        textAlign: 'center',
-        marginBottom: 15,
-    },
-    dataScroll: {
-        flex: 1,
-    },
-    modalMedItem: {
-        marginBottom: 12,
-    },
-    modalMedText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: '600',
-        textAlign: 'center',
-        lineHeight: 26,
-    },
-    modalSummaryText: {
-        color: '#fff',
-        fontSize: 17,
-        lineHeight: 25,
-        textAlign: 'center',
-    },
-    modalEmptyText: {
-        color: 'rgba(255,255,255,0.4)',
-        textAlign: 'center',
-        marginTop: 20,
-    },
-    copyBtn: {
-        width: '100%',
-        backgroundColor: '#243b2b', // Deep green
-        paddingVertical: 14,
-        borderRadius: 20,
-        marginTop: 20,
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'rgba(46, 75, 55, 0.5)',
-    },
-    copyBtnText: {
-        color: '#4CAF50',
-        fontSize: 16,
-        fontWeight: '800',
-    },
-    modalBackBtn: {
-        marginTop: 15,
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.1)',
-        alignItems: 'center',
-        justifyContent: 'center',
-    }
 });

@@ -40,28 +40,39 @@ router.post('/extract', upload.single('image'), async (req, res) => {
         const imageBase64 = imageBuffer.toString('base64');
 
         const prompt = `
-            Analyze this image. 
-            FIRST: Determine if this is a medical prescription or a lab report.
-            If it is NOT a prescription and NOT a lab report (e.g., if it's a flower, a person, a landscape, etc.), 
-            return EXACTLY this JSON and nothing else: {"error": "not_medical_record"}.
+            Analyze this medical image carefully. 
+            
+            ROLE: You are an expert pharmacist and medical data extractor. Your job is to extract prescription details with 100% accuracy, correcting minor OCR errors in medicine names based on known drug names (e.g., "Amoxirillin" -> "Amoxicillin").
 
-            If it IS a medical record, extract the following information in JSON format:
+            TASK:
+            1. Identify if the image is a prescription or lab report.
+            2. If NOT medical, return {"error": "not_medical_record"}.
+            3. If medical, extract the data into the JSON format below.
+
+            EXTRACTION RULES:
+            - Medicine Name: Extract the full generic or brand name. CORRRECT SPELLING ERRORS.
+            - Dosage: Extract strength (e.g., 500mg, 10ml). If mixed with name, separate it.
+            - Frequency: Extract how often to take (e.g., "3x a day", "BID", "every 8 hours").
+            - Duration: Extract how long to take (e.g., "7 days", "1 week").
+            - Instructions: Any special notes (e.g., "after food").
+
+            OUTPUT JSON FORMAT:
             {
                 "type": "prescription" | "lab_report",
                 "medicines": [
                     {
-                        "name": "string",
-                        "dosage": "string",
-                        "frequency": "string",
-                        "duration": "string",
+                        "name": "string (Corrected Medicine Name)",
+                        "dosage": "string (e.g. 500mg)",
+                        "frequency": "string (e.g. 3 times daily)",
+                        "duration": "string (e.g. 7 days)",
                         "instructions": "string"
                     }
                 ],
-                "patient_name": "string",
-                "date": "string"
+                "patient_name": "string or null",
+                "date": "string or null"
             }
-            If it's a lab report, extract key findings in the medicines array with name as the test name and dosage as the result.
-            Return ONLY the raw JSON.
+            
+            Return ONLY the raw JSON. No markdown formatting.
         `;
 
         const result = await model.generateContent([
@@ -78,7 +89,7 @@ router.post('/extract', upload.single('image'), async (req, res) => {
         let text = response.text();
 
         // Clean up JSON response if Gemini adds markdown blocks
-        text = text.replace(/```json|```/g, '').trim();
+        text = text.replace(/```json| ```/g, '').trim();
 
         let extractedData;
         try {
@@ -116,7 +127,7 @@ router.post('/summary', async (req, res) => {
         }
 
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-        const prompt = `Provide a professional, concise summary for the medicine: ${medicineName}. Include what it is used for, common side effects, and important precautions. Format it with clear headings.`;
+        const prompt = `Provide a professional, concise summary for the medicine: ${medicineName}. Include what it is used for, common side effects, and important precautions.Format it with clear headings.`;
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
