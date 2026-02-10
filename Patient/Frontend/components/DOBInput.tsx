@@ -18,6 +18,13 @@ export function DOBInput({ onDateChange }: DOBInputProps) {
 
     const handleDayChange = (text: string) => {
         const numericText = text.replace(/[^0-9]/g, '');
+        const dayNum = parseInt(numericText);
+
+        // Validate day (1-31)
+        if (numericText && (dayNum < 1 || dayNum > 31)) {
+            return; // Don't update if invalid
+        }
+
         setDay(numericText);
         onDateChange(numericText, month, year);
         if (numericText.length === 2) monthRef.current?.focus();
@@ -25,6 +32,13 @@ export function DOBInput({ onDateChange }: DOBInputProps) {
 
     const handleMonthChange = (text: string) => {
         const numericText = text.replace(/[^0-9]/g, '');
+        const monthNum = parseInt(numericText);
+
+        // Validate month (1-12)
+        if (numericText && (monthNum < 1 || monthNum > 12)) {
+            return; // Don't update if invalid
+        }
+
         setMonth(numericText);
         onDateChange(day, numericText, year);
         if (numericText.length === 2) yearRef.current?.focus();

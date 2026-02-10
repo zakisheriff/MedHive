@@ -9,9 +9,10 @@ interface InputProps extends Omit<TextInputProps, 'style'> {
     style?: StyleProp<ViewStyle>;
     inputStyle?: StyleProp<TextStyle>;
     iconName?: keyof typeof Ionicons.glyphMap;
+    prefix?: string;
 }
 
-export function Input({ label, style, inputStyle, iconName, ...props }: InputProps) {
+export function Input({ label, style, inputStyle, iconName, prefix, ...props }: InputProps) {
     return (
         <View style={styles.wrapper}>
             {label && <Text style={styles.label}>{label}</Text>}
@@ -20,6 +21,9 @@ export function Input({ label, style, inputStyle, iconName, ...props }: InputPro
                     <View style={styles.iconContainer}>
                         <Ionicons name={iconName} size={20} color={Colors.light.icon} />
                     </View>
+                )}
+                {prefix && (
+                    <Text style={styles.prefixText}>{prefix}</Text>
                 )}
                 <TextInput
                     style={[styles.inputField, inputStyle]}
@@ -60,5 +64,11 @@ const styles = StyleSheet.create({
     iconContainer: {
         paddingLeft: 16,
         paddingRight: 4,
+    },
+    prefixText: {
+        fontSize: 16,
+        color: Colors.light.text,
+        fontWeight: '500',
+        paddingLeft: 4,
     },
 });

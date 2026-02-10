@@ -8,14 +8,36 @@ import { Colors } from '../constants/theme';
 import { HoneyContainer } from '../components/HoneyContainer';
 import { Input } from '../components/Input';
 import { DOBInput } from '../components/DOBInput';
+import { PickerInput } from '../components/PickerInput';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { SocialButton } from '../components/SocialButton';
 import { StatusBar } from 'expo-status-bar';
 
+// Sri Lankan Districts by Province
+const SRI_LANKAN_DISTRICTS = [
+    'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo',
+    'Galle', 'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara',
+    'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar',
+    'Matale', 'Matara', 'Monaragala', 'Mullaitivu', 'Nuwara Eliya',
+    'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya'
+];
+
+const SRI_LANKAN_PROVINCES = [
+    'Central', 'Eastern', 'North Central', 'Northern', 'North Western',
+    'Sabaragamuwa', 'Southern', 'Uva', 'Western'
+];
+
+const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
+
 export default function RegisterScreen() {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState(''); // Keeping email for now as per user instruction
+    const [fname, setFname] = useState('');
+    const [lname, setLname] = useState('');
+    const [email, setEmail] = useState('');
     const [dob, setDob] = useState({ day: '', month: '', year: '' });
+    const [gender, setGender] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [district, setDistrict] = useState('');
+    const [province, setProvince] = useState('');
     const [medId, setMedId] = useState('');
     const [dobError, setDobError] = useState('');
     const [password, setPassword] = useState('');
@@ -43,7 +65,7 @@ export default function RegisterScreen() {
     }, [dob.year]);
 
     const handleRegister = () => {
-        if (!name || !email || !password || !medId) {
+        if (!fname || !lname || !email || !password || !medId || !gender || !phoneNumber || !district || !province) {
             alert('Please fill in all fields');
             return;
         }
@@ -56,9 +78,14 @@ export default function RegisterScreen() {
         router.push({
             pathname: '/medical-history',
             params: {
-                name,
+                fname,
+                lname,
                 email,
                 dob: JSON.stringify(dob),
+                gender,
+                phoneNumber,
+                district,
+                province,
                 medId,
                 password
             }
@@ -97,10 +124,18 @@ export default function RegisterScreen() {
                         </View>
 
                         <Input
-                            label="Full Name"
-                            placeholder="John Doe"
-                            value={name}
-                            onChangeText={setName}
+                            label="First Name"
+                            placeholder="John"
+                            value={fname}
+                            onChangeText={setFname}
+                            iconName="person-outline"
+                        />
+
+                        <Input
+                            label="Last Name"
+                            placeholder="Doe"
+                            value={lname}
+                            onChangeText={setLname}
                             iconName="person-outline"
                         />
 
@@ -112,13 +147,51 @@ export default function RegisterScreen() {
 
                         {medId ? (
                             <Input
-                                label="Med-ID (Auto-Generated)"
+                                label="Med-ID"
                                 value={medId}
                                 editable={false}
                                 iconName="id-card-outline"
                                 style={{ backgroundColor: '#f9f9f9', opacity: 0.8 }}
                             />
                         ) : null}
+
+                        <PickerInput
+                            label="Gender"
+                            value={gender}
+                            onValueChange={setGender}
+                            options={GENDER_OPTIONS}
+                            placeholder="Select Gender"
+                            iconName="male-female-outline"
+                        />
+
+                        <Input
+                            label="Phone Number"
+                            placeholder="XX XXX XXXX"
+                            keyboardType="phone-pad"
+                            value={phoneNumber}
+                            onChangeText={setPhoneNumber}
+                            iconName="call-outline"
+                            prefix="+94 "
+                            maxLength={9}
+                        />
+
+                        <PickerInput
+                            label="District"
+                            value={district}
+                            onValueChange={setDistrict}
+                            options={SRI_LANKAN_DISTRICTS}
+                            placeholder="Select District"
+                            iconName="location-outline"
+                        />
+
+                        <PickerInput
+                            label="Province"
+                            value={province}
+                            onValueChange={setProvince}
+                            options={SRI_LANKAN_PROVINCES}
+                            placeholder="Select Province"
+                            iconName="map-outline"
+                        />
 
                         <Input
                             label="Email"
