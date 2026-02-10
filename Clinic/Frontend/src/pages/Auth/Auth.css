@@ -154,3 +154,14 @@ html, body {
   width: 100%;
   cursor: pointer;
 }
+
+.input-error{
+  border: 1.5px solid crimson !important;
+}
+
+.error-text {
+  color: crimson;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}

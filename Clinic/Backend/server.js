@@ -17,12 +17,12 @@ const app = express();
 
 // middleware
 app.use(helmet());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));    //allows frontend to talk to backend
 app.use(express.json());
 app.use(morgan("dev"));
 
 // serve uploaded files
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));     //making uploads folder publicly accessible to view certificate images in browser
 
 // ensure uploads folder exists
 const uploadDir = path.join(__dirname, "uploads");
@@ -61,7 +61,10 @@ const registerSchema = z.object({
   clinicName: z.string().min(2).max(150),
   registrationNo: z.string().min(2).max(100), // will be saved into license_number
   email: z.string().email().max(255),
-  password: z.string().min(8).max(72),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(72, "Password must be less than 72 characters"),
 });
 
 const loginSchema = z.object({
