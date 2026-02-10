@@ -96,12 +96,18 @@ const Navbar = ({ scrolled, onLogoClick }) => {
                         <a href="#problems" onClick={(e) => handleNavClick(e, 'problems')} style={{ cursor: 'pointer' }}>Problems</a>
                         <a href="#ai" onClick={(e) => handleNavClick(e, 'ai')} style={{ cursor: 'pointer' }}>Solutions</a>
                         <a href="#features" onClick={(e) => handleNavClick(e, 'features')} style={{ cursor: 'pointer' }}>Features</a>
-                        <button className="nav-btn mobile-only" onClick={(e) => handleNavClick(e, 'join')} style={{ marginTop: '10px' }}>
+                        <button className="nav-btn mobile-only" onClick={() => window.open('https://patient.medhive.lk', '_blank')}>
+                            Patient App
+                        </button>
+                        <button className="nav-btn-secondary nav-btn mobile-only" onClick={(e) => handleNavClick(e, 'join')}>
                             Partner with Us
                         </button>
                     </div>
                     <div className="nav-actions mobile-hidden">
-                        <button className="nav-btn" onClick={(e) => handleNavClick(e, 'join')}>
+                        <button className="nav-btn" onClick={() => window.open('https://patient.medhive.lk', '_blank')}>
+                            Patient App
+                        </button>
+                        <button className="nav-btn-secondary nav-btn" onClick={(e) => handleNavClick(e, 'join')}>
                             Partner with Us
                         </button>
                     </div>

@@ -226,19 +226,19 @@ const Hero = ({ focusTrigger }) => {
                         MedHive is Sri Lanka's AI-Powered Healthcare Platform. Unify Medical Records, Digitize Prescriptions, and Access Intelligent Health Insights with Your Med-ID.
                     </p>
                     <div className="hero-buttons">
-                        <button className="btn-primary glass-btn" onClick={handleGetStartedClick}>Experience MedHive</button>
+                        <a href="https://patient.medhive.lk" target="_blank" rel="noopener noreferrer" className="btn-primary glass-btn">Patient App</a>
                         <button
                             className="btn-secondary glass-btn"
-                            onClick={() => {
-                                const element = document.getElementById('ai');
+                            onClick={(e) => {
+                                const element = document.getElementById('join');
                                 if (element) {
-                                    const yOffset = -20;
+                                    const yOffset = -30;
                                     const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
                                     window.scrollTo({ top: y, behavior: 'smooth' });
                                 }
                             }}
                         >
-                            Learn More
+                            Partner with Us
                         </button>
                     </div>
                 </div>
