@@ -4,8 +4,7 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    ScrollView,
-    Platform
+    ScrollView
 } from 'react-native';
 import { useAlert } from '../../context/AlertContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,24 +22,7 @@ export default function UploadScreen() {
     const handleUpload = async (type: 'prescription' | 'labReport') => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
-        if (Platform.OS === 'web') {
-            // On Web, direct launch is better because the browser provides its own menu
-            // and asking for permissions upfront can be redundant/buggy.
-            const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                quality: 0.8,
-            });
-            if (!result.canceled) {
-                router.push({
-                    pathname: '/prescription-result',
-                    params: { imageUri: result.assets[0].uri }
-                } as any);
-            }
-            return;
-        }
-
-        // Show options for Native
+        // Show options
         showAlert({
             title: type === 'prescription' ? 'Upload Prescription' : 'Upload Lab Report',
             message: 'Choose how you want to upload',
@@ -115,36 +97,36 @@ export default function UploadScreen() {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
+                {/* Scan Process Guide Moved to Top */}
+                <View style={styles.processContainer}>
+                    <View style={styles.processItem}>
+                        <View style={styles.processIcon}>
+                            <Ionicons name="camera" size={18} color={Colors.light.primary} />
+                        </View>
+                        <Text style={styles.processText}>Snap It</Text>
+                    </View>
+                    <View style={styles.arrowWrapper}>
+                        <Ionicons name="arrow-forward" size={14} color="#C7C7CC" />
+                    </View>
+                    <View style={styles.processItem}>
+                        <View style={styles.processIcon}>
+                            <Ionicons name="scan" size={18} color={Colors.light.primary} />
+                        </View>
+                        <Text style={styles.processText}>AI Scan</Text>
+                    </View>
+                    <View style={styles.arrowWrapper}>
+                        <Ionicons name="arrow-forward" size={14} color="#C7C7CC" />
+                    </View>
+                    <View style={styles.processItem}>
+                        <View style={styles.processIcon}>
+                            <Ionicons name="save-outline" size={18} color={Colors.light.primary} />
+                        </View>
+                        <Text style={styles.processText}>Save</Text>
+                    </View>
+                </View>
+
                 {/* Main Upload Card */}
                 <View style={styles.uploadCard}>
-                    {/* Integrated Process Guide */}
-                    <View style={styles.processContainer}>
-                        <View style={styles.processItem}>
-                            <View style={styles.processIcon}>
-                                <Ionicons name="camera" size={18} color={Colors.light.primary} />
-                            </View>
-                            <Text style={styles.processText}>Snap It</Text>
-                        </View>
-                        <View style={styles.arrowWrapper}>
-                            <Ionicons name="arrow-forward" size={14} color="rgba(255,255,255,0.4)" />
-                        </View>
-                        <View style={styles.processItem}>
-                            <View style={styles.processIcon}>
-                                <Ionicons name="scan" size={18} color={Colors.light.primary} />
-                            </View>
-                            <Text style={styles.processText}>AI Scan</Text>
-                        </View>
-                        <View style={styles.arrowWrapper}>
-                            <Ionicons name="arrow-forward" size={14} color="rgba(255,255,255,0.4)" />
-                        </View>
-                        <View style={styles.processItem}>
-                            <View style={styles.processIcon}>
-                                <Ionicons name="save-outline" size={18} color={Colors.light.primary} />
-                            </View>
-                            <Text style={styles.processText}>Save</Text>
-                        </View>
-                    </View>
-
                     {/* Header */}
                     <View style={styles.cardHeader}>
                         <View style={styles.iconWrapper}>
@@ -246,7 +228,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'center',
         gap: 12,
-        marginBottom: 32, // More space below integrated guide
+        marginBottom: 24, // Space above the upload card
     },
     processItem: {
         alignItems: 'center',
@@ -255,25 +237,19 @@ const styles = StyleSheet.create({
     processIcon: {
         width: 44,
         height: 44,
-        borderRadius: 22,
+        borderRadius: 22, // Full pill/circle
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
-        // Subtle elevation/shadow for inside the card
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
     },
     arrowWrapper: {
-        height: 44,
+        height: 44, // Match icon height for perfect vertical centering
         justifyContent: 'center',
     },
     processText: {
         fontSize: 12,
         fontWeight: '600',
-        color: 'rgba(255,255,255,0.85)', // Light text for dark gold background
+        color: '#8E8E93',
     },
     // Optional: add decorative styles here if needed later
     uploadCard: {
