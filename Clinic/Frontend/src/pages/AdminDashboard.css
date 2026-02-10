@@ -1,0 +1,131 @@
+.admin-page-wrapper {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  padding: 40px;
+  font-family: 'Inter', sans-serif;
+}
+
+.admin-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center; 
+  margin-bottom: 20px;    
+}
+
+.header-content {
+    display: flex;
+    flex-direction: column; /* This puts the text UNDER the logo */
+    align-items: center;
+                /* Tightens the space between logo and text */
+}
+
+.header-content p{
+    align-items:center;
+}
+
+.admin-header h1 {
+  font-size: 24px;
+  color: #1e293b;
+  margin-bottom: 5px;
+}
+
+.admin-header p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.admin-portal-icon {
+  height: 136px;
+  object-fit: contain;
+}
+
+.pending-badge {
+  background: #eff6ff;
+  color: #3b82f6;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th {
+  background: #fdfdfd;
+  text-align: left;
+  padding: 16px 24px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-table td {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  color: #334155;
+}
+
+.clinic-name-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.clinic-name-cell span {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.document-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.document-link:hover {
+  text-decoration: underline;
+}
+
+.approve-btn {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.approve-btn:hover {
+  background: #059669;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  color: #64748b;
+}
+
+.empty-logo {
+  width: 80px;
+  opacity: 0.5;
+  margin-bottom: 20px;
+}
+
+.text-center { text-align: center; }

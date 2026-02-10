@@ -10,6 +10,15 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { z } = require("zod");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.MEDHIVE_EMAIL,
+    pass: process.env.MEDHIVE_EMAIL_PASSWORD
+  }
+});
 
 const pool = require("./db");
 
@@ -151,21 +160,75 @@ app.post("/api/auth/register", upload.single("certificate"), async (req, res) =>
         email.toLowerCase(),
         passwordHash,
         certificateUrl,
-        "APPROVED",
+        "PENDING",
       ]
     );
 
     const clinic = inserted.rows[0];
+    await transporter.sendMail({
+      from: `"MedHive Team" <${process.env.MEDHIVE_EMAIL}>`,
+      to: email.toLowerCase(), // Sending TO the user who just registered
+      subject: "Welcome to MedHive - Registration Pending",
+      html: `
+        <h2>Thank you for registering, ${clinicName}!</h2>
+        <p>We have received your application and PHSRC certificate.</p>
+        <p>Our administrative team is currently verifying your details. You will receive an email once your account is activated.</p>
+        <br />
+        <p>Best Regards,</p>
+        <p>The MedHive Team</p>
+      `,
+    });
+
     const token = signToken({ clinicId: clinic.id, email: clinic.email });
 
     return res.status(201).json({
-      message: "Registered successfully",
+      message: "Registered successfully. Verification pending...",
       token,
       clinic,
     });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Server error" });
+  }
+});
+
+// PATCH to approve a specific clinic
+app.patch("/api/admin/approve-clinic/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      "UPDATE clinics SET verification_status = 'APPROVED' WHERE clinic_id = $1 RETURNING clinic_name, email",
+      [id]
+    );
+
+    if (result.rowCount === 0) return res.status(404).json({ error: "Clinic not found" });
+
+    const clinic = result.rows[0];
+
+    // OPTIONAL: Send a "You've been approved" email back to the clinic
+    await transporter.sendMail({
+      from: `"MedHive Team" <${process.env.MEDHIVE_EMAIL}>`,
+      to: clinic.email,
+      subject: "MedHive Account Approved!",
+      text: `Congratulations ${clinic.clinic_name}! Your MedHive account has been approved. You can now log in to the dashboard.`
+    });
+
+    res.json({ message: `Clinic ${clinic.clinic_name} approved successfully.` });
+  } catch (err) {
+    console.error("Approval error:", err);
+    res.status(500).json({ error: "Approval failed" });
+  }
+});
+
+app.get("/api/admin/pending-clinics", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT clinic_id, clinic_name, email, license_number, phsrc_certificate_image_url FROM clinics WHERE verification_status = 'PENDING' ORDER BY created_at DESC"
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching pending clinics:", err);
+    res.status(500).json({ error: "Failed to fetch pending clinics" });
   }
 });
 
@@ -246,20 +309,13 @@ app.get("/api/me", authRequired, async (req, res) => {
   const { clinicId } = req.user;
 
   const r = await pool.query(
-    `SELECT
-      clinic_id AS id,
-      clinic_name,
-      license_number,
-      email,
-      phsrc_certificate_image_url,
-      verification_status,
-      created_at
-     FROM clinics
-     WHERE clinic_id = $1`,
+    `SELECT clinic_id AS id, clinic_name, verification_status FROM clinics WHERE clinic_id = $1`,
     [clinicId]
   );
 
   if (r.rowCount === 0) return res.status(404).json({ error: "Not found" });
+  
+  // Note: We return the status here regardless of whether it's APPROVED or PENDING
   res.json({ clinic: r.rows[0] });
 });
 

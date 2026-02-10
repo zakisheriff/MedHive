@@ -52,16 +52,13 @@ const AuthPage = () => {
     setLoading(true);
 
     try {
+      let res;
       if (isLogin) {
-        const res = await axios.post(
+        res = await axios.post(
           `${API_BASE}/api/auth/login`,
           { email: loginEmail, password: loginPassword },
           { headers: { "Content-Type": "application/json" } }
         );
-
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("clinic", JSON.stringify(res.data.clinic));
-        navigate("/dashboard/home");
       } else {
         const formData = new FormData();
         formData.append("clinicName", clinicName);
@@ -70,14 +67,22 @@ const AuthPage = () => {
         formData.append("password", registerPassword);
         if (certificateFile) formData.append("certificate", certificateFile);
 
-        const res = await axios.post(`${API_BASE}/api/auth/register`, formData, {
+        res = await axios.post(`${API_BASE}/api/auth/register`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("clinic", JSON.stringify(res.data.clinic));
-        navigate("/dashboard/home");
       }
+
+      // 1. Store the basics
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("clinic", JSON.stringify(res.data.clinic));
+
+      if (res.data.clinic.verification_status === "APPROVED") {
+        navigate("/dashboard/home");
+      } else {
+        // MUST match the path in App.jsx
+        navigate("/pending-verification"); 
+      }
+
     } catch (err) {
       const msg =
         err?.response?.data?.error ||
