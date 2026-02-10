@@ -7,15 +7,19 @@ import Prescriptions from './pages/Dashboard/Prescriptions';
 import SearchPage from './pages/Dashboard/Search';
 import PatientProfile from './pages/Dashboard/PatientProfile';
 import History from './pages/Dashboard/History';
-import PendingVerification from "./pages/Auth/PendingVerification";
+import PendingVerification from './pages/Auth/PendingVerification';
+import AdminDashboard from './pages/AdminDashboard';
+
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Auth Route: No Sidebar here */}
+    
         <Route path="/" element={<AuthPage />} />
-
+        <Route path="/pending-verification" element={<PendingVerification />} />
+        <Route path="/admin-portal" element={<AdminDashboard />} />
+        
         {/* Dashboard Routes: Sidebar is automatically included via Layout */}
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<Navigate to="home" replace />} />
@@ -25,7 +29,6 @@ function App() {
           <Route path="prescription" element={<Prescriptions/>} />
           <Route path="history" element={<History/>} />
         </Route>
-        <Route path="/pending-verification" element={<PendingVerification />} />
       </Routes>
     </Router>
   );

@@ -165,21 +165,18 @@ app.post("/api/auth/register", upload.single("certificate"), async (req, res) =>
     );
 
     const clinic = inserted.rows[0];
-    const approveLink = `${process.env.BACKEND_URL}/api/auth/approve/${clinic.id}`;
-
     await transporter.sendMail({
-      from: `"MedHive System" <${process.env.MEDHIVE_EMAIL}>`,
-      to: "your-medhive-email@gmail.com",
-      subject: `New Verification Request: ${clinicName}`,
+      from: `"MedHive Team" <${process.env.MEDHIVE_EMAIL}>`,
+      to: email.toLowerCase(), // Sending TO the user who just registered
+      subject: "Welcome to MedHive - Registration Pending",
       html: `
-        <h2>New Clinic Registration</h2>
-        <p><b>Clinic:</b> ${clinicName}</p>
-        <p><b>Registration No:</b> ${registrationNo}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p>Please review the attached certificate. If valid, click below:</p>
-        <a href="${approveLink}" style="padding:10px 20px; background:green; color:white; text-decoration:none; border-radius:5px;">APPROVE CLINIC</a>
+        <h2>Thank you for registering, ${clinicName}!</h2>
+        <p>We have received your application and PHSRC certificate.</p>
+        <p>Our administrative team is currently verifying your details. You will receive an email once your account is activated.</p>
+        <br />
+        <p>Best Regards,</p>
+        <p>The MedHive Team</p>
       `,
-      attachments: req.file ? [{ path: req.file.path }] : [],
     });
 
     const token = signToken({ clinicId: clinic.id, email: clinic.email });
@@ -195,28 +192,45 @@ app.post("/api/auth/register", upload.single("certificate"), async (req, res) =>
   }
 });
 
-// GET request because clicking a link in an email is a GET action
-app.get("/api/auth/approve/:id", async (req, res) => {
+// PATCH to approve a specific clinic
+app.patch("/api/admin/approve-clinic/:id", async (req, res) => {
   const { id } = req.params;
-
   try {
-    // 1. Update status in DB
     const result = await pool.query(
-      "UPDATE clinics SET verification_status = 'APPROVED' WHERE clinic_id = $1 RETURNING *",
+      "UPDATE clinics SET verification_status = 'APPROVED' WHERE clinic_id = $1 RETURNING clinic_name, email",
       [id]
     );
 
-    if (result.rowCount === 0) return res.status(404).send("Clinic not found.");
+    if (result.rowCount === 0) return res.status(404).json({ error: "Clinic not found" });
 
-    // TODO: Azure Blob Storage Logic (Move file from /uploads to Azure)
-    // We will do this in the next step!
+    const clinic = result.rows[0];
 
-    res.send(`<h1>Clinic ${result.rows[0].clinic_name} Approved Successfully!</h1>`);
+    // OPTIONAL: Send a "You've been approved" email back to the clinic
+    await transporter.sendMail({
+      from: `"MedHive Team" <${process.env.MEDHIVE_EMAIL}>`,
+      to: clinic.email,
+      subject: "MedHive Account Approved!",
+      text: `Congratulations ${clinic.clinic_name}! Your MedHive account has been approved. You can now log in to the dashboard.`
+    });
+
+    res.json({ message: `Clinic ${clinic.clinic_name} approved successfully.` });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error during approval.");
+    console.error("Approval error:", err);
+    res.status(500).json({ error: "Approval failed" });
   }
-}); 
+});
+
+app.get("/api/admin/pending-clinics", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT clinic_id, clinic_name, email, license_number, phsrc_certificate_image_url FROM clinics WHERE verification_status = 'PENDING' ORDER BY created_at DESC"
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching pending clinics:", err);
+    res.status(500).json({ error: "Failed to fetch pending clinics" });
+  }
+});
 
 // LOGIN
 app.post("/api/auth/login", async (req, res) => {

@@ -76,11 +76,10 @@ const AuthPage = () => {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("clinic", JSON.stringify(res.data.clinic));
 
-      // 2. Routing Logic based on verification_status
       if (res.data.clinic.verification_status === "APPROVED") {
         navigate("/dashboard/home");
       } else {
-        // This covers both "PENDING" and any other non-approved state
+        // MUST match the path in App.jsx
         navigate("/pending-verification"); 
       }
 
