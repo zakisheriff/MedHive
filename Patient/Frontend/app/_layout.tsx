@@ -11,8 +11,17 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Head>
+        <title>MedHive Patient App</title>
         <meta name="theme-color" content={Colors.light.background} />
         <meta name="msapplication-TileColor" content={Colors.light.background} />
+        {/* Force Safari toolbar background color on web */}
+        {Platform.OS === 'web' && (
+          <style>{`
+            html, body {
+              background-color: ${Colors.light.background} !important;
+            }
+          `}</style>
+        )}
       </Head>
       <AlertProvider>
         <View style={styles.root}>
