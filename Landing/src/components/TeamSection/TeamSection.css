@@ -231,3 +231,13 @@
         font-size: 18px;
     }
 }
+
+@media (min-width: 993px) {
+
+    /* Zaki is 1st, Raheem is 2nd in source. 
+       On Desktop, we want Raheem (2nd) to be 1st. 
+       Setting order: -1 moves it to the start. */
+    .team-premium-card:nth-child(2) {
+        order: -1;
+    }
+}
