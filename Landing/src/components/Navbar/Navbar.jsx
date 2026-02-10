@@ -92,10 +92,10 @@ const Navbar = ({ scrolled, onLogoClick }) => {
                         }}
                     />
                     <div className={`nav-links ${mobileMenuOpen ? 'show' : ''}`}>
-                        <a onClick={(e) => handleNavClick(e, 'home')} style={{ cursor: 'pointer' }}>Home</a>
-                        <a onClick={(e) => handleNavClick(e, 'problems')} style={{ cursor: 'pointer' }}>Problems</a>
-                        <a onClick={(e) => handleNavClick(e, 'ai')} style={{ cursor: 'pointer' }}>Solutions</a>
-                        <a onClick={(e) => handleNavClick(e, 'features')} style={{ cursor: 'pointer' }}>Features</a>
+                        <a href="#home" onClick={(e) => handleNavClick(e, 'home')} style={{ cursor: 'pointer' }}>Home</a>
+                        <a href="#problems" onClick={(e) => handleNavClick(e, 'problems')} style={{ cursor: 'pointer' }}>Problems</a>
+                        <a href="#ai" onClick={(e) => handleNavClick(e, 'ai')} style={{ cursor: 'pointer' }}>Solutions</a>
+                        <a href="#features" onClick={(e) => handleNavClick(e, 'features')} style={{ cursor: 'pointer' }}>Features</a>
                         <button className="nav-btn mobile-only" onClick={(e) => handleNavClick(e, 'join')} style={{ marginTop: '10px' }}>
                             Partner with Us
                         </button>

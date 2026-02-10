@@ -89,6 +89,8 @@ const TeamSection = () => {
                                     src={member.image}
                                     alt={member.name}
                                     className="member-image"
+                                    width="400"
+                                    height="440"
                                 />
                             </div>
                             <div className="member-details">

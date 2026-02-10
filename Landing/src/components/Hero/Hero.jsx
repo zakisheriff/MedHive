@@ -540,7 +540,7 @@ const Hero = ({ focusTrigger }) => {
                                     {screen === 'access' && (
                                         <div className="screen-access animate-fade-in">
                                             <div className="home-header">
-                                                <h1>Access</h1>
+                                                <h2>Access</h2>
                                                 <div className="profile-circle" onClick={() => setScreen('profile')} style={{ cursor: 'pointer' }}>JD</div>
                                             </div>
 
