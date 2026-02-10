@@ -38,6 +38,7 @@ export default function PrescriptionResultScreen() {
     const [modalType, setModalType] = useState<'details' | 'summary'>('details');
     const [hasError, setHasError] = useState(false);
     const scanAnim = useRef(new Animated.Value(0)).current;
+    const scanLineOpacity = useRef(new Animated.Value(1)).current;
 
     const [fullScreenVisible, setFullScreenVisible] = useState(false);
 
@@ -107,6 +108,7 @@ export default function PrescriptionResultScreen() {
 
     useEffect(() => {
         if (loading) {
+            scanLineOpacity.setValue(1);
             Animated.loop(
                 Animated.sequence([
                     Animated.timing(scanAnim, {
@@ -128,6 +130,8 @@ export default function PrescriptionResultScreen() {
         }
     }, [loading]);
 
+
+
     useEffect(() => {
         if (imageUri) {
             extractData();
@@ -136,6 +140,16 @@ export default function PrescriptionResultScreen() {
 
     const [showSuccess, setShowSuccess] = useState(false);
     const successAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        if (showSuccess) {
+            Animated.timing(scanLineOpacity, {
+                toValue: 0,
+                duration: 400,
+                useNativeDriver: true,
+            }).start();
+        }
+    }, [showSuccess]);
 
     const extractData = async () => {
         const controller = new AbortController();
@@ -288,21 +302,20 @@ export default function PrescriptionResultScreen() {
                 <View style={styles.loadingOverlay}>
                     <View style={styles.scanCard}>
                         <Image source={{ uri: imageUri }} style={styles.scanImage} resizeMode="cover" />
-                        {!showSuccess && loading && (
-                            <Animated.View
-                                style={[
-                                    styles.scanLine,
-                                    {
-                                        transform: [{
-                                            translateY: scanAnim.interpolate({
-                                                inputRange: [0, 1],
-                                                outputRange: [0, 260] // Match scanImage height
-                                            })
-                                        }]
-                                    }
-                                ]}
-                            />
-                        )}
+                        <Animated.View
+                            style={[
+                                styles.scanLine,
+                                {
+                                    opacity: scanLineOpacity,
+                                    transform: [{
+                                        translateY: scanAnim.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [0, 260] // Match scanImage height
+                                        })
+                                    }]
+                                }
+                            ]}
+                        />
                     </View>
                     <View style={styles.loadingTextContainer}>
                         {showSuccess ? (
