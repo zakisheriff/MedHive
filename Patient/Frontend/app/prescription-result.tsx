@@ -26,6 +26,7 @@ import { BlurView } from 'expo-blur';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
+const isWeb = Platform.OS === 'web';
 
 export default function PrescriptionResultScreen() {
     const insets = useSafeAreaInsets();
@@ -354,104 +355,106 @@ export default function PrescriptionResultScreen() {
 
             {/* Header */}
             <SafeAreaView style={styles.safeArea}>
-                <View style={styles.header}>
-                    <View style={{ width: 40 }} />
-                    <Text style={styles.headerTitle}>Analysis Result</Text>
-                    <TouchableOpacity
-                        onPress={() => router.back()}
-                        style={styles.backButton}
-                    >
-                        <Ionicons name="close" size={24} color={Colors.light.text} />
-                    </TouchableOpacity>
-                </View>
+                <View style={[styles.contentContainer, isWeb && styles.webContentContainer]}>
+                    <View style={styles.header}>
+                        <View style={{ width: 40 }} />
+                        <Text style={styles.headerTitle}>Analysis Result</Text>
+                        <TouchableOpacity
+                            onPress={() => router.back()}
+                            style={styles.backButton}
+                        >
+                            <Ionicons name="close" size={24} color={Colors.light.text} />
+                        </TouchableOpacity>
+                    </View>
 
-                <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                    {/* Image Card - Click to Expand */}
-                    <TouchableOpacity
-                        style={styles.imageCard}
-                        onPress={() => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                            setFullScreenVisible(true);
-                        }}
-                        activeOpacity={0.7}
-                    >
-                        <Image source={{ uri: imageUri }} style={styles.resultImage} resizeMode="cover" />
-                        <View style={styles.statusBadge}>
-                            <Ionicons name="expand" size={12} color="#111827" />
-                            <Text style={styles.statusText}>Tap to View</Text>
+                    <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                        {/* Image Card - Click to Expand */}
+                        <TouchableOpacity
+                            style={styles.imageCard}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                setFullScreenVisible(true);
+                            }}
+                            activeOpacity={0.7}
+                        >
+                            <Image source={{ uri: imageUri }} style={styles.resultImage} resizeMode="cover" />
+                            <View style={styles.statusBadge}>
+                                <Ionicons name="expand" size={12} color="#111827" />
+                                <Text style={styles.statusText}>Tap to View</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                        {/* Title Section */}
+                        <View style={styles.titleSection}>
+                            <Text style={styles.mainTitle}>
+                                {hasError ? 'Manual Verification Required' : 'Prescription Decoded'}
+                            </Text>
+                            <Text style={styles.subTitle}>
+                                {hasError
+                                    ? 'We couldn\'t automatically read the prescription. You can still forward it to your clinic.'
+                                    : 'AI has successfully extracted the details. Choose an action below.'}
+                            </Text>
                         </View>
-                    </TouchableOpacity>
 
-                    {/* Title Section */}
-                    <View style={styles.titleSection}>
-                        <Text style={styles.mainTitle}>
-                            {hasError ? 'Manual Verification Required' : 'Prescription Decoded'}
-                        </Text>
-                        <Text style={styles.subTitle}>
-                            {hasError
-                                ? 'We couldn\'t automatically read the prescription. You can still forward it to your clinic.'
-                                : 'AI has successfully extracted the details. Choose an action below.'}
-                        </Text>
-                    </View>
-
-                    {/* Action Cards */}
-                    <View style={styles.actionsContainer}>
-                        <TouchableOpacity
-                            style={[styles.actionCard, hasError && styles.cardDisabled]}
-                            onPress={handleOpenDetails}
-                            disabled={hasError}
-                        >
-                            <View style={[styles.iconBox, { backgroundColor: '#E3F2FD' }]}>
-                                <Ionicons name="list" size={24} color="#2196F3" />
-                            </View>
-                            <View style={styles.actionTextContainer}>
-                                <Text style={styles.actionTitle}>View Medical Details</Text>
-                                <Text style={styles.actionDesc}>Check extracted medicines & dosage</Text>
-                            </View>
-                            <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={[styles.actionCard, hasError && styles.cardDisabled]}
-                            onPress={handleOpenSummary}
-                            disabled={hasError}
-                        >
-                            <View style={[styles.iconBox, { backgroundColor: '#F3E5F5' }]}>
-                                <Ionicons name="sparkles" size={24} color="#9C27B0" />
-                            </View>
-                            <View style={styles.actionTextContainer}>
-                                <Text style={styles.actionTitle}>AI Summary</Text>
-                                <Text style={styles.actionDesc}>Get a simple explanation of meds</Text>
-                            </View>
-                            <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
-                        </TouchableOpacity>
-
-                        <View style={styles.divider} />
-
-                        <TouchableOpacity
-                            style={styles.primaryButton}
-                            onPress={handleSendToClinic}
-                        >
-                            <LinearGradient
-                                colors={[Colors.light.primary, Colors.light.primaryDark]}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 0 }}
-                                style={styles.primaryButtonGradient}
+                        {/* Action Cards */}
+                        <View style={styles.actionsContainer}>
+                            <TouchableOpacity
+                                style={[styles.actionCard, hasError && styles.cardDisabled]}
+                                onPress={handleOpenDetails}
+                                disabled={hasError}
                             >
-                                <Ionicons name="paper-plane" size={20} color="#fff" />
-                                <Text style={styles.primaryButtonText}>Send to Clinic Pharmacy</Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
+                                <View style={[styles.iconBox, { backgroundColor: '#E3F2FD' }]}>
+                                    <Ionicons name="list" size={24} color="#2196F3" />
+                                </View>
+                                <View style={styles.actionTextContainer}>
+                                    <Text style={styles.actionTitle}>View Medical Details</Text>
+                                    <Text style={styles.actionDesc}>Check extracted medicines & dosage</Text>
+                                </View>
+                                <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
+                            </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={styles.secondaryButton}
-                            onPress={handleAddToHistory}
-                            disabled={hasError}
-                        >
-                            <Text style={[styles.secondaryButtonText, hasError && { color: '#999' }]}>Save to Medical History</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ScrollView>
+                            <TouchableOpacity
+                                style={[styles.actionCard, hasError && styles.cardDisabled]}
+                                onPress={handleOpenSummary}
+                                disabled={hasError}
+                            >
+                                <View style={[styles.iconBox, { backgroundColor: '#F3E5F5' }]}>
+                                    <Ionicons name="sparkles" size={24} color="#9C27B0" />
+                                </View>
+                                <View style={styles.actionTextContainer}>
+                                    <Text style={styles.actionTitle}>AI Summary</Text>
+                                    <Text style={styles.actionDesc}>Get a simple explanation of meds</Text>
+                                </View>
+                                <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
+                            </TouchableOpacity>
+
+                            <View style={styles.divider} />
+
+                            <TouchableOpacity
+                                style={styles.primaryButton}
+                                onPress={handleSendToClinic}
+                            >
+                                <LinearGradient
+                                    colors={[Colors.light.primary, Colors.light.primaryDark]}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 0 }}
+                                    style={styles.primaryButtonGradient}
+                                >
+                                    <Ionicons name="paper-plane" size={20} color="#fff" />
+                                    <Text style={styles.primaryButtonText}>Send to Clinic Pharmacy</Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={styles.secondaryButton}
+                                onPress={handleAddToHistory}
+                                disabled={hasError}
+                            >
+                                <Text style={[styles.secondaryButtonText, hasError && { color: '#999' }]}>Save to Medical History</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </ScrollView>
+                </View>
             </SafeAreaView>
 
             {/* Resizable Modal */}
@@ -469,7 +472,10 @@ export default function PrescriptionResultScreen() {
                             styles.modalContent,
                             {
                                 height: modalHeight,
-                                paddingBottom: insets.bottom + 20
+                                paddingBottom: insets.bottom + 20,
+                                width: isWeb ? '100%' : undefined,
+                                maxWidth: isWeb ? 600 : undefined,
+                                alignSelf: 'center',
                             }
                         ]}
                     >
@@ -568,6 +574,14 @@ export default function PrescriptionResultScreen() {
 }
 
 const styles = StyleSheet.create({
+    contentContainer: {
+        flex: 1,
+    },
+    webContentContainer: {
+        width: '100%',
+        maxWidth: 600,
+        alignSelf: 'center',
+    },
     mainContainer: {
         flex: 1,
         backgroundColor: Colors.light.background,
@@ -776,7 +790,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.6)',
     },
     scanCard: {
-        width: width * 0.85,
+        width: isWeb ? '100%' : width * 0.85,
+        maxWidth: isWeb ? 400 : undefined,
+        alignSelf: 'center',
         height: 260,
         borderRadius: 35,
         overflow: 'hidden',
