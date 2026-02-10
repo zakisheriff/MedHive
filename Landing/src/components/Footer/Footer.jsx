@@ -57,6 +57,7 @@ const Footer = ({ onScrollToTop }) => {
                             <a href="/#problems" onClick={(e) => handleScrollTo(e, 'problems')}>Problems</a>
                             <a href="/#ai" onClick={(e) => handleScrollTo(e, 'ai')}>Solutions</a>
                             <a href="/#features" onClick={(e) => handleScrollTo(e, 'features')}>Features</a>
+                            <a href="https://patient.medhive.lk" target="_blank" rel="noopener noreferrer">Patient App</a>
                         </nav>
                     </div>
 

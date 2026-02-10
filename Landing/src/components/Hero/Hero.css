@@ -2167,8 +2167,10 @@
     .hero-buttons a,
     .hero-buttons button {
         width: 100% !important;
+        min-width: 200px;
         max-width: 280px;
         display: flex;
         justify-content: center;
+        text-align: center;
     }
 }
