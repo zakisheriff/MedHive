@@ -10,6 +10,15 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const { z } = require("zod");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.MEDHIVE_EMAIL,
+    pass: process.env.MEDHIVE_EMAIL_PASSWORD
+  }
+});
 
 const pool = require("./db");
 
@@ -156,16 +165,56 @@ app.post("/api/auth/register", upload.single("certificate"), async (req, res) =>
     );
 
     const clinic = inserted.rows[0];
+    const approveLink = `${process.env.BACKEND_URL}/api/auth/approve/${clinic.id}`;
+
+    await transporter.sendMail({
+      from: `"MedHive System" <${process.env.MEDHIVE_EMAIL}>`,
+      to: "your-medhive-email@gmail.com",
+      subject: `New Verification Request: ${clinicName}`,
+      html: `
+        <h2>New Clinic Registration</h2>
+        <p><b>Clinic:</b> ${clinicName}</p>
+        <p><b>Registration No:</b> ${registrationNo}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p>Please review the attached certificate. If valid, click below:</p>
+        <a href="${approveLink}" style="padding:10px 20px; background:green; color:white; text-decoration:none; border-radius:5px;">APPROVE CLINIC</a>
+      `,
+      attachments: req.file ? [{ path: req.file.path }] : [],
+    });
+
     const token = signToken({ clinicId: clinic.id, email: clinic.email });
 
     return res.status(201).json({
-      message: "Registered successfully",
+      message: "Registered successfully. Verification pending...",
       token,
       clinic,
     });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Server error" });
+  }
+});
+
+// GET request because clicking a link in an email is a GET action
+app.get("/api/auth/approve/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // 1. Update status in DB
+    const result = await pool.query(
+      "UPDATE clinics SET verification_status = 'APPROVED' WHERE clinic_id = $1 RETURNING *",
+      [id]
+    );
+
+    if (result.rowCount === 0) return res.status(404).send("Clinic not found.");
+
+    // TODO: Azure Blob Storage Logic (Move file from /uploads to Azure)
+    // We will do this in the next step!
+
+    res.send(`<h1>Clinic ${result.rows[0].clinic_name} Approved Successfully!</h1>`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error during approval.");
   }
 });
 
