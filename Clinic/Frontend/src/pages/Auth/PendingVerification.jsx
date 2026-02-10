@@ -46,7 +46,7 @@ const PendingVerification = () => {
             disabled={checking}
             style={{ marginTop: "20px" }}
           >
-            {checking ? "Checking..." : "I've been approved, let me in"}
+            {checking ? "Checking..." : "I've been approved, let me in!"}
           </button>
        </div>
     </div>

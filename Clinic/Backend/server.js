@@ -216,7 +216,7 @@ app.get("/api/auth/approve/:id", async (req, res) => {
     console.error(err);
     res.status(500).send("Error during approval.");
   }
-});
+}); 
 
 // LOGIN
 app.post("/api/auth/login", async (req, res) => {
@@ -295,20 +295,13 @@ app.get("/api/me", authRequired, async (req, res) => {
   const { clinicId } = req.user;
 
   const r = await pool.query(
-    `SELECT
-      clinic_id AS id,
-      clinic_name,
-      license_number,
-      email,
-      phsrc_certificate_image_url,
-      verification_status,
-      created_at
-     FROM clinics
-     WHERE clinic_id = $1`,
+    `SELECT clinic_id AS id, clinic_name, verification_status FROM clinics WHERE clinic_id = $1`,
     [clinicId]
   );
 
   if (r.rowCount === 0) return res.status(404).json({ error: "Not found" });
+  
+  // Note: We return the status here regardless of whether it's APPROVED or PENDING
   res.json({ clinic: r.rows[0] });
 });
 
