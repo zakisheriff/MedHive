@@ -4,7 +4,8 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    Platform
 } from 'react-native';
 import { useAlert } from '../../context/AlertContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -172,13 +173,15 @@ export default function UploadScreen() {
                     </View>
                 </View>
 
-                {/* Single Requirement Note for better results */}
-                <View style={styles.tipsNote}>
-                    <Ionicons name="alert-circle" size={18} color={Colors.light.primary} />
-                    <Text style={styles.tipsNoteText}>
-                        For better result, ensure good lighting and steady scan.
-                    </Text>
-                </View>
+                {/* Single Requirement Note for better results - Mobile Only */}
+                {Platform.OS !== 'web' && (
+                    <View style={styles.tipsNote}>
+                        <Ionicons name="alert-circle" size={18} color={Colors.light.primary} />
+                        <Text style={styles.tipsNoteText}>
+                            For better result, ensure good lighting and steady scan.
+                        </Text>
+                    </View>
+                )}
             </ScrollView>
         </View>
     );

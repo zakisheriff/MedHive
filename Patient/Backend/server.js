@@ -10,7 +10,7 @@ app.use(express.json());
 
 // Add this Root Route for Azure Health Check
 app.get('/', (req, res) => {
-    res.send("MedHive Backend is Live! 🚀");
+    res.send("MedHive Backend is Live!");
 });
 
 // Routes
