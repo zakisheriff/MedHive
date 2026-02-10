@@ -3,7 +3,7 @@ import "./Auth.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_BASE = "http://localhost:5000"; // change if your backend runs on a different host/port
+const API_BASE = "http://localhost:5000";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -13,44 +13,56 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Login form state
+  // Login state
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
-  // Register form state
+  // Register state
   const [clinicName, setClinicName] = useState("");
   const [registrationNo, setRegistrationNo] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [certificateFile, setCertificateFile] = useState(null);
 
+  // Register password validation UI
+  const [passwordError, setPasswordError] = useState("");
+
   const leftImage = "/medhive-slide-login.png";
   const rightImage = "/medhive-slide-register.png";
-
   const loginLogo = "/Medhive-dashboard.png";
   const registerLogo = "/Medhive-dashboard.png";
+
+  const validatePassword = (value) => {
+    if (value.length < 8) return "Password must be at least 8 characters";
+    if (value.length > 72) return "Password must be less than 72 characters";
+    return "";
+  };
 
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg("");
+
+    // Block signup if password invalid
+    if (!isLogin) {
+      const err = validatePassword(registerPassword);
+      setPasswordError(err);
+      if (err) return;
+    }
+
     setLoading(true);
 
     try {
       if (isLogin) {
-        // LOGIN -> POST /api/auth/login (JSON)
         const res = await axios.post(
           `${API_BASE}/api/auth/login`,
           { email: loginEmail, password: loginPassword },
           { headers: { "Content-Type": "application/json" } }
         );
 
-        // Save token (and optionally clinic)
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("clinic", JSON.stringify(res.data.clinic));
-
         navigate("/dashboard/home");
       } else {
-        // REGISTER -> POST /api/auth/register (multipart/form-data)
         const formData = new FormData();
         formData.append("clinicName", clinicName);
         formData.append("registrationNo", registrationNo);
@@ -64,11 +76,9 @@ const AuthPage = () => {
 
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("clinic", JSON.stringify(res.data.clinic));
-
         navigate("/dashboard/home");
       }
     } catch (err) {
-      // Try to show server's error nicely
       const msg =
         err?.response?.data?.error ||
         (Array.isArray(err?.response?.data?.details)
@@ -86,11 +96,13 @@ const AuthPage = () => {
   const switchToRegister = () => {
     setIsLogin(false);
     setErrorMsg("");
+    setPasswordError("");
   };
 
   const switchToLogin = () => {
     setIsLogin(true);
     setErrorMsg("");
+    setPasswordError("");
   };
 
   return (
@@ -165,11 +177,7 @@ const AuthPage = () => {
 
           <div className="form-half">
             <div className="auth-content-wrapper">
-              <img
-                src={registerLogo}
-                alt="Register Logo"
-                className="form-logo"
-              />
+              <img src={registerLogo} alt="Register Logo" className="form-logo" />
 
               <div className="auth-form-box">
                 <h2>Sign up</h2>
@@ -219,12 +227,21 @@ const AuthPage = () => {
                     name="password"
                     type="password"
                     placeholder="Password"
-                    className="auth-input"
+                    className={`auth-input ${passwordError ? "input-error" : ""}`}
                     value={registerPassword}
-                    onChange={(e) => setRegisterPassword(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setRegisterPassword(val);
+                      setPasswordError(validatePassword(val));
+                    }}
+                    onBlur={() => setPasswordError(validatePassword(registerPassword))}
                     disabled={loading}
                     required
                   />
+
+                  {passwordError && (
+                    <p className="error-text">{passwordError}</p>
+                  )}
 
                   <div className="file-upload-group">
                     <label htmlFor="certificate">
@@ -236,7 +253,9 @@ const AuthPage = () => {
                       id="certificate"
                       accept=".pdf, image/*"
                       className="auth-input file-input"
-                      onChange={(e) => setCertificateFile(e.target.files?.[0] || null)}
+                      onChange={(e) =>
+                        setCertificateFile(e.target.files?.[0] || null)
+                      }
                       disabled={loading}
                     />
                   </div>
