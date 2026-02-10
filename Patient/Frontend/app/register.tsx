@@ -29,7 +29,10 @@ const SRI_LANKAN_PROVINCES = [
 
 const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 export default function RegisterScreen() {
+    const insets = useSafeAreaInsets();
     const [fname, setFname] = useState('');
     const [lname, setLname] = useState('');
     const [email, setEmail] = useState('');
@@ -107,8 +110,12 @@ export default function RegisterScreen() {
                 style={{ flex: 1 }}
             >
                 <ScrollView
-                    contentContainerStyle={styles.scrollContent}
+                    contentContainerStyle={[
+                        styles.scrollContent,
+                        { paddingTop: Math.max(insets.top, 20) }
+                    ]}
                     keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
                 >
                     <View style={styles.header}>
                         <Image
@@ -260,9 +267,8 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         flexGrow: 1,
-        padding: 20,
-        justifyContent: 'center',
-        paddingBottom: 40,
+        paddingHorizontal: 20,
+        paddingBottom: 60,
     },
     header: {
         alignItems: 'center',
