@@ -11,7 +11,7 @@ const localhost = debuggerHost?.split(':')[0];
 
 export const BASE_URL = __DEV__
     ? `http://${localhost || '192.168.1.190'}:5001`
-    : 'https://patient.medhive.lk';
+    : 'https://medhive-patient-backend-fjaad9afdkc4hvfx.southeastasia-01.azurewebsites.net';
 
 export const API_ENDPOINTS = {
     EXTRACT: `${BASE_URL}/api/extract`,
