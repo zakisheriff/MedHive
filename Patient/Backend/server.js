@@ -5,7 +5,7 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 5001;
 // Middleware
-app.use(cors()); 
+app.use(cors());
 app.use(express.json());
 
 // Routes
@@ -15,6 +15,10 @@ const loginRoute = require('./routes/login');
 // Point the paths to the specific files
 app.use('/register', registerRoute);
 app.use('/login', loginRoute);
+
+// Prescription Routes
+const prescriptionRoute = require('./routes/prescription');
+app.use('/api', prescriptionRoute);
 
 
 app.listen(PORT, '0.0.0.0', () => {

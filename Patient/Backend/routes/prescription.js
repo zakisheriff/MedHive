@@ -1,21 +1,9 @@
 const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const morgan = require('morgan');
+const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-
-dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 5001;
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(morgan('dev'));
 
 // Configure Multer for image uploads
 const storage = multer.diskStorage({
@@ -33,15 +21,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Initialize Gemini
+// Ensure GEMINI_API_KEY is set in your .env file
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Routes
-app.get('/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date() });
-});
-
 // 1. Extract Prescription Data
-app.post('/api/extract', upload.single('image'), async (req, res) => {
+// Route: /api/extract (mounted as /extract in this router)
+router.post('/extract', upload.single('image'), async (req, res) => {
     console.log('--- New Extraction Request Received ---');
     try {
         if (!req.file) {
@@ -95,7 +80,14 @@ app.post('/api/extract', upload.single('image'), async (req, res) => {
         // Clean up JSON response if Gemini adds markdown blocks
         text = text.replace(/```json|```/g, '').trim();
 
-        const extractedData = JSON.parse(text);
+        let extractedData;
+        try {
+            extractedData = JSON.parse(text);
+        } catch (e) {
+            console.error("JSON Parse Error:", e);
+            // Fallback if JSON is malformed, though usually prompt engineering handles this
+            return res.status(500).json({ error: "Failed to parse AI response" });
+        }
 
         // Clean up uploaded file
         fs.unlinkSync(req.file.path);
@@ -103,6 +95,10 @@ app.post('/api/extract', upload.single('image'), async (req, res) => {
         res.json(extractedData);
     } catch (error) {
         console.log('Error extracting data:', error.message || error);
+        // Clean up file if it exists and error occurred
+        if (req.file && fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+        }
         res.status(error.status || 500).json({
             error: error.message || 'Failed to process image',
             details: error.errorDetails || []
@@ -111,7 +107,8 @@ app.post('/api/extract', upload.single('image'), async (req, res) => {
 });
 
 // 2. Get Medicine Summary
-app.post('/api/summary', async (req, res) => {
+// Route: /api/summary
+router.post('/summary', async (req, res) => {
     try {
         const { medicineName } = req.body;
         if (!medicineName) {
@@ -133,10 +130,12 @@ app.post('/api/summary', async (req, res) => {
 });
 
 // 3. Save to History
-app.post('/api/history', async (req, res) => {
+// Route: /api/history
+router.post('/history', async (req, res) => {
     try {
         const data = req.body;
         // In a real app, save to DB. For now, we'll just mock it.
+        // You can add DB logic here later using pool from ../db
         console.log('Saving to history:', data);
         res.json({ success: true, message: 'Saved to history' });
     } catch (error) {
@@ -144,6 +143,4 @@ app.post('/api/history', async (req, res) => {
     }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://0.0.0.0:${PORT}`);
-});
+module.exports = router;

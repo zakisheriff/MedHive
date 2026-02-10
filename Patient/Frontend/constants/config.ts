@@ -6,10 +6,11 @@ import Constants from 'expo-constants';
  * 2. Update the IP below
  * 3. Make sure your phone and PC are on the same WiFi
  */
-const LOCAL_IP = '192.168.1.187'; // Automatically detected IP
+const debuggerHost = Constants.expoConfig?.hostUri;
+const localhost = debuggerHost?.split(':')[0];
 
 export const BASE_URL = __DEV__
-    ? `http://${LOCAL_IP}:5001`
+    ? `http://${localhost || '192.168.1.190'}:5001`
     : 'https://your-production-url.com';
 
 export const API_ENDPOINTS = {
