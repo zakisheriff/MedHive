@@ -90,7 +90,14 @@ const TeamSection = () => {
                                     alt={member.name}
                                     className="member-image"
                                 />
-                                <div className="member-social-overlay">
+                            </div>
+                            <div className="member-details">
+                                <span className="member-role-badge">{member.role}</span>
+                                <h3 className="member-full-name">{member.name}</h3>
+                                <div className="member-accent-line"></div>
+                                <p className="member-bio">{member.bio}</p>
+
+                                <div className="member-social-links">
                                     {Object.keys(member.social).map((platform) => {
                                         const link = member.social[platform];
                                         if (!link || link === '#') return null;
@@ -109,12 +116,6 @@ const TeamSection = () => {
                                         );
                                     })}
                                 </div>
-                            </div>
-                            <div className="member-details">
-                                <span className="member-role-badge">{member.role}</span>
-                                <h3 className="member-full-name">{member.name}</h3>
-                                <div className="member-accent-line"></div>
-                                <p className="member-bio">{member.bio}</p>
                             </div>
                         </div>
                     ))}

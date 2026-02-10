@@ -59,10 +59,7 @@
         transform: scale(1.08);
     }
 
-    .team-premium-card:hover .member-social-overlay {
-        opacity: 1;
-        transform: translateY(0);
-    }
+
 
     .team-premium-card:hover .member-accent-line {
         width: 80px;
@@ -89,15 +86,11 @@
 
 
 /* Social Overlay */
-.member-social-overlay {
-    z-index: 10;
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
+/* Social Links (Now below bio) */
+.member-social-links {
     display: flex;
     gap: 10px;
-    opacity: 0;
-    transform: translateY(20px);
+    margin-top: 20px;
     transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
