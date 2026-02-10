@@ -158,18 +158,28 @@ export default function PrescriptionResultScreen() {
         try {
             setLoading(true);
             const formData = new FormData();
-            // @ts-ignore
-            formData.append('image', {
-                uri: imageUri,
-                name: 'prescription.jpg',
-                type: 'image/jpeg',
-            });
+
+            if (Platform.OS === 'web') {
+                // For Web: specific handling to create a Blob
+                const response = await fetch(imageUri);
+                const blob = await response.blob();
+                formData.append('image', blob, 'prescription.jpg');
+            } else {
+                // For Native: standard React Native FormData handling
+                // @ts-ignore
+                formData.append('image', {
+                    uri: imageUri,
+                    name: 'prescription.jpg',
+                    type: 'image/jpeg',
+                });
+            }
 
             const response = await fetch(API_ENDPOINTS.EXTRACT, {
                 method: 'POST',
                 body: formData,
+                // Remove 'Content-Type': 'multipart/form-data' to allow browser to generate boundary
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    // Add any auth headers if needed here, but do NOT set Content-Type for multipart
                 },
                 signal: controller.signal
             });
