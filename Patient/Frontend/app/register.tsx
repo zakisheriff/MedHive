@@ -12,6 +12,7 @@ import { PickerInput } from '../components/PickerInput';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { SocialButton } from '../components/SocialButton';
 import { StatusBar } from 'expo-status-bar';
+import { auth_endupoints } from '../constants/config';
 
 // Sri Lankan Districts by Province
 const SRI_LANKAN_DISTRICTS = [
@@ -45,9 +46,11 @@ export default function RegisterScreen() {
     const [dobError, setDobError] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    
+    
 
     // Generate Med ID when year changes
-    React.useEffect(() => {
+   React.useEffect(() => {
         const yearInt = parseInt(dob.year);
         const currentYear = new Date().getFullYear();
 
@@ -67,7 +70,7 @@ export default function RegisterScreen() {
         }
     }, [dob.year]);
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
         if (!fname || !lname || !email || !password || !medId || !gender || !phoneNumber || !district || !province) {
             alert('Please fill in all fields');
             return;
@@ -78,26 +81,49 @@ export default function RegisterScreen() {
             return;
         }
 
-        router.push({
-            pathname: '/medical-history',
-            params: {
+        try {
+            // Construct the body based on what your backend expects
+            const registrationData = {
+                
                 fname,
                 lname,
+                date_of_birth: `${dob.year}-${dob.month}-${dob.day}`, // Formatting for SQL
                 email,
-                dob: JSON.stringify(dob),
+                password,
                 gender,
-                phoneNumber,
+                phone_number: phoneNumber,
                 district,
-                province,
-                medId,
-                password
+                province
+            };
+
+            const response = await fetch(auth_endupoints.REGISTER, { // Use 10.0.2.2 for Android Emulator
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(registrationData),
+            });
+
+            const result = await response.json();
+            //***change the route***
+            if (response.ok) {
+                alert('Registration Successful!');
+                router.push('/login');
+            } else {
+                alert(result.message || 'Registration failed');
             }
-        });
+        } catch (error) {
+            console.error("Connection Error:", error);
+            alert('Could not connect to the server');
+        }
     };
 
     const handleDateChange = (day: string, month: string, year: string) => {
         setDob({ day, month, year });
     };
+    
+   
+
 
     return (
         <LinearGradient
@@ -211,6 +237,7 @@ export default function RegisterScreen() {
                         />
 
                         <Input
+                            
                             label="Password"
                             placeholder="Create a password"
                             value={password}
