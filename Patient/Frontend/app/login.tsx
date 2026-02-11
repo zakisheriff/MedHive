@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import { Link, router } from 'expo-router';
-import { API_ENDPOINTS } from '../constants/config';
+
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../constants/theme';
@@ -11,18 +11,54 @@ import { Input } from '../components/Input';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { SocialButton } from '../components/SocialButton';
 import { StatusBar } from 'expo-status-bar';
+import { auth_endupoints } from '../constants/config';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    
+    const handleLogin = async () => {
+        if (!email || !password) {
+            alert("Please enter email and password");
+            return;
+        }
 
-    const handleLogin = () => {
-        // TODO: Implement actual login logic
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        router.push('/(tabs)/upload');
+        try {
+            const response = await fetch(auth_endupoints.LOGIN, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email.trim().toLowerCase(),
+                    password
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+                console.log("Logged in user:", data.userId);
+
+                // Navigate after successful login
+                router.push('/(tabs)/upload');
+            } else {
+                alert(data.message || "Login failed");
+            }
+
+        } catch (error) {
+            console.error("Login Error:", error);
+            alert("Could not connect to server");
+        }
     };
+
+
+
+
+    
+  
 
     return (
         <LinearGradient
@@ -59,6 +95,7 @@ export default function LoginScreen() {
                         />
 
                         <Input
+                            secureTextEntry
                             label="Password"
                             placeholder="Enter your password"
                             value={password}

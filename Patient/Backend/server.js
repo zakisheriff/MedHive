@@ -19,7 +19,7 @@ const loginRoute = require('./routes/login');
 
 // Point the paths to the specific files
 app.use('/auth', registerRoute);
-app.use('/login', loginRoute);
+app.use('/auth', loginRoute);
 
 // Prescription Routes
 const prescriptionRoute = require('./routes/prescription');
