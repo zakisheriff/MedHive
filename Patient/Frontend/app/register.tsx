@@ -237,7 +237,7 @@ export default function RegisterScreen() {
                         />
 
                         <Input
-                            
+                            secureTextEntry
                             label="Password"
                             placeholder="Create a password"
                             value={password}
@@ -246,6 +246,7 @@ export default function RegisterScreen() {
                         />
 
                         <Input
+                            secureTextEntry
                             label="Confirm Password"
                             placeholder="Confirm your password"
                             value={confirmPassword}
