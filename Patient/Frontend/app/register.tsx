@@ -108,7 +108,7 @@ export default function RegisterScreen() {
             //***change the route***
             if (response.ok) {
                 alert('Registration Successful!');
-                router.push('/login');
+                router.push('/(tabs)/upload');
             } else {
                 alert(result.message || 'Registration failed');
             }
