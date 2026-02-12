@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
 import en from '../assets/translations/en.json';
 import si from '../assets/translations/si.json';
@@ -20,6 +21,10 @@ const languageDetector: any = {
     async: true,
     detect: async (callback: (lang: string) => void) => {
         try {
+            // Check if we are on web and window/localStorage are unavailable (SSR/Bundling)
+            if (Platform.OS === 'web' && typeof window === 'undefined') {
+                return callback('en');
+            }
             const savedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
             if (savedLanguage) {
                 return callback(savedLanguage);
@@ -34,6 +39,7 @@ const languageDetector: any = {
     init: () => { },
     cacheUserLanguage: async (language: string) => {
         try {
+            if (Platform.OS === 'web' && typeof window === 'undefined') return;
             await AsyncStorage.setItem(LANGUAGE_KEY, language);
         } catch (error) {
             console.log('Error saving language', error);

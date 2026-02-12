@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Share } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Share, Platform } from 'react-native';
 import { HoneyContainer } from '../../components/HoneyContainer';
 import { Colors } from '../../constants/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -106,7 +106,7 @@ export default function AccessScreen() {
     return (
         <View style={styles.container}>
             {/* Header with Profile Avatar */}
-            <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
+            <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === 'web' ? 20 : 8) }]}>
                 <View>
                     <Text style={styles.headerTitle}>{t('access.title')}</Text>
                     <Text style={styles.headerSubtitle}>{t('access.subtitle')}</Text>

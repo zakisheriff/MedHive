@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
 /**
  * For APK development:
@@ -7,7 +8,7 @@ import Constants from 'expo-constants';
  * 3. Make sure your phone and PC are on the same WiFi
  */
 const debuggerHost = Constants.expoConfig?.hostUri;
-const localhost = debuggerHost?.split(':')[0];
+const localhost = debuggerHost?.split(':')[0] || (Platform.OS === 'web' && typeof window !== 'undefined' ? window.location.hostname : 'localhost');
 
 export const BASE_URL = __DEV__
     ? `http://${localhost || 'localhost'}:5001`
@@ -18,7 +19,7 @@ export const API_ENDPOINTS = {
     SUMMARY: `${BASE_URL}/api/summary`,
     HISTORY: `${BASE_URL}/api/history`,
 };
-export const auth_endupoints={
-     LOGIN: `${BASE_URL}/auth/login`,
-     REGISTER: `${BASE_URL}/auth/register`,
+export const auth_endupoints = {
+    LOGIN: `${BASE_URL}/auth/login`,
+    REGISTER: `${BASE_URL}/auth/register`,
 }

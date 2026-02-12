@@ -98,7 +98,7 @@ export default function UploadScreen() {
     return (
         <View style={styles.container}>
             {/* Header with Profile Avatar */}
-            <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
+            <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === 'web' ? 20 : 8) }]}>
                 <View>
                     <Text style={styles.headerTitle}>{t('upload.title')}</Text>
                     <Text style={styles.headerSubtitle}>{t('upload.subtitle')}</Text>
