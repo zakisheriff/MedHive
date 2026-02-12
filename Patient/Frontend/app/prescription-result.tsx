@@ -495,12 +495,11 @@ export default function PrescriptionResultScreen() {
 
             {/* Resizable Modal */}
             <Modal
-                animationType="fade"
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={[styles.modalOverlay, { paddingHorizontal: isWeb ? 0 : 16 }]}>
+                <BlurView intensity={30} tint="dark" style={[styles.modalOverlay, { paddingHorizontal: isWeb ? 0 : 16 }]}>
                     <TouchableOpacity
                         style={styles.modalBackdrop}
                         onPress={() => setModalVisible(false)}
@@ -592,7 +591,7 @@ export default function PrescriptionResultScreen() {
                             </TouchableOpacity>
                         </View>
                     </Animated.View>
-                </View>
+                </BlurView>
             </Modal>
 
             {/* Full Screen Image Modal */}

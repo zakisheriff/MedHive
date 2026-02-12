@@ -385,11 +385,10 @@ export default function ProfileScreen() {
             {/* Edit Profile Modal */}
             <Modal
                 visible={editModalVisible}
-                animationType="slide"
                 transparent={true}
                 onRequestClose={() => setEditModalVisible(false)}
             >
-                <View style={styles.modalOverlay}>
+                <BlurView intensity={30} tint="dark" style={styles.modalOverlay}>
                     <Pressable style={StyleSheet.absoluteFill} onPress={() => setEditModalVisible(false)} />
                     <View style={styles.editCard}>
                         <Text style={styles.editTitle}>{t('profile.editProfile')}</Text>
@@ -437,7 +436,7 @@ export default function ProfileScreen() {
                             <Text style={styles.cancelBtnText}>{t('profile.cancel')}</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </BlurView>
             </Modal>
         </View>
     );

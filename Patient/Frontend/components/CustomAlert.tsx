@@ -9,6 +9,7 @@ import {
     Platform,
     Dimensions
 } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { useAlert } from '../context/AlertContext';
 import { Colors } from '../constants/theme';
 
@@ -28,7 +29,7 @@ export function CustomAlert() {
             animationType="none"
             onRequestClose={hideAlert}
         >
-            <View style={styles.overlay}>
+            <BlurView intensity={30} tint="light" style={styles.overlay}>
                 <Pressable style={styles.backdrop} onPress={hideAlert} />
 
                 <View style={styles.alertContainer}>
@@ -75,7 +76,7 @@ export function CustomAlert() {
                         )}
                     </View>
                 </View>
-            </View>
+            </BlurView>
         </Modal>
     );
 }
@@ -85,7 +86,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#ffffff95',
     },
     backdrop: {
         ...StyleSheet.absoluteFillObject,

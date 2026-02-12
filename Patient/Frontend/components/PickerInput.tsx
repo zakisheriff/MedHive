@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { Colors } from '../constants/theme';
 
 interface PickerInputProps {
@@ -37,7 +38,7 @@ export function PickerInput({ label, value, onValueChange, options, placeholder 
                 animationType="slide"
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={styles.modalOverlay}>
+                <BlurView intensity={30} tint="dark" style={styles.modalOverlay}>
                     <Pressable style={StyleSheet.absoluteFill} onPress={() => setModalVisible(false)} />
                     <View style={styles.modalContent}>
                         <View style={styles.modalHeader}>
@@ -72,7 +73,7 @@ export function PickerInput({ label, value, onValueChange, options, placeholder 
                             ))}
                         </ScrollView>
                     </View>
-                </View>
+                </BlurView>
             </Modal>
         </View>
     );
@@ -112,7 +113,6 @@ const styles = StyleSheet.create({
     },
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'transparent',
         justifyContent: 'flex-end',
     },
     modalContent: {
