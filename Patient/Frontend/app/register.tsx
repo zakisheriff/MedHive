@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Link, router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../constants/theme';
@@ -166,7 +167,7 @@ export default function RegisterScreen() {
     return (
         <LinearGradient
             colors={[Colors.light.background, Colors.light.background]}
-            style={styles.background}
+            style={{ flex: 1 }}
         >
             <StatusBar style="dark" />
             <KeyboardAvoidingView
@@ -174,13 +175,22 @@ export default function RegisterScreen() {
                 style={{ flex: 1 }}
             >
                 <ScrollView
-                    contentContainerStyle={[
-                        styles.scrollContent,
-                        { paddingTop: Math.max(insets.top, 20) }
-                    ]}
+                    contentContainerStyle={styles.scrollContent}
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
+                    <View style={[styles.closeButtonContainer, { marginTop: Math.max(insets.top, 20) }]}>
+                        <TouchableOpacity
+                            style={styles.closeButton}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                router.replace('/');
+                            }}
+                        >
+                            <Ionicons name="close" size={28} color={Colors.light.text} />
+                        </TouchableOpacity>
+                    </View>
+
                     <View style={styles.header}>
                         <Image
                             source={require('../assets/images/logode.png')}
@@ -336,6 +346,19 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         paddingHorizontal: 20,
         paddingBottom: 60,
+    },
+    closeButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginBottom: 10,
+    },
+    closeButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: 'rgba(0,0,0,0.05)',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     header: {
         alignItems: 'center',

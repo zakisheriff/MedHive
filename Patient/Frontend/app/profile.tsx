@@ -37,11 +37,19 @@ interface MenuItemProps {
     showChevron?: boolean;
     iconColor?: string;
     danger?: boolean;
+    hideBorder?: boolean;
 }
 
-const MenuItem = ({ icon, label, value, onPress, showChevron = true, iconColor, danger }: MenuItemProps) => (
+const MenuItem = ({ icon, label, value, onPress, showChevron = true, iconColor, danger, hideBorder }: MenuItemProps) => (
     <TouchableOpacity
-        style={styles.menuItem}
+        style={[
+            styles.menuItem,
+            hideBorder && {
+                borderBottomWidth: 0,
+                borderBottomLeftRadius: 35,
+                borderBottomRightRadius: 35,
+            }
+        ]}
         onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             onPress?.();
@@ -200,7 +208,7 @@ export default function ProfileScreen() {
                 style={styles.scrollView}
                 contentContainerStyle={[
                     styles.scrollContent,
-                    { paddingTop: insets.top + 10, paddingBottom: 40 }
+                    { paddingTop: insets.top + 10, paddingBottom: 80 }
                 ]}
                 showsVerticalScrollIndicator={false}
             >
@@ -295,6 +303,7 @@ export default function ProfileScreen() {
                         label={t('profile.subscription')}
                         value={t('profile.premiumPlan')}
                         onPress={() => Alert.alert('MedHive Premium', t('profile.earlyAdopter'))}
+                        hideBorder
                     />
                 </View>
 
@@ -340,6 +349,7 @@ export default function ProfileScreen() {
                         label={t('profile.language')}
                         value={i18n.language === 'en' ? 'English' : i18n.language === 'si' ? 'සිංහල' : 'தமிழ்'}
                         onPress={() => setLangPickerVisible(true)}
+                        hideBorder
                     />
                 </View>
 
@@ -360,17 +370,19 @@ export default function ProfileScreen() {
                         icon="star-outline"
                         label={t('profile.rateApp')}
                         onPress={handleRateApp}
+                        hideBorder
                     />
                 </View>
 
                 {/* Logout */}
-                <View style={[styles.menuCard, { marginTop: 24, marginBottom: 12 }]}>
+                <View style={styles.menuCard}>
                     <MenuItem
                         icon="log-out-outline"
                         label={t('profile.signOut')}
                         showChevron={false}
                         danger
                         onPress={handleLogout}
+                        hideBorder
                     />
                 </View>
 
@@ -511,7 +523,7 @@ const styles = StyleSheet.create({
     // Identity Card (App Store style)
     identityCard: {
         backgroundColor: '#fff',
-        borderRadius: 20,
+        borderRadius: 35,
         padding: 20,
         marginBottom: 24,
         width: '100%',
@@ -652,6 +664,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderBottomWidth: 1,
         borderBottomColor: '#F2F2F7',
+    },
+    noBorder: {
+        borderBottomWidth: 0,
     },
     menuIcon: {
         width: 36,

@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
 import { Link, router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -19,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function LoginScreen() {
     const { t } = useTranslation();
+    const insets = useSafeAreaInsets();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -83,14 +86,30 @@ export default function LoginScreen() {
     return (
         <LinearGradient
             colors={[Colors.light.background, Colors.light.background]}
-            style={styles.background}
+            style={{ flex: 1 }}
         >
             <StatusBar style="dark" />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
-                <ScrollView contentContainerStyle={styles.scrollContent}>
+                <ScrollView
+                    contentContainerStyle={styles.scrollContent}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                >
+                    <View style={[styles.closeButtonContainer, { marginTop: Math.max(insets.top, 20) }]}>
+                        <TouchableOpacity
+                            style={styles.closeButton}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                router.replace('/');
+                            }}
+                        >
+                            <Ionicons name="close" size={28} color={Colors.light.text} />
+                        </TouchableOpacity>
+                    </View>
+
                     <View style={styles.header}>
                         <Image
                             source={require('../assets/images/logode.png')}
@@ -175,9 +194,21 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         flexGrow: 1,
-        padding: 20,
-        justifyContent: 'center',
+        paddingHorizontal: 20,
         paddingBottom: 40,
+    },
+    closeButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginBottom: 10,
+    },
+    closeButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: 'rgba(0,0,0,0.05)',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     header: {
         alignItems: 'center',
