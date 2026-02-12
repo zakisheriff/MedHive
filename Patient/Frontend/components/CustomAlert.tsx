@@ -9,7 +9,6 @@ import {
     Platform,
     Dimensions
 } from 'react-native';
-import { BlurView } from 'expo-blur';
 import { useAlert } from '../context/AlertContext';
 import { Colors } from '../constants/theme';
 
@@ -19,23 +18,18 @@ export function CustomAlert() {
     const { alertState, hideAlert } = useAlert();
     const { visible, options } = alertState;
 
-    if (!options) return null;
-
-    const { title, message, buttons } = options;
+    if (!options && !visible) return null;
+    const { title, message, buttons } = options || { title: '' };
 
     return (
         <Modal
             visible={visible}
             transparent={true}
-            animationType="fade"
+            animationType="none"
             onRequestClose={hideAlert}
         >
             <View style={styles.overlay}>
-                {Platform.OS === 'web' ? (
-                    <Pressable style={styles.backdrop} onPress={hideAlert} />
-                ) : (
-                    <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
-                )}
+                <Pressable style={styles.backdrop} onPress={hideAlert} />
 
                 <View style={styles.alertContainer}>
                     <View style={styles.alertContent}>
@@ -72,7 +66,10 @@ export function CustomAlert() {
                                 </TouchableOpacity>
                             ))
                         ) : (
-                            <TouchableOpacity style={styles.button} onPress={hideAlert}>
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={hideAlert}
+                            >
                                 <Text style={styles.buttonText}>OK</Text>
                             </TouchableOpacity>
                         )}
@@ -88,7 +85,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.45)',
+        backgroundColor: '#ffffff95',
     },
     backdrop: {
         ...StyleSheet.absoluteFillObject,
