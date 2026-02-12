@@ -79,7 +79,8 @@ export default function Index() {
                         texts={TYPING_PHRASES}
                         style={styles.heroMoto}
                         speed={80}
-                        delay={2500}
+                        delay={500}
+                        initialDelay={2200}
                         useCircleCursor={true}
                     />
                 </Animated.View>
