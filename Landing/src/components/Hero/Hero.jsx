@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { TypingText } from '../TypingText/TypingText';
 import './Hero.css';
 
 const Hero = ({ focusTrigger }) => {
-    // iPhone State: 'upload', 'history', 'access', 'profile', 'login'
-    const [screen, setScreen] = useState('login');
+    // iPhone State: 'get_started', 'upload', 'history', 'access', 'profile', 'login'
+    const [screen, setScreen] = useState('get_started');
     const [uploadStatus, setUploadStatus] = useState('idle');
     const [uploadPreview, setUploadPreview] = useState(null);
     const [activeAlert, setActiveAlert] = useState(null);
@@ -271,6 +272,44 @@ const Hero = ({ focusTrigger }) => {
                                 { /* App Header removed - now individual per screen */}
 
                                 <div className="app-content-container">
+                                    {/* GET STARTED SCREEN - NEW DEFAULT */}
+                                    {screen === 'get_started' && (
+                                        <div className="screen-get-started animate-fade-in">
+                                            <div className="gs-content">
+                                                <div className="gs-logo-container">
+                                                    <img src="/logode.png" alt="MedHive Logo" className="gs-logo" />
+                                                </div>
+                                                <h1 className="gs-title">MedHive</h1>
+
+                                                <div className="gs-typing-wrapper">
+                                                    <TypingText
+                                                        texts={[
+                                                            "Your Health, Unified.",
+                                                            "Read Prescriptions.",
+                                                            "Unified Records.",
+                                                            "Secure Data.",
+                                                            "Know Your Health."
+                                                        ]}
+                                                        speed={50}
+                                                        delay={2000}
+                                                        initialDelay={1000}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="gs-actions">
+                                                <button className="btn-gs-primary" onClick={() => setScreen('login')}>
+                                                    Log in
+                                                </button>
+                                                <button className="btn-gs-secondary" onClick={() => {
+                                                    setScreen('create_account');
+                                                }}>
+                                                    Sign up
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {/* LOGIN SCREEN */}
                                     {screen === 'login' && (
                                         <div className="screen-login animate-fade-in">
@@ -314,6 +353,10 @@ const Hero = ({ focusTrigger }) => {
                                                 <div className="login-forgot" onClick={() => setScreen('forgot_password')} style={{ cursor: 'pointer' }}>Forgot Password?</div>
 
                                                 <button className="btn-login-mockup" onClick={handleLogin}>Sign In</button>
+
+                                                <div className="login-signup-text">
+                                                    Don't have an account? <span onClick={() => setScreen('create_account')}>Sign up</span>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
@@ -354,6 +397,66 @@ const Hero = ({ focusTrigger }) => {
                                                     style={{ cursor: 'pointer', textAlign: 'center', marginTop: '15px', color: 'var(--color-primary)', fontWeight: '600', alignSelf: 'center' }}
                                                 >
                                                     Back to Sign In
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {/* CREATE ACCOUNT SCREEN */}
+                                    {screen === 'create_account' && (
+                                        <div className="screen-login animate-fade-in">
+                                            <div className="login-logo-container">
+                                                <img src="/logode.png" alt="MedHive Logo" className="login-logo-img" width="60" height="60" />
+                                            </div>
+
+                                            <h2 className="login-title" style={{ marginBottom: '20px' }}>Create Account</h2>
+
+                                            <div className="login-form">
+                                                <div className="login-field">
+                                                    <label htmlFor="signup-name">Full Name</label>
+                                                    <div className="login-input-wrapper">
+                                                        <i className="fa-regular fa-user"></i>
+                                                        <input
+                                                            id="signup-name"
+                                                            type="text"
+                                                            placeholder="John Doe"
+                                                            autoComplete="name"
+                                                            aria-label="Full Name"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="login-field">
+                                                    <label htmlFor="signup-email">Email</label>
+                                                    <div className="login-input-wrapper">
+                                                        <i className="fa-regular fa-envelope"></i>
+                                                        <input
+                                                            id="signup-email"
+                                                            type="email"
+                                                            placeholder="john@example.com"
+                                                            autoComplete="email"
+                                                            aria-label="Email Address"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="login-field">
+                                                    <label htmlFor="signup-password">Password</label>
+                                                    <div className="login-input-wrapper">
+                                                        <i className="fa-solid fa-lock"></i>
+                                                        <input
+                                                            id="signup-password"
+                                                            type="password"
+                                                            placeholder="Create a password"
+                                                            autoComplete="new-password"
+                                                            aria-label="Password"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <button className="btn-login-mockup" onClick={handleLogin} style={{ marginTop: '10px' }}>Sign Up</button>
+
+                                                <div className="login-signup-text">
+                                                    Already have an account? <span onClick={() => setScreen('login')}>Log in</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -630,8 +733,8 @@ const Hero = ({ focusTrigger }) => {
                                     </div>
                                 )}
 
-                                {/* BOTTOM NAV - HIDDEN ON LOGIN */}
-                                {screen !== 'login' && screen !== 'forgot_password' && (
+                                {/* BOTTOM NAV - HIDDEN ON LOGIN & GET STARTED */}
+                                {screen !== 'login' && screen !== 'forgot_password' && screen !== 'get_started' && screen !== 'create_account' && (
                                     <div className="floating-nav">
                                         <div className="nav-indicator" style={{
                                             left: screen === 'history' ? '10px' : (screen === 'upload' || screen === 'profile') ? 'calc(33.33% + 5px)' : 'calc(66.66% + 5px)',
@@ -751,7 +854,7 @@ const Hero = ({ focusTrigger }) => {
                                                 </div>
                                             </div>
 
-                                            <div className="logout-btn-mockup" onClick={() => setScreen('login')}>
+                                            <div className="logout-btn-mockup" onClick={() => setScreen('get_started')}>
                                                 <div className="pl-icon-bg logout-icon"><i className="fa-solid fa-arrow-right-from-bracket"></i></div>
                                                 <span>Log Out</span>
                                             </div>

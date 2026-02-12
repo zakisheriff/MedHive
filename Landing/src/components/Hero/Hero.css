@@ -424,7 +424,7 @@
 .upload-main-card {
     background: #e6aa42;
     /* More muted golden yellow */
-    border-radius: 32px;
+    border-radius: 35px;
     padding: 24px 20px;
     margin-bottom: 24px;
     color: #fff;
@@ -477,7 +477,7 @@
     background: rgba(0, 0, 0, 0.15);
     /* Darker transparent overlay */
     padding: 14px 16px;
-    border-radius: 20px;
+    border-radius: 35px;
     display: flex;
     align-items: center;
     gap: 14px;
@@ -520,7 +520,7 @@
 
 .tip-note-pill {
     background: #fff;
-    border-radius: 20px;
+    border-radius: 35px;
     padding: 12px 18px;
     display: flex;
     align-items: center;
@@ -560,7 +560,7 @@
     width: 44px;
     height: 44px;
     background: #fff;
-    border-radius: 22px;
+    border-radius: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -581,6 +581,102 @@
     color: #e2e8f0;
     font-size: 12px;
 }
+
+/* GET STARTED SCREEN - NEW */
+.screen-get-started {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 100px 30px 60px;
+    background: #FAFAFA;
+    position: relative;
+    overflow: hidden;
+}
+
+.gs-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 40px;
+    z-index: 2;
+}
+
+.gs-logo-container {
+    margin-bottom: 20px;
+}
+
+.gs-logo {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.gs-title {
+    font-size: 42px;
+    font-weight: 900;
+    color: #111;
+    letter-spacing: -2px;
+    margin-bottom: 0px;
+    text-align: center;
+}
+
+.gs-typing-wrapper {
+    height: 50px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+}
+
+.gs-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 85%;
+    z-index: 2;
+}
+
+.btn-gs-primary {
+    background: #dca349;
+    color: #fff;
+    border: none;
+    padding: 18px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(220, 163, 73, 0.3);
+    transition: transform 0.2s;
+    width: 100%;
+}
+
+.btn-gs-primary:active {
+    transform: scale(0.98);
+}
+
+.btn-gs-secondary {
+    background: #fff;
+    color: #dca349;
+    border: 2px solid rgba(220, 163, 73, 0.3);
+    padding: 16px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+.btn-gs-secondary:active {
+    transform: scale(0.98);
+    background: rgba(220, 163, 73, 0.05);
+}
+
+
 
 /* LOGIN SCREEN */
 .screen-login {
@@ -890,7 +986,7 @@
 /* History Card Refined */
 .history-card {
     background: #fff;
-    border-radius: 24px;
+    border-radius: 35px;
     padding: 20px;
     margin-bottom: 15px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
@@ -1463,7 +1559,7 @@
 
 .profile-main-card {
     background: #fff;
-    border-radius: 20px;
+    border-radius: 35px;
     padding: 20px 16px;
     /* Reduced side padding (from 24px) */
     margin-bottom: 24px;
@@ -1595,7 +1691,7 @@
 
 .profile-stats-card {
     background: #fff;
-    border-radius: 20px;
+    border-radius: 35px;
     padding: 24px;
     display: flex;
     align-items: center;
@@ -1629,7 +1725,7 @@
 
 .profile-list-group {
     background: #fff;
-    border-radius: 20px;
+    border-radius: 35px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
@@ -1663,7 +1759,7 @@
     width: 40px;
     height: 40px;
     background: #FFF9F0;
-    border-radius: 12px;
+    border-radius: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1722,7 +1818,7 @@
     gap: 16px;
     padding: 16px 20px;
     background: #FFF5F5;
-    border-radius: 20px;
+    border-radius: 35px;
     cursor: pointer;
 }
 
