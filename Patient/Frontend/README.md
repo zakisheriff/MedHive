@@ -6,6 +6,11 @@
   [![Expo](https://img.shields.io/badge/Platforms-Android%20%7C%20iOS%20%7C%20Web-4630EB?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev)
   [![React Native](https://img.shields.io/badge/React--Native-v0.81-61dafb?style=for-the-badge&logo=react&logoColor=white)](https://reactnative.dev)
   [![TypeScript](https://img.shields.io/badge/TypeScript-v5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+
+  <br />
+
+  **[Main Website: medhive.lk](https://medhive.lk)**<br />
+  **[Patient Portal: patient.medhive.lk](https://patient.medhive.lk)**
 </div>
 
 ---
@@ -13,6 +18,8 @@
 ## 📱 About the App
 
 The **MedHive Patient App** is a cornerstone of the MedHive ecosystem. It empowers patients to take full control of their medical data. Built with **React Native and Expo**, it provides a seamless, secure, and intuitive experience across mobile platforms.
+
+- **Live Access**: [patient.medhive.lk](https://patient.medhive.lk)
 
 ### ✨ Key Features
 - **Unified Health Record**: Access all your medical history from any MedHive-connected clinic using your unique **Med-ID**.

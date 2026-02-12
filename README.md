@@ -11,7 +11,8 @@
 
   <br />
 
-  **[Visit Live Site: https://medhive.lk](https://medhive.lk)**
+  **[Main Website: medhive.lk](https://medhive.lk)**<br />
+  [Patient: patient.medhive.lk](https://patient.medhive.lk) • [Clinic: clinic.medhive.lk](https://clinic.medhive.lk) • [Pharma: pharma.medhive.lk](https://pharma.medhive.lk)
 </div>
 
 ---
@@ -34,16 +35,19 @@ This monorepo contains the four primary pillars of the MedHive network:
 
 ### 1. 📱 [Patient App](./Patient/Frontend)
 A cross-platform mobile application (React Native) for personal health management.
+- **Live Access**: [patient.medhive.lk](https://patient.medhive.lk)
 - **Features**: Record aggregation, AI lab reports, QR Check-in, Medicine reminders.
 - **Tech**: Expo, React Native, JWT.
 
 ### 2. 🩺 [Clinic Portal](./Clinic/Frontend)
 A high-performance web dashboard (React) for doctors and clinic staff.
+- **Live Access**: [clinic.medhive.lk](https://clinic.medhive.lk)
 - **Features**: Instant patient history lookup, AI prescription writer, Pharmacy-Direct mode.
 - **Tech**: React, Vite, Socket.io, Tailwind CSS.
 
 ### 3. 🏭 [Pharma Dashboard](./PharmaCompany/Frontend)
 An enterprise analytics suite for pharmaceutical companies.
+- **Live Access**: [pharma.medhive.lk](https://pharma.medhive.lk)
 - **Features**: Disease outbreak tracking, medication demand forecasting, supply chain alerts.
 - **Tech**: React, D3.js/Chart.js, ML Microservices.
 
