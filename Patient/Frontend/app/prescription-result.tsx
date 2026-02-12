@@ -498,8 +498,12 @@ export default function PrescriptionResultScreen() {
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={styles.modalOverlay}>
-                    <TouchableOpacity style={styles.modalBackdrop} onPress={() => setModalVisible(false)} activeOpacity={1} />
+                <View style={[styles.modalOverlay, { paddingHorizontal: isWeb ? 0 : 16 }]}>
+                    <TouchableOpacity
+                        style={styles.modalBackdrop}
+                        onPress={() => setModalVisible(false)}
+                        activeOpacity={1}
+                    />
 
                     <Animated.View
                         style={[
@@ -527,7 +531,7 @@ export default function PrescriptionResultScreen() {
                                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                 }}
                             >
-                                <Ionicons name={isExpanded ? "contract" : "expand"} size={20} color={Colors.light.text} />
+                                <Ionicons name={isExpanded ? "chevron-down" : "chevron-up"} size={24} color={Colors.light.text} />
                             </TouchableOpacity>
 
                             <Text style={styles.modalTitle}>
@@ -868,7 +872,6 @@ const styles = StyleSheet.create({
     },
     modalBackdrop: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.4)',
     },
     modalContent: {
         backgroundColor: '#fff',
