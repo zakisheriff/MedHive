@@ -70,16 +70,18 @@ export default function Index() {
             <StatusBar style="dark" />
 
             {/* Language Toggle */}
-            <TouchableOpacity
-                style={[styles.langToggle, { top: 60 }]}
-                onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    setLangPickerVisible(true);
-                }}
-            >
-                <Ionicons name="globe-outline" size={24} color={Colors.light.text} />
-                <Text style={styles.langText}>{i18n.language.toUpperCase()}</Text>
-            </TouchableOpacity>
+            <Animated.View style={[styles.langToggleContainer, { opacity: contentAnim }]}>
+                <TouchableOpacity
+                    style={styles.langToggle}
+                    onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        setLangPickerVisible(true);
+                    }}
+                >
+                    <Ionicons name="globe-outline" size={24} color={Colors.light.text} />
+                    <Text style={styles.langText}>{i18n.language.toUpperCase()}</Text>
+                </TouchableOpacity>
+            </Animated.View>
 
             <Animated.View style={[
                 styles.logoContainer,
@@ -218,9 +220,13 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         letterSpacing: 0.5,
     },
-    langToggle: {
+    langToggleContainer: {
         position: 'absolute',
+        top: 60,
         right: 20,
+        zIndex: 100,
+    },
+    langToggle: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 6,
@@ -233,7 +239,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.05,
         shadowRadius: 5,
         elevation: 2,
-        zIndex: 100,
     },
     langText: {
         fontSize: 14,
