@@ -16,13 +16,34 @@ export function DOBInput({ onDateChange }: DOBInputProps) {
     const monthRef = useRef<TextInput>(null);
     const yearRef = useRef<TextInput>(null);
 
+    const isLeapYear = (year: number) => {
+        return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+    };
+
+    const getMaxDays = (m: string, y: string) => {
+        const monthNum = parseInt(m);
+        const yearNum = parseInt(y);
+
+        if (!monthNum) return 31; // Default to max possible if month not entered
+
+        switch (monthNum) {
+            case 2: // February
+                if (!yearNum) return 29; // Allow 29 before year is entered
+                return isLeapYear(yearNum) ? 29 : 28;
+            case 4: case 6: case 9: case 11:
+                return 30;
+            default:
+                return 31;
+        }
+    };
+
     const handleDayChange = (text: string) => {
         const numericText = text.replace(/[^0-9]/g, '');
         const dayNum = parseInt(numericText);
+        const maxDays = getMaxDays(month, year);
 
-        // Validate day (1-31)
-        if (numericText && (dayNum < 1 || dayNum > 31)) {
-            return; // Don't update if invalid
+        if (numericText && (dayNum < 1 || dayNum > maxDays)) {
+            return;
         }
 
         setDay(numericText);
@@ -34,21 +55,39 @@ export function DOBInput({ onDateChange }: DOBInputProps) {
         const numericText = text.replace(/[^0-9]/g, '');
         const monthNum = parseInt(numericText);
 
-        // Validate month (1-12)
         if (numericText && (monthNum < 1 || monthNum > 12)) {
-            return; // Don't update if invalid
+            return;
+        }
+
+        let newDay = day;
+        if (numericText) {
+            const maxDays = getMaxDays(numericText, year);
+            if (day && parseInt(day) > maxDays) {
+                newDay = maxDays.toString();
+                setDay(newDay);
+            }
         }
 
         setMonth(numericText);
-        onDateChange(day, numericText, year);
+        onDateChange(newDay, numericText, year);
         if (numericText.length === 2) yearRef.current?.focus();
         if (numericText.length === 0) dayRef.current?.focus();
     };
 
     const handleYearChange = (text: string) => {
         const numericText = text.replace(/[^0-9]/g, '');
+
+        let newDay = day;
+        if (numericText.length === 4) {
+            const maxDays = getMaxDays(month, numericText);
+            if (day && parseInt(day) > maxDays) {
+                newDay = maxDays.toString();
+                setDay(newDay);
+            }
+        }
+
         setYear(numericText);
-        onDateChange(day, month, numericText);
+        onDateChange(newDay, month, numericText);
         if (numericText.length === 0) monthRef.current?.focus();
     };
 
