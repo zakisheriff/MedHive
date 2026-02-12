@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         paddingVertical: 20,
         paddingHorizontal: 20,
-        borderRadius: 24,
+        borderRadius: 35,
         marginBottom: 24,
         // Subtle Shadow
         shadowColor: '#000',

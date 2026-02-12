@@ -517,7 +517,7 @@ export default function PrescriptionResultScreen() {
                             <TouchableOpacity
                                 style={styles.headerIconButton}
                                 onPress={() => {
-                                    const toValue = isExpanded ? height * 0.5 : height * 0.9;
+                                    const toValue = isExpanded ? height * 0.5 : height * 0.92;
                                     setIsExpanded(!isExpanded);
                                     Animated.spring(modalHeight, {
                                         toValue,
