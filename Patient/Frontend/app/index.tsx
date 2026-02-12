@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Image, Animated, Dimensions, TouchableOpacity, Platform } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '../constants/theme';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -25,17 +25,22 @@ const TYPING_PHRASES = [
 
 export default function Index() {
     const { t, i18n } = useTranslation();
+    const { skipAnimation } = useLocalSearchParams<{ skipAnimation?: string }>();
     const [langPickerVisible, setLangPickerVisible] = React.useState(false);
+
+    const isSkippedRegex = skipAnimation === 'true';
 
     const currentLanguage = LANGUAGES.find(l => l.code === i18n.language) || LANGUAGES[0];
 
-    const fadeAnim = useRef(new Animated.Value(0)).current;
-    const moveAnim = useRef(new Animated.Value(0)).current;
-    const contentAnim = useRef(new Animated.Value(0)).current; // For Moto + Bottom Content
+    const fadeAnim = useRef(new Animated.Value(isSkippedRegex ? 1 : 0)).current;
+    const moveAnim = useRef(new Animated.Value(isSkippedRegex ? -60 : 0)).current;
+    const contentAnim = useRef(new Animated.Value(isSkippedRegex ? 1 : 0)).current; // For Moto + Bottom Content
 
     const TYPING_PHRASES = t('start.phrases', { returnObjects: true }) as string[];
 
     useEffect(() => {
+        if (isSkippedRegex) return;
+
         // Sequence:
         // 1. Fade In Logo + MedHive Title
         // 2. Move Up
@@ -103,7 +108,7 @@ export default function Index() {
                         style={styles.heroMoto}
                         speed={80}
                         delay={500}
-                        initialDelay={2200}
+                        initialDelay={isSkippedRegex ? 0 : 2200}
                         useCircleCursor={true}
                     />
                 </Animated.View>

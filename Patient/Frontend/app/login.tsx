@@ -103,7 +103,7 @@ export default function LoginScreen() {
                             style={styles.closeButton}
                             onPress={() => {
                                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                router.replace('/');
+                                router.replace({ pathname: '/', params: { skipAnimation: 'true' } });
                             }}
                         >
                             <Ionicons name="close" size={28} color={Colors.light.text} />
