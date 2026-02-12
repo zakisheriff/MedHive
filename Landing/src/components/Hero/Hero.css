@@ -629,6 +629,7 @@
     align-items: flex-start;
     justify-content: center;
     width: 100%;
+    margin-top: 5px;
 }
 
 .gs-actions {

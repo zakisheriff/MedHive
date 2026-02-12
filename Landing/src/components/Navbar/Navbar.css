@@ -200,14 +200,15 @@
 }
 
 .nav-btn-secondary {
-    background: rgba(0, 0, 0, 0.08);
+    /* background: rgba(0, 0, 0, 0.08);
     color: var(--color-text-primary);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); */
+    
 }
 
 .nav-btn-secondary:hover {
-    background: rgba(0, 0, 0, 0.12);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    /* background: rgba(0, 0, 0, 0.12);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); */
 }
 
 /* Mobile Hidden Helper */
