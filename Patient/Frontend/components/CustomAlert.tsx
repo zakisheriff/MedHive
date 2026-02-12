@@ -40,7 +40,7 @@ export function CustomAlert() {
 
                     <View style={[
                         styles.buttonContainer,
-                        buttons && buttons.length > 2 && styles.verticalButtons
+                        buttons && buttons.length > 2 ? styles.verticalButtons : styles.horizontalButtons
                     ]}>
                         {buttons && buttons.length > 0 ? (
                             buttons.map((btn, index) => (
@@ -48,7 +48,8 @@ export function CustomAlert() {
                                     key={index}
                                     style={[
                                         styles.button,
-                                        buttons.length > 2 ? styles.verticalButtonBorder : (index < buttons.length - 1 && styles.buttonBorder),
+                                        btn.style === 'cancel' ? styles.cancelButton : styles.primaryActionButton,
+                                        buttons.length > 2 ? styles.fullWidth : styles.flexButton
                                     ]}
                                     onPress={() => {
                                         hideAlert();
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
     },
     alertContainer: {
         backgroundColor: '#FFFFFF',
-        borderRadius: 28,
+        borderRadius: 35,
         width: Math.min(width * 0.82, 340),
         overflow: 'hidden',
         elevation: 10,
@@ -121,42 +122,46 @@ const styles = StyleSheet.create({
         opacity: 0.85,
     },
     buttonContainer: {
+        paddingHorizontal: 20,
+        paddingBottom: 24,
+        gap: 12,
+    },
+    horizontalButtons: {
         flexDirection: 'row',
-        borderTopWidth: 1,
-        borderTopColor: '#F2F2F7',
+    },
+    verticalButtons: {
+        flexDirection: 'column',
     },
     button: {
-        flex: 1,
-        paddingVertical: 18,
+        height: 52,
+        borderRadius: 35,
         alignItems: 'center',
         justifyContent: 'center',
     },
     flexButton: {
         flex: 1,
     },
-    buttonBorder: {
-        borderRightWidth: 1,
-        borderRightColor: '#F2F2F7',
+    fullWidth: {
+        width: '100%',
+    },
+    primaryActionButton: {
+        backgroundColor: 'rgba(220, 163, 73, 0.08)',
+        borderWidth: 1,
+        borderColor: 'rgba(220, 163, 73, 0.15)',
+    },
+    cancelButton: {
+        backgroundColor: '#F2F2F7',
     },
     buttonText: {
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: '700',
         color: Colors.light.primary,
         letterSpacing: 0.3,
     },
-    verticalButtons: {
-        flexDirection: 'column',
-    },
-    verticalButtonBorder: {
-        borderBottomWidth: 1,
-        borderBottomColor: '#F2F2F7',
-    },
     destructiveText: {
         color: '#FF3B30',
-        fontWeight: '700',
     },
     cancelText: {
-        color: '#8E8E93',
-        fontWeight: '500',
+        color: '#64748B',
     },
 });

@@ -741,7 +741,7 @@ const styles = StyleSheet.create({
         }),
     },
     saveBtn: {
-        borderRadius: 20,
+        borderRadius: 35,
         overflow: 'hidden',
         marginTop: 10,
     },

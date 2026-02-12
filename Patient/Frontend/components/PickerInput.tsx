@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 16,
-        borderRadius: 12,
+        borderRadius: 35,
         marginVertical: 4,
     },
     selectedOption: {

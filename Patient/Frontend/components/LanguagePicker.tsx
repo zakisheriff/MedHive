@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: 16,
-        borderRadius: 20,
+        borderRadius: 35,
         backgroundColor: '#F2F2F7',
         borderWidth: 1,
         borderColor: 'transparent',
