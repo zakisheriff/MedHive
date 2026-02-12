@@ -111,9 +111,6 @@ export default function UploadScreen() {
             >
                 {/* Personalized Greeting Section */}
                 <View style={styles.greetingSection}>
-                    <View style={styles.greetingIconWrapper}>
-                        <Ionicons name="sparkles" size={24} color={Colors.light.primary} />
-                    </View>
                     <View style={styles.greetingContent}>
                         <Text style={styles.greetingText}>
                             Welcome back, <Text style={styles.userNameText}>{userData?.fname || 'User'}</Text>! 👋

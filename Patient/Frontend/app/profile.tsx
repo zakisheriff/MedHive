@@ -370,7 +370,7 @@ export default function ProfileScreen() {
                     />
                 </View>
 
-                <Text style={styles.version}>MedHive Production v1.0.4 • 2026</Text>
+                <Text style={styles.version}>MedHive v1.0.4 • 2026</Text>
             </ScrollView>
 
             {/* Edit Profile Modal */}

@@ -7,7 +7,19 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 
+import { TypingText } from '../components/TypingText';
+import { SocialButton } from '../components/SocialButton';
+import { PrimaryButton } from '../components/PrimaryButton';
+
 const { width } = Dimensions.get('window');
+
+const TYPING_PHRASES = [
+    "Your Health, Unified.",
+    "Read Prescriptions.",
+    "Unified Records.",
+    "Secure Data.",
+    "Know Your Health."
+];
 
 export default function Index() {
     const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -28,7 +40,7 @@ export default function Index() {
             Animated.delay(300),
             Animated.parallel([
                 Animated.timing(moveAnim, {
-                    toValue: -40,
+                    toValue: -60,
                     duration: 800,
                     useNativeDriver: true,
                 }),
@@ -50,10 +62,6 @@ export default function Index() {
         <View style={styles.container}>
             <StatusBar style="dark" />
 
-            {/* Background Decoration */}
-            <View style={styles.circle1} />
-            <View style={styles.circle2} />
-
             <Animated.View style={[
                 styles.logoContainer,
                 { opacity: fadeAnim, transform: [{ translateY: moveAnim }] }
@@ -66,31 +74,41 @@ export default function Index() {
                 <Text style={styles.heroTitle}>MedHive</Text>
 
                 {/* Moto fades in later with contentAnim */}
-                <Animated.Text style={[styles.heroMoto, { opacity: contentAnim }]}>
-                    Your Health,{'\n'}Unified.
-                </Animated.Text>
+                <Animated.View style={[{ opacity: contentAnim, width: '100%', alignItems: 'center', justifyContent: 'center' }]}>
+                    <TypingText
+                        texts={TYPING_PHRASES}
+                        style={styles.heroMoto}
+                        speed={80}
+                        delay={2500}
+                        useCircleCursor={true}
+                    />
+                </Animated.View>
             </Animated.View>
 
             <Animated.View style={[styles.bottomContainer, { opacity: contentAnim }]}>
-                <Text style={styles.heroSubtitle}>
-                    MedHive is Sri Lanka's AI-Powered Healthcare Platform. Unify Medical Records and Access Intelligent Health Insights.
-                </Text>
+                <View style={styles.authStack}>
+                    <PrimaryButton
+                        title="Log in"
+                        onPress={() => router.push('/login')}
+                    />
 
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={handleGetStarted}
-                    activeOpacity={0.8}
-                >
-                    <LinearGradient
-                        colors={[Colors.light.primary, Colors.light.primaryDark]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                        style={styles.gradient}
+                    <TouchableOpacity
+                        style={styles.secondaryButton}
+                        onPress={() => router.push('/register')}
+                        activeOpacity={0.8}
                     >
-                        <Text style={styles.buttonText}>Get Started</Text>
-                        <Ionicons name="arrow-forward" size={20} color="#fff" />
-                    </LinearGradient>
-                </TouchableOpacity>
+                        <Text style={styles.secondaryButtonText}>Sign up</Text>
+                    </TouchableOpacity>
+
+                    <SocialButton
+                        title="Continue with Google"
+                        onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            console.log('Google Sign-In');
+                        }}
+                        style={{ marginBottom: 0 }}
+                    />
+                </View>
             </Animated.View>
         </View>
     );
@@ -99,7 +117,7 @@ export default function Index() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.light.background, // Should be #F8FAFC if matching web exactly, but likely defined in theme
+        backgroundColor: Colors.light.background,
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
@@ -111,7 +129,7 @@ const styles = StyleSheet.create({
         width: 300,
         height: 300,
         borderRadius: 150,
-        backgroundColor: 'rgba(220, 163, 73, 0.1)', // #dca349 with opacity
+        backgroundColor: 'rgba(220, 163, 73, 0.1)',
     },
     circle2: {
         position: 'absolute',
@@ -131,62 +149,48 @@ const styles = StyleSheet.create({
         height: 100,
         marginBottom: 10,
     },
-    // Matches .hero-title
     heroTitle: {
-        fontSize: 48, // Scaled down from 90px for mobile
+        fontSize: 48,
         fontWeight: '900',
         color: '#111',
         letterSpacing: -2,
         marginBottom: 5,
         textAlign: 'center',
     },
-    // Matches .hero-moto
     heroMoto: {
-        fontSize: 34, // Reduced from 42
+        fontSize: 32,
         fontWeight: '900',
-        color: '#dca349', // The exact golden yellow
+        color: Colors.light.primary,
         letterSpacing: -1.5,
-        lineHeight: 38,
         textAlign: 'center',
         marginBottom: 10,
+        width: '100%',
     },
     bottomContainer: {
         position: 'absolute',
-        bottom: 50,
+        bottom: 60,
         width: '100%',
         alignItems: 'center',
-        paddingHorizontal: 30,
     },
-    // Matches .hero-subtitle
-    heroSubtitle: {
-        fontSize: 16,
-        color: '#444',
-        textAlign: 'center',
-        marginBottom: 40,
-        lineHeight: 24,
-        fontWeight: '600',
-        maxWidth: 300,
+    authStack: {
+        width: '80%',
+        maxWidth: 400,
+        gap: 12,
     },
-    button: {
+    secondaryButton: {
         width: '100%',
-        borderRadius: 50, // More rounded like web buttons
-        shadowColor: Colors.light.primary,
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.25,
-        shadowRadius: 16,
-        elevation: 8,
-    },
-    gradient: {
-        paddingVertical: 18,
-        borderRadius: 50,
-        flexDirection: 'row',
+        paddingVertical: 16,
+        borderRadius: 35,
+        backgroundColor: '#fff',
+        borderWidth: 1.5,
+        borderColor: 'rgba(220, 163, 73, 0.2)',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 10,
     },
-    buttonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: '800', // Bolder match
+    secondaryButtonText: {
+        color: Colors.light.primary,
+        fontSize: 16,
+        fontWeight: '700',
+        letterSpacing: 0.5,
     },
 });
