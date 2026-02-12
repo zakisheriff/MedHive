@@ -368,7 +368,16 @@ const Hero = ({ focusTrigger }) => {
                                                 <img src="/logode.png" alt="MedHive Logo" className="login-logo-img" width="80" height="80" />
                                             </div>
 
-                                            <h2 className="login-title">Reset Password</h2>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                                <h2 className="sh-title" style={{ marginBottom: 0 }}>History</h2>
+                                                <div className="sh-profile-btn" onClick={() => setScreen('profile')} style={{
+                                                    width: '32px', height: '32px', borderRadius: '50%', background: '#dca349',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    color: '#fff', fontSize: '12px', fontWeight: 'Bold', cursor: 'pointer'
+                                                }}>
+                                                    JD
+                                                </div>
+                                            </div>
                                             <p className="login-subtitle" style={{ textAlign: 'center', color: '#666', fontSize: '13px', margin: '-10px 20px 20px', lineHeight: '1.4' }}>
                                                 Enter your email address to receive a password reset link.
                                             </p>
@@ -689,12 +698,7 @@ const Hero = ({ focusTrigger }) => {
                                         </div>
                                     )}
 
-                                    {/* PROFILE SCREEN */}
-                                    {screen === 'profile' && (
-                                        <div className="screen-profile animate-fade-in">
-                                            {/* ... profile content ... */}
-                                        </div>
-                                    )}
+
                                 </div>
 
                                 {/* UPLOAD PROGRESS OVERLAY (MOVED OUT) */}
@@ -733,22 +737,38 @@ const Hero = ({ focusTrigger }) => {
                                     </div>
                                 )}
 
-                                {/* BOTTOM NAV - HIDDEN ON LOGIN & GET STARTED */}
+                                {/* BOTTOM NAV - PILL DESIGN */}
                                 {screen !== 'login' && screen !== 'forgot_password' && screen !== 'get_started' && screen !== 'create_account' && (
-                                    <div className="floating-nav">
-                                        <div className="nav-indicator" style={{
-                                            left: screen === 'history' ? '10px' : (screen === 'upload' || screen === 'profile') ? 'calc(33.33% + 5px)' : 'calc(66.66% + 5px)',
-                                            width: 'calc(33.33% - 15px)'
-                                        }}></div>
-                                        <div className={`nav-item ${screen === 'history' ? 'active' : ''}`} onClick={() => setScreen('history')}>
-                                            <i className="fas fa-history"></i>
-                                        </div>
-                                        <div className={`nav-item ${(screen === 'upload' || screen === 'profile') ? 'active' : ''}`} onClick={() => setScreen('upload')}>
-                                            <i className="fas fa-upload"></i>
-                                        </div>
-                                        <div className={`nav-item ${screen === 'access' ? 'active' : ''}`} onClick={() => setScreen('access')}>
-                                            <i className="fas fa-key"></i>
-                                        </div>
+                                    <div className="floating-nav-pill">
+                                        <button
+                                            className={`nav-item ${screen === 'history' ? 'active' : ''}`}
+                                            onClick={() => setScreen('history')}
+                                        >
+                                            <div className="nav-icon-wrapper">
+                                                <i className="fa-regular fa-clock"></i>
+                                            </div>
+                                            <span className="nav-label">History</span>
+                                        </button>
+
+                                        <button
+                                            className={`nav-item ${screen === 'upload' ? 'active' : ''}`}
+                                            onClick={() => setScreen('upload')}
+                                        >
+                                            <div className="nav-icon-wrapper">
+                                                <i className="fa-regular fa-file-lines"></i>
+                                            </div>
+                                            <span className="nav-label">Upload</span>
+                                        </button>
+
+                                        <button
+                                            className={`nav-item ${screen === 'access' ? 'active' : ''}`}
+                                            onClick={() => setScreen('access')}
+                                        >
+                                            <div className="nav-icon-wrapper">
+                                                <i className="fa-solid fa-key"></i>
+                                            </div>
+                                            <span className="nav-label">Access</span>
+                                        </button>
                                     </div>
                                 )}
 
@@ -756,8 +776,8 @@ const Hero = ({ focusTrigger }) => {
                                 {screen === 'profile' && (
                                     <div className="screen-profile-overlay animate-slide-up">
                                         <div className="profile-header-done">
-                                            <h3>Account</h3>
-                                            <button className="btn-done" onClick={() => setScreen('upload')}>Close</button>
+                                            <h3 style={{ fontSize: '18px', fontWeight: '700' }}>Account</h3>
+                                            <button className="btn-done" onClick={() => setScreen('history')}>Close</button>
                                         </div>
 
                                         <div className="profile-scroll-content">
@@ -773,21 +793,20 @@ const Hero = ({ focusTrigger }) => {
                                                     </div>
                                                 </div>
                                                 <div className="pmc-divider"></div>
-                                                <div className="pmc-med-id-row">
-                                                    <div className="pmc-med-label">MED-ID</div>
-                                                    <div className="pmc-med-value-group">
-                                                        <span className="pmc-med-value">2000154823</span>
-                                                        <i className="fa-regular fa-copy"></i>
+                                                <div className="pmc-med-id">
+                                                    <div>
+                                                        <span className="med-id-val">2000 1548 23</span>
                                                     </div>
+                                                    <i className="fa-regular fa-copy"></i>
                                                 </div>
                                             </div>
 
-                                            <h3 className="profile-section-title">Statistics</h3>
+                                            <h3 className="profile-section-title">Performance</h3>
                                             <div className="profile-stats-card">
-                                                <div className="stat-col"><strong>12</strong><span>Uploads</span></div>
-                                                <div className="stat-col-divider"></div>
-                                                <div className="stat-col"><strong>3</strong><span>Shared</span></div>
-                                                <div className="stat-col-divider"></div>
+                                                <div className="stat-col"><strong>4</strong><span>Uploads</span></div>
+                                                <div className="stat-divider"></div>
+                                                <div className="stat-col"><strong>2</strong><span>Clinics</span></div>
+                                                <div className="stat-divider"></div>
                                                 <div className="stat-col"><strong>8</strong><span>Months</span></div>
                                             </div>
 
@@ -806,32 +825,29 @@ const Hero = ({ focusTrigger }) => {
                                                         <div className="pl-icon-bg"><i className="fa-regular fa-credit-card"></i></div>
                                                         <div className="pl-text-stack">
                                                             <span>Subscription</span>
-                                                            <small>Free Plan</small>
+                                                            <small>Premium AI Plan</small>
                                                         </div>
                                                     </div>
                                                     <i className="fa-solid fa-chevron-right pl-arrow"></i>
                                                 </div>
                                             </div>
 
-                                            <div className="profile-section-header">
-                                                <h3 className="profile-section-title">Preferences</h3>
-                                                <span className="psh-link">Close</span>
-                                            </div>
+                                            <h3 className="profile-section-title">Settings</h3>
                                             <div className="profile-list-group">
                                                 <div className="pl-item">
                                                     <div className="pl-left"><div className="pl-icon-bg"><i className="fa-regular fa-bell"></i></div><span>Notifications</span></div>
                                                     <div className="pl-toggle active"></div>
                                                 </div>
                                                 <div className="pl-item">
-                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-solid fa-fingerprint"></i></div><span>Face ID / Touch ID</span></div>
-                                                    <div className="pl-toggle"></div>
+                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-solid fa-fingerprint"></i></div><span>Face ID Login</span></div>
+                                                    <div className="pl-toggle active"></div>
                                                 </div>
                                                 <div className="pl-item">
                                                     <div className="pl-left">
-                                                        <div className="pl-icon-bg"><i className="fa-solid fa-language"></i></div>
+                                                        <div className="pl-icon-bg"><i className="fa-solid fa-globe"></i></div>
                                                         <div className="pl-text-stack">
-                                                            <span>Language</span>
-                                                            <small>English</small>
+                                                            <span>Region</span>
+                                                            <small>Global (English)</small>
                                                         </div>
                                                     </div>
                                                     <i className="fa-solid fa-chevron-right pl-arrow"></i>
@@ -841,33 +857,34 @@ const Hero = ({ focusTrigger }) => {
                                             <h3 className="profile-section-title">Support</h3>
                                             <div className="profile-list-group">
                                                 <div className="pl-item">
-                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-regular fa-circle-question"></i></div><span>Help Center</span></div>
+                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-regular fa-circle-question"></i></div><span>Knowledge Base</span></div>
                                                     <i className="fa-solid fa-chevron-right pl-arrow"></i>
                                                 </div>
                                                 <div className="pl-item">
-                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-regular fa-comment-dots"></i></div><span>Contact Us</span></div>
+                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-regular fa-envelope"></i></div><span>Contact Medical Support</span></div>
                                                     <i className="fa-solid fa-chevron-right pl-arrow"></i>
                                                 </div>
                                                 <div className="pl-item">
-                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-regular fa-star"></i></div><span>Rate App</span></div>
+                                                    <div className="pl-left"><div className="pl-icon-bg"><i className="fa-regular fa-star"></i></div><span>Rate MedHive AI</span></div>
                                                     <i className="fa-solid fa-chevron-right pl-arrow"></i>
                                                 </div>
                                             </div>
 
                                             <div className="logout-btn-mockup" onClick={() => setScreen('get_started')}>
                                                 <div className="pl-icon-bg logout-icon"><i className="fa-solid fa-arrow-right-from-bracket"></i></div>
-                                                <span>Log Out</span>
+                                                <span>Sign Out</span>
                                             </div>
 
-                                            <div className="profile-version">MedHive v1.0.0</div>
+                                            <div className="profile-version">MedHive v1.0.4 • 2026</div>
                                         </div>
                                     </div>
                                 )}
+
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </div >
+            </div >
         </section >
     );
 };
