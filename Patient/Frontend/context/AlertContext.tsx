@@ -11,6 +11,7 @@ interface AlertOptions {
     title: string;
     message?: string;
     buttons?: AlertButton[];
+    forceCustom?: boolean;
 }
 
 interface AlertContextType {
@@ -38,7 +39,14 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const showAlert = useCallback((options: AlertOptions) => {
-        if (Platform.OS === 'ios') {
+        // Use native alert() for web ONLY if there's 1 or fewer buttons AND it's not forced to custom
+        if (Platform.OS === 'web' && (!options.buttons || options.buttons.length <= 1) && !options.forceCustom) {
+            const message = options.message ? `${options.title}\n\n${options.message}` : options.title;
+            alert(message);
+            if (options.buttons && options.buttons.length === 1) {
+                options.buttons[0].onPress?.();
+            }
+        } else if (Platform.OS === 'ios') {
             Alert.alert(
                 options.title,
                 options.message,
@@ -51,6 +59,7 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
                 }))
             );
         } else {
+            // For Android OR Web/iOS with multiple buttons OR forced custom
             setAlertState({
                 visible: true,
                 options,

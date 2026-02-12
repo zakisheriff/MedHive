@@ -14,6 +14,7 @@ import { SocialButton } from '../components/SocialButton';
 import { StatusBar } from 'expo-status-bar';
 import { auth_endupoints } from '../constants/config';
 import { saveUser } from '../utils/userStore';
+import { useAlert } from '../context/AlertContext';
 
 // Sri Lankan Districts by Province
 const SRI_LANKAN_DISTRICTS = [
@@ -35,6 +36,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function RegisterScreen() {
     const insets = useSafeAreaInsets();
+    const { showAlert } = useAlert();
     const [fname, setFname] = useState('');
     const [lname, setLname] = useState('');
     const [email, setEmail] = useState('');
@@ -73,12 +75,20 @@ export default function RegisterScreen() {
 
     const handleRegister = async () => {
         if (!fname || !lname || !email || !password || !medId || !gender || !phoneNumber || !district || !province) {
-            alert('Please fill in all fields');
+            showAlert({
+                title: 'Required',
+                message: 'Please fill in all fields',
+                forceCustom: true
+            });
             return;
         }
 
         if (password !== confirmPassword) {
-            alert('Passwords do not match');
+            showAlert({
+                title: 'Error',
+                message: 'Passwords do not match',
+                forceCustom: true
+            });
             return;
         }
 
@@ -108,7 +118,11 @@ export default function RegisterScreen() {
             const result = await response.json();
             //***change the route***
             if (response.ok) {
-                alert('Registration Successful!');
+                showAlert({
+                    title: 'Success',
+                    message: 'Registration Successful!',
+                    forceCustom: true
+                });
 
                 // Store user data
                 if (result.user) {
@@ -117,11 +131,19 @@ export default function RegisterScreen() {
 
                 router.push('/(tabs)/upload');
             } else {
-                alert(result.message || 'Registration failed');
+                showAlert({
+                    title: 'Registration Failed',
+                    message: result.message || 'Registration failed',
+                    forceCustom: true
+                });
             }
         } catch (error) {
             console.error("Connection Error:", error);
-            alert('Could not connect to the server');
+            showAlert({
+                title: 'Connection Error',
+                message: 'Could not connect to the server',
+                forceCustom: true
+            });
         }
     };
 

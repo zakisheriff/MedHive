@@ -13,14 +13,21 @@ import { SocialButton } from '../components/SocialButton';
 import { StatusBar } from 'expo-status-bar';
 import { auth_endupoints } from '../constants/config';
 import { saveUser } from '../utils/userStore';
+import { useAlert } from '../context/AlertContext';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const { showAlert } = useAlert();
+
     const handleLogin = async () => {
         if (!email || !password) {
-            alert("Please enter email and password");
+            showAlert({
+                title: 'Required',
+                message: "Please enter email and password",
+                forceCustom: true
+            });
             return;
         }
 
@@ -49,12 +56,20 @@ export default function LoginScreen() {
                 // Navigate after successful login
                 router.push('/(tabs)/upload');
             } else {
-                alert(data.message || "Login failed");
+                showAlert({
+                    title: 'Login Failed',
+                    message: data.message || "Invalid credentials",
+                    forceCustom: true
+                });
             }
 
         } catch (error) {
             console.error("Login Error:", error);
-            alert("Could not connect to server");
+            showAlert({
+                title: 'Connection Error',
+                message: "Could not connect to server",
+                forceCustom: true
+            });
         }
     };
 
