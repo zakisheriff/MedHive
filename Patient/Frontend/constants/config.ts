@@ -18,7 +18,7 @@ export const API_ENDPOINTS = {
     SUMMARY: `${BASE_URL}/api/summary`,
     HISTORY: `${BASE_URL}/api/history`,
 };
-// export const auth_endupoints={
-//     LOGIN: `${BASE_URL}/auth/login`,
-//     SIGNUP: `${BASE_URL}/auth/registeration`,
-// }
+export const auth_endupoints={
+     LOGIN: `${BASE_URL}/auth/login`,
+     REGISTER: `${BASE_URL}/auth/register`,
+}

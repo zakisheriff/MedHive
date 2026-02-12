@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const pool = require("../db"); // Adjust path if your db.js is in the root
 
-router.post("/", async (req, res) => {
+router.post("/register", async (req, res) => {
   const {
     fname,
     lname,
