@@ -49,8 +49,7 @@ export default function RegisterScreen() {
     const [dobError, setDobError] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-
-
+    const [isLoading, setIsLoading] = useState(false);
 
     // Generate Med ID when year changes
     React.useEffect(() => {
@@ -92,6 +91,7 @@ export default function RegisterScreen() {
             return;
         }
 
+        setIsLoading(true);
         try {
             // Construct the body based on what your backend expects
             const registrationData = {
@@ -144,6 +144,8 @@ export default function RegisterScreen() {
                 message: 'Could not connect to the server',
                 forceCustom: true
             });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -287,6 +289,7 @@ export default function RegisterScreen() {
                             title="Next"
                             onPress={handleRegister}
                             style={styles.registerBtn}
+                            isLoading={isLoading}
                         />
 
                         <View style={styles.dividerContainer}>

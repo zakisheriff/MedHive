@@ -18,6 +18,7 @@ import { useAlert } from '../context/AlertContext';
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const { showAlert } = useAlert();
 
@@ -31,6 +32,7 @@ export default function LoginScreen() {
             return;
         }
 
+        setIsLoading(true);
         try {
             const response = await fetch(auth_endupoints.LOGIN, {
                 method: "POST",
@@ -70,6 +72,8 @@ export default function LoginScreen() {
                 message: "Could not connect to server",
                 forceCustom: true
             });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -136,6 +140,7 @@ export default function LoginScreen() {
                             title="Sign In"
                             onPress={handleLogin}
                             style={styles.loginBtn}
+                            isLoading={isLoading}
                         />
 
                         <View style={styles.dividerContainer}>
