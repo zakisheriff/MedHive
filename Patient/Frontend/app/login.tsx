@@ -32,7 +32,7 @@ export default function LoginScreen() {
         if (!email || !password) {
             showAlert({
                 title: t('auth.required'),
-                message: t('auth.emailPlaceholder') + " & " + t('auth.passwordPlaceholder'),
+                message: t('auth.missingCreds'),
                 forceCustom: true
             });
             return;

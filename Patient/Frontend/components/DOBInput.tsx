@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     },
     inputPiece: {
         paddingVertical: 16,
-        fontSize: 15,
+        fontSize: 16,
         color: '#334155',
         textAlign: 'center',
         minWidth: 0,

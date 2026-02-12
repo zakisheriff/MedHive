@@ -35,7 +35,6 @@ export function PickerInput({ label, value, onValueChange, options, placeholder 
             <Modal
                 visible={modalVisible}
                 transparent={true}
-                animationType="slide"
                 onRequestClose={() => setModalVisible(false)}
             >
                 <BlurView intensity={30} tint="dark" style={styles.modalOverlay}>
@@ -105,7 +104,7 @@ const styles = StyleSheet.create({
     },
     pickerText: {
         flex: 1,
-        fontSize: 15,
+        fontSize: 16,
         color: '#334155',
     },
     placeholder: {

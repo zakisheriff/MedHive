@@ -203,7 +203,8 @@
         "connError": "Connection Error",
         "connErrorMsg": "Could not connect to the server",
         "loginFailed": "Login Failed",
-        "invalidCreds": "Invalid credentials"
+        "invalidCreds": "Invalid credentials",
+        "missingCreds": "Please enter your email and password."
     },
     "medHistory": {
         "title": "Medical History",
