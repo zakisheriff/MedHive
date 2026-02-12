@@ -1,105 +1,62 @@
-# <div align="center">MedHive</div>
-
 <div align="center">
-<strong>Your Health, Unified.</strong>
-</div>
+  <img src="Patient/Frontend/assets/images/logode.png" width="120" height="120" alt="MedHive Logo" />
+  <h1>MedHive</h1>
+  <p><strong>Your Health, Unified.</strong></p>
 
-<br />
+  [![Project Status](https://img.shields.io/badge/Status-In%20Development-yellow?style=for-the-badge)](https://github.com/zakisheriff/MedHive)
+  [![Frontend](https://img.shields.io/badge/Frontend-React%20%7C%20Native-61dafb?style=for-the-badge&logo=react&logoColor=white)](https://github.com/zakisheriff/MedHive)
+  [![Backend](https://img.shields.io/badge/Backend-Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://github.com/zakisheriff/MedHive)
+  [![Database](https://img.shields.io/badge/Database-PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://github.com/zakisheriff/MedHive)
+  [![Deployment](https://img.shields.io/badge/Deployment-Vercel%20%7C%20Azure-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)](https://medhive.lk)
 
-<div align="center">
+  <br />
 
-![React](https://img.shields.io/badge/Frontend-React%20%7C%20Native-61dafb?style=for-the-badge&logo=react&logoColor=white)
-![Node](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![Postgres](https://img.shields.io/badge/Database-PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![Azure](https://img.shields.io/badge/Cloud-Azure-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
-
-<br />
-
-**[Visit Live Site: https://medhive.lk](https://medhive.lk)**
-
+  **[Visit Live Site: https://medhive.lk](https://medhive.lk)**
 </div>
 
 ---
 
 ## 🚀 The Vision
-MedHive isn't just a website defined by a single landing page. It is a comprehensive **Healthcare Ecosystem** designed to unify the fragmented medical landscape of Sri Lanka. 
 
-We connect **Patients**, **Doctors via Clinics**, and **Pharmaceutical Companies** into one seamless, AI-powered network.
+MedHive is a comprehensive **Healthcare Ecosystem** designed to unify the fragmented medical landscape. We bridge the gap between **Patients**, **Clinics**, and **Pharmaceutical Companies** through an AI-powered network that puts health records where they belong: in the hands of the people.
+
+### Core Objectives:
+- **Unification**: One Med-ID for every patient, accepted at every MedHive clinic.
+- **Intelligence**: AI-driven prescription reading and lab report analysis.
+- **Connectivity**: Real-time transmission of digital prescriptions to pharmacies.
+- **Insights**: Nationwide epidemiological data for pharma-research and supply chain optimization.
 
 ---
 
-## 🏛️ Project Architecture (Monorepo)
+## 🏛️ Ecosystem Architecture
 
-This repository hosts the entire ecosystem, divided into specialized components:
+This monorepo contains the four primary pillars of the MedHive network:
 
-### 1. 🩺 The Clinic (Doctor's Hub)
-**Folder**: `Clinic/`
-*   **Purpose**: Connectivity for Doctors and Pharmacies.
-*   **Key Features**:
-    *   **Patient Lookup**: Instant access to complete unified medical history (Med ID).
-    *   **AI Prescription Writer**: Eliminates illegible handwriting.
-    *   **In-House Pharmacy Link**: Instant digital order transmission to the clinic's pharmacy.
-    *   **Analytics**: Daily patient throughput and diagnosis trends.
+### 1. 📱 [Patient App](./Patient/Frontend)
+A cross-platform mobile application (React Native) for personal health management.
+- **Features**: Record aggregation, AI lab reports, QR Check-in, Medicine reminders.
+- **Tech**: Expo, React Native, JWT.
 
-### 2. 📱 The Patient App
-**Folder**: `Patient/`
-*   **Purpose**: A unified personal health record for every citizen.
-*   **Key Features**:
-    *   **Record Unifying**: Aggregates history from visiting different MedHive clinics.
-    *   **AI Interpretation**: Explains complex lab reports in simple English.
-    *   **QR Check-in**: Scan to grant temporary record access to doctors.
-    *   **Medicine Reminders**: Automated scheduling based on prescriptions.
+### 2. 🩺 [Clinic Portal](./Clinic/Frontend)
+A high-performance web dashboard (React) for doctors and clinic staff.
+- **Features**: Instant patient history lookup, AI prescription writer, Pharmacy-Direct mode.
+- **Tech**: React, Vite, Socket.io, Tailwind CSS.
 
-### 3. 🏭 Pharma Company (Enterprise)
-**Folder**: `PharmaCompany/`
-*   **Purpose**: Nationwide insights and supply chain optimization.
-*   **Key Features**:
-    *   **Insights Dashboard**: Real-time visualization of disease outbreaks and medication demand.
-    *   **Stock Management**: Automated supply chain alerts.
-    *   **ML Model Prediction**: Predicts future demand for specific drugs (e.g., Insulin spikes) to prevent shortages.
+### 3. 🏭 [Pharma Dashboard](./PharmaCompany/Frontend)
+An enterprise analytics suite for pharmaceutical companies.
+- **Features**: Disease outbreak tracking, medication demand forecasting, supply chain alerts.
+- **Tech**: React, D3.js/Chart.js, ML Microservices.
 
-### 4. 🌐 Landing Page & Identity
-**Folder**: `Landing/`
-*   **Purpose**: The public face of MedHive.
-*   **Tech**: React, Vite, Glassmorphism aesthetic.
-*   **Role**: Onboards new users and explains the ecosystem value proposition.
+### 4. 🌐 [Landing & Identity](./Landing)
+The gateway to MedHive, explaining our mission and onboarding users.
+- **Tech**: React, Vite, Framer Motion.
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Component | Frontend | Backend | Database | Key Tech |
+| Pillar | Frontend | Backend | Database | Deployment |
 | :--- | :--- | :--- | :--- | :--- |
-| **Patient App** | **React Native** (Expo) | **Express.js** (Node) | **PostgreSQL** | Native Modules, Push Notifications |
-| **Clinic Portal** | **React.js** (Vite) | **Express.js** (Node) | **PostgreSQL** | Socket.io (Real-time), Glassmorphism |
-| **Pharma Dashboard**| **React.js** | **Express.js** | **PostgreSQL** | Data Visualization, Predictive Models |
-| **Landing Page** | **React.js** | - | - | Vercel Deployment, CSS Animations |
-
-### ☁️ Infrastructure & Cloud
-*   **Cloud Provider**: **Microsoft Azure** (Hosting & Services)
-*   **Database**: **PostgreSQL** (Relational Data for Patients/Medical Records)
-*   **Authentication**: JWT / Azure AD (Potential)
-*   **AI/ML**: Served via Azure Functions or Python Microservices
-
----
-
-## 🤝 Contributing
-
-We follow a strict **Team-Based Workflow**. 
-
-> **See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full "Cheatsheet".**
-
-### Quick Rules:
-1.  **Never push to `main`**.
-2.  **Work in your Team Branch**:
-    *   Patient Team -> `patient`
-    *   Clinic Team -> `clinic`
-    *   Pharma Team -> `pharma`
-3.  **Sync Daily**: Run `git pull origin <your-team-branch>`.
-
----
-
-## MedHive Team
 
 *   **Zaki Sheriff** (Lead & Patient Team)
 *   **Abdul Rahman** (Patient Team)
