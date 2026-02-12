@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -15,10 +15,21 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/theme';
 import { ProfileAvatar } from '../../components/ProfileAvatar';
+import { getUser, UserData } from '../../utils/userStore';
 
 export default function UploadScreen() {
     const insets = useSafeAreaInsets();
     const { showAlert } = useAlert();
+    const [userData, setUserData] = useState<UserData | null>(null);
+
+    useEffect(() => {
+        loadUserData();
+    }, []);
+
+    const loadUserData = async () => {
+        const data = await getUser();
+        setUserData(data);
+    };
 
     const handleUpload = async (type: 'prescription' | 'labReport') => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -98,31 +109,16 @@ export default function UploadScreen() {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
-                {/* Scan Process Guide Moved to Top */}
-                <View style={styles.processContainer}>
-                    <View style={styles.processItem}>
-                        <View style={styles.processIcon}>
-                            <Ionicons name="camera" size={18} color={Colors.light.primary} />
-                        </View>
-                        <Text style={styles.processText}>Snap It</Text>
+                {/* Personalized Greeting Section */}
+                <View style={styles.greetingSection}>
+                    <View style={styles.greetingIconWrapper}>
+                        <Ionicons name="sparkles" size={24} color={Colors.light.primary} />
                     </View>
-                    <View style={styles.arrowWrapper}>
-                        <Ionicons name="arrow-forward" size={14} color="#C7C7CC" />
-                    </View>
-                    <View style={styles.processItem}>
-                        <View style={styles.processIcon}>
-                            <Ionicons name="scan" size={18} color={Colors.light.primary} />
-                        </View>
-                        <Text style={styles.processText}>AI Scan</Text>
-                    </View>
-                    <View style={styles.arrowWrapper}>
-                        <Ionicons name="arrow-forward" size={14} color="#C7C7CC" />
-                    </View>
-                    <View style={styles.processItem}>
-                        <View style={styles.processIcon}>
-                            <Ionicons name="save-outline" size={18} color={Colors.light.primary} />
-                        </View>
-                        <Text style={styles.processText}>Save</Text>
+                    <View style={styles.greetingContent}>
+                        <Text style={styles.greetingText}>
+                            Welcome back, <Text style={styles.userNameText}>{userData?.fname || 'User'}</Text>! 👋
+                        </Text>
+                        <Text style={styles.greetingSubtext}>Ready to can your medical documents?</Text>
                     </View>
                 </View>
 
@@ -218,41 +214,54 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         flexGrow: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         paddingHorizontal: 20,
-        paddingTop: 20,
+        paddingTop: 10,
         paddingBottom: 120,
         width: '100%',
         maxWidth: 500,
         alignSelf: 'center',
     },
-    processContainer: {
+    // Greeting Section
+    greetingSection: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        gap: 12,
-        marginBottom: 24, // Space above the upload card
-    },
-    processItem: {
         alignItems: 'center',
-        gap: 8,
-    },
-    processIcon: {
-        width: 44,
-        height: 44,
-        borderRadius: 22, // Full pill/circle
         backgroundColor: '#fff',
+        paddingVertical: 20,
+        paddingHorizontal: 20,
+        borderRadius: 24,
+        marginBottom: 24,
+        // Subtle Shadow
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.03,
+        shadowRadius: 10,
+    },
+    greetingIconWrapper: {
+        width: 48,
+        height: 48,
+        borderRadius: 16,
+        backgroundColor: 'rgba(0, 122, 255, 0.08)', // Using a soft blue matching primary
         alignItems: 'center',
         justifyContent: 'center',
+        marginRight: 16,
     },
-    arrowWrapper: {
-        height: 44, // Match icon height for perfect vertical centering
-        justifyContent: 'center',
+    greetingContent: {
+        flex: 1,
     },
-    processText: {
-        fontSize: 12,
-        fontWeight: '600',
+    greetingText: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: Colors.light.text,
+        marginBottom: 2,
+    },
+    userNameText: {
+        color: Colors.light.primary,
+    },
+    greetingSubtext: {
+        fontSize: 13,
         color: '#8E8E93',
+        fontWeight: '500',
     },
     // Optional: add decorative styles here if needed later
     uploadCard: {
