@@ -13,6 +13,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
 import { Colors } from '../constants/theme';
+import { useTranslation } from 'react-i18next';
 import { HistoryItem, Medicine, LabTest } from '../types/history';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -25,6 +26,7 @@ interface HistoryCardProps {
 }
 
 export function HistoryCard({ item, onPress }: HistoryCardProps) {
+    const { t } = useTranslation();
     const handlePress = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         onPress?.();
@@ -41,8 +43,8 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
             message += `Clinic: ${item.clinicName || 'N/A'}\n`;
             message += `Date: ${item.date.toLocaleDateString()}\n\n`;
 
-            if (medicinesText) message += `Medications:\n${medicinesText}\n\n`;
-            if (testsText) message += `Lab Tests:\n${testsText}\n\n`;
+            if (medicinesText) message += `${t('result.medications')}:\n${medicinesText}\n\n`;
+            if (testsText) message += `${t('history.filters.labReport')}:\n${testsText}\n\n`;
             if (item.notes) message += `Notes: ${item.notes}\n`;
 
             await Share.share({
@@ -65,7 +67,7 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
         if (diffDays === 0) {
             return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
         } else if (diffDays === 1) {
-            return 'Yesterday';
+            return t('history.yesterday');
         } else if (diffDays < 7) {
             return date.toLocaleDateString('en-US', { weekday: 'short' });
         } else {
@@ -95,7 +97,7 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                             </Text>
                         )}
                         <Text style={styles.recordSubtitle} numberOfLines={1}>
-                            {item.type === 'prescription' ? 'Digital Prescription' : 'Electronic Lab Report'}
+                            {item.type === 'prescription' ? t('history.digitalPrescription') : t('history.electronicLabReport')}
                         </Text>
                     </View>
                 </View>
@@ -113,7 +115,7 @@ export function HistoryCard({ item, onPress }: HistoryCardProps) {
                         </View>
                         <Text style={styles.previewText} numberOfLines={1}>
                             {item.medicines[0].name}
-                            {item.medicines.length > 1 ? ` +${item.medicines.length - 1} more` : ''}
+                            {item.medicines.length > 1 ? ` +${item.medicines.length - 1} ${t('history.more')}` : ''}
                         </Text>
                     </View>
                 )}

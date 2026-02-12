@@ -16,8 +16,10 @@ import { router } from 'expo-router';
 import { Colors } from '../../constants/theme';
 import { ProfileAvatar } from '../../components/ProfileAvatar';
 import { getUser, UserData } from '../../utils/userStore';
+import { useTranslation } from 'react-i18next';
 
 export default function UploadScreen() {
+    const { t } = useTranslation();
     const insets = useSafeAreaInsets();
     const { showAlert } = useAlert();
     const [userData, setUserData] = useState<UserData | null>(null);
@@ -36,11 +38,11 @@ export default function UploadScreen() {
 
         // Show options
         showAlert({
-            title: type === 'prescription' ? 'Upload Prescription' : 'Upload Lab Report',
-            message: 'Choose how you want to upload',
+            title: type === 'prescription' ? t('upload.modal.prescriptionTitle') : t('upload.modal.labTitle'),
+            message: t('upload.modal.message'),
             buttons: [
                 {
-                    text: 'Camera',
+                    text: t('upload.modal.camera'),
                     onPress: async () => {
                         const { status } = await ImagePicker.requestCameraPermissionsAsync();
                         if (status !== 'granted') {
@@ -64,7 +66,7 @@ export default function UploadScreen() {
                     }
                 },
                 {
-                    text: 'Gallery',
+                    text: t('upload.modal.gallery'),
                     onPress: async () => {
                         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
                         if (status !== 'granted') {
@@ -88,7 +90,7 @@ export default function UploadScreen() {
                         }
                     }
                 },
-                { text: 'Cancel', style: 'cancel' }
+                { text: t('upload.modal.cancel'), style: 'cancel' }
             ]
         });
     };
@@ -98,8 +100,8 @@ export default function UploadScreen() {
             {/* Header with Profile Avatar */}
             <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
                 <View>
-                    <Text style={styles.headerTitle}>Upload</Text>
-                    <Text style={styles.headerSubtitle}>AI Scan & Extract</Text>
+                    <Text style={styles.headerTitle}>{t('upload.title')}</Text>
+                    <Text style={styles.headerSubtitle}>{t('upload.subtitle')}</Text>
                 </View>
                 <ProfileAvatar size={34} />
             </View>
@@ -113,9 +115,9 @@ export default function UploadScreen() {
                 <View style={styles.greetingSection}>
                     <View style={styles.greetingContent}>
                         <Text style={styles.greetingText}>
-                            Welcome back, <Text style={styles.userNameText}>{userData?.fname || 'User'}</Text>! 👋
+                            {t('upload.welcome')}, <Text style={styles.userNameText}>{userData?.fname || 'User'}</Text>! 👋
                         </Text>
-                        <Text style={styles.greetingSubtext}>Ready to can your medical documents?</Text>
+                        <Text style={styles.greetingSubtext}>{t('upload.greeting')}</Text>
                     </View>
                 </View>
 
@@ -126,9 +128,9 @@ export default function UploadScreen() {
                         <View style={styles.iconWrapper}>
                             <Ionicons name="document-text" size={28} color="#fff" />
                         </View>
-                        <Text style={styles.cardTitle}>Upload Your Health Record</Text>
+                        <Text style={styles.cardTitle}>{t('upload.cardTitle')}</Text>
                         <Text style={styles.cardSubtitle}>
-                            Upload an Image to Extract Medicine Name, Dosage, and Duration
+                            {t('upload.cardSubtitle')}
                         </Text>
                     </View>
 
@@ -143,8 +145,8 @@ export default function UploadScreen() {
                                 <Ionicons name="receipt-outline" size={22} color={Colors.light.primary} />
                             </View>
                             <View style={styles.optionContent}>
-                                <Text style={styles.optionText}>Prescription Reader</Text>
-                                <Text style={styles.optionSubtext}>Extract Medicine Details</Text>
+                                <Text style={styles.optionText}>{t('upload.prescriptionTitle')}</Text>
+                                <Text style={styles.optionSubtext}>{t('upload.prescriptionSub')}</Text>
                             </View>
                             <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.5)" />
                         </TouchableOpacity>
@@ -158,8 +160,8 @@ export default function UploadScreen() {
                                 <Ionicons name="flask" size={22} color={Colors.light.primary} />
                             </View>
                             <View style={styles.optionContent}>
-                                <Text style={styles.optionText}>Lab Report Analyzer</Text>
-                                <Text style={styles.optionSubtext}>Analyze Test Results</Text>
+                                <Text style={styles.optionText}>{t('upload.labTitle')}</Text>
+                                <Text style={styles.optionSubtext}>{t('upload.labSub')}</Text>
                             </View>
                             <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.5)" />
                         </TouchableOpacity>
@@ -171,7 +173,7 @@ export default function UploadScreen() {
                     <View style={styles.tipsNote}>
                         <Ionicons name="alert-circle" size={18} color={Colors.light.primary} />
                         <Text style={styles.tipsNoteText}>
-                            For better result, ensure good lighting and steady scan.
+                            {t('upload.tip')}
                         </Text>
                     </View>
                 )}

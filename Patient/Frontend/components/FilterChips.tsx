@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Colors } from '../constants/theme';
+import { useTranslation } from 'react-i18next';
 import { HistoryItemType } from '../types/history';
 
 export type FilterType = 'all' | HistoryItemType | 'active' | 'completed';
@@ -12,13 +13,15 @@ interface FilterChipsProps {
     onFilterChange: (filter: FilterType) => void;
 }
 
-const filters: { id: FilterType; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
-    { id: 'all', label: 'All', icon: 'grid-outline' },
-    { id: 'prescription', label: 'Prescriptions', icon: 'receipt-outline' },
-    { id: 'labReport', label: 'Lab Reports', icon: 'flask-outline' },
-];
-
 export function FilterChips({ selectedFilter, onFilterChange }: FilterChipsProps) {
+    const { t } = useTranslation();
+
+    const filters: { id: FilterType; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+        { id: 'all', label: t('history.filters.all'), icon: 'grid-outline' },
+        { id: 'prescription', label: t('history.filters.prescription'), icon: 'receipt-outline' },
+        { id: 'labReport', label: t('history.filters.labReport'), icon: 'flask-outline' },
+    ];
+
     const handleFilterPress = (filterId: FilterType) => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         onFilterChange(filterId);

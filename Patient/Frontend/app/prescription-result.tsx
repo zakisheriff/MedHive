@@ -15,6 +15,7 @@ import {
     Animated,
     Easing
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -30,6 +31,7 @@ const { width, height } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
 
 export default function PrescriptionResultScreen() {
+    const { t } = useTranslation();
     const insets = useSafeAreaInsets();
     const { imageUri, type = 'prescription' } = useLocalSearchParams<{ imageUri: string, type?: string }>();
     const [loading, setLoading] = useState(true);
@@ -193,9 +195,9 @@ export default function PrescriptionResultScreen() {
             if (result.is_medical === false || result.error === 'not_medical_record') {
                 setLoading(false);
                 Alert.alert(
-                    'Invalid Document',
-                    `MedHive AI: This image doesn't appear to be a medical ${type === 'prescription' ? 'prescription' : 'lab report'}. Please upload a clear medical document.`,
-                    [{ text: 'OK', onPress: () => router.back() }]
+                    t('result.invalidDoc'),
+                    t('result.invalidDocDesc'),
+                    [{ text: t('profile.close'), onPress: () => router.back() }]
                 );
                 return;
             }
@@ -207,9 +209,9 @@ export default function PrescriptionResultScreen() {
             if (!hasMedicines && !hasLabTests) {
                 setLoading(false);
                 Alert.alert(
-                    'No Details Found',
-                    `MedHive AI couldn't detect any medical details in this image. Please ensure it's a clear ${type === 'prescription' ? 'prescription' : 'lab report'}.`,
-                    [{ text: 'OK', onPress: () => router.back() }]
+                    t('result.noDetails'),
+                    t('result.noDetailsDesc'),
+                    [{ text: t('profile.close'), onPress: () => router.back() }]
                 );
                 return;
             }
@@ -241,11 +243,11 @@ export default function PrescriptionResultScreen() {
 
             // Soft alert instead of forcing a back navigation
             Alert.alert(
-                'Server Busy',
-                'MedHive AI is temporarily unavailable. You can still securely send your prescription image directly to the clinic or go back.',
+                t('result.serverBusy'),
+                t('result.serverBusyDesc'),
                 [
-                    { text: 'Go Back', onPress: () => router.back(), style: 'cancel' },
-                    { text: 'Continue' }
+                    { text: t('profile.cancel'), onPress: () => router.back(), style: 'cancel' },
+                    { text: t('access.alerts.confirm') }
                 ]
             );
         }
@@ -259,7 +261,7 @@ export default function PrescriptionResultScreen() {
 
     const handleOpenSummary = async () => {
         if (!data?.medicines?.[0]?.name) {
-            Alert.alert('No Data', 'No medicines detected to summarize.');
+            Alert.alert(t('result.noDetails'), t('result.noDetailsDesc'));
             return;
         }
         setModalType('summary');
@@ -293,7 +295,7 @@ export default function PrescriptionResultScreen() {
         }
         Clipboard.setString(content);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        Alert.alert('Copied', 'Information copied to clipboard.');
+        Alert.alert(t('result.copy'), t('result.copied'));
     };
 
     const handleSendToClinic = () => {
@@ -301,7 +303,7 @@ export default function PrescriptionResultScreen() {
         const msg = hasError
             ? 'Your prescription image has been securely forwarded to your clinic pharmacy (Direct Mode).'
             : 'Prescription data and image have been securely forwarded to your clinic pharmacy.';
-        Alert.alert('Success', msg);
+        Alert.alert(t('access.active'), msg);
     };
 
     const handleAddToHistory = async () => {
@@ -323,7 +325,7 @@ export default function PrescriptionResultScreen() {
             });
             if (response.ok) {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                Alert.alert('Success', 'Record saved to your medical history.');
+                Alert.alert(t('access.active'), t('result.copied')); // Reuse success message or add new one
             }
         } catch (error) {
             Alert.alert('Error', 'Failed to save record.');
@@ -359,13 +361,13 @@ export default function PrescriptionResultScreen() {
                                 <View style={styles.successCircle}>
                                     <Ionicons name="checkmark" size={50} color="#fff" />
                                 </View>
-                                <Text style={styles.loadingTitle}>Scan Complete</Text>
+                                <Text style={styles.loadingTitle}>{t('result.scanComplete')}</Text>
                             </Animated.View>
                         ) : (
                             <>
                                 <ActivityIndicator size="large" color="#fff" />
-                                <Text style={styles.loadingTitle}>Analyzing Prescription...</Text>
-                                <Text style={styles.loadingSubtitle}>MedHive AI is extracting medical details</Text>
+                                <Text style={styles.loadingTitle}>{t('result.extracting')}</Text>
+                                <Text style={styles.loadingSubtitle}>{t('result.extractingSub')}</Text>
                             </>
                         )}
                     </View>
@@ -383,7 +385,7 @@ export default function PrescriptionResultScreen() {
                 <View style={[styles.contentContainer, isWeb && styles.webContentContainer]}>
                     <View style={styles.header}>
                         <View style={{ width: 40 }} />
-                        <Text style={styles.headerTitle}>Analysis Result</Text>
+                        <Text style={styles.headerTitle}>{t('result.title')}</Text>
                         <TouchableOpacity
                             onPress={() => router.back()}
                             style={styles.backButton}
@@ -413,13 +415,13 @@ export default function PrescriptionResultScreen() {
                         <View style={styles.titleSection}>
                             <Text style={styles.mainTitle}>
                                 {hasError
-                                    ? 'Manual Verification Required'
-                                    : `${type === 'prescription' ? 'Prescription' : 'Lab Report'} Decoded`}
+                                    ? t('result.manualRequired')
+                                    : t('result.subtitle')}
                             </Text>
                             <Text style={styles.subTitle}>
                                 {hasError
-                                    ? `We couldn't automatically read the ${type === 'prescription' ? 'prescription' : 'lab report'}. You can still forward it to your clinic.`
-                                    : 'AI has successfully extracted the details. Choose an action below.'}
+                                    ? t('result.manualDesc')
+                                    : t('result.subtitle')}
                             </Text>
                         </View>
 
@@ -434,8 +436,8 @@ export default function PrescriptionResultScreen() {
                                         <Ionicons name="list" size={24} color="#2196F3" />
                                     </View>
                                     <View style={styles.actionTextContainer}>
-                                        <Text style={styles.actionTitle}>View Medical Details</Text>
-                                        <Text style={styles.actionDesc}>Check extracted medicines & dosage</Text>
+                                        <Text style={styles.actionTitle}>{t('result.viewDetails')}</Text>
+                                        <Text style={styles.actionDesc}>{t('result.detailsDesc')}</Text>
                                     </View>
                                     <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
                                 </TouchableOpacity>
@@ -448,8 +450,8 @@ export default function PrescriptionResultScreen() {
                                         <Ionicons name="sparkles" size={24} color="#9C27B0" />
                                     </View>
                                     <View style={styles.actionTextContainer}>
-                                        <Text style={styles.actionTitle}>AI Summary</Text>
-                                        <Text style={styles.actionDesc}>Get a simple explanation of meds</Text>
+                                        <Text style={styles.actionTitle}>{t('result.aiSummary')}</Text>
+                                        <Text style={styles.actionDesc}>{t('result.summaryDesc')}</Text>
                                     </View>
                                     <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
                                 </TouchableOpacity>
@@ -470,7 +472,7 @@ export default function PrescriptionResultScreen() {
                                     style={styles.primaryButtonGradient}
                                 >
                                     <Ionicons name="paper-plane" size={20} color="#fff" />
-                                    <Text style={styles.primaryButtonText}>Send to Clinic Pharmacy</Text>
+                                    <Text style={styles.primaryButtonText}>{t('result.sendPharmacy')}</Text>
                                 </LinearGradient>
                             </TouchableOpacity>
 
@@ -480,7 +482,7 @@ export default function PrescriptionResultScreen() {
                             >
                                 <View style={styles.secondaryButtonContent}>
                                     <Ionicons name="save-outline" size={20} color={Colors.light.primary} />
-                                    <Text style={styles.secondaryButtonText}>Save to Medical History</Text>
+                                    <Text style={styles.secondaryButtonText}>{t('result.saveHistory')}</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -535,7 +537,7 @@ export default function PrescriptionResultScreen() {
                             </TouchableOpacity>
 
                             <Text style={styles.modalTitle}>
-                                {modalType === 'details' ? 'Extracted Details' : 'AI Summary'}
+                                {modalType === 'details' ? t('result.viewDetails') : t('result.aiSummary')}
                             </Text>
 
                             <TouchableOpacity style={styles.headerIconButton} onPress={() => setModalVisible(false)}>
@@ -586,7 +588,7 @@ export default function PrescriptionResultScreen() {
                         <View style={styles.modalActions}>
                             <TouchableOpacity style={styles.copyButton} onPress={handleCopy}>
                                 <Ionicons name="copy-outline" size={20} color={Colors.light.primary} />
-                                <Text style={styles.copyButtonText}>Copy to Clipboard</Text>
+                                <Text style={styles.copyButtonText}>{t('result.copy')}</Text>
                             </TouchableOpacity>
                         </View>
                     </Animated.View>

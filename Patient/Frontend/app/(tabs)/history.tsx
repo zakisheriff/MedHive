@@ -11,8 +11,10 @@ import { EmptyHistoryState } from '../../components/EmptyHistoryState';
 import { HistoryItem } from '../../types/history';
 import { groupHistoryByDate, filterHistory, generateMockHistory } from '../../utils/historyUtils';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 
 export default function HistoryScreen() {
+    const { t } = useTranslation();
     const insets = useSafeAreaInsets();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilter, setSelectedFilter] = useState<FilterType>('all');
@@ -41,10 +43,10 @@ export default function HistoryScreen() {
             {/* Header with Profile Avatar */}
             <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
                 <View>
-                    <Text style={styles.headerTitle}>History</Text>
+                    <Text style={styles.headerTitle}>{t('history.title')}</Text>
                     {historyItems.length > 0 && (
                         <Text style={styles.headerSubtitle}>
-                            {filteredItems.length} {filteredItems.length === 1 ? 'record' : 'records'}
+                            {filteredItems.length} {filteredItems.length === 1 ? t('history.record') : t('history.records')}
                         </Text>
                     )}
                 </View>
@@ -57,7 +59,7 @@ export default function HistoryScreen() {
                     <Ionicons name="search" size={20} color="#8E8E93" />
                     <TextInput
                         style={styles.searchInput}
-                        placeholder="Search by medicine, doctor, clinic..."
+                        placeholder={t('history.searchPlaceholder')}
                         placeholderTextColor="#8E8E93"
                         value={searchQuery}
                         onChangeText={setSearchQuery}

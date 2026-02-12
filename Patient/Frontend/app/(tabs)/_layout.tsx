@@ -3,6 +3,7 @@ import { Tabs } from 'expo-router';
 import { GlassmorphicTabBar } from '../../components/GlassmorphicTabBar';
 import { Colors } from '../../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Android & Web Tab Layout
@@ -11,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
  * iOS uses a separate _layout.ios.tsx with native tabs for the Liquid Glass effect.
  */
 export default function TabLayout() {
+    const { t } = useTranslation();
     return (
         <Tabs
             tabBar={(props) => <GlassmorphicTabBar {...props} />}
@@ -25,21 +27,21 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="history"
                 options={{
-                    title: 'History',
+                    title: t('tabs.history'),
                     tabBarIcon: ({ color, size }) => <Ionicons name="time-outline" size={size} color={color} />,
                 }}
             />
             <Tabs.Screen
                 name="upload"
                 options={{
-                    title: 'Upload',
+                    title: t('tabs.upload'),
                     tabBarIcon: ({ color, size }) => <Ionicons name="cloud-upload-outline" size={size} color={color} />,
                 }}
             />
             <Tabs.Screen
                 name="access"
                 options={{
-                    title: 'Access',
+                    title: t('tabs.access'),
                     tabBarIcon: ({ color, size }) => <Ionicons name="key-outline" size={size} color={color} />,
                 }}
             />

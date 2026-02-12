@@ -10,6 +10,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { TypingText } from '../components/TypingText';
 import { SocialButton } from '../components/SocialButton';
 import { PrimaryButton } from '../components/PrimaryButton';
+import { LanguagePicker } from '../components/LanguagePicker';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -22,9 +24,14 @@ const TYPING_PHRASES = [
 ];
 
 export default function Index() {
+    const { t, i18n } = useTranslation();
+    const [langPickerVisible, setLangPickerVisible] = React.useState(false);
+
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const moveAnim = useRef(new Animated.Value(0)).current;
     const contentAnim = useRef(new Animated.Value(0)).current; // For Moto + Bottom Content
+
+    const TYPING_PHRASES = t('start.phrases', { returnObjects: true }) as string[];
 
     useEffect(() => {
         // Sequence:
@@ -62,6 +69,18 @@ export default function Index() {
         <View style={styles.container}>
             <StatusBar style="dark" />
 
+            {/* Language Toggle */}
+            <TouchableOpacity
+                style={[styles.langToggle, { top: 60 }]}
+                onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setLangPickerVisible(true);
+                }}
+            >
+                <Ionicons name="globe-outline" size={24} color={Colors.light.text} />
+                <Text style={styles.langText}>{i18n.language.toUpperCase()}</Text>
+            </TouchableOpacity>
+
             <Animated.View style={[
                 styles.logoContainer,
                 { opacity: fadeAnim, transform: [{ translateY: moveAnim }] }
@@ -89,7 +108,7 @@ export default function Index() {
             <Animated.View style={[styles.bottomContainer, { opacity: contentAnim }]}>
                 <View style={styles.authStack}>
                     <PrimaryButton
-                        title="Log in"
+                        title={t('start.login')}
                         onPress={() => router.push('/login')}
                     />
 
@@ -98,11 +117,11 @@ export default function Index() {
                         onPress={() => router.push('/register')}
                         activeOpacity={0.8}
                     >
-                        <Text style={styles.secondaryButtonText}>Sign up</Text>
+                        <Text style={styles.secondaryButtonText}>{t('start.signup')}</Text>
                     </TouchableOpacity>
 
                     <SocialButton
-                        title="Continue with Google"
+                        title={t('start.google')}
                         onPress={() => {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                             console.log('Google Sign-In');
@@ -111,6 +130,11 @@ export default function Index() {
                     />
                 </View>
             </Animated.View>
+
+            <LanguagePicker
+                visible={langPickerVisible}
+                onClose={() => setLangPickerVisible(false)}
+            />
         </View>
     );
 }
@@ -193,5 +217,27 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '700',
         letterSpacing: 0.5,
+    },
+    langToggle: {
+        position: 'absolute',
+        right: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        backgroundColor: '#fff',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
+        elevation: 2,
+        zIndex: 100,
+    },
+    langText: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: Colors.light.text,
     },
 });

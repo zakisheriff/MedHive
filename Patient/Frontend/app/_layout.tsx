@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AlertProvider } from '../context/AlertContext';
 import { CustomAlert } from '../components/CustomAlert';
 import { Colors } from '../constants/theme';
+import '../constants/i18n';
 
 export default function RootLayout() {
   return (

@@ -11,8 +11,10 @@ import * as Haptics from 'expo-haptics';
 import { AccessCard } from '../../components/AccessCard';
 import { generateMockAccess } from '../../utils/accessUtils';
 import { AccessRecord, AccessStatus, AccessDuration } from '../../types/access';
+import { useTranslation } from 'react-i18next';
 
 export default function AccessScreen() {
+    const { t } = useTranslation();
     const insets = useSafeAreaInsets();
     const { showAlert } = useAlert();
     const [accessRecords, setAccessRecords] = useState<AccessRecord[]>(generateMockAccess());
@@ -58,21 +60,21 @@ export default function AccessScreen() {
 
         let title = "";
         let message = "";
-        let confirmText = "Confirm";
+        let confirmText = t('access.alerts.confirm');
         let style: 'default' | 'destructive' = 'default';
 
         if (action === 'approve_1h') {
-            title = "Grant Temporary Access?";
-            message = `${record.clinicName} will be able to view your medical history for exactly 60 minutes.`;
-            confirmText = "Approve for 1 Hour";
+            title = t('access.alerts.tempTitle');
+            message = t('access.alerts.tempMsg', { name: record.clinicName });
+            confirmText = t('access.alerts.tempBtn');
         } else if (action === 'approve_full') {
-            title = "Grant Full Access?";
-            message = `${record.clinicName} will have ongoing access to your medical history until you revoke it manually.`;
-            confirmText = "Approve Full Access";
+            title = t('access.alerts.fullTitle');
+            message = t('access.alerts.fullMsg', { name: record.clinicName });
+            confirmText = t('access.alerts.fullBtn');
         } else if (action === 'revoke') {
-            title = "Revoke Access?";
-            message = `${record.clinicName} will no longer be able to view your medical records or history.`;
-            confirmText = "Revoke";
+            title = t('access.alerts.revokeTitle');
+            message = t('access.alerts.revokeMsg', { name: record.clinicName });
+            confirmText = t('access.alerts.revokeBtn');
             style = 'destructive';
         }
 
@@ -80,7 +82,7 @@ export default function AccessScreen() {
             title,
             message,
             buttons: [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('access.alerts.cancel'), style: 'cancel' },
                 {
                     text: confirmText,
                     style,
@@ -94,7 +96,7 @@ export default function AccessScreen() {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         try {
             await Share.share({
-                message: `My MedHive ID: ${MY_MED_ID}`,
+                message: t('access.shareMessage', { id: MY_MED_ID }),
             });
         } catch (error) {
             console.error(error);
@@ -106,8 +108,8 @@ export default function AccessScreen() {
             {/* Header with Profile Avatar */}
             <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
                 <View>
-                    <Text style={styles.headerTitle}>Access</Text>
-                    <Text style={styles.headerSubtitle}>Permissions & Privacy</Text>
+                    <Text style={styles.headerTitle}>{t('access.title')}</Text>
+                    <Text style={styles.headerSubtitle}>{t('access.subtitle')}</Text>
                 </View>
                 <ProfileAvatar size={34} />
             </View>
@@ -126,7 +128,7 @@ export default function AccessScreen() {
                         <View style={styles.idCardHeader}>
                             <View style={styles.idBrand}>
                                 <Ionicons name="shield-checkmark" size={24} color="#fff" />
-                                <Text style={styles.idBrandText}>Med-ID</Text>
+                                <Text style={styles.idBrandText}>{t('access.medId')}</Text>
                             </View>
                             <TouchableOpacity onPress={handleShareMedId} style={styles.shareButton}>
                                 <Ionicons name="share-outline" size={20} color="#fff" />
@@ -138,7 +140,7 @@ export default function AccessScreen() {
                         </View>
 
                         <View style={styles.idFooter}>
-                            <Text style={styles.idFooterText}>Share this ID with your doctor to grant access</Text>
+                            <Text style={styles.idFooterText}>{t('access.shareFooter')}</Text>
                         </View>
                     </LinearGradient>
                 </View>
@@ -147,7 +149,7 @@ export default function AccessScreen() {
                 {pendingRequests.length > 0 && (
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionTitle}>Incoming Requests</Text>
+                            <Text style={styles.sectionTitle}>{t('access.incoming')}</Text>
                             <View style={styles.badge}>
                                 <Text style={styles.badgeText}>{pendingRequests.length}</Text>
                             </View>
@@ -164,7 +166,7 @@ export default function AccessScreen() {
 
                 {/* Active Permissions */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Clinics with Access</Text>
+                    <Text style={styles.sectionTitle}>{t('access.clinics')}</Text>
                     {activeAccess.length > 0 ? (
                         activeAccess.map(record => (
                             <AccessCard
@@ -176,8 +178,8 @@ export default function AccessScreen() {
                     ) : (
                         <HoneyContainer style={styles.emptyContainer}>
                             <Ionicons name="lock-open-outline" size={40} color="#CBD5E1" />
-                            <Text style={styles.emptyText}>No active access permissions</Text>
-                            <Text style={styles.emptySubtext}>When clinics request your Med-ID, they will appear here for approval.</Text>
+                            <Text style={styles.emptyText}>{t('access.noAccess')}</Text>
+                            <Text style={styles.emptySubtext}>{t('access.noAccessSub')}</Text>
                         </HoneyContainer>
                     )}
                 </View>

@@ -3,8 +3,10 @@ import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/theme';
+import { useTranslation } from 'react-i18next';
 
 export function EmptyHistoryState() {
+    const { t } = useTranslation();
     return (
         <View style={styles.container}>
             <View style={styles.iconWrapper}>
@@ -15,9 +17,9 @@ export function EmptyHistoryState() {
                     <Ionicons name="document-text-outline" size={40} color={Colors.light.primary} />
                 </LinearGradient>
             </View>
-            <Text style={styles.title}>No Records Yet</Text>
+            <Text style={styles.title}>{t('history.noRecords')}</Text>
             <Text style={styles.subtitle}>
-                Your scanned prescriptions and lab reports{'\n'}will appear here
+                {t('history.noRecordsSub')}
             </Text>
         </View>
     );
