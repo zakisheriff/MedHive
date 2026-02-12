@@ -22,7 +22,7 @@ interface LanguagePickerProps {
     onClose: () => void;
 }
 
-const LANGUAGES = [
+export const LANGUAGES = [
     { code: 'en', name: 'English', nativeName: 'English', icon: '🇺🇸' },
     { code: 'si', name: 'Sinhala', nativeName: 'සිංහල', icon: '🇱🇰' },
     { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்', icon: '🇮🇳' },

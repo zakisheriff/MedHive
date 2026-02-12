@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { TypingText } from '../components/TypingText';
 import { SocialButton } from '../components/SocialButton';
 import { PrimaryButton } from '../components/PrimaryButton';
-import { LanguagePicker } from '../components/LanguagePicker';
+import { LanguagePicker, LANGUAGES } from '../components/LanguagePicker';
 import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
@@ -26,6 +26,8 @@ const TYPING_PHRASES = [
 export default function Index() {
     const { t, i18n } = useTranslation();
     const [langPickerVisible, setLangPickerVisible] = React.useState(false);
+
+    const currentLanguage = LANGUAGES.find(l => l.code === i18n.language) || LANGUAGES[0];
 
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const moveAnim = useRef(new Animated.Value(0)).current;
@@ -79,7 +81,7 @@ export default function Index() {
                     }}
                 >
                     <Ionicons name="globe-outline" size={24} color={Colors.light.text} />
-                    <Text style={styles.langText}>{i18n.language.toUpperCase()}</Text>
+                    <Text style={styles.langText}>{currentLanguage.nativeName}</Text>
                 </TouchableOpacity>
             </Animated.View>
 
