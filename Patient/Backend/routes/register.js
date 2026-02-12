@@ -44,9 +44,10 @@ router.post("/register", async (req, res) => {
       ],
     );
 
+    const { password: _, ...patientInfo } = newUser.rows[0];
     res.status(201).json({
       message: "User created successfully!",
-      user: newUser.rows[0],
+      user: patientInfo,
     });
   } catch (err) {
     console.error("DB Error:", err.message);

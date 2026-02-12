@@ -12,6 +12,7 @@ import { PrimaryButton } from '../components/PrimaryButton';
 import { SocialButton } from '../components/SocialButton';
 import { StatusBar } from 'expo-status-bar';
 import { auth_endupoints } from '../constants/config';
+import { saveUser } from '../utils/userStore';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
@@ -40,7 +41,10 @@ export default function LoginScreen() {
             if (response.ok) {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-                console.log("Logged in user:", data.userId);
+                console.log("Logged in user:", data.user.med_id);
+
+                // Store user data
+                await saveUser(data.user);
 
                 // Navigate after successful login
                 router.push('/(tabs)/upload');
@@ -57,8 +61,8 @@ export default function LoginScreen() {
 
 
 
-    
-  
+
+
 
     return (
         <LinearGradient

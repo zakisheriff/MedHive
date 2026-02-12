@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     View,
     Text,
@@ -23,15 +23,8 @@ import { router } from 'expo-router';
 import { Colors } from '../constants/theme';
 import { generateMockHistory } from '../utils/historyUtils';
 import { generateMockAccess } from '../utils/accessUtils';
+import { getUser, clearUser, saveUser, UserData } from '../utils/userStore';
 
-// Mock user data
-const USER = {
-    name: 'John Doe',
-    email: 'john.doe@email.com',
-    medId: '2000154823',
-    avatar: null, // Would be a URI in production
-    memberSince: 'January 2024',
-};
 
 interface MenuItemProps {
     icon: keyof typeof Ionicons.glyphMap;
@@ -70,13 +63,20 @@ export default function ProfileScreen() {
     const { showAlert } = useAlert();
 
     // User State
-    const [userData, setUserData] = useState({
-        name: 'John Doe',
-        email: 'john.doe@email.com',
-        medId: '2000 1548 2314',
-        avatar: null,
-        memberSince: 'Jan 2024'
-    });
+    const [userData, setUserData] = useState<UserData | null>(null);
+
+    useEffect(() => {
+        loadUserData();
+    }, []);
+
+    const loadUserData = async () => {
+        const user = await getUser();
+        if (user) {
+            setUserData(user);
+            setTempName(`${user.fname} ${user.lname}`);
+            setTempEmail(user.email);
+        }
+    };
 
     // Preferences
     const [notifications, setNotifications] = useState(true);
@@ -84,8 +84,8 @@ export default function ProfileScreen() {
 
     // Modal States
     const [editModalVisible, setEditModalVisible] = useState(false);
-    const [tempName, setTempName] = useState(userData.name);
-    const [tempEmail, setTempEmail] = useState(userData.email);
+    const [tempName, setTempName] = useState('');
+    const [tempEmail, setTempEmail] = useState('');
 
     // Dynamic Statistics
     const historyItems = useMemo(() => generateMockHistory(), []);
@@ -106,7 +106,8 @@ export default function ProfileScreen() {
                 {
                     text: 'Log Out',
                     style: 'destructive',
-                    onPress: () => {
+                    onPress: async () => {
+                        await clearUser();
                         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                         router.replace('/login');
                     }
@@ -120,7 +121,22 @@ export default function ProfileScreen() {
             Alert.alert('Error', 'Name and Email are required.');
             return;
         }
-        setUserData(prev => ({ ...prev, name: tempName, email: tempEmail }));
+
+        const nameParts = tempName.trim().split(/\s+/);
+        const newFname = nameParts[0] || '';
+        const newLname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+        if (userData) {
+            const updatedUser = {
+                ...userData,
+                fname: newFname,
+                lname: newLname,
+                email: tempEmail
+            };
+            setUserData(updatedUser);
+            saveUser(updatedUser); // Persist changes
+        }
+
         setEditModalVisible(false);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     };
@@ -139,6 +155,17 @@ export default function ProfileScreen() {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         Alert.alert('Rate MedHive', 'Thank you for your feedback! This would open the App Store in production.', [{ text: 'Cancel' }, { text: '5 Stars ⭐', onPress: () => { } }]);
     };
+
+    if (!userData) {
+        return (
+            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                <Text style={styles.userName}>Loading profile...</Text>
+            </View>
+        );
+    }
+
+    const fullName = `${userData.fname} ${userData.lname}`;
+    const initials = `${userData.fname[0]}${userData.lname[0]}`.toUpperCase();
 
     return (
         <View style={styles.container}>
@@ -185,7 +212,7 @@ export default function ProfileScreen() {
                                 style={styles.avatarPlaceholder}
                             >
                                 <Text style={styles.avatarInitials}>
-                                    {userData.name.split(' ').map(n => n[0]).join('')}
+                                    {initials}
                                 </Text>
                             </LinearGradient>
                             <TouchableOpacity
@@ -196,7 +223,7 @@ export default function ProfileScreen() {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.identityText}>
-                            <Text style={styles.userName}>{userData.name}</Text>
+                            <Text style={styles.userName}>{fullName}</Text>
                             <Text style={styles.userEmail}>{userData.email}</Text>
                         </View>
                     </View>
@@ -216,7 +243,7 @@ export default function ProfileScreen() {
                     >
                         <View>
                             <Text style={styles.medIdLabel}>Med-ID</Text>
-                            <Text style={styles.medIdValue}>{userData.medId}</Text>
+                            <Text style={styles.medIdValue}>{userData.med_id}</Text>
                         </View>
                         <Ionicons name="copy-outline" size={18} color={Colors.light.primary} />
                     </TouchableOpacity>
@@ -248,7 +275,7 @@ export default function ProfileScreen() {
                         icon="person-outline"
                         label="Edit Profile"
                         onPress={() => {
-                            setTempName(userData.name);
+                            setTempName(fullName);
                             setTempEmail(userData.email);
                             setEditModalVisible(true);
                         }}

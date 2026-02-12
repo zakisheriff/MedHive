@@ -20,9 +20,10 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: "Invalid Email or Password" });
         }
 
-        res.status(200).json({ 
+        const { password: _, ...patientInfo } = user.rows[0];
+        res.status(200).json({
             message: "Login successful!",
-            userId: user.rows[0].med_id 
+            user: patientInfo
         });
 
     } catch (err) {
