@@ -34,9 +34,19 @@ const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useTranslation } from 'react-i18next';
+
 export default function RegisterScreen() {
     const insets = useSafeAreaInsets();
     const { showAlert } = useAlert();
+    const { t } = useTranslation();
+
+    const GENDER_OPTIONS = [
+        t('auth.genderOptions.male'),
+        t('auth.genderOptions.female'),
+        t('auth.genderOptions.other')
+    ];
+
     const [fname, setFname] = useState('');
     const [lname, setLname] = useState('');
     const [email, setEmail] = useState('');
@@ -75,8 +85,8 @@ export default function RegisterScreen() {
     const handleRegister = async () => {
         if (!fname || !lname || !email || !password || !medId || !gender || !phoneNumber || !district || !province) {
             showAlert({
-                title: 'Required',
-                message: 'Please fill in all fields',
+                title: t('auth.required'),
+                message: t('auth.requiredMsg'),
                 forceCustom: true
             });
             return;
@@ -84,8 +94,8 @@ export default function RegisterScreen() {
 
         if (password !== confirmPassword) {
             showAlert({
-                title: 'Error',
-                message: 'Passwords do not match',
+                title: t('auth.regFailed'),
+                message: t('auth.passwordMismatch'),
                 forceCustom: true
             });
             return;
@@ -119,8 +129,8 @@ export default function RegisterScreen() {
             //***change the route***
             if (response.ok) {
                 showAlert({
-                    title: 'Success',
-                    message: 'Registration Successful!',
+                    title: t('auth.regSuccess'),
+                    message: t('auth.regSuccess'),
                     forceCustom: true
                 });
 
@@ -132,16 +142,16 @@ export default function RegisterScreen() {
                 router.push('/(tabs)/upload');
             } else {
                 showAlert({
-                    title: 'Registration Failed',
-                    message: result.message || 'Registration failed',
+                    title: t('auth.regFailed'),
+                    message: result.message || t('auth.regFailed'),
                     forceCustom: true
                 });
             }
         } catch (error) {
             console.error("Connection Error:", error);
             showAlert({
-                title: 'Connection Error',
-                message: 'Could not connect to the server',
+                title: t('auth.connError'),
+                message: t('auth.connErrorMsg'),
                 forceCustom: true
             });
         } finally {
@@ -152,9 +162,6 @@ export default function RegisterScreen() {
     const handleDateChange = (day: string, month: string, year: string) => {
         setDob({ day, month, year });
     };
-
-
-
 
     return (
         <LinearGradient
@@ -184,20 +191,20 @@ export default function RegisterScreen() {
 
                     <HoneyContainer style={styles.formContainer}>
                         <View style={styles.formHeader}>
-                            <Text style={styles.cardTitle}>Create Account</Text>
+                            <Text style={styles.cardTitle}>{t('auth.createAccount')}</Text>
                         </View>
 
                         <Input
-                            label="First Name"
-                            placeholder="John"
+                            label={t('auth.fnameLabel')}
+                            placeholder={t('auth.fnamePlaceholder')}
                             value={fname}
                             onChangeText={setFname}
                             iconName="person-outline"
                         />
 
                         <Input
-                            label="Last Name"
-                            placeholder="Doe"
+                            label={t('auth.lnameLabel')}
+                            placeholder={t('auth.lnamePlaceholder')}
                             value={lname}
                             onChangeText={setLname}
                             iconName="person-outline"
@@ -211,7 +218,7 @@ export default function RegisterScreen() {
 
                         {medId ? (
                             <Input
-                                label="Med-ID"
+                                label={t('access.medId')}
                                 value={medId}
                                 editable={false}
                                 iconName="id-card-outline"
@@ -220,17 +227,17 @@ export default function RegisterScreen() {
                         ) : null}
 
                         <PickerInput
-                            label="Gender"
+                            label={t('auth.genderLabel')}
                             value={gender}
                             onValueChange={setGender}
                             options={GENDER_OPTIONS}
-                            placeholder="Select Gender"
+                            placeholder={t('auth.genderPlaceholder')}
                             iconName="male-female-outline"
                         />
 
                         <Input
-                            label="Phone Number"
-                            placeholder="XX XXX XXXX"
+                            label={t('auth.phoneLabel')}
+                            placeholder={t('auth.phonePlaceholder')}
                             keyboardType="phone-pad"
                             value={phoneNumber}
                             onChangeText={setPhoneNumber}
@@ -240,26 +247,26 @@ export default function RegisterScreen() {
                         />
 
                         <PickerInput
-                            label="District"
+                            label={t('auth.districtLabel')}
                             value={district}
                             onValueChange={setDistrict}
                             options={SRI_LANKAN_DISTRICTS}
-                            placeholder="Select District"
+                            placeholder={t('auth.districtPlaceholder')}
                             iconName="location-outline"
                         />
 
                         <PickerInput
-                            label="Province"
+                            label={t('auth.provinceLabel')}
                             value={province}
                             onValueChange={setProvince}
                             options={SRI_LANKAN_PROVINCES}
-                            placeholder="Select Province"
+                            placeholder={t('auth.provincePlaceholder')}
                             iconName="map-outline"
                         />
 
                         <Input
-                            label="Email"
-                            placeholder="Enter your email"
+                            label={t('auth.emailLabel')}
+                            placeholder={t('auth.emailPlaceholder')}
                             keyboardType="email-address"
                             autoCapitalize="none"
                             value={email}
@@ -269,8 +276,8 @@ export default function RegisterScreen() {
 
                         <Input
                             secureTextEntry
-                            label="Password"
-                            placeholder="Create a password"
+                            label={t('auth.passwordLabel')}
+                            placeholder={t('auth.passwordPlaceholder')}
                             value={password}
                             onChangeText={setPassword}
                             iconName="lock-closed-outline"
@@ -278,15 +285,15 @@ export default function RegisterScreen() {
 
                         <Input
                             secureTextEntry
-                            label="Confirm Password"
-                            placeholder="Confirm your password"
+                            label={t('auth.confirmPasswordLabel')}
+                            placeholder={t('auth.confirmPasswordPlaceholder')}
                             value={confirmPassword}
                             onChangeText={setConfirmPassword}
                             iconName="lock-closed-outline"
                         />
 
                         <PrimaryButton
-                            title="Next"
+                            title={t('auth.next')}
                             onPress={handleRegister}
                             style={styles.registerBtn}
                             isLoading={isLoading}
@@ -294,23 +301,23 @@ export default function RegisterScreen() {
 
                         <View style={styles.dividerContainer}>
                             <View style={styles.dividerLine} />
-                            <Text style={styles.dividerText}>or</Text>
+                            <Text style={styles.dividerText}>{t('auth.or')}</Text>
                             <View style={styles.dividerLine} />
                         </View>
 
                         <SocialButton
-                            title="Continue with Google"
-                            onPress={() => console.log('Google Sign-Up')}
+                            title={t('auth.google')}
+                            onPress={() => console.log('Google Sign-In')}
                         />
 
                         <View style={styles.footer}>
-                            <Text style={styles.footerText}>Already have an account? </Text>
+                            <Text style={styles.footerText}>{t('auth.haveAccount')}</Text>
                             <TouchableOpacity
                                 onPress={() => {
                                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                     router.push('/login');
                                 }}>
-                                <Text style={styles.linkText}>Sign In</Text>
+                                <Text style={styles.linkText}>{t('auth.signInLink')}</Text>
                             </TouchableOpacity>
                         </View>
                     </HoneyContainer>

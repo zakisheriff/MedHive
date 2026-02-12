@@ -40,7 +40,7 @@ export function CustomAlert() {
 
                     <View style={[
                         styles.buttonContainer,
-                        buttons && buttons.length > 2 ? styles.verticalButtons : styles.horizontalButtons
+                        buttons && buttons.length === 2 ? styles.horizontalButtons : styles.verticalButtons
                     ]}>
                         {buttons && buttons.length > 0 ? (
                             buttons.map((btn, index) => (
@@ -49,7 +49,7 @@ export function CustomAlert() {
                                     style={[
                                         styles.button,
                                         btn.style === 'cancel' ? styles.cancelButton : styles.primaryActionButton,
-                                        buttons.length > 2 ? styles.fullWidth : styles.flexButton
+                                        buttons.length === 2 ? styles.flexButton : styles.fullWidth
                                     ]}
                                     onPress={() => {
                                         hideAlert();
@@ -69,7 +69,7 @@ export function CustomAlert() {
                             ))
                         ) : (
                             <TouchableOpacity
-                                style={styles.button}
+                                style={[styles.button, styles.primaryActionButton, styles.fullWidth]}
                                 onPress={hideAlert}
                             >
                                 <Text style={styles.buttonText}>OK</Text>

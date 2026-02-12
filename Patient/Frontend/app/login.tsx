@@ -15,7 +15,10 @@ import { auth_endupoints } from '../constants/config';
 import { saveUser } from '../utils/userStore';
 import { useAlert } from '../context/AlertContext';
 
+import { useTranslation } from 'react-i18next';
+
 export default function LoginScreen() {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -25,8 +28,8 @@ export default function LoginScreen() {
     const handleLogin = async () => {
         if (!email || !password) {
             showAlert({
-                title: 'Required',
-                message: "Please enter email and password",
+                title: t('auth.required'),
+                message: t('auth.emailPlaceholder') + " & " + t('auth.passwordPlaceholder'),
                 forceCustom: true
             });
             return;
@@ -59,8 +62,8 @@ export default function LoginScreen() {
                 router.push('/(tabs)/upload');
             } else {
                 showAlert({
-                    title: 'Login Failed',
-                    message: data.message || "Invalid credentials",
+                    title: t('auth.loginFailed'),
+                    message: data.message || t('auth.invalidCreds'),
                     forceCustom: true
                 });
             }
@@ -68,20 +71,14 @@ export default function LoginScreen() {
         } catch (error) {
             console.error("Login Error:", error);
             showAlert({
-                title: 'Connection Error',
-                message: "Could not connect to server",
+                title: t('auth.connError'),
+                message: t('auth.connErrorMsg'),
                 forceCustom: true
             });
         } finally {
             setIsLoading(false);
         }
     };
-
-
-
-
-
-
 
     return (
         <LinearGradient
@@ -104,12 +101,12 @@ export default function LoginScreen() {
 
                     <HoneyContainer style={styles.formContainer}>
                         <View style={styles.formHeader}>
-                            <Text style={styles.cardTitle}>Login</Text>
+                            <Text style={styles.cardTitle}>{t('auth.login')}</Text>
                         </View>
 
                         <Input
-                            label="Email"
-                            placeholder="Enter your email"
+                            label={t('auth.emailLabel')}
+                            placeholder={t('auth.emailPlaceholder')}
                             keyboardType="email-address"
                             autoCapitalize="none"
                             value={email}
@@ -119,8 +116,8 @@ export default function LoginScreen() {
 
                         <Input
                             secureTextEntry
-                            label="Password"
-                            placeholder="Enter your password"
+                            label={t('auth.passwordLabel')}
+                            placeholder={t('auth.passwordPlaceholder')}
                             value={password}
                             onChangeText={setPassword}
                             iconName="lock-closed-outline"
@@ -132,12 +129,12 @@ export default function LoginScreen() {
                                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                     router.push('/forgot-password');
                                 }}>
-                                <Text style={styles.forgotText}>Forgot Password?</Text>
+                                <Text style={styles.forgotText}>{t('auth.forgotPassword')}</Text>
                             </TouchableOpacity>
                         </View>
 
                         <PrimaryButton
-                            title="Sign In"
+                            title={t('auth.signIn')}
                             onPress={handleLogin}
                             style={styles.loginBtn}
                             isLoading={isLoading}
@@ -145,23 +142,23 @@ export default function LoginScreen() {
 
                         <View style={styles.dividerContainer}>
                             <View style={styles.dividerLine} />
-                            <Text style={styles.dividerText}>or</Text>
+                            <Text style={styles.dividerText}>{t('auth.or')}</Text>
                             <View style={styles.dividerLine} />
                         </View>
 
                         <SocialButton
-                            title="Continue with Google"
+                            title={t('auth.google')}
                             onPress={() => console.log('Google Sign-In')}
                         />
 
                         <View style={styles.footer}>
-                            <Text style={styles.footerText}>Don't have an account? </Text>
+                            <Text style={styles.footerText}>{t('auth.noAccount')}</Text>
                             <TouchableOpacity
                                 onPress={() => {
                                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                     router.push('/register');
                                 }}>
-                                <Text style={styles.linkText}>Sign Up</Text>
+                                <Text style={styles.linkText}>{t('auth.signUpLink')}</Text>
                             </TouchableOpacity>
                         </View>
                     </HoneyContainer>

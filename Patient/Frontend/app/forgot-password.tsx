@@ -9,7 +9,10 @@ import { Input } from '../components/Input';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { StatusBar } from 'expo-status-bar';
 
+import { useTranslation } from 'react-i18next';
+
 export default function ForgotPasswordScreen() {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
 
     const handleReset = () => {
@@ -39,15 +42,15 @@ export default function ForgotPasswordScreen() {
 
                     <HoneyContainer style={styles.formContainer}>
                         <View style={styles.formHeader}>
-                            <Text style={styles.cardTitle}>Reset Password</Text>
+                            <Text style={styles.cardTitle}>{t('auth.resetPassword')}</Text>
                             <Text style={styles.cardSubtitle}>
-                                Enter your email address to receive a password reset link.
+                                {t('auth.resetSubtitle')}
                             </Text>
                         </View>
 
                         <Input
-                            label="Email"
-                            placeholder="Enter your email"
+                            label={t('auth.emailLabel')}
+                            placeholder={t('auth.emailPlaceholder')}
                             keyboardType="email-address"
                             autoCapitalize="none"
                             value={email}
@@ -56,7 +59,7 @@ export default function ForgotPasswordScreen() {
                         />
 
                         <PrimaryButton
-                            title="Send Reset Link"
+                            title={t('auth.sendResetLink')}
                             onPress={handleReset}
                             style={styles.resetBtn}
                         />
@@ -67,7 +70,7 @@ export default function ForgotPasswordScreen() {
                                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                     router.back();
                                 }}>
-                                <Text style={styles.linkText}>Back to Sign In</Text>
+                                <Text style={styles.linkText}>{t('auth.backToSignIn')}</Text>
                             </TouchableOpacity>
                         </View>
                     </HoneyContainer>

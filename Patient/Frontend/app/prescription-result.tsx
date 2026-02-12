@@ -280,7 +280,7 @@ export default function PrescriptionResultScreen() {
             const result = await response.json();
             setSummary(result.summary);
         } catch (error) {
-            Alert.alert('Error', 'Failed to generate medical summary.');
+            Alert.alert('Error', t('result.summaryFailed'));
         } finally {
             setSummaryLoading(false);
         }
@@ -301,8 +301,8 @@ export default function PrescriptionResultScreen() {
     const handleSendToClinic = () => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         const msg = hasError
-            ? 'Your prescription image has been securely forwarded to your clinic pharmacy (Direct Mode).'
-            : 'Prescription data and image have been securely forwarded to your clinic pharmacy.';
+            ? t('result.forwardedDirect')
+            : t('result.forwardedFull');
         Alert.alert(t('access.active'), msg);
     };
 
@@ -314,7 +314,7 @@ export default function PrescriptionResultScreen() {
                 date: new Date().toISOString(),
                 clinicName: 'Manual Upload',
                 medicines: [],
-                notes: 'AI extraction unavailable',
+                notes: t('result.aiUnavailable'),
                 imageUri
             } : { ...data, imageUri };
 
@@ -328,7 +328,7 @@ export default function PrescriptionResultScreen() {
                 Alert.alert(t('access.active'), t('result.copied')); // Reuse success message or add new one
             }
         } catch (error) {
-            Alert.alert('Error', 'Failed to save record.');
+            Alert.alert('Error', t('result.saveFailed'));
         }
     };
 
@@ -407,7 +407,7 @@ export default function PrescriptionResultScreen() {
                             <Image source={{ uri: imageUri }} style={styles.resultImage} resizeMode="cover" />
                             <View style={styles.statusBadge}>
                                 <Ionicons name="expand" size={12} color="#111827" />
-                                <Text style={styles.statusText}>Tap to View</Text>
+                                <Text style={styles.statusText}>{t('result.tapToView')}</Text>
                             </View>
                         </TouchableOpacity>
 
@@ -568,7 +568,7 @@ export default function PrescriptionResultScreen() {
                                         </View>
                                     ))}
                                     {(!data?.medicines || data?.medicines.length === 0) && (
-                                        <Text style={styles.emptyText}>No medicines found in this document.</Text>
+                                        <Text style={styles.emptyText}>{t('result.noMedsFound')}</Text>
                                     )}
                                 </View>
                             ) : (
@@ -577,7 +577,7 @@ export default function PrescriptionResultScreen() {
                                         <ActivityIndicator color={Colors.light.primary} size="large" />
                                     ) : (
                                         <View>
-                                            {summary ? renderMarkdown(summary) : <Text style={styles.summaryText}>Analyzing...</Text>}
+                                            {summary ? renderMarkdown(summary) : <Text style={styles.summaryText}>{t('result.analyzing')}</Text>}
                                         </View>
                                     )}
                                 </View>

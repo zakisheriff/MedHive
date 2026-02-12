@@ -9,7 +9,10 @@ import { Input } from '../components/Input';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { StatusBar } from 'expo-status-bar';
 
+import { useTranslation } from 'react-i18next';
+
 export default function MedicalHistoryScreen() {
+    const { t } = useTranslation();
     const params = useLocalSearchParams();
     const { fname, lname, email, dob, gender, phoneNumber, district, province, medId, password } = params;
 
@@ -57,13 +60,13 @@ export default function MedicalHistoryScreen() {
                 >
                     <HoneyContainer style={styles.formContainer}>
                         <View style={styles.formHeader}>
-                            <Text style={styles.cardTitle}>Medical History</Text>
-                            <Text style={styles.subtitle}>Step 2 of 2</Text>
+                            <Text style={styles.cardTitle}>{t('medHistory.title')}</Text>
+                            <Text style={styles.subtitle}>{t('medHistory.step')}</Text>
                         </View>
 
                         <Input
-                            label="Previous Medical Records"
-                            placeholder="Any major surgeries, treatments, etc."
+                            label={t('medHistory.recordsLabel')}
+                            placeholder={t('medHistory.recordsPlaceholder')}
                             value={medicalRecords}
                             onChangeText={setMedicalRecords}
                             iconName="document-text-outline"
@@ -72,24 +75,24 @@ export default function MedicalHistoryScreen() {
                         />
 
                         <Input
-                            label="Chronic Diseases"
-                            placeholder="e.g., Diabetes, Hypertension"
+                            label={t('medHistory.chronicLabel')}
+                            placeholder={t('medHistory.chronicPlaceholder')}
                             value={diseases}
                             onChangeText={setDiseases}
                             iconName="fitness-outline"
                         />
 
                         <Input
-                            label="Allergies"
-                            placeholder="e.g., Peanuts, Penicillin"
+                            label={t('medHistory.allergiesLabel')}
+                            placeholder={t('medHistory.allergiesPlaceholder')}
                             value={allergies}
                             onChangeText={setAllergies}
                             iconName="warning-outline"
                         />
 
                         <Input
-                            label="Other Information"
-                            placeholder="Any other health details..."
+                            label={t('medHistory.otherLabel')}
+                            placeholder={t('medHistory.otherPlaceholder')}
                             value={otherInfo}
                             onChangeText={setOtherInfo}
                             iconName="information-circle-outline"
@@ -98,7 +101,7 @@ export default function MedicalHistoryScreen() {
                         />
 
                         <PrimaryButton
-                            title="Verify & Create Account"
+                            title={t('medHistory.verifyBtn')}
                             onPress={handleVerifyAndCreate}
                             style={styles.submitBtn}
                         />

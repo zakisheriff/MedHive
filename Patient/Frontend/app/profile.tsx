@@ -105,7 +105,7 @@ export default function ProfileScreen() {
     const handleLogout = () => {
         showAlert({
             title: t('profile.signOut'),
-            message: 'Are you sure you want to log out?', // I'll translate more later
+            message: t('profile.signOutConfirm'),
             buttons: [
                 { text: t('profile.cancel'), style: 'cancel' },
                 {
@@ -123,7 +123,7 @@ export default function ProfileScreen() {
 
     const handleSaveProfile = () => {
         if (!tempName.trim() || !tempEmail.trim()) {
-            Alert.alert('Error', 'Name and Email are required.');
+            Alert.alert('Error', t('profile.fieldRequired'));
             return;
         }
 
@@ -255,21 +255,21 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* Statistics Section */}
-                <Text style={styles.sectionTitle}>Performance</Text>
+                <Text style={styles.sectionTitle}>{t('profile.performance')}</Text>
                 <View style={styles.statsContainer}>
                     <View style={styles.statItem}>
                         <Text style={styles.statValue}>{stats.uploads}</Text>
-                        <Text style={styles.statLabel}>Uploads</Text>
+                        <Text style={styles.statLabel}>{t('history.title')}</Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
                         <Text style={styles.statValue}>{stats.shared}</Text>
-                        <Text style={styles.statLabel}>Clinics</Text>
+                        <Text style={styles.statLabel}>{t('access.clinics')}</Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
                         <Text style={styles.statValue}>{stats.months}</Text>
-                        <Text style={styles.statLabel}>Health Age</Text>
+                        <Text style={styles.statLabel}>{t('profile.healthAge')}</Text>
                     </View>
                 </View>
 
@@ -294,7 +294,7 @@ export default function ProfileScreen() {
                         icon="card-outline"
                         label={t('profile.subscription')}
                         value={t('profile.premiumPlan')}
-                        onPress={() => Alert.alert('MedHive Premium', 'You are Currently on The Early Adopter Plan.')}
+                        onPress={() => Alert.alert('MedHive Premium', t('profile.earlyAdopter'))}
                     />
                 </View>
 
@@ -394,23 +394,23 @@ export default function ProfileScreen() {
                         <Text style={styles.editTitle}>{t('profile.editProfile')}</Text>
 
                         <View style={styles.inputContainer}>
-                            <Text style={styles.inputLabel}>Full Name</Text>
+                            <Text style={styles.inputLabel}>{t('profile.fullName')}</Text>
                             <TextInput
                                 style={styles.textInput}
                                 value={tempName}
                                 onChangeText={setTempName}
-                                placeholder="Enter your name"
+                                placeholder={t('auth.fnamePlaceholder')}
                                 placeholderTextColor="#8E8E93"
                             />
                         </View>
 
                         <View style={styles.inputContainer}>
-                            <Text style={styles.inputLabel}>Email Address</Text>
+                            <Text style={styles.inputLabel}>{t('profile.emailAddress')}</Text>
                             <TextInput
                                 style={styles.textInput}
                                 value={tempEmail}
                                 onChangeText={setTempEmail}
-                                placeholder="Enter your email"
+                                placeholder={t('auth.emailPlaceholder')}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 placeholderTextColor="#8E8E93"
