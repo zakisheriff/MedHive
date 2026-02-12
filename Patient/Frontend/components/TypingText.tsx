@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, StyleSheet, TextStyle, View, Animated } from 'react-native';
+import { Text, StyleSheet, TextStyle, View, Animated, Platform } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { useIsFocused } from '@react-navigation/native';
 
 interface TypingTextProps {
     texts: string[];
@@ -38,14 +40,16 @@ export function TypingText({
     // Filter style to remove layout-breaking properties
     const { width: _w, textAlign: _t, ...textStyle } = (style as any) || {};
 
+    const isFocused = useIsFocused();
     // Initial delay effect
     useEffect(() => {
+        if (!isFocused) return;
         const timer = setTimeout(() => setIsReady(true), initialDelay);
         return () => clearTimeout(timer);
-    }, [initialDelay]);
+    }, [initialDelay, isFocused]);
 
     useEffect(() => {
-        if (!isReady) return;
+        if (!isReady || !isFocused) return;
 
         let timer: any;
         const currentFullText = texts[currentTextIndex];
@@ -54,17 +58,11 @@ export function TypingText({
             // Deleting phase
             if (displayedText.length > 0) {
                 timer = setTimeout(() => {
-                    // Trigger "sucking" pulse animation - even faster for no-lag feel
-                    cursorScale.setValue(1.1);
-                    Animated.spring(cursorScale, {
-                        toValue: 1,
-                        friction: 3,
-                        tension: 100,
-                        useNativeDriver: false
-                    }).start();
-
+                    if (Platform.OS !== 'web') {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    }
                     setDisplayedText(prev => prev.slice(0, -1));
-                }, speed / 2);
+                }, 25);
             } else {
                 // DONE ERASING: Immediate, zero-delay Liquid Morph transition
                 Animated.spring(morphAnim, {
@@ -87,12 +85,13 @@ export function TypingText({
                 });
             }
         } else {
-            // Typing phase
             if (displayedText.length < currentFullText.length) {
-                // Reduced speed to 50ms for fluid effect, ignoring comma delays
                 timer = setTimeout(() => {
+                    if (Platform.OS !== 'web') {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    }
                     setDisplayedText(prev => currentFullText.slice(0, prev.length + 1));
-                }, 50);
+                }, 25);
             } else {
                 // Wait before starting erasure
                 timer = setTimeout(() => {
@@ -102,7 +101,7 @@ export function TypingText({
         }
 
         return () => clearTimeout(timer);
-    }, [displayedText, isDeleting, currentTextIndex, texts, speed, delay, isReady, pauseAfterErase]);
+    }, [displayedText, isDeleting, currentTextIndex, texts, speed, delay, isReady, pauseAfterErase, isFocused]);
 
     return (
         <View style={styles.container}>
@@ -152,6 +151,7 @@ const styles = StyleSheet.create({
         height: 32, // Fixed height to keep it pill-like
         borderRadius: 16, // Fixed radius (half of height) for perfect curves
         backgroundColor: '#dca349',
-        marginLeft: 10,
+        marginLeft: 2,
+        marginBottom: 10
     }
 });
