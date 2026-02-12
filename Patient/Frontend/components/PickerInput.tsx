@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, ScrollView, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/theme';
 
@@ -38,6 +38,7 @@ export function PickerInput({ label, value, onValueChange, options, placeholder 
                 onRequestClose={() => setModalVisible(false)}
             >
                 <View style={styles.modalOverlay}>
+                    <Pressable style={StyleSheet.absoluteFill} onPress={() => setModalVisible(false)} />
                     <View style={styles.modalContent}>
                         <View style={styles.modalHeader}>
                             <Text style={styles.modalTitle}>{label}</Text>
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     },
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'transparent',
         justifyContent: 'flex-end',
     },
     modalContent: {
@@ -120,6 +121,11 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 35,
         maxHeight: '70%',
         paddingBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 20,
     },
     modalHeader: {
         flexDirection: 'row',

@@ -11,7 +11,8 @@ import {
     TextInput,
     Modal,
     Alert,
-    Platform
+    Platform,
+    Pressable
 } from 'react-native';
 import { useAlert } from '../context/AlertContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -380,7 +381,7 @@ export default function ProfileScreen() {
                 onRequestClose={() => setEditModalVisible(false)}
             >
                 <View style={styles.modalOverlay}>
-                    <BlurView intensity={50} tint="dark" style={StyleSheet.absoluteFill} />
+                    <Pressable style={StyleSheet.absoluteFill} onPress={() => setEditModalVisible(false)} />
                     <View style={styles.editCard}>
                         <Text style={styles.editTitle}>Edit Profile</Text>
 

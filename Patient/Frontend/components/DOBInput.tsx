@@ -105,37 +105,35 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 14,
-        color: '#666',
+        color: '#334155',
         marginBottom: 8,
         fontWeight: '600',
         marginLeft: 4,
     },
     container: {
-        backgroundColor: '#fff',
+        backgroundColor: '#F1F5F9',
         borderWidth: 1,
-        borderColor: '#e5e5e5',
-        borderRadius: 30, // Pill shape
+        borderColor: '#E2E8F0',
+        borderRadius: 35,
         flexDirection: 'row',
         alignItems: 'center',
-        paddingRight: 16,
-        overflow: 'hidden', // Ensure pill shape is maintained
+        paddingHorizontal: 16,
     },
     iconContainer: {
-        paddingLeft: 16,
-        paddingRight: 8,
+        marginRight: 8,
     },
     inputsRow: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between', // More robust distribution
+        justifyContent: 'space-between',
     },
     inputPiece: {
         paddingVertical: 16,
-        fontSize: 16,
-        color: Colors.light.text,
+        fontSize: 15,
+        color: '#334155',
         textAlign: 'center',
-        minWidth: 0, // CRITICAL: Allows flex items to shrink on Web
+        minWidth: 0,
         ...Platform.select({
             web: {
                 outlineStyle: 'none',
@@ -144,7 +142,7 @@ const styles = StyleSheet.create({
     },
     separator: {
         fontSize: 16,
-        color: '#999',
-        marginHorizontal: 2, // Tighter spacing
+        color: '#94A3B8',
+        marginHorizontal: 2,
     },
 });
