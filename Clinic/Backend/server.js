@@ -1,4 +1,4 @@
-// server.js -AI-based medical classifier
+// server.js 
 
 require("dotenv").config();
 const express = require("express");
@@ -44,18 +44,27 @@ if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const SYSTEM_INSTRUCTION = `
-You are MedHive, a specialized AI assistant for a medical clinic.
+You are MedHive Clinic Assistant.
 
-STRICT SCOPE:
-- Only answer medical/health questions (symptoms, injuries, conditions, medications, prescriptions, pharmacy/medicine stock, human biology, tests, lifestyle health).
-- If the user asks anything unrelated (coding, sports, movies, jokes, politics, math, poetry, stories), refuse briefly and redirect to health topics.
+You help clinics and staff with:
+- clinic onboarding & account help
+- appointment booking/rescheduling/cancellation guidance
+- clinic services info (specialties, tests, procedures)
+- pricing/fees and insurance guidance (general)
+- operating hours, location, contact details
+- using the MedHive dashboard features (prescriptions, patient records, uploads)
+- troubleshooting common issues
 
-SAFETY:
-- Do NOT provide definitive diagnoses.
-- For emergencies (chest pain, severe breathing difficulty, stroke signs, severe bleeding, fainting, seizures, suicidal thoughts), tell the user to seek urgent medical care immediately.
-- Be professional, empathetic, and concise.
-- If information is insufficient, ask 1–3 medical follow-up questions.
+STYLE:
+- Clear, professional, concise.
+- Ask 1–2 follow-up questions when needed.
+
+RULES:
+- Do not provide medical diagnosis or treatment instructions.
+- If the user asks for medical advice, reply: 
+  "I can’t provide medical advice. Please consult a licensed clinician or seek urgent care if it’s an emergency."
 `;
+
 
 // RELIABILITY HELPERS
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -139,7 +148,6 @@ ${message}
     }
   }
 
-  // If all models fail, throw so route can return friendly message
   throw lastErr;
 }
 
@@ -178,7 +186,7 @@ async function generateMedReply({ message, history }) {
   throw lastErr;
 }
 
-// ---------------- ZOD SCHEMAS ----------------
+// ZOD SCHEMAS 
 const registerSchema = z.object({
   clinicName: z.string().min(2).max(150),
   registrationNo: z.string().min(2).max(100),
@@ -203,7 +211,7 @@ const chatSchema = z.object({
     .optional(),
 });
 
-// ---------------- RATE LIMITER FOR CHAT ----------------
+//  RATE LIMITER FOR CHAT 
 const chatLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 20,
@@ -218,7 +226,7 @@ function signToken(payload) {
   });
 }
 
-// ---------------- MULTER CONFIG ----------------
+//  MULTER CONFIG 
 const storage = multer.diskStorage({
   destination: (_, __, cb) => cb(null, uploadDir),
   filename: (_, file, cb) => {
@@ -246,7 +254,7 @@ const upload = multer({
   },
 });
 
-// ---------------- HEALTH CHECK ----------------
+// HEALTH CHECK
 app.get("/api/health", async (_, res) => {
   try {
     await pool.query("SELECT 1");
@@ -256,7 +264,7 @@ app.get("/api/health", async (_, res) => {
   }
 });
 
-// ---------------- CHATBOT ROUTE (AI CLASSIFIER) ----------------
+// CHATBOT ROUTE (AI CLASSIFIER) 
 app.post("/api/chat", chatLimiter, async (req, res) => {
   try {
     const parsed = chatSchema.safeParse(req.body);
@@ -268,29 +276,8 @@ app.post("/api/chat", chatLimiter, async (req, res) => {
 
     const { message, history = [] } = parsed.data;
 
-    // 1) Decide medical vs non-medical using AI classifier (no regex list)
-    const isMedical = await classifyMedical({ message, history });
-
-    if (!isMedical) {
-      return res.json({
-        reply:
-          "I’m designed to help with medical and health-related questions only. Please ask about symptoms, injuries, medications, prescriptions, or health concerns.",
-      });
-    }
-
-    // 2) Generate medical response (with retry + fallback)
+    // 2) Generate response (with retry + fallback)
     const { text } = await generateMedReply({ message, history });
-
-    // 3) Optional drift guard (cheap safety net)
-    const offTopicRegex =
-      /(javascript|react|node|code|football|cricket|politics|movie|song|joke|poem|story|math)/i;
-
-    if (offTopicRegex.test(text)) {
-      return res.json({
-        reply:
-          "I can only assist with medical and health-related topics. Please ask a health question.",
-      });
-    }
 
     return res.json({ reply: text });
   } catch (error) {
