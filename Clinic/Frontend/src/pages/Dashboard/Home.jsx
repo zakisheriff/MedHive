@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './css/Home.css';
 
@@ -6,24 +6,58 @@ const Home = () => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef(null);
+  
   const hasStarted = messages.length > 0;
 
-  const handleSend = (e) => {
+  // Auto-scroll to bottom
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
+
+  // ADDED 'async' here
+  const handleSend = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const userMsg = { role: 'user', text: input };
-    setMessages(prev => [...prev, userMsg]);
-    setInput('');
+    // 1. Capture the input BEFORE clearing state
+    const currentMessage = input; 
     
-    // Trigger Gemini-style loading state
-    setIsTyping(true);
+    const userMsg = { role: 'user', text: currentMessage };
+    setMessages(prev => [...prev, userMsg]);
+    
+    setInput(''); // Clear the input box
+    setIsTyping(true); // Start loading animation
 
-    setTimeout(() => {
-      const aiReply = { role: 'ai', text: "Faaaahhhhhhh" };
+    try {
+      // 2. Send 'currentMessage' (not the empty 'input')
+      const response = await fetch('http://localhost:5000/api/chat', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: currentMessage }), 
+      });
+
+      if (!response.ok) throw new Error("API Error");
+
+      const data = await response.json();
+
+      const aiReply = { role: 'ai', text: data.reply };
       setMessages(prev => [...prev, aiReply]);
+
+    } catch (error) {
+      console.error("Chat Error:", error);
+      const errorReply = { 
+        role: 'ai', 
+        text: "I'm sorry, I'm having trouble connecting to the MedHive server. Please try again later." 
+      };
+      setMessages(prev => [...prev, errorReply]);
+    } finally {
       setIsTyping(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -57,7 +91,6 @@ const Home = () => {
           </motion.div>
         ))}
         
-        {/* Gemini-style Loading State */}
         {isTyping && (
           <div className="message-row ai">
             <div className="avatar-container loading">
@@ -68,6 +101,7 @@ const Home = () => {
             </div>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className={`input-sticky-bottom ${hasStarted ? 'has-started' : ''}`}>
@@ -77,9 +111,10 @@ const Home = () => {
             placeholder="Enter a prompt here..." 
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            disabled={isTyping}
           />
-          <button type="submit" className={"send-btn"}>
-            <img src="/icons/send.png" alt="send" className={input.length > 0? 'active' : ''} />
+          <button type="submit" className="send-btn" disabled={isTyping || !input.trim()}>
+            <img src="/icons/send.png" alt="send" className={input.length > 0 ? 'active' : ''} />
           </button>
         </form>
         <p className="footer-note">
