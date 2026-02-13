@@ -16,6 +16,10 @@ import { StatusBar } from 'expo-status-bar';
 import { auth_endupoints } from '../constants/config';
 import { saveUser } from '../utils/userStore';
 import { useAlert } from '../context/AlertContext';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useEffect } from 'react';
+
+
 
 // Sri Lankan Districts by Province
 const SRI_LANKAN_DISTRICTS = [
@@ -155,6 +159,56 @@ export default function RegisterScreen() {
                 message: t('auth.connErrorMsg'),
                 forceCustom: true
             });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    //google signup page
+    useEffect(() => {
+        GoogleSignin.configure({
+            webClientId: 'YOUR_WEB_CLIENT_ID',
+            offlineAccess: true,
+        });
+    }, []);
+
+
+    const handleGoogleSignIn = async () => {
+        try {
+            setIsLoading(true);
+
+            await GoogleSignin.hasPlayServices();
+
+            const response = await GoogleSignin.signIn();
+
+            if (response.type !== 'success') {
+            throw new Error('Google Sign-In cancelled');
+            }
+
+            const idToken = response.data.idToken;
+
+            if (!idToken) {
+            throw new Error('No ID token returned');
+            }
+
+            const backendResponse = await fetch(
+            auth_endupoints.GOOGLESIGNUP,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: idToken }),
+            }
+            );
+
+            const result = await backendResponse.json();
+
+            if (backendResponse.ok) {
+            await saveUser(result.user);
+            router.push('/(tabs)/upload');
+            }
+
+        } catch (error) {
+            console.log(error);
         } finally {
             setIsLoading(false);
         }
@@ -317,8 +371,9 @@ export default function RegisterScreen() {
 
                         <SocialButton
                             title={t('auth.google')}
-                            onPress={() => console.log('Google Sign-In')}
+                            onPress={handleGoogleSignIn}
                         />
+                        
 
                         <View style={styles.footer}>
                             <Text style={styles.footerText}>{t('auth.haveAccount')}</Text>
