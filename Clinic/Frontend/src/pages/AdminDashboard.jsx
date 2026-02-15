@@ -75,7 +75,7 @@ const AdminDashboard = () => {
                     <td>{clinic.email}</td>
                     <td>
                       <a 
-                        href={`${API_BASE}${clinic.phsrc_certificate_image_url}`} 
+                        href={clinic.phsrc_certificate_image_url} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="document-link"
