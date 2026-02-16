@@ -14,6 +14,7 @@ const { z } = require("zod");
 const nodemailer = require("nodemailer");
 const rateLimit = require("express-rate-limit");
 const { GoogleGenerativeAI } = require("@google/generative-ai"); // Gemini
+const { BlobServiceClient } = require("@azure/storage-blob");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -22,6 +23,9 @@ const transporter = nodemailer.createTransport({
     pass: process.env.MEDHIVE_EMAIL_PASSWORD,
   },
 });
+
+const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
+const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_CONTAINER_NAME);
 
 const pool = require("./db");
 
@@ -227,14 +231,7 @@ function signToken(payload) {
 }
 
 //  MULTER CONFIG 
-const storage = multer.diskStorage({
-  destination: (_, __, cb) => cb(null, uploadDir),
-  filename: (_, file, cb) => {
-    const safeBase = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `${safeBase}${ext}`);
-  },
-});
+const storage = multer.memoryStorage(); 
 
 const upload = multer({
   storage,
@@ -335,9 +332,22 @@ app.post("/api/auth/register", upload.single("certificate"), async (req, res) =>
 
     const passwordHash = await bcrypt.hash(password, 12);
 
-    const certificateUrl = req.file
-      ? `/uploads/${path.basename(req.file.path)}`
-      : null;
+    let certificateUrl = null;
+
+    if (req.file){
+      const safeBase = Date.now() + "-" + Math.round(Math.random()* 1e9);
+      const ext = path.extname(req.file.originalname).toLowerCase();
+      const blobName = `${safeBase}${ext}`;
+
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+      await blockBlobClient.uploadData(req.file.buffer, {
+        blobHTTPHeaders : { blobContentType: req.file.mimetype}
+      });
+
+      certificateUrl = blockBlobClient.url;
+
+    }
 
     const inserted = await pool.query(
       `INSERT INTO clinics (
