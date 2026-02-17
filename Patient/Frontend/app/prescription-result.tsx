@@ -568,48 +568,16 @@ export default function PrescriptionResultScreen() {
                 </View>
             </SafeAreaView>
 
-            {/* Resizable Modal */}
+            {/* Medical Details Modal */}
             <Modal
-                transparent={true}
+                animationType="slide"
+                presentationStyle="pageSheet"
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <BlurView intensity={30} tint="dark" style={[styles.modalOverlay, { paddingHorizontal: isWeb ? 0 : 16 }]}>
-                    <TouchableOpacity
-                        style={styles.modalBackdrop}
-                        onPress={() => setModalVisible(false)}
-                        activeOpacity={1}
-                    />
-
-                    <Animated.View
-                        style={[
-                            styles.modalContent,
-                            {
-                                height: modalHeight,
-                                paddingBottom: insets.bottom + 20,
-                                width: '100%',
-                                maxWidth: isWeb ? 600 : undefined,
-                                alignSelf: 'center',
-                            }
-                        ]}
-                    >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
                         <View style={styles.modalHeader}>
-                            <TouchableOpacity
-                                style={styles.headerIconButton}
-                                onPress={() => {
-                                    const toValue = isExpanded ? height * 0.5 : height * 0.92;
-                                    setIsExpanded(!isExpanded);
-                                    Animated.spring(modalHeight, {
-                                        toValue,
-                                        useNativeDriver: false,
-                                        friction: 6
-                                    }).start();
-                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                }}
-                            >
-                                <Ionicons name={isExpanded ? "chevron-down" : "chevron-up"} size={24} color={Colors.light.text} />
-                            </TouchableOpacity>
-
                             <Text style={styles.modalTitle}>
                                 {modalType === 'details' ? t('result.viewDetails') : t('result.aiSummary')}
                             </Text>
@@ -624,21 +592,16 @@ export default function PrescriptionResultScreen() {
                                 <View style={styles.detailsList}>
                                     {data?.medicines?.map((med: any, index: number) => (
                                         <View key={index} style={styles.detailItem}>
-                                            <View style={styles.detailIcon}>
-                                                <Ionicons name="medkit-outline" size={20} color={Colors.light.primary} />
-                                            </View>
-                                            <View style={styles.detailInfo}>
-                                                <Text style={styles.medName}>{med.name}</Text>
-                                                <View style={styles.medDetailsRow}>
-                                                    <View style={styles.medDosageChip}>
-                                                        <Text style={styles.medDosageText}>{med.dosage}</Text>
-                                                    </View>
-                                                    {med.frequency && (
-                                                        <View style={styles.medFrequencyChip}>
-                                                            <Text style={styles.medFrequencyText}>{med.frequency}</Text>
-                                                        </View>
-                                                    )}
+                                            <Text style={styles.medName}>{med.name}</Text>
+                                            <View style={styles.medDetailsRow}>
+                                                <View style={styles.medDosageChip}>
+                                                    <Text style={styles.medDosageText}>{med.dosage}</Text>
                                                 </View>
+                                                {med.frequency && (
+                                                    <View style={styles.medFrequencyChip}>
+                                                        <Text style={styles.medFrequencyText}>{med.frequency}</Text>
+                                                    </View>
+                                                )}
                                             </View>
                                         </View>
                                     ))}
@@ -661,12 +624,12 @@ export default function PrescriptionResultScreen() {
 
                         <View style={styles.modalActions}>
                             <TouchableOpacity style={styles.copyButton} onPress={handleCopy}>
-                                <Ionicons name="copy-outline" size={20} color={Colors.light.primary} />
+                                <Ionicons name="copy-outline" size={20} color="#FFFFFF" />
                                 <Text style={styles.copyButtonText}>{t('result.copy')}</Text>
                             </TouchableOpacity>
                         </View>
-                    </Animated.View>
-                </BlurView>
+                    </View>
+                </View>
             </Modal>
 
             {/* Full Screen Image Modal */}
@@ -949,6 +912,10 @@ const styles = StyleSheet.create({
     },
 
     // Modal
+    modalContainer: {
+        flex: 1,
+        backgroundColor: Colors.light.background,
+    },
     modalOverlay: {
         flex: 1,
         justifyContent: 'flex-end',
@@ -999,17 +966,18 @@ const styles = StyleSheet.create({
         gap: 15,
     },
     detailItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 15,
-        backgroundColor: '#F9FAFB',
-        borderRadius: 35,
+        padding: 20,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        marginBottom: 12,
     },
     detailIcon: {
         width: 40,
         height: 40,
         borderRadius: 35,
-        backgroundColor: '#FEF3C7', // Light orange/yellow bg
+        backgroundColor: '#FEF3C7',
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 15,
@@ -1018,10 +986,10 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     medName: {
-        fontSize: 18,
+        fontSize: 17,
         fontWeight: '700',
         color: Colors.light.text,
-        marginBottom: 8,
+        marginBottom: 10,
     },
     medDetailsRow: {
         flexDirection: 'row',
@@ -1074,15 +1042,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 8,
-        paddingVertical: 15,
-        backgroundColor: '#F0F9FF',
+        gap: 10,
+        paddingVertical: 16,
+        backgroundColor: Colors.light.primary,
         borderRadius: 35,
     },
     copyButtonText: {
         fontSize: 16,
-        fontWeight: '600',
-        color: Colors.light.primary,
+        fontWeight: '700',
+        color: '#FFFFFF',
     },
     // Markdown Styles
     mdH2: {
