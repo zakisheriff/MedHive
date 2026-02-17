@@ -26,6 +26,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ImagePreviewModal } from '../components/ImagePreviewModal';
+import { ClinicSelector } from '../components/ClinicSelector';
 
 const { width, height } = Dimensions.get('window');
 const isWeb = Platform.OS === 'web';
@@ -45,6 +46,8 @@ export default function PrescriptionResultScreen() {
     const scanLineOpacity = useRef(new Animated.Value(1)).current;
 
     const [fullScreenVisible, setFullScreenVisible] = useState(false);
+    const [clinicSelectorVisible, setClinicSelectorVisible] = useState(false);
+    const [selectedClinic, setSelectedClinic] = useState<any>(null);
 
     // Resizable Modal State
     const [isExpanded, setIsExpanded] = useState(false);
@@ -300,7 +303,12 @@ export default function PrescriptionResultScreen() {
 
     const [sendingToClinic, setSendingToClinic] = useState(false);
 
-    const handleSendToClinic = async () => {
+    const handleSendToClinic = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        setClinicSelectorVisible(true);
+    };
+
+    const sendToSelectedClinic = async (clinic: any) => {
         try {
             setSendingToClinic(true);
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -332,6 +340,7 @@ export default function PrescriptionResultScreen() {
 
             formData.append('patientName', patientName);
             formData.append('medHiveId', medHiveId);
+            formData.append('clinicId', clinic.clinic_id.toString());
 
             // Add extracted data if available (fallback: send only image if AI failed)
             if (!hasError && data) {
@@ -348,9 +357,9 @@ export default function PrescriptionResultScreen() {
             if (response.ok) {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                 const msg = hasError
-                    ? t('result.forwardedDirect')
-                    : t('result.forwardedFull');
-                Alert.alert(t('access.active'), msg);
+                    ? `Prescription sent to ${clinic.clinic_name} (image only - AI extraction unavailable)`
+                    : `Prescription sent successfully to ${clinic.clinic_name}!`;
+                Alert.alert('Success', msg);
             } else {
                 Alert.alert('Error', result.error || t('result.sendFailed'));
             }
@@ -665,6 +674,13 @@ export default function PrescriptionResultScreen() {
                 isVisible={fullScreenVisible}
                 imageUri={imageUri}
                 onClose={() => setFullScreenVisible(false)}
+            />
+
+            {/* Clinic Selector Modal */}
+            <ClinicSelector
+                visible={clinicSelectorVisible}
+                onClose={() => setClinicSelectorVisible(false)}
+                onSelectClinic={sendToSelectedClinic}
             />
         </View>
     );

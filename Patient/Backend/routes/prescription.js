@@ -229,5 +229,28 @@ router.post('/send-to-clinic', upload.single('image'), async (req, res) => {
     }
 });
 
+// 3. Get Verified Clinics
+// Route: /api/clinics (mounted as /clinics in this router)
+router.get('/clinics', async (req, res) => {
+    try {
+        const pool = require('../db');
+
+        const result = await pool.query(
+            `SELECT clinic_id, clinic_name, district, province 
+             FROM clinics 
+             WHERE verification_status = 'APPROVED' 
+             ORDER BY clinic_name ASC`
+        );
+
+        res.json({
+            clinics: result.rows
+        });
+    } catch (error) {
+        console.error('Error fetching clinics:', error);
+        res.status(500).json({ error: 'Failed to fetch clinics' });
+    }
+});
+
 module.exports = router;
+
 

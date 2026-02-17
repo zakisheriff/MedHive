@@ -645,6 +645,25 @@ app.patch("/api/prescriptions/:id/dispense", async (req, res) => {
   }
 });
 
+// GET verified clinics for patient selection
+app.get("/api/clinics/verified", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT clinic_id, clinic_name, district, province 
+       FROM clinics 
+       WHERE status = 'verified' 
+       ORDER BY clinic_name ASC`
+    );
+
+    res.json({
+      clinics: result.rows
+    });
+  } catch (error) {
+    console.error("Error fetching verified clinics:", error);
+    res.status(500).json({ error: "Failed to fetch clinics" });
+  }
+});
+
 // Start
 const port = Number(process.env.PORT || 5002);
 app.listen(port, () => console.log(`API running on http://localhost:${port}`));

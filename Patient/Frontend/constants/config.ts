@@ -15,13 +15,20 @@ export const BASE_URL = __DEV__
     : 'https://medhive-patient-backend-fjaad9afdkc4hvfx.southeastasia-01.azurewebsites.net';
 
 export const API_ENDPOINTS = {
+    REGISTER: `${BASE_URL}/api/auth/register`,
+    LOGIN: `${BASE_URL}/api/auth/login`,
+    GOOGLE_SIGNUP: `${BASE_URL}/api/auth/google-signup`,
+    GOOGLE_LOGIN: `${BASE_URL}/api/auth/google-login`,
     EXTRACT: `${BASE_URL}/api/extract`,
+    EXTRACT_PRESCRIPTION: `${BASE_URL}/api/extract`,
     SUMMARY: `${BASE_URL}/api/summary`,
     HISTORY: `${BASE_URL}/api/history`,
     SEND_TO_CLINIC: `${BASE_URL}/api/send-to-clinic`,
+    GET_CLINICS: `${BASE_URL}/api/clinics`,
 };
+
 export const auth_endupoints = {
     LOGIN: `${BASE_URL}/auth/login`,
     REGISTER: `${BASE_URL}/auth/register`,
     GOOGLESIGNUP: `${BASE_URL}/auth/google_signup`
-}
+};

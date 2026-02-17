@@ -6,6 +6,7 @@ const Prescriptions = () => {
   const [orders, setOrders] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [medicineStatuses, setMedicineStatuses] = useState({}); // Persist statuses across refreshes
 
   // Fetch prescriptions from backend
   const fetchPrescriptions = async () => {
@@ -29,18 +30,22 @@ const Prescriptions = () => {
           }
 
           // Format medicines for display
-          const formattedMedicines = medicines.map(med => ({
-            name: `${med.name} ${med.dosage || ''}`.trim(),
-            quantity: med.duration || med.frequency || '',
-            status: null
-          }));
+          const formattedMedicines = medicines.map((med, index) => {
+            const statusKey = `${prescription.id}-${index}`;
+            return {
+              name: `${med.name} ${med.dosage || ''}`.trim(),
+              quantity: med.duration || med.frequency || '',
+              status: medicineStatuses[statusKey] || null // Restore previous status
+            };
+          });
 
           // If no extracted data, show manual review required
           if (!prescription.has_extracted_data || formattedMedicines.length === 0) {
+            const statusKey = `${prescription.id}-0`;
             formattedMedicines.push({
               name: 'Manual Review Required',
               quantity: 'AI extraction unavailable',
-              status: null
+              status: medicineStatuses[statusKey] || null
             });
           }
 
@@ -76,7 +81,7 @@ const Prescriptions = () => {
     fetchPrescriptions();
     const interval = setInterval(fetchPrescriptions, 10000); // 10 seconds
     return () => clearInterval(interval);
-  }, []);
+  }, [medicineStatuses]); // Re-fetch when statuses change
 
   useEffect(() => {
     const handleEsc = (e) => {
@@ -94,10 +99,26 @@ const Prescriptions = () => {
     }
   }, [selectedImage]);
 
-  const toggleStatus = (orderId, medIndex, status) => {
+  const toggleStatus = (orderId, medIndex, newStatus) => {
+    const statusKey = `${orderId}-${medIndex}`;
+
+    // Update persistent status storage
+    setMedicineStatuses(prev => ({
+      ...prev,
+      [statusKey]: prev[statusKey] === newStatus ? null : newStatus
+    }));
+
+    // Update UI immediately
     setOrders(prev => prev.map(order =>
       order.id === orderId
-        ? { ...order, medicines: order.medicines.map((med, i) => i === medIndex ? { ...med, status } : med) }
+        ? {
+          ...order,
+          medicines: order.medicines.map((med, i) =>
+            i === medIndex
+              ? { ...med, status: med.status === newStatus ? null : newStatus }
+              : med
+          )
+        }
         : order
     ));
   };
@@ -233,7 +254,7 @@ const Prescriptions = () => {
             exit={{ opacity: 0 }}
           >
             <button className="close-modal" onClick={() => setSelectedImage(null)}>
-              <img src="/icons/cross.png" alt="" className='close-icon-img' />
+              ✕
             </button>
             <img src={selectedImage} alt="Full View" />
           </motion.div>
