@@ -4,6 +4,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const FormData = require('form-data');
+const axios = require('axios');
 
 // Configure Multer for image uploads
 const storage = multer.diskStorage({
@@ -157,4 +159,75 @@ router.post('/history', async (req, res) => {
     }
 });
 
+// 4. Send Prescription to Clinic
+// Route: /api/send-to-clinic
+router.post('/send-to-clinic', upload.single('image'), async (req, res) => {
+    try {
+        console.log('--- Send to Clinic Request Received ---');
+
+        if (!req.file) {
+            return res.status(400).json({ error: 'No prescription image provided' });
+        }
+
+        // Parse the extracted data and patient info from request body
+        const { extractedData, patientName, medHiveId } = req.body;
+
+        // Parse extractedData if it's a string
+        let parsedExtractedData = null;
+        let hasExtractedData = false;
+
+        if (extractedData) {
+            try {
+                parsedExtractedData = typeof extractedData === 'string'
+                    ? JSON.parse(extractedData)
+                    : extractedData;
+                hasExtractedData = parsedExtractedData && parsedExtractedData.medicines && parsedExtractedData.medicines.length > 0;
+            } catch (e) {
+                console.log('Failed to parse extracted data, sending image only');
+            }
+        }
+
+        // Prepare form data to send to Clinic Backend
+        const formData = new FormData();
+
+        // Read the file from disk and add it to FormData
+        const fileStream = fs.createReadStream(req.file.path);
+        formData.append('image', fileStream, {
+            filename: req.file.originalname || 'prescription.jpg',
+            contentType: req.file.mimetype
+        });
+
+        // Add patient info and extracted data
+        formData.append('patientName', patientName || 'Unknown Patient');
+        formData.append('medHiveId', medHiveId || 'N/A');
+        formData.append('hasExtractedData', hasExtractedData.toString());
+
+        if (hasExtractedData) {
+            formData.append('medicines', JSON.stringify(parsedExtractedData.medicines));
+        }
+
+        // Forward to Clinic Backend
+        const CLINIC_BACKEND_URL = process.env.CLINIC_BACKEND_URL || 'http://localhost:5002';
+
+        const response = await axios.post(
+            `${CLINIC_BACKEND_URL}/api/prescriptions/incoming`,
+            formData,
+            {
+                headers: formData.getHeaders()
+            }
+        );
+
+        res.json({
+            success: true,
+            message: 'Prescription sent to clinic successfully',
+            prescriptionId: response.data.prescriptionId
+        });
+
+    } catch (error) {
+        console.error('Error sending to clinic:', error);
+        res.status(500).json({ error: 'Failed to send prescription to clinic' });
+    }
+});
+
 module.exports = router;
+

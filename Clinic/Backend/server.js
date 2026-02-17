@@ -231,7 +231,7 @@ function signToken(payload) {
 }
 
 //  MULTER CONFIG 
-const storage = multer.memoryStorage(); 
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
@@ -310,7 +310,7 @@ app.post("/api/auth/register", upload.single("certificate"), async (req, res) =>
     });
 
     if (!parsed.success) {
-      if (req.file) fs.unlinkSync(req.file.path);
+      if (req.file && req.file.path) fs.unlinkSync(req.file.path);
       return res
         .status(400)
         .json({ error: "Invalid input", details: parsed.error.issues });
@@ -324,7 +324,7 @@ app.post("/api/auth/register", upload.single("certificate"), async (req, res) =>
     );
 
     if (existing.rowCount > 0) {
-      if (req.file) fs.unlinkSync(req.file.path);
+      if (req.file && req.file.path) fs.unlinkSync(req.file.path);
       return res.status(409).json({
         error: "Clinic already exists with this email or license number.",
       });
@@ -334,15 +334,15 @@ app.post("/api/auth/register", upload.single("certificate"), async (req, res) =>
 
     let certificateUrl = null;
 
-    if (req.file){
-      const safeBase = Date.now() + "-" + Math.round(Math.random()* 1e9);
+    if (req.file) {
+      const safeBase = Date.now() + "-" + Math.round(Math.random() * 1e9);
       const ext = path.extname(req.file.originalname).toLowerCase();
       const blobName = `${safeBase}${ext}`;
 
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
       await blockBlobClient.uploadData(req.file.buffer, {
-        blobHTTPHeaders : { blobContentType: req.file.mimetype}
+        blobHTTPHeaders: { blobContentType: req.file.mimetype }
       });
 
       certificateUrl = blockBlobClient.url;
@@ -531,6 +531,121 @@ app.get("/api/me", authRequired, async (req, res) => {
   res.json({ clinic: r.rows[0] });
 });
 
+// ============================================
+// INCOMING PRESCRIPTIONS FROM PATIENTS
+// ============================================
+
+// POST: Receive prescription from Patient Backend
+app.post("/api/prescriptions/incoming", upload.single("image"), async (req, res) => {
+  try {
+    console.log("--- Incoming Prescription from Patient ---");
+
+    if (!req.file) {
+      return res.status(400).json({ error: "No prescription image provided" });
+    }
+
+    const { patientName, medHiveId, hasExtractedData, medicines } = req.body;
+
+    // Upload image to Azure Blob Storage
+    const blobName = `prescriptions/${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+    await blockBlobClient.uploadData(req.file.buffer, {
+      blobHTTPHeaders: { blobContentType: req.file.mimetype }
+    });
+
+    const imageUrl = blockBlobClient.url;
+
+    // Parse medicines if provided
+    let medicinesData = [];
+    if (hasExtractedData === 'true' && medicines) {
+      try {
+        medicinesData = typeof medicines === 'string' ? JSON.parse(medicines) : medicines;
+      } catch (e) {
+        console.log('Failed to parse medicines data');
+      }
+    }
+
+    // Store in database
+    const result = await pool.query(
+      `INSERT INTO incoming_prescriptions 
+        (patient_name, medhive_id, prescription_image_url, medicines, has_extracted_data, status)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING id`,
+      [
+        patientName || 'Unknown Patient',
+        medHiveId || 'N/A',
+        imageUrl,
+        JSON.stringify(medicinesData),
+        hasExtractedData === 'true',
+        'pending'
+      ]
+    );
+
+    console.log(`✅ Prescription stored with ID: ${result.rows[0].id}`);
+
+    res.json({
+      success: true,
+      message: 'Prescription received successfully',
+      prescriptionId: result.rows[0].id
+    });
+
+  } catch (error) {
+    console.error("Error receiving prescription:", error);
+    res.status(500).json({ error: "Failed to receive prescription" });
+  }
+});
+
+// GET: Fetch all pending prescriptions for clinic frontend
+app.get("/api/prescriptions/incoming", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT 
+        id,
+        patient_name,
+        medhive_id,
+        prescription_image_url,
+        medicines,
+        has_extracted_data,
+        received_at,
+        status
+       FROM incoming_prescriptions
+       WHERE status = 'pending'
+       ORDER BY received_at DESC`
+    );
+
+    res.json({ prescriptions: result.rows });
+  } catch (error) {
+    console.error("Error fetching prescriptions:", error);
+    res.status(500).json({ error: "Failed to fetch prescriptions" });
+  }
+});
+
+// PATCH: Mark prescription as dispensed
+app.patch("/api/prescriptions/:id/dispense", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(
+      `UPDATE incoming_prescriptions 
+       SET status = 'dispensed' 
+       WHERE id = $1 
+       RETURNING id`,
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Prescription not found" });
+    }
+
+    res.json({ success: true, message: "Prescription marked as dispensed" });
+  } catch (error) {
+    console.error("Error dispensing prescription:", error);
+    res.status(500).json({ error: "Failed to dispense prescription" });
+  }
+});
+
 // Start
-const port = Number(process.env.PORT || 5000);
+const port = Number(process.env.PORT || 5002);
 app.listen(port, () => console.log(`API running on http://localhost:${port}`));
+

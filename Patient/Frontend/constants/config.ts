@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
     EXTRACT: `${BASE_URL}/api/extract`,
     SUMMARY: `${BASE_URL}/api/summary`,
     HISTORY: `${BASE_URL}/api/history`,
+    SEND_TO_CLINIC: `${BASE_URL}/api/send-to-clinic`,
 };
 export const auth_endupoints = {
     LOGIN: `${BASE_URL}/auth/login`,

@@ -298,13 +298,70 @@ export default function PrescriptionResultScreen() {
         Alert.alert(t('result.copy'), t('result.copied'));
     };
 
-    const handleSendToClinic = () => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        const msg = hasError
-            ? t('result.forwardedDirect')
-            : t('result.forwardedFull');
-        Alert.alert(t('access.active'), msg);
+    const [sendingToClinic, setSendingToClinic] = useState(false);
+
+    const handleSendToClinic = async () => {
+        try {
+            setSendingToClinic(true);
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+            // Get user data for patient info
+            const { getUser } = await import('../utils/userStore');
+            const userData = await getUser();
+
+            const formData = new FormData();
+
+            // Add the prescription image
+            if (Platform.OS === 'web') {
+                const response = await fetch(imageUri);
+                const blob = await response.blob();
+                const imageBlob = new Blob([blob], { type: 'image/jpeg' });
+                formData.append('image', imageBlob, 'prescription.jpg');
+            } else {
+                // @ts-ignore
+                formData.append('image', {
+                    uri: imageUri,
+                    name: 'prescription.jpg',
+                    type: 'image/jpeg',
+                });
+            }
+
+            // Add patient information
+            const patientName = userData ? `${userData.fname} ${userData.lname}` : 'Unknown Patient';
+            const medHiveId = userData?.med_id || 'N/A';
+
+            formData.append('patientName', patientName);
+            formData.append('medHiveId', medHiveId);
+
+            // Add extracted data if available (fallback: send only image if AI failed)
+            if (!hasError && data) {
+                formData.append('extractedData', JSON.stringify(data));
+            }
+
+            const response = await fetch(API_ENDPOINTS.SEND_TO_CLINIC, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                const msg = hasError
+                    ? t('result.forwardedDirect')
+                    : t('result.forwardedFull');
+                Alert.alert(t('access.active'), msg);
+            } else {
+                Alert.alert('Error', result.error || t('result.sendFailed'));
+            }
+        } catch (error) {
+            console.error('Error sending to clinic:', error);
+            Alert.alert('Error', t('result.sendFailed'));
+        } finally {
+            setSendingToClinic(false);
+        }
     };
+
 
     const handleAddToHistory = async () => {
         try {
@@ -464,15 +521,24 @@ export default function PrescriptionResultScreen() {
                             <TouchableOpacity
                                 style={styles.primaryButton}
                                 onPress={handleSendToClinic}
+                                disabled={sendingToClinic}
                             >
                                 <LinearGradient
-                                    colors={[Colors.light.primary, Colors.light.primaryDark]}
+                                    colors={sendingToClinic
+                                        ? ['#9CA3AF', '#6B7280']
+                                        : [Colors.light.primary, Colors.light.primaryDark]}
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 0 }}
                                     style={styles.primaryButtonGradient}
                                 >
-                                    <Ionicons name="paper-plane" size={20} color="#fff" />
-                                    <Text style={styles.primaryButtonText}>{t('result.sendPharmacy')}</Text>
+                                    {sendingToClinic ? (
+                                        <ActivityIndicator size="small" color="#fff" />
+                                    ) : (
+                                        <Ionicons name="paper-plane" size={20} color="#fff" />
+                                    )}
+                                    <Text style={styles.primaryButtonText}>
+                                        {sendingToClinic ? t('result.sending') : t('result.sendPharmacy')}
+                                    </Text>
                                 </LinearGradient>
                             </TouchableOpacity>
 

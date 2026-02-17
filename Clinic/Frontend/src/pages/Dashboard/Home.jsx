@@ -19,57 +19,57 @@ const Home = () => {
     scrollToBottom();
   }, [messages, isTyping]);
 
-const handleSend = async (e) => {
-  e.preventDefault();
-  if (!input.trim()) return;
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
 
-  const currentMessage = input;
+    const currentMessage = input;
 
-  const userMsg = { role: "user", text: currentMessage };
+    const userMsg = { role: "user", text: currentMessage };
 
-  // Build the history snapshot BEFORE setMessages (because state updates are async)
-  const historyToSend = [...messages, userMsg].slice(-8);
+    // Build the history snapshot BEFORE setMessages (because state updates are async)
+    const historyToSend = [...messages, userMsg].slice(-8);
 
-  setMessages((prev) => [...prev, userMsg]);
-  setInput("");
-  setIsTyping(true);
+    setMessages((prev) => [...prev, userMsg]);
+    setInput("");
+    setIsTyping(true);
 
-  try {
-    const response = await fetch("http://localhost:5000/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: currentMessage,
-        history: historyToSend,
-      }),
-    });
+    try {
+      const response = await fetch("http://localhost:5002/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: currentMessage,
+          history: historyToSend,
+        }),
+      });
 
-   //Always parse JSON (even for 429/503)
-    const data = await response.json().catch(() => ({}));
+      //Always parse JSON (even for 429/503)
+      const data = await response.json().catch(() => ({}));
 
-    // If server sends a reply on errors, show it
-    if (!response.ok) {
+      // If server sends a reply on errors, show it
+      if (!response.ok) {
+        setMessages((prev) => [
+          ...prev,
+          { role: "ai", text: data.reply || "Temporary error. Please try again." },
+        ]);
+        return;
+      }
+
+      setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
+    } catch (error) {
+      console.error("Chat Error:", error);
       setMessages((prev) => [
         ...prev,
-        { role: "ai", text: data.reply || "Temporary error. Please try again." },
+        {
+          role: "ai",
+          text: "I’m having trouble connecting right now. Please try again.",
+        },
       ]);
-      return;
+    } finally {
+      setIsTyping(false);
     }
-
-    setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
-  } catch (error) {
-    console.error("Chat Error:", error);
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "ai",
-        text: "I’m having trouble connecting right now. Please try again.",
-      },
-    ]);
-  } finally {
-    setIsTyping(false);
-  }
-};
+  };
 
   return (
     <div className="home-container">

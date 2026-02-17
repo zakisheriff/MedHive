@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./AdminDashboard.css";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "http://localhost:5002";
 
 const AdminDashboard = () => {
   const [pending, setPending] = useState([]);
@@ -42,7 +42,7 @@ const AdminDashboard = () => {
           <img src="./admin - Copy.png" alt="Portal logo" className="admin-portal-icon" />
           <p>Review and approve PHSRC certifications for new MedHive clinics.</p>
         </div>
-        
+
       </header>
 
       <main className="admin-main-content">
@@ -74,9 +74,9 @@ const AdminDashboard = () => {
                     </td>
                     <td>{clinic.email}</td>
                     <td>
-                      <a 
-                        href={clinic.phsrc_certificate_image_url} 
-                        target="_blank" 
+                      <a
+                        href={clinic.phsrc_certificate_image_url}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="document-link"
                       >
@@ -84,7 +84,7 @@ const AdminDashboard = () => {
                       </a>
                     </td>
                     <td className="text-center">
-                      <button 
+                      <button
                         onClick={() => handleApprove(clinic.clinic_id)}
                         className="approve-btn"
                       >

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "http://localhost:5002";
 
 const PendingVerification = () => {
   const navigate = useNavigate();
@@ -34,21 +34,21 @@ const PendingVerification = () => {
 
   return (
     <div className="auth-container" style={{ textAlign: "center", paddingTop: "80px" }}>
-       <div className="auth-form-box" style={{ maxWidth: "500px", margin: "0 auto" }}>
-          <h2>Verification in Progress</h2>
-          <p>We have received your PHSRC certificate. Our team is currently reviewing your details.</p>
-          
-          {message && <p style={{ color: "#2c3e50", fontWeight: "bold" }}>{message}</p>}
+      <div className="auth-form-box" style={{ maxWidth: "500px", margin: "0 auto" }}>
+        <h2>Verification in Progress</h2>
+        <p>We have received your PHSRC certificate. Our team is currently reviewing your details.</p>
 
-          <button 
-            className="btn-main" 
-            onClick={handleRefresh} 
-            disabled={checking}
-            style={{ marginTop: "20px" }}
-          >
-            {checking ? "Checking..." : "I've been approved, let me in!"}
-          </button>
-       </div>
+        {message && <p style={{ color: "#2c3e50", fontWeight: "bold" }}>{message}</p>}
+
+        <button
+          className="btn-main"
+          onClick={handleRefresh}
+          disabled={checking}
+          style={{ marginTop: "20px" }}
+        >
+          {checking ? "Checking..." : "I've been approved, let me in!"}
+        </button>
+      </div>
     </div>
   );
 };

@@ -12,12 +12,13 @@ const pool = new Pool({
   }
 });
 
-pool.connect((err, client, release) => {
+// Test connection asynchronously without blocking
+pool.query('SELECT NOW()', (err, res) => {
   if (err) {
-    return console.error('Error acquiring client', err.stack);
+    console.error('❌ Database connection error:', err.message);
+  } else {
+    console.log('✅ Connected to PostgreSQL Database');
   }
-  console.log('✅ Connected to PostgreSQL Database');
-  release();
 });
 
 module.exports = pool;
