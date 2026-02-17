@@ -47,9 +47,9 @@ export const ClinicSelector: React.FC<ClinicSelectorProps> = ({
             setFilteredClinics(clinics);
         } else {
             const filtered = clinics.filter(clinic =>
-                clinic.clinic_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                clinic.district.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                clinic.province.toLowerCase().includes(searchQuery.toLowerCase())
+                clinic.clinic_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                clinic.district?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                clinic.province?.toLowerCase().includes(searchQuery.toLowerCase())
             );
             setFilteredClinics(filtered);
         }
@@ -90,7 +90,7 @@ export const ClinicSelector: React.FC<ClinicSelectorProps> = ({
             <View style={styles.clinicInfo}>
                 <Text style={styles.clinicName}>{item.clinic_name}</Text>
                 <Text style={styles.clinicLocation}>
-                    {item.clinic_id}
+                    {item.district}, {item.province}
                 </Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#999" />
