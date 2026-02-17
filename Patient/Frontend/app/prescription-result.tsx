@@ -15,6 +15,7 @@ import {
     Animated,
     Easing
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { useRef } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,12 +25,16 @@ import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ImagePreviewModal } from '../components/ImagePreviewModal';
+import { ClinicSelector } from '../components/ClinicSelector';
 
 const { width, height } = Dimensions.get('window');
+const isWeb = Platform.OS === 'web';
 
 export default function PrescriptionResultScreen() {
+    const { t } = useTranslation();
     const insets = useSafeAreaInsets();
-    const { imageUri } = useLocalSearchParams<{ imageUri: string }>();
+    const { imageUri, type = 'prescription' } = useLocalSearchParams<{ imageUri: string, type?: string }>();
     const [loading, setLoading] = useState(true);
     const [summaryLoading, setSummaryLoading] = useState(false);
     const [data, setData] = useState<any>(null);
@@ -38,9 +43,79 @@ export default function PrescriptionResultScreen() {
     const [modalType, setModalType] = useState<'details' | 'summary'>('details');
     const [hasError, setHasError] = useState(false);
     const scanAnim = useRef(new Animated.Value(0)).current;
+    const scanLineOpacity = useRef(new Animated.Value(1)).current;
+
+    const [fullScreenVisible, setFullScreenVisible] = useState(false);
+    const [clinicSelectorVisible, setClinicSelectorVisible] = useState(false);
+    const [selectedClinic, setSelectedClinic] = useState<any>(null);
+
+    // Resizable Modal State
+    const [isExpanded, setIsExpanded] = useState(false);
+    const modalHeight = useRef(new Animated.Value(height * 0.5)).current;
+
+    const renderMarkdown = (text: string) => {
+        if (!text) return null;
+
+        return text.split('\n').map((line, index) => {
+            // Headers (### or ##)
+            if (line.startsWith('### ')) {
+                return (
+                    <Text key={index} style={[styles.mdH3, { marginTop: index === 0 ? 0 : 12 }]}>
+                        {line.replace('### ', '')}
+                    </Text>
+                );
+            }
+            if (line.startsWith('## ')) {
+                return (
+                    <Text key={index} style={[styles.mdH2, { marginTop: index === 0 ? 0 : 16 }]}>
+                        {line.replace('## ', '')}
+                    </Text>
+                );
+            }
+
+            // Bullet points (* )
+            if (line.trim().startsWith('* ')) {
+                const content = line.trim().substring(2);
+                return (
+                    <View key={index} style={styles.mdListItem}>
+                        <Text style={styles.mdBullet}>•</Text>
+                        <Text style={styles.mdListText}>
+                            {parseBold(content)}
+                        </Text>
+                    </View>
+                );
+            }
+
+            // Regular paragraph
+            if (line.trim() === '') {
+                return <View key={index} style={{ height: 8 }} />;
+            }
+
+            return (
+                <Text key={index} style={styles.mdParagraph}>
+                    {parseBold(line)}
+                </Text>
+            );
+        });
+    };
+
+    const parseBold = (text: string) => {
+        const parts = text.split(/(\*\*.*?\*\*)/g);
+        return parts.map((part, i) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+                return (
+                    <Text key={i} style={styles.mdBold}>
+                        {part.slice(2, -2)}
+                    </Text>
+                );
+            }
+            return <Text key={i}>{part}</Text>;
+        });
+    };
 
     useEffect(() => {
         if (loading) {
+            scanLineOpacity.setValue(1);
             Animated.loop(
                 Animated.sequence([
                     Animated.timing(scanAnim, {
@@ -62,11 +137,26 @@ export default function PrescriptionResultScreen() {
         }
     }, [loading]);
 
+
+
     useEffect(() => {
         if (imageUri) {
             extractData();
         }
     }, [imageUri]);
+
+    const [showSuccess, setShowSuccess] = useState(false);
+    const successAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        if (showSuccess) {
+            Animated.timing(scanLineOpacity, {
+                toValue: 0,
+                duration: 400,
+                useNativeDriver: true,
+            }).start();
+        }
+    }, [showSuccess]);
 
     const extractData = async () => {
         const controller = new AbortController();
@@ -75,18 +165,29 @@ export default function PrescriptionResultScreen() {
         try {
             setLoading(true);
             const formData = new FormData();
-            // @ts-ignore
-            formData.append('image', {
-                uri: imageUri,
-                name: 'prescription.jpg',
-                type: 'image/jpeg',
-            });
+
+            if (Platform.OS === 'web') {
+                // For Web: specific handling to create a Blob
+                const response = await fetch(imageUri);
+                const blob = await response.blob();
+                const imageBlob = new Blob([blob], { type: 'image/jpeg' });
+                formData.append('image', imageBlob, 'prescription.jpg');
+            } else {
+                // For Native: standard React Native FormData handling
+                // @ts-ignore
+                formData.append('image', {
+                    uri: imageUri,
+                    name: 'prescription.jpg',
+                    type: 'image/jpeg',
+                });
+            }
 
             const response = await fetch(API_ENDPOINTS.EXTRACT, {
                 method: 'POST',
                 body: formData,
+                // Remove 'Content-Type': 'multipart/form-data' to allow browser to generate boundary
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    // Add any auth headers if needed here, but do NOT set Content-Type for multipart
                 },
                 signal: controller.signal
             });
@@ -94,33 +195,64 @@ export default function PrescriptionResultScreen() {
             clearTimeout(timeoutId);
             const result = await response.json();
 
-            if (!response.status.toString().startsWith('2')) {
-                throw new Error(result.error || `Server error: ${response.status}`);
+            if (result.is_medical === false || result.error === 'not_medical_record') {
+                setLoading(false);
+                Alert.alert(
+                    t('result.invalidDoc'),
+                    t('result.invalidDocDesc'),
+                    [{ text: t('profile.close'), onPress: () => router.back() }]
+                );
+                return;
             }
 
-            if (result.error === 'not_medical_record') {
+            // Stricter Success Validation: No data found
+            const hasMedicines = result.medicines && result.medicines.length > 0;
+            const hasLabTests = result.labTests && result.labTests.length > 0;
+
+            if (!hasMedicines && !hasLabTests) {
+                setLoading(false);
                 Alert.alert(
-                    'Invalid Document',
-                    'MedHive AI: This image doesn\'t appear to be a medical prescription or lab report. Please upload a clear medical document.',
-                    [{ text: 'OK', onPress: () => router.back() }]
+                    t('result.noDetails'),
+                    t('result.noDetailsDesc'),
+                    [{ text: t('profile.close'), onPress: () => router.back() }]
                 );
                 return;
             }
 
             setData(result);
             setHasError(false);
+
+            // Success Animation
+            setShowSuccess(true);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+            Animated.spring(successAnim, {
+                toValue: 1,
+                friction: 6,
+                tension: 40,
+                useNativeDriver: true
+            }).start();
+
+            // Delay before showing results
+            setTimeout(() => {
+                setLoading(false);
+                setShowSuccess(false);
+            }, 2000);
+
         } catch (error: any) {
             console.log('Extraction error (Handled):', error.message);
             setHasError(true);
+            setLoading(false);
 
             // Soft alert instead of forcing a back navigation
             Alert.alert(
-                'Server Busy',
-                'MedHive AI is temporarily unavailable (Free Tier limit). You can still securely send your prescription image directly to the clinic below.',
-                [{ text: 'Continue' }]
+                t('result.serverBusy'),
+                t('result.serverBusyDesc'),
+                [
+                    { text: t('profile.cancel'), onPress: () => router.back(), style: 'cancel' },
+                    { text: t('access.alerts.confirm') }
+                ]
             );
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -132,7 +264,7 @@ export default function PrescriptionResultScreen() {
 
     const handleOpenSummary = async () => {
         if (!data?.medicines?.[0]?.name) {
-            Alert.alert('No Data', 'No medicines detected to summarize.');
+            Alert.alert(t('result.noDetails'), t('result.noDetailsDesc'));
             return;
         }
         setModalType('summary');
@@ -151,7 +283,7 @@ export default function PrescriptionResultScreen() {
             const result = await response.json();
             setSummary(result.summary);
         } catch (error) {
-            Alert.alert('Error', 'Failed to generate medical summary.');
+            Alert.alert('Error', t('result.summaryFailed'));
         } finally {
             setSummaryLoading(false);
         }
@@ -166,65 +298,146 @@ export default function PrescriptionResultScreen() {
         }
         Clipboard.setString(content);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        Alert.alert('Copied', 'Information copied to clipboard.');
+        Alert.alert(t('result.copy'), t('result.copied'));
     };
 
+    const [sendingToClinic, setSendingToClinic] = useState(false);
+
     const handleSendToClinic = () => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        const msg = hasError
-            ? 'Your prescription image has been securely forwarded to your clinic pharmacy (Direct Mode).'
-            : 'Prescription data and image have been securely forwarded to your clinic pharmacy.';
-        Alert.alert('Success', msg);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        setClinicSelectorVisible(true);
     };
+
+    const sendToSelectedClinic = async (clinic: any) => {
+        try {
+            setSendingToClinic(true);
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+            // Get user data for patient info
+            const { getUser } = await import('../utils/userStore');
+            const userData = await getUser();
+
+            const formData = new FormData();
+
+            // Add the prescription image
+            if (Platform.OS === 'web') {
+                const response = await fetch(imageUri);
+                const blob = await response.blob();
+                const imageBlob = new Blob([blob], { type: 'image/jpeg' });
+                formData.append('image', imageBlob, 'prescription.jpg');
+            } else {
+                // @ts-ignore
+                formData.append('image', {
+                    uri: imageUri,
+                    name: 'prescription.jpg',
+                    type: 'image/jpeg',
+                });
+            }
+
+            // Add patient information
+            const patientName = userData ? `${userData.fname} ${userData.lname}` : 'Unknown Patient';
+            const medHiveId = userData?.med_id || 'N/A';
+
+            formData.append('patientName', patientName);
+            formData.append('medHiveId', medHiveId);
+            formData.append('clinicId', clinic.clinic_id.toString());
+
+            // Add extracted data if available (fallback: send only image if AI failed)
+            if (!hasError && data) {
+                formData.append('extractedData', JSON.stringify(data));
+            }
+
+            const response = await fetch(API_ENDPOINTS.SEND_TO_CLINIC, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                const msg = hasError
+                    ? `Prescription sent to ${clinic.clinic_name} (image only - AI extraction unavailable)`
+                    : `Prescription sent successfully to ${clinic.clinic_name}!`;
+                Alert.alert('Success', msg);
+            } else {
+                Alert.alert('Error', result.error || t('result.sendFailed'));
+            }
+        } catch (error) {
+            console.error('Error sending to clinic:', error);
+            Alert.alert('Error', t('result.sendFailed'));
+        } finally {
+            setSendingToClinic(false);
+        }
+    };
+
 
     const handleAddToHistory = async () => {
         try {
+            // Prepare payload even if extraction failed
+            const historyData = hasError ? {
+                type: 'prescription',
+                date: new Date().toISOString(),
+                clinicName: 'Manual Upload',
+                medicines: [],
+                notes: t('result.aiUnavailable'),
+                imageUri
+            } : { ...data, imageUri };
+
             const response = await fetch(API_ENDPOINTS.HISTORY, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...data, imageUri }),
+                body: JSON.stringify(historyData),
             });
             if (response.ok) {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                Alert.alert('Success', 'Record saved to your medical history.');
+                Alert.alert(t('access.active'), t('result.copied')); // Reuse success message or add new one
             }
         } catch (error) {
-            Alert.alert('Error', 'Failed to save record.');
+            Alert.alert('Error', t('result.saveFailed'));
         }
     };
 
     if (loading) {
         return (
-            <View style={styles.loadingMainContainer}>
+            <View style={styles.loadingContainer}>
                 <Stack.Screen options={{ headerShown: false }} />
-                <SafeAreaView style={styles.loadingSafeArea}>
-                    <View style={styles.loadingContentPill}>
-                        <View style={styles.scanContainer}>
-                            <View style={styles.loadingImagePill}>
-                                <Image source={{ uri: imageUri }} style={styles.loadingImage} resizeMode="cover" />
-                                <Animated.View
-                                    style={[
-                                        styles.scanLine,
-                                        {
-                                            transform: [{
-                                                translateY: scanAnim.interpolate({
-                                                    inputRange: [0, 1],
-                                                    outputRange: [0, 200]
-                                                })
-                                            }]
-                                        }
-                                    ]}
-                                />
-                            </View>
-                        </View>
-
-                        <View style={styles.loadingStatusArea}>
-                            <ActivityIndicator size="small" color="#fff" style={{ marginBottom: 15 }} />
-                            <Text style={styles.loadingTitle}>MedHive AI Analyzing...</Text>
-                            <Text style={styles.loadingSubtext}>Extracting medical details from your image</Text>
-                        </View>
+                <Image source={{ uri: imageUri }} style={styles.loadingBgImage} resizeMode="cover" blurRadius={10} />
+                <View style={styles.loadingOverlay}>
+                    <View style={styles.scanCard}>
+                        <Image source={{ uri: imageUri }} style={styles.scanImage} resizeMode="cover" />
+                        <Animated.View
+                            style={[
+                                styles.scanLine,
+                                {
+                                    opacity: scanLineOpacity,
+                                    transform: [{
+                                        translateY: scanAnim.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [0, 260] // Match scanImage height
+                                        })
+                                    }]
+                                }
+                            ]}
+                        />
                     </View>
-                </SafeAreaView>
+                    <View style={styles.loadingTextContainer}>
+                        {showSuccess ? (
+                            <Animated.View style={{ alignItems: 'center', transform: [{ scale: successAnim }] }}>
+                                <View style={styles.successCircle}>
+                                    <Ionicons name="checkmark" size={50} color="#fff" />
+                                </View>
+                                <Text style={styles.loadingTitle}>{t('result.scanComplete')}</Text>
+                            </Animated.View>
+                        ) : (
+                            <>
+                                <ActivityIndicator size="large" color="#fff" />
+                                <Text style={styles.loadingTitle}>{t('result.extracting')}</Text>
+                                <Text style={styles.loadingSubtitle}>{t('result.extractingSub')}</Text>
+                            </>
+                        )}
+                    </View>
+                </View>
             </View>
         );
     }
@@ -233,488 +446,652 @@ export default function PrescriptionResultScreen() {
         <View style={styles.mainContainer}>
             <Stack.Screen options={{ headerShown: false }} />
 
-            <SafeAreaView style={styles.safeArea} edges={['bottom', 'left', 'right']}>
-                {/* Sticky "Close" Button Unit - Matching Profile Modal */}
-                <View style={[
-                    styles.closeHeader,
-                    { top: Platform.OS === 'web' ? 65 : insets.top + 10, pointerEvents: 'box-none' }
-                ]}>
-                    <View style={styles.closeHeaderInner}>
-                        <View style={styles.headerSpacer} />
-                        <BlurView intensity={60} tint="light" style={styles.blurWrapper}>
-                            <TouchableOpacity
-                                style={styles.doneBtn}
-                                onPress={() => {
-                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                    router.back();
-                                }}
-                            >
-                                <Text style={styles.doneText}>Close</Text>
-                            </TouchableOpacity>
-                        </BlurView>
-                    </View>
-                </View>
-
-                <View style={[
-                    styles.contentPill,
-                    Platform.OS !== 'web' && { marginTop: insets.top + 60 }
-                ]}>
-                    {/* Header Image */}
-                    <View style={styles.imageWrapper}>
-                        <Image source={{ uri: imageUri }} style={styles.mainImage} resizeMode="cover" />
+            {/* Header */}
+            <SafeAreaView style={styles.safeArea}>
+                <View style={[styles.contentContainer, isWeb && styles.webContentContainer]}>
+                    <View style={styles.header}>
+                        <View style={{ width: 40 }} />
+                        <Text style={styles.headerTitle}>{t('result.title')}</Text>
+                        <TouchableOpacity
+                            onPress={() => router.back()}
+                            style={styles.backButton}
+                        >
+                            <Ionicons name="close" size={24} color={Colors.light.text} />
+                        </TouchableOpacity>
                     </View>
 
-                    {/* Action Area */}
-                    <View style={styles.resultsArea}>
-                        <Text style={styles.welcomeText}>
-                            {hasError ? 'Direct Send Mode' : 'Scan Complete'}
-                        </Text>
-                        <Text style={styles.subText}>
-                            {hasError
-                                ? 'AI extraction hit its limit. You can still forward the image to your clinic for manual verification.'
-                                : 'Select an option below to view extracted data or get a detailed AI summary.'}
-                        </Text>
+                    <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+                        {/* Image Card - Click to Expand */}
+                        <TouchableOpacity
+                            style={styles.imageCard}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                setFullScreenVisible(true);
+                            }}
+                            activeOpacity={0.7}
+                        >
+                            <Image source={{ uri: imageUri }} style={styles.resultImage} resizeMode="cover" />
+                            <View style={styles.statusBadge}>
+                                <Ionicons name="expand" size={12} color="#111827" />
+                                <Text style={styles.statusText}>{t('result.tapToView')}</Text>
+                            </View>
+                        </TouchableOpacity>
 
-                        <View style={styles.actionGridContainer}>
+                        {/* Title Section */}
+                        <View style={styles.titleSection}>
+                            <Text style={styles.mainTitle}>
+                                {hasError
+                                    ? t('result.manualRequired')
+                                    : t('result.subtitle')}
+                            </Text>
+                            <Text style={styles.subTitle}>
+                                {hasError
+                                    ? t('result.manualDesc')
+                                    : t('result.subtitle')}
+                            </Text>
+                        </View>
+
+                        {/* Action Cards - Only show if not in error mode */}
+                        {!hasError && (
+                            <View style={styles.actionsContainer}>
+                                <TouchableOpacity
+                                    style={styles.actionCard}
+                                    onPress={handleOpenDetails}
+                                >
+                                    <View style={[styles.iconBox, { backgroundColor: '#E3F2FD' }]}>
+                                        <Ionicons name="list" size={24} color="#2196F3" />
+                                    </View>
+                                    <View style={styles.actionTextContainer}>
+                                        <Text style={styles.actionTitle}>{t('result.viewDetails')}</Text>
+                                        <Text style={styles.actionDesc}>{t('result.detailsDesc')}</Text>
+                                    </View>
+                                    <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={styles.actionCard}
+                                    onPress={handleOpenSummary}
+                                >
+                                    <View style={[styles.iconBox, { backgroundColor: '#F3E5F5' }]}>
+                                        <Ionicons name="sparkles" size={24} color="#9C27B0" />
+                                    </View>
+                                    <View style={styles.actionTextContainer}>
+                                        <Text style={styles.actionTitle}>{t('result.aiSummary')}</Text>
+                                        <Text style={styles.actionDesc}>{t('result.summaryDesc')}</Text>
+                                    </View>
+                                    <Ionicons name="chevron-forward" size={20} color={Colors.light.icon} />
+                                </TouchableOpacity>
+                            </View>
+                        )}
+
+                        <View style={styles.divider} />
+
+                        <View style={[styles.actionsContainer, { marginTop: 12 }]}>
                             <TouchableOpacity
-                                style={[styles.buttonBase, hasError && styles.buttonDisabled]}
-                                onPress={handleOpenDetails}
-                                disabled={hasError}
+                                style={styles.primaryButton}
+                                onPress={handleSendToClinic}
+                                disabled={sendingToClinic}
                             >
                                 <LinearGradient
-                                    colors={hasError ? ['#9CA3AF', '#6B7280'] : ['#4A4A4A', '#2D2D2D']}
-                                    style={styles.buttonGradientBase}
+                                    colors={sendingToClinic
+                                        ? ['#9CA3AF', '#6B7280']
+                                        : [Colors.light.primary, Colors.light.primaryDark]}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 0 }}
+                                    style={styles.primaryButtonGradient}
                                 >
-                                    <Ionicons name="list" size={18} color={hasError ? 'rgba(255,255,255,0.5)' : "#fff"} />
-                                    <Text style={[styles.buttonTextBase, hasError && styles.textDisabled]}>View Medical Details</Text>
+                                    {sendingToClinic ? (
+                                        <ActivityIndicator size="small" color="#fff" />
+                                    ) : (
+                                        <Ionicons name="paper-plane" size={20} color="#fff" />
+                                    )}
+                                    <Text style={styles.primaryButtonText}>
+                                        {sendingToClinic ? t('result.sending') : t('result.sendPharmacy')}
+                                    </Text>
                                 </LinearGradient>
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                                style={[styles.buttonBase, hasError && styles.buttonDisabled]}
-                                onPress={handleOpenSummary}
-                                disabled={hasError}
-                            >
-                                <LinearGradient
-                                    colors={hasError ? ['#9CA3AF', '#6B7280'] : ['#4A4A4A', '#2D2D2D']}
-                                    style={styles.buttonGradientBase}
-                                >
-                                    <Ionicons name="sparkles" size={18} color={hasError ? 'rgba(255,255,255,0.5)' : "#fff"} />
-                                    <Text style={[styles.buttonTextBase, hasError && styles.textDisabled]}>View AI Summary</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-
-                            <View style={styles.divider} />
-
-                            <TouchableOpacity style={styles.buttonBase} onPress={handleSendToClinic}>
-                                <LinearGradient colors={['#ADC178', '#8A9A5B']} style={styles.buttonGradientBase}>
-                                    <Ionicons name="business" size={18} color="#fff" />
-                                    <Text style={styles.buttonTextBase}>Send to Clinic</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={[styles.buttonBase, hasError && styles.buttonDisabled]}
+                                style={styles.secondaryButton}
                                 onPress={handleAddToHistory}
-                                disabled={hasError}
                             >
-                                <LinearGradient
-                                    colors={hasError ? ['#9CA3AF', '#6B7280'] : ['#ADC178', '#8A9A5B']}
-                                    style={styles.buttonGradientBase}
-                                >
-                                    <Ionicons name="archive" size={18} color={hasError ? 'rgba(255,255,255,0.5)' : "#fff"} />
-                                    <Text style={[styles.buttonTextBase, hasError && styles.textDisabled]}>Add to History</Text>
-                                </LinearGradient>
+                                <View style={styles.secondaryButtonContent}>
+                                    <Ionicons name="save-outline" size={20} color={Colors.light.primary} />
+                                    <Text style={styles.secondaryButtonText}>{t('result.saveHistory')}</Text>
+                                </View>
                             </TouchableOpacity>
                         </View>
-                    </View>
+
+                        {/* Spacer for Mobile Web Browser Bar - Increased height */}
+                        {isWeb && <View style={{ height: 150 }} />}
+                    </ScrollView>
                 </View>
             </SafeAreaView>
 
-            {/* Elegant Charcoal Modal */}
+            {/* Medical Details Modal */}
             <Modal
                 animationType="slide"
-                transparent={true}
+                presentationStyle="pageSheet"
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={styles.modalOverlay}>
-                    <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
+                <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalBrand}>MedHive's Prescription Reader</Text>
-
-                        <View style={styles.dataContainer}>
-                            <Text style={styles.dataTitle}>
-                                {modalType === 'details' ? 'Medicine Data' : 'Medicine Summary'}
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>
+                                {modalType === 'details' ? t('result.viewDetails') : t('result.aiSummary')}
                             </Text>
 
-                            <ScrollView style={styles.dataScroll} showsVerticalScrollIndicator={false}>
-                                {modalType === 'details' ? (
-                                    <View>
-                                        {data?.medicines?.map((med: any, index: number) => (
-                                            <View key={index} style={styles.modalMedItem}>
-                                                <Text style={styles.modalMedText}>• {med.name} {med.dosage ? `${med.dosage}` : ''} {med.duration ? `x ${med.duration}` : ''}</Text>
-                                            </View>
-                                        ))}
-                                        {(!data?.medicines || data?.medicines.length === 0) && (
-                                            <Text style={styles.modalEmptyText}>No medicines detected.</Text>
-                                        )}
-                                    </View>
-                                ) : (
-                                    <View>
-                                        {summaryLoading ? (
-                                            <ActivityIndicator color="#fff" style={{ marginTop: 20 }} />
-                                        ) : (
-                                            <Text style={styles.modalSummaryText}>{summary || 'Analyzing...'}</Text>
-                                        )}
-                                    </View>
-                                )}
-                            </ScrollView>
+                            <TouchableOpacity style={styles.headerIconButton} onPress={() => setModalVisible(false)}>
+                                <Ionicons name="close" size={24} color={Colors.light.text} />
+                            </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity style={styles.copyBtn} onPress={handleCopy}>
-                            <Text style={styles.copyBtnText}>Copy</Text>
-                        </TouchableOpacity>
+                        <ScrollView style={styles.modalScroll}>
+                            {modalType === 'details' ? (
+                                <View style={styles.detailsList}>
+                                    {data?.medicines?.map((med: any, index: number) => (
+                                        <View key={index} style={styles.detailItem}>
+                                            <Text style={styles.medName}>{med.name}</Text>
+                                            <View style={styles.medDetailsRow}>
+                                                <View style={styles.medDosageChip}>
+                                                    <Text style={styles.medDosageText}>{med.dosage}</Text>
+                                                </View>
+                                                {med.frequency && (
+                                                    <View style={styles.medFrequencyChip}>
+                                                        <Text style={styles.medFrequencyText}>{med.frequency}</Text>
+                                                    </View>
+                                                )}
+                                            </View>
+                                        </View>
+                                    ))}
+                                    {(!data?.medicines || data?.medicines.length === 0) && (
+                                        <Text style={styles.emptyText}>{t('result.noMedsFound')}</Text>
+                                    )}
+                                </View>
+                            ) : (
+                                <View style={styles.summaryContainer}>
+                                    {summaryLoading ? (
+                                        <ActivityIndicator color={Colors.light.primary} size="large" />
+                                    ) : (
+                                        <View>
+                                            {summary ? renderMarkdown(summary) : <Text style={styles.summaryText}>{t('result.analyzing')}</Text>}
+                                        </View>
+                                    )}
+                                </View>
+                            )}
+                        </ScrollView>
 
-                        <TouchableOpacity style={styles.modalBackBtn} onPress={() => setModalVisible(false)}>
-                            <Ionicons name="chevron-back" size={24} color="rgba(255,255,255,0.7)" />
-                        </TouchableOpacity>
+                        <View style={styles.modalActions}>
+                            <TouchableOpacity style={styles.copyButton} onPress={handleCopy}>
+                                <Ionicons name="copy-outline" size={20} color="#FFFFFF" />
+                                <Text style={styles.copyButtonText}>{t('result.copy')}</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </Modal>
+
+            {/* Full Screen Image Modal */}
+            <ImagePreviewModal
+                isVisible={fullScreenVisible}
+                imageUri={imageUri}
+                onClose={() => setFullScreenVisible(false)}
+            />
+
+            {/* Clinic Selector Modal */}
+            <ClinicSelector
+                visible={clinicSelectorVisible}
+                onClose={() => setClinicSelectorVisible(false)}
+                onSelectClinic={sendToSelectedClinic}
+            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    contentContainer: {
+        flex: 1,
+    },
+    webContentContainer: {
+        width: '100%',
+        maxWidth: 600,
+        alignSelf: 'center',
+    },
     mainContainer: {
         flex: 1,
-        backgroundColor: '#F8FAFC',
+        backgroundColor: Colors.light.background,
     },
     safeArea: {
         flex: 1,
+    },
+    header: {
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: Platform.OS === 'web' ? 'center' : 'flex-start',
+        justifyContent: 'space-between',
+        paddingHorizontal: 20,
+        paddingVertical: isWeb ? 12 : 15,
     },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F8FAFC',
-    },
-    loadingMainContainer: {
-        flex: 1,
-        backgroundColor: '#F8FAFC',
-    },
-    loadingSafeArea: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    loadingContentPill: {
-        width: width * 0.95,
-        maxWidth: 420,
-        backgroundColor: Colors.light.primary,
-        borderRadius: 40,
-        padding: 20,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 15,
-        elevation: 10,
-    },
-    scanContainer: {
-        width: '100%',
-        alignItems: 'center',
-        paddingVertical: 10,
-    },
-    loadingImagePill: {
-        width: '100%',
-        height: 200,
-        borderRadius: 32,
-        overflow: 'hidden',
+    backButton: {
+        width: isWeb ? 38 : 40,
+        height: isWeb ? 38 : 40,
+        borderRadius: 35,
         backgroundColor: '#fff',
-        borderWidth: 4,
-        borderColor: 'rgba(255,255,255,0.3)',
-        position: 'relative',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
+        elevation: 2,
     },
-    loadingImage: {
+    headerTitle: {
+        fontSize: isWeb ? 17 : 18,
+        fontWeight: '600',
+        color: Colors.light.text,
+    },
+    scrollContent: {
+        paddingHorizontal: 20,
+        paddingBottom: isWeb ? 100 : 40,
+    },
+    imageCard: {
+        width: '100%',
+        height: isWeb ? 190 : 220,
+        borderRadius: isWeb ? 30 : 35,
+        backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: isWeb ? 7 : 10 },
+        shadowOpacity: 0.08,
+        shadowRadius: isWeb ? 18 : 20,
+        elevation: 5,
+        marginBottom: isWeb ? 18 : 20,
+        overflow: 'hidden',
+        position: 'relative'
+    },
+    resultImage: {
         width: '100%',
         height: '100%',
-        opacity: 0.9,
+    },
+    statusBadge: {
+        position: 'absolute',
+        bottom: isWeb ? 12 : 15,
+        right: isWeb ? 12 : 15,
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        paddingHorizontal: isWeb ? 11 : 12,
+        paddingVertical: isWeb ? 5 : 6,
+        borderRadius: 35,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: isWeb ? 5 : 6,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    statusText: {
+        fontSize: isWeb ? 11.5 : 12,
+        fontWeight: '600',
+        color: '#111827',
+    },
+    titleSection: {
+        marginBottom: isWeb ? 18 : 20,
+    },
+    mainTitle: {
+        fontSize: isWeb ? 22 : 24,
+        fontWeight: 'bold',
+        color: Colors.light.text,
+        marginBottom: isWeb ? 5 : 6,
+        letterSpacing: -0.5,
+    },
+    subTitle: {
+        fontSize: isWeb ? 14 : 15,
+        color: Colors.light.icon,
+        lineHeight: isWeb ? 20 : 22,
+    },
+    actionsContainer: {
+        gap: isWeb ? 11 : 12,
+    },
+    actionCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        padding: isWeb ? 13 : 14,
+        borderRadius: isWeb ? 30 : 35,
+        borderWidth: 1,
+        borderColor: '#EDE9FE',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.03,
+        shadowRadius: isWeb ? 6 : 8,
+        elevation: 1,
+    },
+    cardDisabled: {
+        opacity: 0.6,
+        backgroundColor: '#F3F4F6',
+    },
+    iconBox: {
+        width: isWeb ? 40 : 48,
+        height: isWeb ? 40 : 48,
+        borderRadius: 35,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: isWeb ? 12 : 16,
+    },
+    actionTextContainer: {
+        flex: 1,
+    },
+    actionTitle: {
+        fontSize: isWeb ? 15 : 16,
+        fontWeight: '600',
+        color: Colors.light.text,
+        marginBottom: 2,
+    },
+    actionDesc: {
+        fontSize: isWeb ? 12 : 13,
+        color: Colors.light.icon,
+    },
+    divider: {
+        height: 1,
+        backgroundColor: '#E5E7EB',
+        marginVertical: isWeb ? 8 : 10,
+    },
+    primaryButton: {
+        width: '100%',
+        borderRadius: 35,
+        overflow: 'hidden',
+        shadowColor: Colors.light.primary,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.2,
+        shadowRadius: 16,
+        elevation: 8,
+    },
+    primaryButtonGradient: {
+        paddingVertical: isWeb ? 15 : 18,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+    },
+    primaryButtonText: {
+        fontSize: isWeb ? 15 : 16,
+        fontWeight: '700',
+        color: '#fff',
+    },
+    secondaryButton: {
+        width: '100%',
+        borderRadius: 35,
+        backgroundColor: '#F8FAFC',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        overflow: 'hidden',
+    },
+    secondaryButtonContent: {
+        paddingVertical: isWeb ? 15 : 18,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10,
+    },
+    secondaryButtonText: {
+        fontSize: isWeb ? 15 : 16,
+        fontWeight: '700',
+        color: Colors.light.primary,
+    },
+
+    // Loading State
+    loadingContainer: {
+        flex: 1,
+        backgroundColor: '#000',
+    },
+    loadingBgImage: {
+        flex: 1,
+        opacity: 0.4,
+    },
+    loadingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.6)',
+    },
+    scanCard: {
+        width: isWeb ? '92%' : width * 0.85,
+        maxWidth: isWeb ? 400 : undefined,
+        alignSelf: 'center',
+        height: 260,
+        borderRadius: 35,
+        overflow: 'hidden',
+        borderWidth: 2,
+        borderColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: '#000',
+        marginBottom: 40,
+    },
+    scanImage: {
+        width: '100%',
+        height: '100%',
+        opacity: 0.8,
     },
     scanLine: {
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
-        height: 4,
-        backgroundColor: '#fff',
-        shadowColor: '#fff',
+        height: 3,
+        backgroundColor: Colors.light.primary,
+        shadowColor: Colors.light.primary,
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 1,
         shadowRadius: 10,
-        elevation: 10,
-        zIndex: 10,
     },
-    loadingStatusArea: {
-        paddingVertical: 20,
+    loadingTextContainer: {
         alignItems: 'center',
     },
     loadingTitle: {
         fontSize: 20,
-        fontWeight: '900',
-        color: '#fff',
-        marginBottom: 6,
-    },
-    loadingSubtext: {
-        fontSize: 14,
-        color: 'rgba(255,255,255,0.8)',
-        textAlign: 'center',
-        paddingHorizontal: 20,
-    },
-    loadingText: {
-        marginTop: 20,
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#4A4A4A',
-    },
-    contentPill: {
-        width: width * 0.95,
-        maxWidth: 420,
-        alignSelf: 'center',
-        backgroundColor: Colors.light.primary,
-        borderRadius: 40,
-        padding: 15, // Increased padding
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 15,
-        elevation: 10,
-        // Web optimization
-        ...Platform.select({
-            web: {
-                marginVertical: 40,
-                minHeight: 500,
-            },
-            default: {
-                flex: 1,
-                marginBottom: 20,
-            }
-        })
-    },
-    imageWrapper: {
-        height: Platform.OS === 'web' ? 160 : height * 0.28, // Compact image for web
-        width: '100%',
-        borderRadius: 32,
-        overflow: 'hidden',
-        backgroundColor: '#fff',
-    },
-    mainImage: {
-        width: '100%',
-        height: '100%',
-    },
-    imageOverlay: {
-        position: 'absolute',
-        bottom: 15,
-        left: 15,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        borderRadius: 120,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    overlayText: {
-        color: '#fff',
-        fontSize: 13,
         fontWeight: '700',
-    },
-    resultsArea: {
-        flex: 1,
-        paddingVertical: 15,
-        paddingHorizontal: 15,
-    },
-    welcomeText: {
-        fontSize: 22,
-        fontWeight: '900',
         color: '#fff',
         marginBottom: 8,
-        textAlign: 'center',
     },
-    subText: {
+    loadingSubtitle: {
         fontSize: 14,
-        color: 'rgba(255,255,255,0.9)',
-        lineHeight: 20,
-        marginBottom: 20,
-        textAlign: 'center',
+        color: 'rgba(255,255,255,0.7)',
     },
-    actionGridContainer: {
-        gap: 12,
-        marginTop: 5,
-    },
-    divider: {
-        height: 1,
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        marginVertical: 5,
-    },
-    buttonBase: {
-        width: '100%',
-        borderRadius: 22,
-        overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 5,
-    },
-    buttonGradientBase: {
-        paddingVertical: Platform.OS === 'web' ? 14 : 17, // Slimmer buttons on web
-        flexDirection: 'row',
+    successCircle: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        backgroundColor: Colors.light.primary,
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 12,
+        marginBottom: 16,
+        borderWidth: 4,
+        borderColor: '#fff',
+        shadowColor: Colors.light.primary,
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 20,
     },
-    buttonTextBase: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '800',
-        letterSpacing: 0.3,
+
+    // Modal
+    modalContainer: {
+        flex: 1,
+        backgroundColor: Colors.light.background,
     },
-    buttonDisabled: {
-        opacity: 0.6,
-    },
-    textDisabled: {
-        color: 'rgba(255,255,255,0.5)',
-    },
-    // Matching Profile Modal Close Button
-    closeHeader: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        zIndex: 100,
-        alignItems: 'center',
-    },
-    closeHeaderInner: {
-        width: '100%',
-        maxWidth: 420, // Match new contentPill width
-        paddingHorizontal: 15,
-        flexDirection: 'row',
-        alignItems: 'center',
+    modalOverlay: {
+        flex: 1,
         justifyContent: 'flex-end',
     },
-    headerSpacer: {
+    modalBackdrop: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    modalContent: {
+        backgroundColor: '#fff',
+        borderTopLeftRadius: 35,
+        borderTopRightRadius: 35,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -5 },
+        shadowOpacity: 0.1,
+        shadowRadius: 20,
+        elevation: 20,
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F3F4F6',
+    },
+
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: Colors.light.text,
+        textAlign: 'center',
         flex: 1,
     },
-    blurWrapper: {
-        borderRadius: 22,
-        overflow: 'hidden',
+    headerIconButton: {
+        padding: 8,
+        backgroundColor: '#F3F4F6',
+        borderRadius: 20,
+        width: 40,
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    modalScroll: {
+        padding: 20,
+    },
+    detailsList: {
+        gap: 15,
+    },
+    detailItem: {
+        padding: 20,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 20,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.4)',
+        borderColor: '#E5E7EB',
+        marginBottom: 12,
     },
-    doneBtn: {
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        borderRadius: 22,
+    detailIcon: {
+        width: 40,
+        height: 40,
+        borderRadius: 35,
+        backgroundColor: '#FEF3C7',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 15,
     },
-    doneText: {
+    detailInfo: {
+        flex: 1,
+    },
+    medName: {
         fontSize: 17,
+        fontWeight: '700',
+        color: Colors.light.text,
+        marginBottom: 10,
+    },
+    medDetailsRow: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 8,
+    },
+    medDosageChip: {
+        backgroundColor: 'rgba(220, 163, 73, 0.08)',
+        paddingHorizontal: 12,
+        paddingVertical: 5,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: 'rgba(220, 163, 73, 0.2)',
+    },
+    medDosageText: {
+        fontSize: 14,
         fontWeight: '600',
         color: Colors.light.primary,
     },
-    // Modal Styles matching design
-    modalOverlay: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+    medFrequencyChip: {
+        backgroundColor: '#F3F4F6',
+        paddingHorizontal: 12,
+        paddingVertical: 5,
+        borderRadius: 12,
     },
-    modalContent: {
-        width: width * 0.92,
-        maxWidth: 450, // UX: Premium focused width on Web
-        backgroundColor: '#2D2D2A', // Deep charcoal
-        borderRadius: 40,
-        padding: 25,
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.1)',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 20 },
-        shadowOpacity: 0.5,
-        shadowRadius: 30,
-        elevation: 20,
+    medFrequencyText: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#6B7280',
     },
-    modalBrand: {
-        fontSize: 15,
-        fontWeight: '700',
-        color: '#fff',
-        marginBottom: 20,
-        letterSpacing: 0.5,
-    },
-    dataContainer: {
-        width: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-        borderRadius: 30,
-        padding: 20,
-        height: height * 0.45,
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.08)',
-    },
-    dataTitle: {
-        fontSize: 18,
-        fontWeight: '800',
-        color: 'rgba(255,255,255,0.7)',
+    emptyText: {
         textAlign: 'center',
-        marginBottom: 15,
-    },
-    dataScroll: {
-        flex: 1,
-    },
-    modalMedItem: {
-        marginBottom: 12,
-    },
-    modalMedText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: '600',
-        textAlign: 'center',
-        lineHeight: 26,
-    },
-    modalSummaryText: {
-        color: '#fff',
-        fontSize: 17,
-        lineHeight: 25,
-        textAlign: 'center',
-    },
-    modalEmptyText: {
-        color: 'rgba(255,255,255,0.4)',
-        textAlign: 'center',
+        color: '#9CA3AF',
         marginTop: 20,
     },
-    copyBtn: {
-        width: '100%',
-        backgroundColor: '#243b2b', // Deep green
-        paddingVertical: 14,
-        borderRadius: 20,
-        marginTop: 20,
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'rgba(46, 75, 55, 0.5)',
+    summaryContainer: {
+        paddingTop: 10,
     },
-    copyBtnText: {
-        color: '#4CAF50',
+    summaryText: {
         fontSize: 16,
-        fontWeight: '800',
+        lineHeight: 26,
+        color: '#374151',
     },
-    modalBackBtn: {
-        marginTop: 15,
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.1)',
+    modalActions: {
+        padding: 20,
+        borderTopWidth: 1,
+        borderTopColor: '#F3F4F6',
+    },
+    copyButton: {
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-    }
+        gap: 10,
+        paddingVertical: 16,
+        backgroundColor: Colors.light.primary,
+        borderRadius: 35,
+    },
+    copyButtonText: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#FFFFFF',
+    },
+    // Markdown Styles
+    mdH2: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: Colors.light.text,
+        marginBottom: 8,
+    },
+    mdH3: {
+        fontSize: 17,
+        fontWeight: '600',
+        color: Colors.light.text,
+        marginBottom: 6,
+    },
+    mdParagraph: {
+        fontSize: 15,
+        lineHeight: 24,
+        color: '#374151',
+        marginBottom: 4,
+    },
+    mdBold: {
+        fontWeight: '700',
+        color: '#111827',
+    },
+    mdListItem: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: 6,
+        paddingLeft: 4,
+    },
+    mdBullet: {
+        fontSize: 16,
+        lineHeight: 24,
+        marginRight: 8,
+        color: Colors.light.primary,
+    },
+    mdListText: {
+        flex: 1,
+        fontSize: 15,
+        lineHeight: 24,
+        color: '#374151',
+    },
+
 });

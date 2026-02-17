@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
     View,
     Text,
@@ -10,7 +10,9 @@ import {
     Linking,
     TextInput,
     Modal,
-    Alert
+    Alert,
+    Platform,
+    Pressable
 } from 'react-native';
 import { useAlert } from '../context/AlertContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,15 +24,10 @@ import { router } from 'expo-router';
 import { Colors } from '../constants/theme';
 import { generateMockHistory } from '../utils/historyUtils';
 import { generateMockAccess } from '../utils/accessUtils';
+import { getUser, clearUser, saveUser, UserData } from '../utils/userStore';
+import { useTranslation } from 'react-i18next';
+import { LanguagePicker } from '../components/LanguagePicker';
 
-// Mock user data
-const USER = {
-    name: 'John Doe',
-    email: 'john.doe@email.com',
-    medId: '2000154823',
-    avatar: null, // Would be a URI in production
-    memberSince: 'January 2024',
-};
 
 interface MenuItemProps {
     icon: keyof typeof Ionicons.glyphMap;
@@ -40,11 +37,19 @@ interface MenuItemProps {
     showChevron?: boolean;
     iconColor?: string;
     danger?: boolean;
+    hideBorder?: boolean;
 }
 
-const MenuItem = ({ icon, label, value, onPress, showChevron = true, iconColor, danger }: MenuItemProps) => (
+const MenuItem = ({ icon, label, value, onPress, showChevron = true, iconColor, danger, hideBorder }: MenuItemProps) => (
     <TouchableOpacity
-        style={styles.menuItem}
+        style={[
+            styles.menuItem,
+            hideBorder && {
+                borderBottomWidth: 0,
+                borderBottomLeftRadius: 35,
+                borderBottomRightRadius: 35,
+            }
+        ]}
         onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             onPress?.();
@@ -65,17 +70,26 @@ const MenuItem = ({ icon, label, value, onPress, showChevron = true, iconColor, 
 );
 
 export default function ProfileScreen() {
+    const { t, i18n } = useTranslation();
     const insets = useSafeAreaInsets();
     const { showAlert } = useAlert();
+    const [langPickerVisible, setLangPickerVisible] = useState(false);
 
     // User State
-    const [userData, setUserData] = useState({
-        name: 'John Doe',
-        email: 'john.doe@email.com',
-        medId: '2000 1548 2314',
-        avatar: null,
-        memberSince: 'Jan 2024'
-    });
+    const [userData, setUserData] = useState<UserData | null>(null);
+
+    useEffect(() => {
+        loadUserData();
+    }, []);
+
+    const loadUserData = async () => {
+        const user = await getUser();
+        if (user) {
+            setUserData(user);
+            setTempName(`${user.fname} ${user.lname}`);
+            setTempEmail(user.email);
+        }
+    };
 
     // Preferences
     const [notifications, setNotifications] = useState(true);
@@ -83,8 +97,8 @@ export default function ProfileScreen() {
 
     // Modal States
     const [editModalVisible, setEditModalVisible] = useState(false);
-    const [tempName, setTempName] = useState(userData.name);
-    const [tempEmail, setTempEmail] = useState(userData.email);
+    const [tempName, setTempName] = useState('');
+    const [tempEmail, setTempEmail] = useState('');
 
     // Dynamic Statistics
     const historyItems = useMemo(() => generateMockHistory(), []);
@@ -98,14 +112,15 @@ export default function ProfileScreen() {
 
     const handleLogout = () => {
         showAlert({
-            title: 'Log Out',
-            message: 'Are you sure you want to log out?',
+            title: t('profile.signOut'),
+            message: t('profile.signOutConfirm'),
             buttons: [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('profile.cancel'), style: 'cancel' },
                 {
-                    text: 'Log Out',
+                    text: t('profile.signOut'),
                     style: 'destructive',
-                    onPress: () => {
+                    onPress: async () => {
+                        await clearUser();
                         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                         router.replace('/login');
                     }
@@ -116,10 +131,25 @@ export default function ProfileScreen() {
 
     const handleSaveProfile = () => {
         if (!tempName.trim() || !tempEmail.trim()) {
-            Alert.alert('Error', 'Name and Email are required.');
+            Alert.alert('Error', t('profile.fieldRequired'));
             return;
         }
-        setUserData(prev => ({ ...prev, name: tempName, email: tempEmail }));
+
+        const nameParts = tempName.trim().split(/\s+/);
+        const newFname = nameParts[0] || '';
+        const newLname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+        if (userData) {
+            const updatedUser = {
+                ...userData,
+                fname: newFname,
+                lname: newLname,
+                email: tempEmail
+            };
+            setUserData(updatedUser);
+            saveUser(updatedUser); // Persist changes
+        }
+
         setEditModalVisible(false);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     };
@@ -139,6 +169,17 @@ export default function ProfileScreen() {
         Alert.alert('Rate MedHive', 'Thank you for your feedback! This would open the App Store in production.', [{ text: 'Cancel' }, { text: '5 Stars ⭐', onPress: () => { } }]);
     };
 
+    if (!userData) {
+        return (
+            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                <Text style={styles.userName}>Loading profile...</Text>
+            </View>
+        );
+    }
+
+    const fullName = `${userData.fname} ${userData.lname}`;
+    const initials = `${userData.fname[0]}${userData.lname[0]}`.toUpperCase();
+
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -156,7 +197,7 @@ export default function ProfileScreen() {
                                 style={styles.doneBtn}
                                 onPress={() => router.back()}
                             >
-                                <Text style={styles.doneText}>Close</Text>
+                                <Text style={styles.doneText}>{t('profile.close')}</Text>
                             </TouchableOpacity>
                         </BlurView>
                     </View>
@@ -167,12 +208,12 @@ export default function ProfileScreen() {
                 style={styles.scrollView}
                 contentContainerStyle={[
                     styles.scrollContent,
-                    { paddingTop: insets.top + 10, paddingBottom: 40 }
+                    { paddingTop: insets.top + 10, paddingBottom: 80 }
                 ]}
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.scrollHeader}>
-                    <Text style={styles.headerTitleCentered}>Account</Text>
+                    <Text style={styles.headerTitleCentered}>{t('profile.account')}</Text>
                 </View>
 
                 {/* User Identity Card (App Store Style) */}
@@ -184,7 +225,7 @@ export default function ProfileScreen() {
                                 style={styles.avatarPlaceholder}
                             >
                                 <Text style={styles.avatarInitials}>
-                                    {userData.name.split(' ').map(n => n[0]).join('')}
+                                    {initials}
                                 </Text>
                             </LinearGradient>
                             <TouchableOpacity
@@ -195,7 +236,7 @@ export default function ProfileScreen() {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.identityText}>
-                            <Text style={styles.userName}>{userData.name}</Text>
+                            <Text style={styles.userName}>{fullName}</Text>
                             <Text style={styles.userEmail}>{userData.email}</Text>
                         </View>
                     </View>
@@ -215,65 +256,66 @@ export default function ProfileScreen() {
                     >
                         <View>
                             <Text style={styles.medIdLabel}>Med-ID</Text>
-                            <Text style={styles.medIdValue}>{userData.medId}</Text>
+                            <Text style={styles.medIdValue}>{userData.med_id}</Text>
                         </View>
                         <Ionicons name="copy-outline" size={18} color={Colors.light.primary} />
                     </TouchableOpacity>
                 </View>
 
                 {/* Statistics Section */}
-                <Text style={styles.sectionTitle}>Performance</Text>
+                <Text style={styles.sectionTitle}>{t('profile.performance')}</Text>
                 <View style={styles.statsContainer}>
                     <View style={styles.statItem}>
                         <Text style={styles.statValue}>{stats.uploads}</Text>
-                        <Text style={styles.statLabel}>Uploads</Text>
+                        <Text style={styles.statLabel}>{t('history.title')}</Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
                         <Text style={styles.statValue}>{stats.shared}</Text>
-                        <Text style={styles.statLabel}>Clinics</Text>
+                        <Text style={styles.statLabel}>{t('access.clinics')}</Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
                         <Text style={styles.statValue}>{stats.months}</Text>
-                        <Text style={styles.statLabel}>Health Age</Text>
+                        <Text style={styles.statLabel}>{t('profile.healthAge')}</Text>
                     </View>
                 </View>
 
                 {/* Account Section */}
-                <Text style={styles.sectionTitle}>Account</Text>
+                <Text style={styles.sectionTitle}>{t('profile.account')}</Text>
                 <View style={styles.menuCard}>
                     <MenuItem
                         icon="person-outline"
-                        label="Edit Profile"
+                        label={t('profile.editProfile')}
                         onPress={() => {
-                            setTempName(userData.name);
+                            setTempName(fullName);
                             setTempEmail(userData.email);
                             setEditModalVisible(true);
                         }}
                     />
                     <MenuItem
                         icon="shield-checkmark-outline"
-                        label="Security & Privacy"
+                        label={t('profile.security')}
                         onPress={() => Linking.openURL('https://medhive.lk')}
                     />
                     <MenuItem
                         icon="card-outline"
-                        label="Subscription"
-                        value="Premium AI Plan"
-                        onPress={() => Alert.alert('MedHive Premium', 'You are Currently on The Early Adopter Plan.')}
+                        label={t('profile.subscription')}
+                        value={t('profile.premiumPlan')}
+                        onPress={() => Alert.alert('MedHive Premium', t('profile.earlyAdopter'))}
+                        hideBorder
                     />
                 </View>
 
                 {/* Preferences Section */}
-                <Text style={styles.sectionTitle}>Settings</Text>
+                <Text style={styles.sectionTitle}>{t('profile.settings')}</Text>
                 <View style={styles.menuCard}>
                     <View style={styles.menuItem}>
                         <View style={[styles.menuIcon, { backgroundColor: 'rgba(220,163,73,0.1)' }]}>
                             <Ionicons name="notifications-outline" size={20} color={Colors.light.primary} />
                         </View>
                         <View style={styles.menuContent}>
-                            <Text style={styles.menuLabel}>Smart Notifications</Text>
+                            <Text style={styles.menuLabel}>{t('profile.notifications')}</Text>
                         </View>
                         <Switch
                             value={notifications}
@@ -290,7 +332,7 @@ export default function ProfileScreen() {
                             <Ionicons name="finger-print-outline" size={20} color={Colors.light.primary} />
                         </View>
                         <View style={styles.menuContent}>
-                            <Text style={styles.menuLabel}>Face ID Login</Text>
+                            <Text style={styles.menuLabel}>{t('profile.biometrics')}</Text>
                         </View>
                         <Switch
                             value={biometrics}
@@ -304,76 +346,83 @@ export default function ProfileScreen() {
                     </View>
                     <MenuItem
                         icon="globe-outline"
-                        label="Region"
-                        value="Global (English)"
-                        onPress={() => { }}
+                        label={t('profile.language')}
+                        value={i18n.language === 'en' ? 'English' : i18n.language === 'si' ? 'සිංහල' : 'தமிழ்'}
+                        onPress={() => setLangPickerVisible(true)}
+                        hideBorder
                     />
                 </View>
 
                 {/* Support Section */}
-                <Text style={styles.sectionTitle}>Support</Text>
+                <Text style={styles.sectionTitle}>{t('profile.support')}</Text>
                 <View style={styles.menuCard}>
                     <MenuItem
                         icon="help-circle-outline"
-                        label="Knowledge Base"
+                        label={t('profile.knowledgeBase')}
                         onPress={handleHelpCenter}
                     />
                     <MenuItem
                         icon="mail-outline"
-                        label="Contact Medical Support"
+                        label={t('profile.contactSupport')}
                         onPress={handleContactUs}
                     />
                     <MenuItem
                         icon="star-outline"
-                        label="Rate MedHive AI"
+                        label={t('profile.rateApp')}
                         onPress={handleRateApp}
+                        hideBorder
                     />
                 </View>
 
                 {/* Logout */}
-                <View style={[styles.menuCard, { marginTop: 24, marginBottom: 12 }]}>
+                <View style={styles.menuCard}>
                     <MenuItem
                         icon="log-out-outline"
-                        label="Sign Out"
+                        label={t('profile.signOut')}
                         showChevron={false}
                         danger
                         onPress={handleLogout}
+                        hideBorder
                     />
                 </View>
 
-                <Text style={styles.version}>MedHive Production v1.0.4 • 2026</Text>
+                <Text style={styles.version}>{t('profile.version')}</Text>
+
+                <LanguagePicker
+                    visible={langPickerVisible}
+                    onClose={() => setLangPickerVisible(false)}
+                />
             </ScrollView>
 
             {/* Edit Profile Modal */}
             <Modal
                 visible={editModalVisible}
-                animationType="slide"
                 transparent={true}
                 onRequestClose={() => setEditModalVisible(false)}
             >
-                <View style={styles.modalOverlay}>
-                    <BlurView intensity={50} tint="dark" style={StyleSheet.absoluteFill} />
+                <BlurView intensity={30} tint="dark" style={styles.modalOverlay}>
+                    <Pressable style={StyleSheet.absoluteFill} onPress={() => setEditModalVisible(false)} />
                     <View style={styles.editCard}>
-                        <Text style={styles.editTitle}>Edit Profile</Text>
+                        <Text style={styles.editTitle}>{t('profile.editProfile')}</Text>
 
                         <View style={styles.inputContainer}>
-                            <Text style={styles.inputLabel}>Full Name</Text>
+                            <Text style={styles.inputLabel}>{t('profile.fullName')}</Text>
                             <TextInput
                                 style={styles.textInput}
                                 value={tempName}
                                 onChangeText={setTempName}
-                                placeholder="Enter your name"
+                                placeholder={t('auth.fnamePlaceholder')}
                                 placeholderTextColor="#8E8E93"
                             />
                         </View>
 
                         <View style={styles.inputContainer}>
-                            <Text style={styles.inputLabel}>Email Address</Text>
+                            <Text style={styles.inputLabel}>{t('profile.emailAddress')}</Text>
                             <TextInput
                                 style={styles.textInput}
                                 value={tempEmail}
                                 onChangeText={setTempEmail}
-                                placeholder="Enter your email"
+                                placeholder={t('auth.emailPlaceholder')}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 placeholderTextColor="#8E8E93"
@@ -388,7 +437,7 @@ export default function ProfileScreen() {
                                 colors={[Colors.light.primary, Colors.light.primaryDark]}
                                 style={styles.saveGradient}
                             >
-                                <Text style={styles.saveBtnText}>Save Changes</Text>
+                                <Text style={styles.saveBtnText}>{t('profile.saveChanges')}</Text>
                             </LinearGradient>
                         </TouchableOpacity>
 
@@ -396,10 +445,10 @@ export default function ProfileScreen() {
                             style={styles.cancelBtn}
                             onPress={() => setEditModalVisible(false)}
                         >
-                            <Text style={styles.cancelBtnText}>Cancel</Text>
+                            <Text style={styles.cancelBtnText}>{t('profile.cancel')}</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </BlurView>
             </Modal>
         </View>
     );
@@ -474,7 +523,7 @@ const styles = StyleSheet.create({
     // Identity Card (App Store style)
     identityCard: {
         backgroundColor: '#fff',
-        borderRadius: 20,
+        borderRadius: 35,
         padding: 20,
         marginBottom: 24,
         width: '100%',
@@ -616,6 +665,9 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#F2F2F7',
     },
+    noBorder: {
+        borderBottomWidth: 0,
+    },
     menuIcon: {
         width: 36,
         height: 36,
@@ -697,9 +749,14 @@ const styles = StyleSheet.create({
         color: '#1C1C1E',
         borderWidth: 1,
         borderColor: '#E5E5EA',
+        ...Platform.select({
+            web: {
+                outlineStyle: 'none',
+            } as any,
+        }),
     },
     saveBtn: {
-        borderRadius: 20,
+        borderRadius: 35,
         overflow: 'hidden',
         marginTop: 10,
     },

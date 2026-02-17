@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle, ActivityIndicator } from 'react-native';
 import { Colors } from '../constants/theme';
 
 import * as Haptics from 'expo-haptics';
@@ -10,17 +10,28 @@ interface PrimaryButtonProps {
     onPress: () => void;
     style?: ViewStyle;
     textStyle?: TextStyle;
+    isLoading?: boolean;
 }
 
-export function PrimaryButton({ title, onPress, style, textStyle }: PrimaryButtonProps) {
+export function PrimaryButton({ title, onPress, style, textStyle, isLoading }: PrimaryButtonProps) {
     const handlePress = () => {
+        if (isLoading) return;
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         onPress();
     };
 
     return (
-        <TouchableOpacity style={[styles.button, style]} onPress={handlePress} activeOpacity={0.8}>
-            <Text style={[styles.text, textStyle]}>{title}</Text>
+        <TouchableOpacity
+            style={[styles.button, style, isLoading && styles.disabled]}
+            onPress={handlePress}
+            activeOpacity={0.8}
+            disabled={isLoading}
+        >
+            {isLoading ? (
+                <ActivityIndicator color="#fff" />
+            ) : (
+                <Text style={[styles.text, textStyle]}>{title}</Text>
+            )}
         </TouchableOpacity>
     );
 }
@@ -39,5 +50,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '700',
         letterSpacing: 0.5,
+    },
+    disabled: {
+        opacity: 0.7,
     },
 });

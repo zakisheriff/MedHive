@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Platform } from 'react-native';
 import { Colors } from '../../constants/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ProfileAvatar } from '../../components/ProfileAvatar';
@@ -11,8 +11,10 @@ import { EmptyHistoryState } from '../../components/EmptyHistoryState';
 import { HistoryItem } from '../../types/history';
 import { groupHistoryByDate, filterHistory, generateMockHistory } from '../../utils/historyUtils';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 
 export default function HistoryScreen() {
+    const { t } = useTranslation();
     const insets = useSafeAreaInsets();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilter, setSelectedFilter] = useState<FilterType>('all');
@@ -39,12 +41,12 @@ export default function HistoryScreen() {
     return (
         <View style={styles.container}>
             {/* Header with Profile Avatar */}
-            <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
+            <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === 'web' ? 20 : 8) }]}>
                 <View>
-                    <Text style={styles.headerTitle}>History</Text>
+                    <Text style={styles.headerTitle}>{t('history.title')}</Text>
                     {historyItems.length > 0 && (
                         <Text style={styles.headerSubtitle}>
-                            {filteredItems.length} {filteredItems.length === 1 ? 'record' : 'records'}
+                            {filteredItems.length} {filteredItems.length === 1 ? t('history.record') : t('history.records')}
                         </Text>
                     )}
                 </View>
@@ -57,7 +59,7 @@ export default function HistoryScreen() {
                     <Ionicons name="search" size={20} color="#8E8E93" />
                     <TextInput
                         style={styles.searchInput}
-                        placeholder="Search by medicine, doctor, clinic..."
+                        placeholder={t('history.searchPlaceholder')}
                         placeholderTextColor="#8E8E93"
                         value={searchQuery}
                         onChangeText={setSearchQuery}
@@ -165,7 +167,7 @@ const styles = StyleSheet.create({
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: Colors.light.background,
         height: 35,
         paddingHorizontal: 16,
         borderRadius: 35,
@@ -183,6 +185,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: Colors.light.text,
         padding: 0,
+        ...Platform.select({
+            web: {
+                outlineStyle: 'none',
+            } as any,
+        }),
     },
     clearButton: {
         padding: 2,

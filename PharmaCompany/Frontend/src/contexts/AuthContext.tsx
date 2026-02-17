@@ -1,20 +1,4 @@
-import { createContext, useContext, useState } from 'react';
-import type { ReactNode } from 'react';
-
-interface User {
-  email: string;
-  fullName: string;
-  companyName: string;
-}
-
-interface AuthContextType {
-  isAuthenticated: boolean;
-  user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  loginWithOTP: (email: string, otp: string) => Promise<boolean>;
-  register: (companyData: CompanyData, adminData: AdminData) => Promise<boolean>;
-  logout: () => void;
-}
+import { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface CompanyData {
   companyName: string;
@@ -36,69 +20,82 @@ export interface AdminData {
   confirmPassword: string;
 }
 
+export interface AuthContextType {
+  isAuthenticated: boolean;
+  user: { email: string; role: string } | null;
+  login: (email: string, password: string) => Promise<boolean>;
+  loginWithOTP: (email: string, otp: string) => Promise<boolean>;
+  register: (companyData: CompanyData, adminData: AdminData) => Promise<void>;
+  logout: () => void;
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<{ email: string; role: string } | null>(null);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Placeholder for API call
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Mock authentication - in production, this would call your backend
-    if (email && password) {
-      setUser({
-        email,
-        fullName: 'John Doe',
-        companyName: 'Pharma Corp'
-      });
+    try {
+      // Simulate API call
+      // Replace this with your actual authentication logic
+      console.log('Attempting login with:', email);
+      
+      // Mock success for demo purposes
       setIsAuthenticated(true);
+      setUser({ email, role: 'admin' });
       return true;
+    } catch (error) {
+      console.error('Login failed:', error);
+      return false;
     }
-    return false;
   };
 
   const loginWithOTP = async (email: string, otp: string): Promise<boolean> => {
-    // Placeholder for OTP verification API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    if (email && otp.length === 6) {
-      setUser({
-        email,
-        fullName: 'John Doe',
-        companyName: 'Pharma Corp'
-      });
+    try {
+      // Simulate API call
+      console.log('Verifying OTP for:', email, otp);
+      
+      // Mock success for demo purposes
       setIsAuthenticated(true);
+      setUser({ email, role: 'admin' });
       return true;
+    } catch (error) {
+      console.error('OTP verification failed:', error);
+      return false;
     }
-    return false;
   };
 
-  const register = async (companyData: CompanyData, adminData: AdminData): Promise<boolean> => {
-    // Placeholder for registration API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setUser({
-      email: adminData.email,
-      fullName: adminData.fullName,
-      companyName: companyData.companyName
-    });
-    setIsAuthenticated(true);
-    return true;
+  const register = async (companyData: CompanyData, adminData: AdminData): Promise<void> => {
+    try {
+      // Simulate API call
+      console.log('Registering company:', companyData);
+      console.log('Creating admin user:', adminData);
+      
+      // Mock success for demo purposes
+      setIsAuthenticated(true);
+      setUser({ email: adminData.email, role: 'admin' });
+    } catch (error) {
+      console.error('Registration failed:', error);
+      throw error;
+    }
   };
 
   const logout = () => {
-    setUser(null);
     setIsAuthenticated(false);
+    setUser(null);
   };
 
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, loginWithOTP, register, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const value: AuthContextType = {
+    isAuthenticated,
+    user,
+    login,
+    loginWithOTP,
+    register,
+    logout,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

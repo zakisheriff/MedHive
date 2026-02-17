@@ -8,6 +8,7 @@ import {
     SafeAreaView,
     StatusBar,
     Platform,
+    ScrollView,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
@@ -52,14 +53,21 @@ export function ImagePreviewModal({ isVisible, imageUri, onClose }: ImagePreview
                         </TouchableOpacity>
                     </View>
 
-                    <View style={styles.imageContainer}>
+                    <ScrollView
+                        style={styles.imageContainer}
+                        contentContainerStyle={styles.scrollContent}
+                        maximumZoomScale={3}
+                        minimumZoomScale={1}
+                        showsHorizontalScrollIndicator={false}
+                        showsVerticalScrollIndicator={false}
+                    >
                         <Image
                             source={imageUri}
                             style={styles.image}
                             contentFit="contain"
                             transition={200}
                         />
-                    </View>
+                    </ScrollView>
                 </SafeAreaView>
             </View>
         </Modal>
@@ -95,12 +103,14 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         flex: 1,
+    },
+    scrollContent: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
     },
     image: {
-        width: '100%',
-        height: '100%',
+        width: width,
+        height: height * 0.8,
     },
 });

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    Platform
 } from 'react-native';
 import { useAlert } from '../../context/AlertContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,21 +15,34 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/theme';
 import { ProfileAvatar } from '../../components/ProfileAvatar';
+import { getUser, UserData } from '../../utils/userStore';
+import { useTranslation } from 'react-i18next';
 
 export default function UploadScreen() {
+    const { t } = useTranslation();
     const insets = useSafeAreaInsets();
     const { showAlert } = useAlert();
+    const [userData, setUserData] = useState<UserData | null>(null);
+
+    useEffect(() => {
+        loadUserData();
+    }, []);
+
+    const loadUserData = async () => {
+        const data = await getUser();
+        setUserData(data);
+    };
 
     const handleUpload = async (type: 'prescription' | 'labReport') => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
         // Show options
         showAlert({
-            title: type === 'prescription' ? 'Upload Prescription' : 'Upload Lab Report',
-            message: 'Choose how you want to upload',
+            title: type === 'prescription' ? t('upload.modal.prescriptionTitle') : t('upload.modal.labTitle'),
+            message: t('upload.modal.message'),
             buttons: [
                 {
-                    text: 'Camera',
+                    text: t('upload.modal.camera'),
                     onPress: async () => {
                         const { status } = await ImagePicker.requestCameraPermissionsAsync();
                         if (status !== 'granted') {
@@ -46,13 +60,13 @@ export default function UploadScreen() {
                         if (!result.canceled) {
                             router.push({
                                 pathname: '/prescription-result',
-                                params: { imageUri: result.assets[0].uri }
+                                params: { imageUri: result.assets[0].uri, type }
                             } as any);
                         }
                     }
                 },
                 {
-                    text: 'Gallery',
+                    text: t('upload.modal.gallery'),
                     onPress: async () => {
                         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
                         if (status !== 'granted') {
@@ -71,12 +85,12 @@ export default function UploadScreen() {
                         if (!result.canceled) {
                             router.push({
                                 pathname: '/prescription-result',
-                                params: { imageUri: result.assets[0].uri }
+                                params: { imageUri: result.assets[0].uri, type }
                             } as any);
                         }
                     }
                 },
-                { text: 'Cancel', style: 'cancel' }
+                { text: t('upload.modal.cancel'), style: 'cancel' }
             ]
         });
     };
@@ -84,10 +98,10 @@ export default function UploadScreen() {
     return (
         <View style={styles.container}>
             {/* Header with Profile Avatar */}
-            <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
+            <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === 'web' ? 20 : 8) }]}>
                 <View>
-                    <Text style={styles.headerTitle}>Upload</Text>
-                    <Text style={styles.headerSubtitle}>AI Scan & Extract</Text>
+                    <Text style={styles.headerTitle}>{t('upload.title')}</Text>
+                    <Text style={styles.headerSubtitle}>{t('upload.subtitle')}</Text>
                 </View>
                 <ProfileAvatar size={34} />
             </View>
@@ -97,6 +111,16 @@ export default function UploadScreen() {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
+                {/* Personalized Greeting Section */}
+                <View style={styles.greetingSection}>
+                    <View style={styles.greetingContent}>
+                        <Text style={styles.greetingText}>
+                            {t('upload.welcome')}, <Text style={styles.userNameText}>{userData?.fname || 'User'}</Text>! 👋
+                        </Text>
+                        <Text style={styles.greetingSubtext}>{t('upload.greeting')}</Text>
+                    </View>
+                </View>
+
                 {/* Main Upload Card */}
                 <View style={styles.uploadCard}>
                     {/* Header */}
@@ -104,9 +128,9 @@ export default function UploadScreen() {
                         <View style={styles.iconWrapper}>
                             <Ionicons name="document-text" size={28} color="#fff" />
                         </View>
-                        <Text style={styles.cardTitle}>Upload Your Health Record</Text>
+                        <Text style={styles.cardTitle}>{t('upload.cardTitle')}</Text>
                         <Text style={styles.cardSubtitle}>
-                            Upload an Image to Extract Medicine Name, Dosage, and Duration
+                            {t('upload.cardSubtitle')}
                         </Text>
                     </View>
 
@@ -121,8 +145,8 @@ export default function UploadScreen() {
                                 <Ionicons name="receipt-outline" size={22} color={Colors.light.primary} />
                             </View>
                             <View style={styles.optionContent}>
-                                <Text style={styles.optionText}>Prescription Reader</Text>
-                                <Text style={styles.optionSubtext}>Extract Medicine Details</Text>
+                                <Text style={styles.optionText}>{t('upload.prescriptionTitle')}</Text>
+                                <Text style={styles.optionSubtext}>{t('upload.prescriptionSub')}</Text>
                             </View>
                             <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.5)" />
                         </TouchableOpacity>
@@ -136,49 +160,23 @@ export default function UploadScreen() {
                                 <Ionicons name="flask" size={22} color={Colors.light.primary} />
                             </View>
                             <View style={styles.optionContent}>
-                                <Text style={styles.optionText}>Lab Report Analyzer</Text>
-                                <Text style={styles.optionSubtext}>Analyze Test Results</Text>
+                                <Text style={styles.optionText}>{t('upload.labTitle')}</Text>
+                                <Text style={styles.optionSubtext}>{t('upload.labSub')}</Text>
                             </View>
                             <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.5)" />
                         </TouchableOpacity>
                     </View>
                 </View>
 
-                {/* Single Requirement Note for better results */}
-                <View style={styles.tipsNote}>
-                    <Ionicons name="alert-circle" size={18} color={Colors.light.primary} />
-                    <Text style={styles.tipsNoteText}>
-                        For better result, ensure good lighting and steady scan.
-                    </Text>
-                </View>
-
-                {/* Scan Process Guide (Individual pill icons, moved below !) */}
-                <View style={styles.processContainer}>
-                    <View style={styles.processItem}>
-                        <View style={styles.processIcon}>
-                            <Ionicons name="camera" size={18} color={Colors.light.primary} />
-                        </View>
-                        <Text style={styles.processText}>Snap It</Text>
+                {/* Single Requirement Note for better results - Mobile Only */}
+                {Platform.OS !== 'web' && (
+                    <View style={styles.tipsNote}>
+                        <Ionicons name="alert-circle" size={18} color={Colors.light.primary} />
+                        <Text style={styles.tipsNoteText}>
+                            {t('upload.tip')}
+                        </Text>
                     </View>
-                    <View style={styles.arrowWrapper}>
-                        <Ionicons name="arrow-forward" size={14} color="#C7C7CC" />
-                    </View>
-                    <View style={styles.processItem}>
-                        <View style={styles.processIcon}>
-                            <Ionicons name="scan" size={18} color={Colors.light.primary} />
-                        </View>
-                        <Text style={styles.processText}>AI Scan</Text>
-                    </View>
-                    <View style={styles.arrowWrapper}>
-                        <Ionicons name="arrow-forward" size={14} color="#C7C7CC" />
-                    </View>
-                    <View style={styles.processItem}>
-                        <View style={styles.processIcon}>
-                            <Ionicons name="save-outline" size={18} color={Colors.light.primary} />
-                        </View>
-                        <Text style={styles.processText}>Save</Text>
-                    </View>
-                </View>
+                )}
             </ScrollView>
         </View>
     );
@@ -215,47 +213,60 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         flexGrow: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         paddingHorizontal: 20,
         paddingTop: 10,
-        paddingBottom: 60,
+        paddingBottom: 120,
         width: '100%',
         maxWidth: 500,
         alignSelf: 'center',
     },
-    processContainer: {
+    // Greeting Section
+    greetingSection: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        gap: 12,
-        marginTop: 16, // Space below the ! note
-    },
-    processItem: {
         alignItems: 'center',
-        gap: 8,
-    },
-    processIcon: {
-        width: 44,
-        height: 44,
-        borderRadius: 22, // Full pill/circle
         backgroundColor: '#fff',
+        paddingVertical: 20,
+        paddingHorizontal: 20,
+        borderRadius: 35,
+        marginBottom: 24,
+        // Subtle Shadow
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.03,
+        shadowRadius: 10,
+    },
+    greetingIconWrapper: {
+        width: 48,
+        height: 48,
+        borderRadius: 16,
+        backgroundColor: 'rgba(0, 122, 255, 0.08)', // Using a soft blue matching primary
         alignItems: 'center',
         justifyContent: 'center',
+        marginRight: 16,
     },
-    arrowWrapper: {
-        height: 44, // Match icon height for perfect vertical centering
-        justifyContent: 'center',
+    greetingContent: {
+        flex: 1,
     },
-    processText: {
-        fontSize: 12,
-        fontWeight: '600',
+    greetingText: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: Colors.light.text,
+        marginBottom: 2,
+    },
+    userNameText: {
+        color: Colors.light.primary,
+    },
+    greetingSubtext: {
+        fontSize: 13,
         color: '#8E8E93',
+        fontWeight: '500',
     },
     // Optional: add decorative styles here if needed later
     uploadCard: {
         backgroundColor: Colors.light.primary,
-        borderRadius: 32,
-        padding: 32,
+        borderRadius: 35,
+        padding: 30,
     },
     cardHeader: {
         alignItems: 'center',
@@ -294,7 +305,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.12)',
         paddingVertical: 16,
         paddingHorizontal: 18,
-        borderRadius: 24,
+        borderRadius: 35,
     },
     optionIcon: {
         width: 40,
@@ -350,7 +361,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         paddingVertical: 12,
         paddingHorizontal: 20,
-        borderRadius: 20,
+        borderRadius: 35,
         gap: 10,
         marginTop: 24,
         alignSelf: 'center',

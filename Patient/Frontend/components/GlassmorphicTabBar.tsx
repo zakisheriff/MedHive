@@ -95,12 +95,12 @@ export function GlassmorphicTabBar({ state, descriptors, navigation }: BottomTab
             >
                 <Ionicons
                     name={iconName}
-                    size={22}
+                    size={24}
                     color={isFocused ? Colors.light.primary : '#1C1C1E'}
                 />
-                {isFocused && (
-                    <Text style={styles.activeLabel}>{iconConfig.label}</Text>
-                )}
+                <Text style={[styles.label, isFocused && styles.activeLabel]}>
+                    {iconConfig.label}
+                </Text>
             </TouchableOpacity>
         );
     };
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
         zIndex: 1000,
     },
     pill: {
-        borderRadius: 35,
+        borderRadius: 55,
         overflow: 'hidden',
         borderWidth: 1,
         borderColor: 'rgba(0, 0, 0, 0.05)',
@@ -161,34 +161,42 @@ const styles = StyleSheet.create({
     },
     pillInner: {
         flexDirection: 'row',
-        paddingVertical: 12,
+        paddingVertical: 7,
         paddingHorizontal: 12,
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 4,
+        gap: 6,
     },
     tabItem: {
         alignItems: 'center',
+        justifyContent: 'center',
         paddingHorizontal: 16,
-        paddingVertical: 10,
+        paddingVertical: 8,
         borderRadius: 35,
-        flexDirection: 'row',
-        gap: 6,
-        zIndex: 2, // Icons on top of indicator
+        flexDirection: 'column',
+        gap: 4,
+        zIndex: 2,
+        minWidth: 75,
+    },
+    label: {
+        fontSize: 11,
+        fontWeight: '500',
+        color: '#1C1C1E',
+        marginTop: 2,
     },
     activeLabel: {
-        fontSize: 14,
-        fontWeight: '600',
+        fontSize: 11,
+        fontWeight: '700',
         color: Colors.light.primary,
-        marginLeft: 4,
+        marginTop: 2,
     },
     indicator: {
         position: 'absolute',
-        height: 42, // Height of the tab item
+        height: 56,
         backgroundColor: 'rgba(0, 0, 0, 0.06)',
         borderRadius: 35,
         left: 0,
-        top: 12, // Match pillInner paddingVertical
+        top: 10,
         zIndex: 1,
     },
 });

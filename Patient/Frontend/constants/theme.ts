@@ -1,8 +1,8 @@
 
 import { Platform } from 'react-native';
 
-const honeyPrimary = '#dca349';
-const honeyDark = '#b8873d';
+const honeyPrimary = '#dca349'; // Landing page gold
+const honeyDark = '#b8873d'; // Landing page gold dark
 
 export const Colors = {
   light: {

@@ -19,23 +19,18 @@ export function CustomAlert() {
     const { alertState, hideAlert } = useAlert();
     const { visible, options } = alertState;
 
-    if (!options) return null;
-
-    const { title, message, buttons } = options;
+    if (!options && !visible) return null;
+    const { title, message, buttons } = options || { title: '' };
 
     return (
         <Modal
             visible={visible}
             transparent={true}
-            animationType="fade"
+            animationType="none"
             onRequestClose={hideAlert}
         >
-            <View style={styles.overlay}>
-                {Platform.OS === 'web' ? (
-                    <Pressable style={styles.backdrop} onPress={hideAlert} />
-                ) : (
-                    <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
-                )}
+            <BlurView intensity={30} tint="light" style={styles.overlay}>
+                <Pressable style={styles.backdrop} onPress={hideAlert} />
 
                 <View style={styles.alertContainer}>
                     <View style={styles.alertContent}>
@@ -43,15 +38,18 @@ export function CustomAlert() {
                         {message && <Text style={styles.message}>{message}</Text>}
                     </View>
 
-                    <View style={styles.buttonContainer}>
+                    <View style={[
+                        styles.buttonContainer,
+                        buttons && buttons.length === 2 ? styles.horizontalButtons : styles.verticalButtons
+                    ]}>
                         {buttons && buttons.length > 0 ? (
                             buttons.map((btn, index) => (
                                 <TouchableOpacity
                                     key={index}
                                     style={[
                                         styles.button,
-                                        index < buttons.length - 1 && styles.buttonBorder,
-                                        buttons.length === 2 && styles.flexButton
+                                        btn.style === 'cancel' ? styles.cancelButton : styles.primaryActionButton,
+                                        buttons.length === 2 ? styles.flexButton : styles.fullWidth
                                     ]}
                                     onPress={() => {
                                         hideAlert();
@@ -70,13 +68,16 @@ export function CustomAlert() {
                                 </TouchableOpacity>
                             ))
                         ) : (
-                            <TouchableOpacity style={styles.button} onPress={hideAlert}>
+                            <TouchableOpacity
+                                style={[styles.button, styles.primaryActionButton, styles.fullWidth]}
+                                onPress={hideAlert}
+                            >
                                 <Text style={styles.buttonText}>OK</Text>
                             </TouchableOpacity>
                         )}
                     </View>
                 </View>
-            </View>
+            </BlurView>
         </Modal>
     );
 }
@@ -86,7 +87,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
     },
     backdrop: {
         ...StyleSheet.absoluteFillObject,
@@ -94,58 +94,74 @@ const styles = StyleSheet.create({
     alertContainer: {
         backgroundColor: '#FFFFFF',
         borderRadius: 35,
-        width: Math.min(width * 0.85, 360), // Slightly more compact
+        width: Math.min(width * 0.82, 340),
         overflow: 'hidden',
-        // Smoother shadow
+        elevation: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
     },
     alertContent: {
-        paddingTop: 20,
+        paddingTop: 28,
         paddingHorizontal: 24,
-        paddingBottom: 16,
-        alignItems: 'flex-start', // Standard material alignment
+        paddingBottom: 20,
     },
     title: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: '700',
         color: '#1C1C1E',
-        textAlign: 'left',
-        marginBottom: 12,
+        textAlign: 'center',
+        marginBottom: 8,
     },
     message: {
-        fontSize: 16,
-        color: '#636366',
-        textAlign: 'left',
+        fontSize: 15,
+        color: '#3A3A3C',
+        textAlign: 'center',
         lineHeight: 22,
+        opacity: 0.85,
     },
     buttonContainer: {
+        paddingHorizontal: 20,
+        paddingBottom: 24,
+        gap: 12,
+    },
+    horizontalButtons: {
         flexDirection: 'row',
-        justifyContent: 'flex-end', // Align buttons to right
-        paddingHorizontal: 16,
-        paddingBottom: 16,
-        gap: 8,
+    },
+    verticalButtons: {
+        flexDirection: 'column',
     },
     button: {
-        paddingHorizontal: 16,
+        height: 52,
+        borderRadius: 35,
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 35,
     },
     flexButton: {
-        // No longer flexing to full width
+        flex: 1,
     },
-    buttonBorder: {
-        // Removed lines
+    fullWidth: {
+        width: '100%',
+    },
+    primaryActionButton: {
+        backgroundColor: 'rgba(220, 163, 73, 0.08)',
+        borderWidth: 1,
+        borderColor: 'rgba(220, 163, 73, 0.15)',
+    },
+    cancelButton: {
+        backgroundColor: '#F2F2F7',
     },
     buttonText: {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: '700',
         color: Colors.light.primary,
-        letterSpacing: 0.5,
+        letterSpacing: 0.3,
     },
     destructiveText: {
         color: '#FF3B30',
     },
     cancelText: {
-        color: '#8E8E93',
+        color: '#64748B',
     },
 });

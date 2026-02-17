@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput, StyleSheet, View, Text, TextInputProps, StyleProp, ViewStyle, TextStyle } from 'react-native';
+import { TextInput, StyleSheet, View, Text, TextInputProps, StyleProp, ViewStyle, TextStyle, Platform } from 'react-native';
 import { Colors } from '../constants/theme';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -9,9 +9,10 @@ interface InputProps extends Omit<TextInputProps, 'style'> {
     style?: StyleProp<ViewStyle>;
     inputStyle?: StyleProp<TextStyle>;
     iconName?: keyof typeof Ionicons.glyphMap;
+    prefix?: string;
 }
 
-export function Input({ label, style, inputStyle, iconName, ...props }: InputProps) {
+export function Input({ label, style, inputStyle, iconName, prefix, ...props }: InputProps) {
     return (
         <View style={styles.wrapper}>
             {label && <Text style={styles.label}>{label}</Text>}
@@ -20,6 +21,9 @@ export function Input({ label, style, inputStyle, iconName, ...props }: InputPro
                     <View style={styles.iconContainer}>
                         <Ionicons name={iconName} size={20} color={Colors.light.icon} />
                     </View>
+                )}
+                {prefix && (
+                    <Text style={styles.prefixText}>{prefix}</Text>
                 )}
                 <TextInput
                     style={[styles.inputField, inputStyle]}
@@ -44,9 +48,9 @@ const styles = StyleSheet.create({
         marginLeft: 4,
     },
     inputContainer: {
-        backgroundColor: '#fff',
+        backgroundColor: Colors.light.background,
         borderWidth: 1,
-        borderColor: '#e5e5e5',
+        borderColor: Colors.light.border,
         borderRadius: 35, // Pill shape
         flexDirection: 'row',
         alignItems: 'center',
@@ -56,9 +60,20 @@ const styles = StyleSheet.create({
         padding: 16,
         fontSize: 16,
         color: Colors.light.text,
+        ...Platform.select({
+            web: {
+                outlineStyle: 'none',
+            } as any,
+        }),
     },
     iconContainer: {
         paddingLeft: 16,
         paddingRight: 4,
+    },
+    prefixText: {
+        fontSize: 16,
+        color: Colors.light.text,
+        fontWeight: '500',
+        paddingLeft: 4,
     },
 });

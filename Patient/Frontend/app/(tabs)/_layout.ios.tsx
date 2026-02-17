@@ -1,6 +1,7 @@
 import React from 'react';
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { Colors } from '../../constants/theme';
+import { useTranslation } from 'react-i18next';
 
 /**
  * iOS-only Tab Layout using Native Tabs (Liquid Glass)
@@ -10,6 +11,7 @@ import { Colors } from '../../constants/theme';
  * native haptic feedback, and scroll-to-top behavior.
  */
 export default function IOSTabLayout() {
+    const { t } = useTranslation();
     return (
         <NativeTabs
             blurEffect="systemChromeMaterial"
@@ -26,7 +28,7 @@ export default function IOSTabLayout() {
             <NativeTabs.Trigger
                 name="history"
                 options={{
-                    title: 'History',
+                    title: t('tabs.history'),
                     icon: { sf: 'clock' },
                     selectedIcon: { sf: 'clock.fill' },
                 }}
@@ -34,7 +36,7 @@ export default function IOSTabLayout() {
             <NativeTabs.Trigger
                 name="upload"
                 options={{
-                    title: 'Upload',
+                    title: t('tabs.upload'),
                     icon: { sf: 'doc' },
                     selectedIcon: { sf: 'doc.fill' },
                 }}
@@ -42,7 +44,7 @@ export default function IOSTabLayout() {
             <NativeTabs.Trigger
                 name="access"
                 options={{
-                    title: 'Access',
+                    title: t('tabs.access'),
                     icon: { sf: 'key' },
                     selectedIcon: { sf: 'key.fill' },
                 }}

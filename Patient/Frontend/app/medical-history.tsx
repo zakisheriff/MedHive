@@ -1,16 +1,20 @@
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../constants/theme';
 import { HoneyContainer } from '../components/HoneyContainer';
+import { Input } from '../components/Input';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { StatusBar } from 'expo-status-bar';
 
+import { useTranslation } from 'react-i18next';
+
 export default function MedicalHistoryScreen() {
+    const { t } = useTranslation();
     const params = useLocalSearchParams();
-    const { name, email, dob, medId, password } = params;
+    const { fname, lname, email, dob, gender, phoneNumber, district, province, medId, password } = params;
 
     const [medicalRecords, setMedicalRecords] = useState('');
     const [diseases, setDiseases] = useState('');
@@ -20,7 +24,7 @@ export default function MedicalHistoryScreen() {
     const handleVerifyAndCreate = () => {
         // Here you would typically send all data to your backend
         const completeProfile = {
-            basicInfo: { name, email, dob, medId, password },
+            basicInfo: { fname, lname, email, dob, gender, phoneNumber, district, province, medId, password },
             medicalHistory: {
                 records: medicalRecords,
                 diseases: diseases,
@@ -42,7 +46,7 @@ export default function MedicalHistoryScreen() {
 
     return (
         <LinearGradient
-            colors={['#F8FAFC', '#FFFFFF', '#F8FAFC']}
+            colors={[Colors.light.background, Colors.light.background]}
             style={styles.background}
         >
             <StatusBar style="dark" />
@@ -56,58 +60,48 @@ export default function MedicalHistoryScreen() {
                 >
                     <HoneyContainer style={styles.formContainer}>
                         <View style={styles.formHeader}>
-                            <Text style={styles.cardTitle}>Medical History</Text>
-                            <Text style={styles.subtitle}>Step 2 of 2</Text>
+                            <Text style={styles.cardTitle}>{t('medHistory.title')}</Text>
+                            <Text style={styles.subtitle}>{t('medHistory.step')}</Text>
                         </View>
 
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Previous Medical Records</Text>
-                            <TextInput
-                                style={[styles.input, styles.textArea]}
-                                placeholder="Any major surgeries, treatments, etc."
-                                value={medicalRecords}
-                                onChangeText={setMedicalRecords}
-                                multiline
-                                numberOfLines={4}
-                                textAlignVertical="top"
-                            />
-                        </View>
+                        <Input
+                            label={t('medHistory.recordsLabel')}
+                            placeholder={t('medHistory.recordsPlaceholder')}
+                            value={medicalRecords}
+                            onChangeText={setMedicalRecords}
+                            iconName="document-text-outline"
+                            multiline
+                            numberOfLines={4}
+                        />
 
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Chronic Diseases</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="e.g., Diabetes, Hypertension"
-                                value={diseases}
-                                onChangeText={setDiseases}
-                            />
-                        </View>
+                        <Input
+                            label={t('medHistory.chronicLabel')}
+                            placeholder={t('medHistory.chronicPlaceholder')}
+                            value={diseases}
+                            onChangeText={setDiseases}
+                            iconName="fitness-outline"
+                        />
 
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Allergies</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="e.g., Peanuts, Penicillin"
-                                value={allergies}
-                                onChangeText={setAllergies}
-                            />
-                        </View>
+                        <Input
+                            label={t('medHistory.allergiesLabel')}
+                            placeholder={t('medHistory.allergiesPlaceholder')}
+                            value={allergies}
+                            onChangeText={setAllergies}
+                            iconName="warning-outline"
+                        />
 
-                        <View style={styles.inputGroup}>
-                            <Text style={styles.label}>Other Information</Text>
-                            <TextInput
-                                style={[styles.input, styles.textArea]}
-                                placeholder="Any other health details..."
-                                value={otherInfo}
-                                onChangeText={setOtherInfo}
-                                multiline
-                                numberOfLines={3}
-                                textAlignVertical="top"
-                            />
-                        </View>
+                        <Input
+                            label={t('medHistory.otherLabel')}
+                            placeholder={t('medHistory.otherPlaceholder')}
+                            value={otherInfo}
+                            onChangeText={setOtherInfo}
+                            iconName="information-circle-outline"
+                            multiline
+                            numberOfLines={3}
+                        />
 
                         <PrimaryButton
-                            title="Verify & Create Account"
+                            title={t('medHistory.verifyBtn')}
                             onPress={handleVerifyAndCreate}
                             style={styles.submitBtn}
                         />
