@@ -16,17 +16,18 @@ app.use(express.json());
 app.post('/api/register', async (req, res) => {
   const {
     companyName,
-    companyRegNo,
-    contactEmail,
+    registrationNumber,
+    email,
     contactNumber,
     address,
-    password,
-    nmraLicenseNo,
-    licenseExpiryDate
+    addressPostalCode,
+    nmraLicenseNumber,
+    licenseExpiryDate,
+    password
   } = req.body;
 
   try {
-    // Hash password
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const query = `
@@ -36,34 +37,37 @@ app.post('/api/register', async (req, res) => {
         contact_email,
         contact_number,
         address,
+        address_postal_code,
         address_passcode,
         nmra_license_no,
         license_expiry_date
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+      )
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
       RETURNING pharma_id
     `;
 
     const values = [
       companyName,
-      companyRegNo,
-      contactEmail,
+      registrationNumber,
+      email,
       contactNumber,
       address,
+      addressPostalCode,
       hashedPassword,
-      nmraLicenseNo,
+      nmraLicenseNumber,
       licenseExpiryDate
     ];
 
     const result = await pool.query(query, values);
 
     res.status(201).json({
-      message: 'Registration successful',
+      message: "Registration successful",
       pharmaId: result.rows[0].pharma_id
     });
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Registration failed' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Registration failed" });
   }
 });
 
