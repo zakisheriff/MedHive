@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #f9f9f9;
+  background: #000000;
 }
 
 .logoContainer {
@@ -26,14 +26,14 @@
 }
 
 .logoImage {
-  height: 120px;
+  height: 140px;
   width: auto;
   margin-bottom: 1rem;
   object-fit: contain;
 }
 
 .tagline {
-  color: #666666;
+  color: #e5e5e5;
   font-size: 1.25rem;
   text-align: center;
   margin-bottom: 3rem;
@@ -55,7 +55,7 @@
 }
 
 .message {
-  color: #666666;
+  color: #d4d4d4;
   font-size: 1rem;
   margin-top: 2rem;
   text-align: center;

@@ -15,7 +15,7 @@ export const CreateAccountPage = ({ onNext }: CreateAccountPageProps) => {
     email: '',
     contactNumber: '',
     address: '',
-    addressPasscode: '',
+    addressPostalCode: '',
     nmraLicenseNumber: '',
     licenseExpiryDate: '',
   });
@@ -64,8 +64,8 @@ export const CreateAccountPage = ({ onNext }: CreateAccountPageProps) => {
       newErrors.address = 'Address is required';
     }
 
-    if (!formData.addressPasscode.trim()) {
-      newErrors.addressPasscode = 'Address passcode is required';
+    if (!formData.addressPostalCode.trim()) {
+      newErrors.addressPostalCode = 'Address postal code is required';
     }
 
     if (!formData.nmraLicenseNumber.trim()) {
@@ -177,16 +177,16 @@ export const CreateAccountPage = ({ onNext }: CreateAccountPageProps) => {
 
             <div className={styles.formGroup}>
               <label className={styles.label}>
-                Address Passcode <span className={styles.required}>*</span>
+                Address Postal Code <span className={styles.required}>*</span>
               </label>
               <input
                 type="text"
-                className={`${styles.input} ${errors.addressPasscode ? styles.error : ''}`}
-                value={formData.addressPasscode}
-                onChange={(e) => handleChange('addressPasscode', e.target.value)}
+                className={`${styles.input} ${errors.addressPostalCode ? styles.error : ''}`}
+                value={formData.addressPostalCode}
+                onChange={(e) => handleChange('addressPostalCode', e.target.value)}
                 placeholder="12345"
               />
-              {errors.addressPasscode && <span className={styles.errorText}>{errors.addressPasscode}</span>}
+              {errors.addressPostalCode && <span className={styles.errorText}>{errors.addressPostalCode}</span>}
             </div>
           </div>
 
