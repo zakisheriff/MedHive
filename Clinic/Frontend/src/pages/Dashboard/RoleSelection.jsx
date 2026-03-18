@@ -8,7 +8,7 @@ const RoleSelect = () => {
 
   const handleSelect = (role) => {
     if (role === "doctor") {
-      navigate("/doctor-register");
+      navigate("/doctor-login");
     } else if (role === "admin") {
       navigate("/admin-register");
     }

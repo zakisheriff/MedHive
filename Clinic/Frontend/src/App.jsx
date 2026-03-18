@@ -10,6 +10,7 @@ import PendingVerification from './pages/Auth/PendingVerification';
 import AdminDashboard from './pages/AdminDashboard';
 import RoleSelect from './pages/Dashboard/RoleSelection';
 import DoctorRegister from './pages/Dashboard/DoctorReg';
+import DoctorLogin from './pages/Dashboard/DoctorLogin';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/admin-portal" element={<AdminDashboard />} />
        
         <Route path="/role-select" element={<RoleSelect />} />
+        <Route path="/doctor-login" element={<DoctorLogin />} />
         <Route path="doctor-register" element={<DoctorRegister />} />
         <Route path="search" element={<SearchPage />} />
         
