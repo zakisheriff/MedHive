@@ -70,6 +70,15 @@ const DoctorRegister = () => {
 
     console.log("Doctor Registration Data:", formData);
 
+    localStorage.setItem(
+      "doctor",
+      JSON.stringify({
+        doctorName: formData.doctorName,
+        nic: formData.nic,
+        password: formData.password,
+      })
+    );
+
     setSuccessMessage("Doctor registered successfully!");
 
     setFormData({
@@ -82,7 +91,7 @@ const DoctorRegister = () => {
     setErrors({});
 
     setTimeout(() => {
-      navigate("/search");
+      navigate("/doctor-login");
     }, 1000);
   };
 
@@ -135,9 +144,7 @@ const DoctorRegister = () => {
               value={formData.password}
               onChange={handleChange}
             />
-            {errors.password && (
-              <span className="error">{errors.password}</span>
-            )}
+            {errors.password && <span className="error">{errors.password}</span>}
           </div>
 
           <div className="form-group">
@@ -158,6 +165,13 @@ const DoctorRegister = () => {
             Register
           </button>
         </form>
+
+        <p className="register-link">
+          Already registered?{" "}
+          <span onClick={() => navigate("/doctor-login")}>
+            Login here
+          </span>
+        </p>
 
         {successMessage && <p className="success">{successMessage}</p>}
       </div>
