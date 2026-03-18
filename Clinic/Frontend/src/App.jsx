@@ -8,6 +8,7 @@ import PatientProfile from './pages/Dashboard/PatientProfile';
 import History from './pages/Dashboard/History';
 import PendingVerification from './pages/Auth/PendingVerification';
 import AdminDashboard from './pages/AdminDashboard';
+import RoleSelect from './pages/Dashboard/RoleSelection';
 
 
 function App() {
@@ -18,14 +19,17 @@ function App() {
         <Route path="/" element={<AuthPage />} />
         <Route path="/pending-verification" element={<PendingVerification />} />
         <Route path="/admin-portal" element={<AdminDashboard />} />
+        <Route index element={<Navigate to="role-select" replace />} />
+          <Route path="role-select" element={<RoleSelect />} />
         
         {/* Dashboard Routes: Sidebar is automatically included via Layout */}
         <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<Navigate to="search" replace />} />
+      
           <Route path="search" element={<SearchPage />} />
           <Route path="patientProfile" element={<PatientProfile />} />
           <Route path="prescription" element={<Prescriptions/>} />
           <Route path="history" element={<History/>} />
+          
         </Route>
       </Routes>
     </Router>
