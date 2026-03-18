@@ -52,7 +52,11 @@
   align-items: center;
 }
 
-.custom-icon { width: 34px; height: 34px; opacity: 0.8; padding-left: 18px; }
+.custom-icon {
+  width: 30px;
+  height: 30px;
+}
+
 
 .nav-label { font-weight: 500; font-size: 0.95rem; white-space: nowrap; }
 
