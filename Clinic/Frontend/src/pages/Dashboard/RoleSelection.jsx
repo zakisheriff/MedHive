@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/RoleSelection.css";
 
+
 const RoleSelect = () => {
   const navigate = useNavigate();
 
@@ -24,14 +25,14 @@ const RoleSelect = () => {
             className="role-btn doctor"
             onClick={() => handleSelect("doctor")}
           >
-            👨‍⚕️ I am a Doctor
+            Doctor
           </button>
 
           <button
             className="role-btn admin"
             onClick={() => handleSelect("admin")}
           >
-            🏥 Clinic Admin
+             Clinic Admin
           </button>
         </div>
       </div>

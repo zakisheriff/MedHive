@@ -41,19 +41,19 @@
 }
 
 .role-btn.doctor {
-  background-color: #2b7de9;
+  background-color:#f1a63b;
   color: white;
 }
 
 .role-btn.doctor:hover {
-  background-color: #1f67c1;
+  background-color: #e28a0e;
 }
 
 .role-btn.admin {
-  background-color: #00a86b;
+  background-color: #f1a63b;
   color: white;
 }
 
 .role-btn.admin:hover {
-  background-color: #008a57;
+  background-color: #e28a0e;
 }
