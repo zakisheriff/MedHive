@@ -651,7 +651,7 @@ app.get("/api/clinics/verified", async (req, res) => {
     const result = await pool.query(
       `SELECT clinic_id, clinic_name, district, province 
        FROM clinics 
-       WHERE status = 'verified' 
+       WHERE status = 'APPROVED' 
        ORDER BY clinic_name ASC`
     );
 
