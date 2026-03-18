@@ -77,7 +77,7 @@ const AuthPage = () => {
       localStorage.setItem("clinic", JSON.stringify(res.data.clinic));
 
       if (res.data.clinic.verification_status === "APPROVED") {
-        navigate("/dashboard/home");
+        navigate("/dashboard/search");
       } else {
         // MUST match the path in App.jsx
         navigate("/pending-verification"); 

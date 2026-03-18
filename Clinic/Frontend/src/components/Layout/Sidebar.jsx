@@ -7,7 +7,6 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { name: 'Home', path: '/dashboard/home', icon: '/icons/home.png' },
     { name: 'Search', path: '/dashboard/search', icon: '/icons/search.png' },
     { name: 'Prescription', path: '/dashboard/prescription', icon: '/icons/prescription.png' },
     { name: 'History', path: '/dashboard/history', icon: '/icons/history.png' },
