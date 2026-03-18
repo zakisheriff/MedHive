@@ -20,7 +20,7 @@ const Blog = () => {
                     <header className="article-header">
                         <h2>Why Sri Lanka’s Healthcare System Desperately Needs Digital Prescriptions</h2>
                         <div className="article-meta">
-                            <span className="date">November 2025</span>
+                            <span className="date">March 18, 2026</span>
                         </div>
                     </header>
 
