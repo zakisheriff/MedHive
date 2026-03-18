@@ -42,8 +42,13 @@
   background:#f1a63b;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 30px;
   cursor: pointer;
+  
+}
+.login-btn:hover {
+  background-color: #e28a0e;
+  transform: scale(1.03);
 }
 
 .error {

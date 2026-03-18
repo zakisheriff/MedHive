@@ -34,7 +34,7 @@
 .role-btn {
   padding: 14px;
   border: none;
-  border-radius: 10px;
+  border-radius: 30px;
   font-size: 15px;
   cursor: pointer;
   transition: 0.3s;
@@ -47,6 +47,7 @@
 
 .role-btn.doctor:hover {
   background-color: #e28a0e;
+  transform: scale(1.03);
 }
 
 .role-btn.admin {
@@ -56,4 +57,5 @@
 
 .role-btn.admin:hover {
   background-color: #e28a0e;
+    transform: scale(1.03);
 }

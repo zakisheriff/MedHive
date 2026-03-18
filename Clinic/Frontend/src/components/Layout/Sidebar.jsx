@@ -13,7 +13,7 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
   ];
 
   const handleLogout = () =>{
-      navigate("/auth");
+      navigate("/");
   }
 
   return (
