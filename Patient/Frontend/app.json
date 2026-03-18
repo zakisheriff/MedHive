@@ -9,7 +9,8 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.Frontend"
     },
     "android": {
       "adaptiveIcon": {
@@ -32,7 +33,12 @@
       "themeColor": "#4F46E5"
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "origin": "https://medhive.com"
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -46,7 +52,12 @@
         }
       ],
       "@react-native-community/datetimepicker",
-      "@react-native-google-signin/google-signin"
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.335178320393-ro7qi41ur08qfoaeamnf70l268h8vahq"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

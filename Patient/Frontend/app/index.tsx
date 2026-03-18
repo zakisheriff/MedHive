@@ -12,6 +12,11 @@ import { SocialButton } from '../components/SocialButton';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { LanguagePicker, LANGUAGES } from '../components/LanguagePicker';
 import { useTranslation } from 'react-i18next';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { auth_endupoints } from '../constants/config';
+import { saveUser } from '../utils/userStore';
+import { useAlert } from '../context/AlertContext';
+import { useGoogleAuth } from '../hooks/useGoogleAuth';
 
 const { width } = Dimensions.get('window');
 
@@ -27,6 +32,8 @@ export default function Index() {
     const { t, i18n } = useTranslation();
     const { skipAnimation } = useLocalSearchParams<{ skipAnimation?: string }>();
     const [langPickerVisible, setLangPickerVisible] = React.useState(false);
+    const { showAlert } = useAlert();
+    const { handleGoogleSignIn } = useGoogleAuth(showAlert, t);
 
     const isSkippedRegex = skipAnimation === 'true';
 
@@ -131,10 +138,7 @@ export default function Index() {
 
                     <SocialButton
                         title={t('start.google')}
-                        onPress={() => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                            console.log('Google Sign-In');
-                        }}
+                        onPress={handleGoogleSignIn}
                         style={{ marginBottom: 0 }}
                     />
                 </View>

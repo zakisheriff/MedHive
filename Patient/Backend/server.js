@@ -17,11 +17,13 @@ app.get('/', (req, res) => {
 const registerRoute = require('./routes/register');
 const loginRoute = require('./routes/login');
 const googleSignUpRoute = require('./routes/google_signup');
+const googleCompleteProfileRoute = require('./routes/google_complete_profile');
 
 // Point the paths to the specific files
 app.use('/auth', registerRoute);
 app.use('/auth', loginRoute);
-app.use('/auth',googleSignUpRoute);
+app.use('/auth', googleSignUpRoute);
+app.use('/auth', googleCompleteProfileRoute);
 
 // Prescription Routes
 const prescriptionRoute = require('./routes/prescription');
