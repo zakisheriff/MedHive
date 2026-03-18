@@ -10,7 +10,7 @@ const RoleSelect = () => {
     if (role === "doctor") {
       navigate("/doctor-login");
     } else if (role === "admin") {
-      navigate("/admin-register");
+      navigate("/Dashboard/history");
     }
   };
 

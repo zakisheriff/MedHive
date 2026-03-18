@@ -7,9 +7,9 @@ const Sidebar = ({ isExpanded, setIsExpanded }) => {
   const navigate = useNavigate();
 
   const menuItems = [
-    
-    { name: 'Prescription', path: '/dashboard/prescription', icon: '/icons/prescription.png' },
     { name: 'History', path: '/dashboard/history', icon: '/icons/history.png' },
+    { name: 'Prescription', path: '/dashboard/prescription', icon: '/icons/prescription.png' },
+  
   ];
 
   const handleLogout = () =>{
