@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./css/DoctorReg.css";
+import { useNavigate } from "react-router-dom";
 
 const DoctorRegister = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,8 @@ const DoctorRegister = () => {
 
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,7 +68,6 @@ const DoctorRegister = () => {
       return;
     }
 
-    // Example only - replace with API call
     console.log("Doctor Registration Data:", formData);
 
     setSuccessMessage("Doctor registered successfully!");
@@ -76,7 +78,12 @@ const DoctorRegister = () => {
       password: "",
       confirmPassword: "",
     });
+
     setErrors({});
+
+    setTimeout(() => {
+      navigate("/search");
+    }, 1000);
   };
 
   return (
