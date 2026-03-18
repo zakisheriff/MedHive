@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import '../../styles/global.css';
 import blogTitleImg from './images/blog-title.jpg';
 import blogTitle2Img from './images/blog-title2.jpg';
+import ContactForm from '../../components/ContactForm/ContactForm';
 
 const Blog = () => {
     useEffect(() => {
@@ -180,62 +181,22 @@ const Blog = () => {
                         </p>
                     </section>
 
-                    <section className="blog-section references">
-                        <h2>References</h2>
-                        <ul>
-                            <li>
-                                <a
-                                    href="https://slmc.gov.lk/en/newstest/46-general-notices-en/524-sri-lanka-medical-council-notice-to-all-registrants-of-the-sri-lanka-medical-council-prescription-writing"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Sri Lanka Medical Council (SLMC) notice on prescription writing
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="https://www.researchgate.net/publication/283354699_Assessment_of_legibility_and_completeness_of_prescriptions_dispensed_at_State_Pharmaceutical_Corporation_Anuradhapura"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Research conducted in hospitals in the Anuradhapura area
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="https://www.who.int/europe/news/item/02-05-2024-digital-prescriptions---good-for-patients--good-for-prescribers-and-good-for-dispensers"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    World Health Organization (WHO): Digital prescriptions report
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://medhive.lk/" target="_blank" rel="noopener noreferrer">
-                                    MedHive official website
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="https://www.vecteezy.com/photo/25025410-woman-use-phone-scan-barcode-or-qr-codes-to-pay-credit-card-bill-after-receiving-document-invoice-payment-receive-paying-electricity-digital-payments-technology-scanning-financial-transactions"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Cover image source: Vecteezy
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="https://www.vecteezy.com/photo/70018349-stack-of-colorful-sticky-notes"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Figure image source: Vecteezy
-                                </a>
-                            </li>
-                        </ul>
-                    </section>
                 </article>
+
+                <section className="blog-inquiry-section" id="join">
+                    <div className="blog-inquiry-card glass-card">
+                        <div className="blog-inquiry-content">
+                            <h2>Partner with MedHive</h2>
+                            <p>
+                                Partner with MedHive to digitize prescriptions and improve care quality.
+                                Send us your inquiry and our team will get back to you shortly.
+                            </p>
+                        </div>
+                        <div className="blog-inquiry-form-wrapper">
+                            <ContactForm />
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <style jsx>{`
@@ -282,6 +243,44 @@ const Blog = () => {
 
                 .blog-shell {
                     padding-bottom: 100px;
+                }
+
+                .blog-inquiry-section {
+                    margin: 28px auto 0;
+                    display: flex;
+                    justify-content: center;
+                }
+
+                .blog-inquiry-card {
+                    width: 100%;
+                    max-width: 940px;
+                    padding: 56px 44px;
+                    text-align: center;
+                    border-radius: 28px;
+                    background: linear-gradient(135deg, rgba(220, 163, 73, 0.12) 0%, rgba(220, 163, 73, 0.04) 100%);
+                    border: 1px solid rgba(220, 163, 73, 0.2);
+                }
+
+                .blog-inquiry-content h2 {
+                    font-size: 42px;
+                    font-weight: 800;
+                    margin-bottom: 16px;
+                    color: var(--color-text-primary);
+                    letter-spacing: -1px;
+                    line-height: 1.2;
+                }
+
+                .blog-inquiry-content p {
+                    font-size: 18px;
+                    line-height: 1.65;
+                    color: var(--color-text-secondary);
+                    margin: 0 auto 32px;
+                    max-width: 700px;
+                }
+
+                .blog-inquiry-form-wrapper {
+                    display: flex;
+                    justify-content: center;
                 }
 
                 .blog-article {
@@ -373,16 +372,6 @@ const Blog = () => {
                     text-decoration: underline;
                 }
 
-                .references {
-                    border-top: 1px solid rgba(17, 17, 17, 0.12);
-                    margin-top: 54px;
-                    padding-top: 36px;
-                }
-
-                .references ul {
-                    margin-top: 14px;
-                }
-
                 @media (max-width: 1100px) {
                     .blog-header h1 {
                         font-size: 46px;
@@ -410,6 +399,20 @@ const Blog = () => {
                     .blog-article {
                         padding: 24px 20px;
                         border-radius: 22px;
+                    }
+
+                    .blog-inquiry-card {
+                        padding: 42px 22px;
+                        border-radius: 22px;
+                    }
+
+                    .blog-inquiry-content h2 {
+                        font-size: 30px;
+                    }
+
+                    .blog-inquiry-content p {
+                        font-size: 16px;
+                        margin-bottom: 26px;
                     }
 
                     .blog-section {
