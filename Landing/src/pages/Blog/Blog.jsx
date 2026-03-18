@@ -180,61 +180,6 @@ const Blog = () => {
                         </p>
                     </section>
 
-                    <section className="blog-section references">
-                        <h2>References</h2>
-                        <ul>
-                            <li>
-                                <a
-                                    href="https://slmc.gov.lk/en/newstest/46-general-notices-en/524-sri-lanka-medical-council-notice-to-all-registrants-of-the-sri-lanka-medical-council-prescription-writing"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Sri Lanka Medical Council (SLMC) notice on prescription writing
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="https://www.researchgate.net/publication/283354699_Assessment_of_legibility_and_completeness_of_prescriptions_dispensed_at_State_Pharmaceutical_Corporation_Anuradhapura"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Research conducted in hospitals in the Anuradhapura area
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="https://www.who.int/europe/news/item/02-05-2024-digital-prescriptions---good-for-patients--good-for-prescribers-and-good-for-dispensers"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    World Health Organization (WHO): Digital prescriptions report
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://medhive.lk/" target="_blank" rel="noopener noreferrer">
-                                    MedHive official website
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="https://www.vecteezy.com/photo/25025410-woman-use-phone-scan-barcode-or-qr-codes-to-pay-credit-card-bill-after-receiving-document-invoice-payment-receive-paying-electricity-digital-payments-technology-scanning-financial-transactions"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Cover image source: Vecteezy
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="https://www.vecteezy.com/photo/70018349-stack-of-colorful-sticky-notes"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Figure image source: Vecteezy
-                                </a>
-                            </li>
-                        </ul>
-                    </section>
                 </article>
             </div>
 
@@ -371,16 +316,6 @@ const Blog = () => {
                 a:hover {
                     color: var(--color-primary-dark);
                     text-decoration: underline;
-                }
-
-                .references {
-                    border-top: 1px solid rgba(17, 17, 17, 0.12);
-                    margin-top: 54px;
-                    padding-top: 36px;
-                }
-
-                .references ul {
-                    margin-top: 14px;
                 }
 
                 @media (max-width: 1100px) {
