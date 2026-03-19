@@ -14,6 +14,8 @@ import LandingPage from './pages/LandingPage';
 import PrivacyPolicy from './pages/Legal/PrivacyPolicy';
 import TermsOfService from './pages/Legal/TermsOfService';
 import AboutUs from './pages/AboutUs/AboutUs';
+import Blog from './pages/Blog/Blog';
+import BlogList from './pages/Blog/BlogList';
 
 const MOBILE_BREAKPOINT = 900;
 
@@ -115,6 +117,8 @@ function AppContent() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/blog" element={<BlogList />} />
+        <Route path="/blog/digital-prescriptions-sri-lanka" element={<Blog />} />
       </Routes>
 
       <Footer onScrollToTop={scrollToTop} />

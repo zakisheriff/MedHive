@@ -33,7 +33,7 @@ const app = express();
 
 // middleware
 app.use(helmet());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -651,7 +651,7 @@ app.get("/api/clinics/verified", async (req, res) => {
     const result = await pool.query(
       `SELECT clinic_id, clinic_name, district, province 
        FROM clinics 
-       WHERE status = 'verified' 
+       WHERE status = 'APPROVED' 
        ORDER BY clinic_name ASC`
     );
 

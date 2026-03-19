@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './css/Prescriptions.css';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5002";
+
 const Prescriptions = () => {
   const [orders, setOrders] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -11,7 +13,7 @@ const Prescriptions = () => {
   // Fetch prescriptions from backend
   const fetchPrescriptions = async () => {
     try {
-      const response = await fetch('http://localhost:5002/api/prescriptions/incoming');
+      const response = await fetch(`${API_BASE}/api/prescriptions/incoming`);
       const data = await response.json();
 
       if (response.ok) {
@@ -125,7 +127,7 @@ const Prescriptions = () => {
 
   const handleDispense = async (orderId) => {
     try {
-      const response = await fetch(`http://localhost:5002/api/prescriptions/${orderId}/dispense`, {
+      const response = await fetch(`${API_BASE}/api/prescriptions/${orderId}/dispense`, {
         method: 'PATCH'
       });
 

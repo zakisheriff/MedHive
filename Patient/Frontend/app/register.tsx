@@ -16,8 +16,11 @@ import { StatusBar } from 'expo-status-bar';
 import { auth_endupoints } from '../constants/config';
 import { saveUser } from '../utils/userStore';
 import { useAlert } from '../context/AlertContext';
-// import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useEffect } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
+import { useGoogleAuth } from '../hooks/useGoogleAuth';
 
 
 
@@ -37,14 +40,12 @@ const SRI_LANKAN_PROVINCES = [
 
 const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
 
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import { useTranslation } from 'react-i18next';
 
 export default function RegisterScreen() {
     const insets = useSafeAreaInsets();
     const { showAlert } = useAlert();
     const { t } = useTranslation();
+    const { handleGoogleSignIn } = useGoogleAuth(showAlert, t);
 
     const GENDER_OPTIONS = [
         t('auth.genderOptions.male'),
@@ -164,54 +165,6 @@ export default function RegisterScreen() {
         }
     };
 
-    //google signup page
-    // TODO: Configure Google Sign-In native module properly
-    // useEffect(() => {
-    //     GoogleSignin.configure({
-    //         webClientId: 'YOUR_WEB_CLIENT_ID',
-    //         offlineAccess: true,
-    //     });
-    // }, []);
-
-
-    const handleGoogleSignIn = async () => {
-        // TODO: Implement Google Sign-In after configuring native module
-        showAlert({
-            title: 'Coming Soon',
-            message: 'Google Sign-In is currently unavailable. Please use email registration.',
-            forceCustom: true
-        });
-
-        // try {
-        //     setIsLoading(true);
-        //     await GoogleSignin.hasPlayServices();
-        //     const response = await GoogleSignin.signIn();
-        //     if (response.type !== 'success') {
-        //         throw new Error('Google Sign-In cancelled');
-        //     }
-        //     const idToken = response.data.idToken;
-        //     if (!idToken) {
-        //         throw new Error('No ID token returned');
-        //     }
-        //     const backendResponse = await fetch(
-        //         auth_endupoints.GOOGLESIGNUP,
-        //         {
-        //             method: 'POST',
-        //             headers: { 'Content-Type': 'application/json' },
-        //             body: JSON.stringify({ token: idToken }),
-        //         }
-        //     );
-        //     const result = await backendResponse.json();
-        //     if (backendResponse.ok) {
-        //         await saveUser(result.user);
-        //         router.push('/(tabs)/upload');
-        //     }
-        // } catch (error) {
-        //     console.log(error);
-        // } finally {
-        //     setIsLoading(false);
-        // }
-    };
 
     const handleDateChange = (day: string, month: string, year: string) => {
         setDob({ day, month, year });

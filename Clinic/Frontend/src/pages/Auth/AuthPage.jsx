@@ -3,7 +3,7 @@ import "./Auth.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_BASE = "http://localhost:5002";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5002";
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -77,7 +77,7 @@ const AuthPage = () => {
       localStorage.setItem("clinic", JSON.stringify(res.data.clinic));
 
       if (res.data.clinic.verification_status === "APPROVED") {
-        navigate("/dashboard/home");
+        navigate("/role-select");
       } else {
         // MUST match the path in App.jsx
         navigate("/pending-verification"); 
