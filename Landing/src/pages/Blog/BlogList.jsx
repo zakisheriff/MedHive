@@ -15,7 +15,7 @@ const posts = [
         link: '/blog/digital-prescriptions-sri-lanka',
     },
     {
-        title: 'MedHive Digital Prescriptions: A Smarter Step for Patients and Clinics',
+        title: '5 Reasons Private Clinics Should Switch to Digital Records in 2026',
         description:
             'Discover how MedHive helps clinics and patients move from paper-based prescriptions to a faster, safer digital workflow.',
         image: blogTitle3Img,
