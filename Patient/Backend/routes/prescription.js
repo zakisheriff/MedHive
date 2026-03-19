@@ -6,6 +6,8 @@ const fs = require('fs');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const FormData = require('form-data');
 const axios = require('axios');
+const { uploadToAzure } = require('../utils/azureBlob');
+
 
 // Configure Multer for image uploads
 const storage = multer.diskStorage({
@@ -34,7 +36,8 @@ router.post('/extract', upload.single('image'), async (req, res) => {
         if (!req.file) {
             return res.status(400).json({ error: 'No image uploaded' });
         }
-
+       
+            
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         // Convert image to base64
@@ -104,11 +107,22 @@ router.post('/extract', upload.single('image'), async (req, res) => {
             console.error("Raw Text:", text);
             return res.status(500).json({ error: "Failed to parse AI response" });
         }
+        
+        const { patientId } = req.body;
+        const imageUrl = await uploadToAzure(
+            
+            req.file.path,
+            req.file.originalname,
+            patientId || "anonymous"
+        );
 
         // Clean up uploaded file
         fs.unlinkSync(req.file.path);
 
-        res.json(extractedData);
+        res.json({
+            ...extractedData,
+            imageUrl
+        });
     } catch (error) {
         console.log('Error extracting data:', error.message || error);
         // Clean up file if it exists and error occurred
@@ -147,14 +161,47 @@ router.post('/summary', async (req, res) => {
 
 // 3. Save to History
 // Route: /api/history
+// Route: /api/history
 router.post('/history', async (req, res) => {
     try {
-        const data = req.body;
-        // In a real app, save to DB. For now, we'll just mock it.
-        // You can add DB logic here later using pool from ../db
-        console.log('Saving to history:', data);
-        res.json({ success: true, message: 'Saved to history' });
+        const { 
+            patientId, 
+            type, 
+            clinicName, 
+            imageUrl, 
+            medicines, 
+            labTests, 
+            summary 
+        } = req.body;
+
+        const pool = require('../db');
+        
+        const query = `
+            INSERT INTO medical_history 
+            (patient_id, type, clinic_name, image_url, medicines, lab_tests, summary)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING *;
+        `;
+
+        const values = [
+            patientId || 'anonymous',
+            type || 'prescription',
+            clinicName || 'AI Scan',
+            imageUrl,
+            JSON.stringify(medicines || []),
+            JSON.stringify(labTests || []),
+            summary
+        ];
+
+        const result = await pool.query(query, values);
+
+        res.json({ 
+            success: true, 
+            message: 'Saved to history', 
+            record: result.rows[0] 
+        });
     } catch (error) {
+        console.error('Database Error:', error);
         res.status(500).json({ error: 'Failed to save to history' });
     }
 });
@@ -186,17 +233,18 @@ router.post('/send-to-clinic', upload.single('image'), async (req, res) => {
                 console.log('Failed to parse extracted data, sending image only');
             }
         }
+         const imageUrl = await uploadToAzure(
+            req.file.path,
+            req.file.originalname,
+            medHiveId || "unknown"
+        );
+        fs.unlinkSync(req.file.path);
 
         // Prepare form data to send to Clinic Backend
         const formData = new FormData();
 
         // Read the file from disk and add it to FormData
-        const fileStream = fs.createReadStream(req.file.path);
-        formData.append('image', fileStream, {
-            filename: req.file.originalname || 'prescription.jpg',
-            contentType: req.file.mimetype
-        });
-
+        formData.append('imageUrl', imageUrl);
         // Add patient info and extracted data
         formData.append('patientName', patientName || 'Unknown Patient');
         formData.append('medHiveId', medHiveId || 'N/A');
@@ -222,6 +270,9 @@ router.post('/send-to-clinic', upload.single('image'), async (req, res) => {
             message: 'Prescription sent to clinic successfully',
             prescriptionId: response.data.prescriptionId
         });
+
+       
+       
 
     } catch (error) {
         console.error('Error sending to clinic:', error);
