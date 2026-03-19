@@ -18,7 +18,7 @@ import { saveUser } from '../utils/userStore';
 import { useAlert } from '../context/AlertContext';
 
 import { useTranslation } from 'react-i18next';
-
+import { useGoogleAuth } from '../hooks/useGoogleAuth';
 export default function LoginScreen() {
     const { t } = useTranslation();
     const insets = useSafeAreaInsets();
@@ -27,6 +27,7 @@ export default function LoginScreen() {
     const [isLoading, setIsLoading] = useState(false);
 
     const { showAlert } = useAlert();
+    const { handleGoogleSignIn } = useGoogleAuth(showAlert, t);
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -82,6 +83,8 @@ export default function LoginScreen() {
             setIsLoading(false);
         }
     };
+
+
 
     return (
         <LinearGradient
@@ -167,7 +170,7 @@ export default function LoginScreen() {
 
                         <SocialButton
                             title={t('auth.google')}
-                            onPress={() => console.log('Google Sign-In')}
+                            onPress={handleGoogleSignIn}
                         />
 
                         <View style={styles.footer}>

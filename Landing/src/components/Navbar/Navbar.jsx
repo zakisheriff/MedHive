@@ -80,9 +80,13 @@ const Navbar = ({ scrolled, onLogoClick }) => {
                     ref={navContentRef}
                 >
                     <img
-                        src="logode.png"
+                        src="/logode.png"
                         alt="MedHive Logo"
                         className="nav-logo-image"
+                        onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = '/logo.jpeg';
+                        }}
                         onClick={(e) => {
                             if (window.innerWidth <= 900) {
                                 toggleMobileMenu();

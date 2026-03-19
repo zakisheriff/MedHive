@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { Link, router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,18 +10,12 @@ import { Input } from '../components/Input';
 import { DOBInput } from '../components/DOBInput';
 import { PickerInput } from '../components/PickerInput';
 import { PrimaryButton } from '../components/PrimaryButton';
-import { SocialButton } from '../components/SocialButton';
 import { StatusBar } from 'expo-status-bar';
 import { auth_endupoints } from '../constants/config';
 import { saveUser } from '../utils/userStore';
 import { useAlert } from '../context/AlertContext';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { useGoogleAuth } from '../hooks/useGoogleAuth';
-
-
 
 // Sri Lankan Districts by Province
 const SRI_LANKAN_DISTRICTS = [
@@ -38,14 +31,11 @@ const SRI_LANKAN_PROVINCES = [
     'Sabaragamuwa', 'Southern', 'Uva', 'Western'
 ];
 
-const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
-
-
-export default function RegisterScreen() {
+export default function CompleteProfileScreen() {
     const insets = useSafeAreaInsets();
     const { showAlert } = useAlert();
     const { t } = useTranslation();
-    const { handleGoogleSignIn } = useGoogleAuth(showAlert, t);
+    const params = useLocalSearchParams();
 
     const GENDER_OPTIONS = [
         t('auth.genderOptions.male'),
@@ -53,9 +43,10 @@ export default function RegisterScreen() {
         t('auth.genderOptions.other')
     ];
 
-    const [fname, setFname] = useState('');
-    const [lname, setLname] = useState('');
-    const [email, setEmail] = useState('');
+    const [fname, setFname] = useState((params.fname as string) || '');
+    const [lname, setLname] = useState((params.lname as string) || '');
+    const email = (params.email as string) || '';
+    
     const [dob, setDob] = useState({ day: '', month: '', year: '' });
     const [gender, setGender] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -63,8 +54,6 @@ export default function RegisterScreen() {
     const [province, setProvince] = useState('');
     const [medId, setMedId] = useState('');
     const [dobError, setDobError] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     // Generate Med ID when year changes
@@ -88,8 +77,8 @@ export default function RegisterScreen() {
         }
     }, [dob.year]);
 
-    const handleRegister = async () => {
-        if (!fname || !lname || !email || !password || !medId || !gender || !phoneNumber || !district || !province) {
+    const handleCompleteProfile = async () => {
+        if (!fname || !lname || !dob.year || !dob.month || !dob.day || !gender || !phoneNumber || !district || !province) {
             showAlert({
                 title: t('auth.required'),
                 message: t('auth.requiredMsg'),
@@ -98,49 +87,36 @@ export default function RegisterScreen() {
             return;
         }
 
-        if (password !== confirmPassword) {
-            showAlert({
-                title: t('auth.regFailed'),
-                message: t('auth.passwordMismatch'),
-                forceCustom: true
-            });
-            return;
-        }
-
         setIsLoading(true);
         try {
-            // Construct the body based on what your backend expects
-            const registrationData = {
-
+            const profileData = {
                 fname,
                 lname,
-                date_of_birth: `${dob.year}-${dob.month}-${dob.day}`, // Formatting for SQL
+                date_of_birth: `${dob.year}-${dob.month}-${dob.day}`,
                 email,
-                password,
                 gender,
                 phone_number: phoneNumber,
                 district,
                 province
             };
 
-            const response = await fetch(auth_endupoints.REGISTER, { // Use 10.0.2.2 for Android Emulator
+            const response = await fetch(auth_endupoints.GOOGLE_COMPLETE_PROFILE, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(registrationData),
+                body: JSON.stringify(profileData),
             });
 
             const result = await response.json();
-            //***change the route***
+
             if (response.ok) {
                 showAlert({
                     title: t('auth.regSuccess'),
-                    message: t('auth.regSuccess'),
+                    message: "Profile completed successfully!",
                     forceCustom: true
                 });
 
-                // Store user data
                 if (result.user) {
                     await saveUser(result.user);
                 }
@@ -148,8 +124,8 @@ export default function RegisterScreen() {
                 router.push('/(tabs)/upload');
             } else {
                 showAlert({
-                    title: t('auth.regFailed'),
-                    message: result.message || t('auth.regFailed'),
+                    title: 'Registration Failed',
+                    message: result.message || 'Could not complete profile',
                     forceCustom: true
                 });
             }
@@ -164,7 +140,6 @@ export default function RegisterScreen() {
             setIsLoading(false);
         }
     };
-
 
     const handleDateChange = (day: string, month: string, year: string) => {
         setDob({ day, month, year });
@@ -207,8 +182,16 @@ export default function RegisterScreen() {
 
                     <HoneyContainer style={styles.formContainer}>
                         <View style={styles.formHeader}>
-                            <Text style={styles.cardTitle}>{t('auth.createAccount')}</Text>
+                            <Text style={styles.cardTitle}>Complete Profile</Text>
                         </View>
+
+                        <Input
+                            label="Email Address"
+                            value={email}
+                            editable={false}
+                            iconName="mail-outline"
+                            style={{ backgroundColor: '#f9f9f9', opacity: 0.8 }}
+                        />
 
                         <Input
                             label={t('auth.fnameLabel')}
@@ -280,63 +263,13 @@ export default function RegisterScreen() {
                             iconName="map-outline"
                         />
 
-                        <Input
-                            label={t('auth.emailLabel')}
-                            placeholder={t('auth.emailPlaceholder')}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            value={email}
-                            onChangeText={setEmail}
-                            iconName="mail-outline"
-                        />
-
-                        <Input
-                            secureTextEntry
-                            label={t('auth.passwordLabel')}
-                            placeholder={t('auth.passwordPlaceholder')}
-                            value={password}
-                            onChangeText={setPassword}
-                            iconName="lock-closed-outline"
-                        />
-
-                        <Input
-                            secureTextEntry
-                            label={t('auth.confirmPasswordLabel')}
-                            placeholder={t('auth.confirmPasswordPlaceholder')}
-                            value={confirmPassword}
-                            onChangeText={setConfirmPassword}
-                            iconName="lock-closed-outline"
-                        />
-
                         <PrimaryButton
-                            title={t('auth.next')}
-                            onPress={handleRegister}
+                            title={t('auth.next') || "Complete Profile"}
+                            onPress={handleCompleteProfile}
                             style={styles.registerBtn}
                             isLoading={isLoading}
                         />
 
-                        <View style={styles.dividerContainer}>
-                            <View style={styles.dividerLine} />
-                            <Text style={styles.dividerText}>{t('auth.or')}</Text>
-                            <View style={styles.dividerLine} />
-                        </View>
-
-                        <SocialButton
-                            title={t('auth.google')}
-                            onPress={handleGoogleSignIn}
-                        />
-
-
-                        <View style={styles.footer}>
-                            <Text style={styles.footerText}>{t('auth.haveAccount')}</Text>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                    router.push('/login');
-                                }}>
-                                <Text style={styles.linkText}>{t('auth.signInLink')}</Text>
-                            </TouchableOpacity>
-                        </View>
                     </HoneyContainer>
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -397,35 +330,5 @@ const styles = StyleSheet.create({
     registerBtn: {
         marginTop: 8,
         marginBottom: 20,
-    },
-    dividerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    dividerLine: {
-        flex: 1,
-        height: 1,
-        backgroundColor: '#E5E5E5',
-    },
-    dividerText: {
-        marginHorizontal: 12,
-        color: '#999',
-        fontSize: 14,
-        fontWeight: '500',
-    },
-    footer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop: 10,
-    },
-    footerText: {
-        color: '#666',
-        fontSize: 14,
-    },
-    linkText: {
-        color: Colors.light.primary,
-        fontSize: 14,
-        fontWeight: '700',
-    },
+    }
 });
