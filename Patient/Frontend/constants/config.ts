@@ -30,5 +30,6 @@ export const API_ENDPOINTS = {
 export const auth_endupoints = {
     LOGIN: `${BASE_URL}/auth/login`,
     REGISTER: `${BASE_URL}/auth/register`,
-<<<<<<
+    GOOGLE_COMPLETE_PROFILE : `${BASE_URL}/auth/google-login`
+
 };
