@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import BlogCard from '../../components/BlogCard/BlogCard';
 import blogTitleImg from './images/blog-title.jpg';
+import blogTitle3Img from './images/blog-title3.jpeg';
 import './BlogList.css';
 
 const posts = [
@@ -10,6 +11,15 @@ const posts = [
             "Handwritten prescriptions cause errors, delays, and lost records. Digital solutions can transform Sri Lanka's healthcare.",
         image: blogTitleImg,
         date: 'March 18, 2026',
+        category: '',
+        link: '/blog/digital-prescriptions-sri-lanka',
+    },
+    {
+        title: 'MedHive Digital Prescriptions: A Smarter Step for Patients and Clinics',
+        description:
+            'Discover how MedHive helps clinics and patients move from paper-based prescriptions to a faster, safer digital workflow.',
+        image: blogTitle3Img,
+        date: 'March 19, 2026',
         category: '',
         link: '/blog/digital-prescriptions-sri-lanka',
     },
