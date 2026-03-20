@@ -95,11 +95,11 @@ const Blog2 = () => {
                             <p className="image-source">
                                 Image source:{' '}
                                 <a
-                                    href="https://www.vecteezy.com/photo/70019764-medical-professional-using-laptop-for-telemedicine-or-patient-consultation"
+                                    href="https://www.vecteezy.com/free-photos/doctor-and-patient"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    Medical professional using laptop stock photo by Vecteezy
+                                    Doctor And Patient Stock photos by Vecteezy
                                 </a>
                             </p>
                         </div>
@@ -152,11 +152,11 @@ const Blog2 = () => {
                             <p className="image-source">
                                 Image source:{' '}
                                 <a
-                                    href="https://www.vecteezy.com/photo/69691081-a-doctor-is-holding-a-tablet-with-a-digital-interface"
+                                    href="https://www.vecteezy.com/free-photos/doctor"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    Doctor holding a tablet with digital interface stock photo by Vecteezy
+                                    Doctor Stock photos by Vecteezy
                                 </a>
                             </p>
                         </div>
