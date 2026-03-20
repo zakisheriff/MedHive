@@ -17,9 +17,7 @@ const Blog2 = () => {
                     <p className="blog-date">March 20, 2026</p>
                     <h1>5 Reasons Private Clinics Should Switch to Digital Records in 2026</h1>
                     <p className="blog-subtitle">
-                        Private clinics are under pressure to deliver faster, safer, and more accurate care.
-                        Moving from paper files to digital records helps reduce errors, improve communication,
-                        and create a better experience for both clinicians and patients.
+                        As healthcare becomes more digital, private clinics in 2026 can benefit greatly by replacing paper records with efficient digital systems. This shift can help clinics provide faster service, improve accuracy, and manage patient information more effectively.
                     </p>
                 </div>
             </div>
@@ -42,12 +40,6 @@ const Blog2 = () => {
                             </a>
                         </p>
                     </div>
-
-                    <section className="blog-section">
-                        <p>
-                            As healthcare becomes more digital, private clinics in 2026 can benefit greatly by replacing paper records with efficient digital systems. This shift can help clinics provide faster service, improve accuracy, and manage patient information more effectively.
-                        </p>
-                    </section>
 
                     <section className="blog-section">
                         <h2>Why Digital Records Are Becoming Essential</h2>
