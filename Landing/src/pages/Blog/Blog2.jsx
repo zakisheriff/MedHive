@@ -34,11 +34,11 @@ const Blog2 = () => {
                         <p className="image-source">
                             Image source:{' '}
                             <a
-                                href="https://www.vecteezy.com/photo/69823664-doctor-consulting-a-patient-healthcare-and-medicine"
+                                href="https://www.vecteezy.com/free-photos/doctor-and-patient"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                Doctor consulting a patient stock photo by Vecteezy
+                                Doctor And Patient Stock photos by Vecteezy
                             </a>
                         </p>
                     </div>
