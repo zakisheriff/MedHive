@@ -293,6 +293,8 @@ const Blog2 = () => {
                     color: #444;
                     max-width: 1050px;
                     margin: 0;
+                    text-align: justify;
+                    text-align-last: left;
                 }
 
                 .blog-shell {
@@ -392,6 +394,8 @@ const Blog2 = () => {
                     font-size: 20px;
                     line-height: 1.85;
                     color: #374151;
+                    text-align: justify;
+                    text-align-last: left;
                 }
 
                 .blog-section p {
