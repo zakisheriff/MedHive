@@ -21,9 +21,15 @@ export default function MedicalHistoryScreen() {
     const { fname, lname, email, dob, gender, phoneNumber, district, province, medId, password } = params;
 
     const [medicalRecords, setMedicalRecords] = useState('');
+    const [bloodGroup, setbloodGroup] = useState('');
     const [diseases, setDiseases] = useState('');
     const [allergies, setAllergies] = useState('');
     const [otherInfo, setOtherInfo] = useState('');
+    const [emergencyContactName, setemergencyContactName] = useState('');
+    
+    const [emergencyContactNumber, setemergencyContactNumber] = useState('');
+    
+    
 
     const handleVerifyAndCreate = async () => {
         try {
@@ -44,6 +50,9 @@ export default function MedicalHistoryScreen() {
                     medical_records: medicalRecords,
                     diseases: diseases,
                     allergies: allergies,
+                    blood_group:bloodGroup,
+                    emergency_contact_name:emergencyContactName,
+                    emergency_contact_number:emergencyContactNumber,
                     other_info: otherInfo
                 }),
             });
@@ -98,6 +107,16 @@ export default function MedicalHistoryScreen() {
                             numberOfLines={4}
                         />
 
+                         <Input
+                            label={"blood Group"}
+                            placeholder={"Blood group (eg:- O+ , O-,....)"}
+                            value={bloodGroup}
+                            onChangeText={setbloodGroup}
+                            iconName="document-text-outline"
+                            multiline
+                            numberOfLines={1}
+                        />
+
                         <Input
                             label={t('medHistory.chronicLabel')}
                             placeholder={t('medHistory.chronicPlaceholder')}
@@ -113,6 +132,21 @@ export default function MedicalHistoryScreen() {
                             onChangeText={setAllergies}
                             iconName="warning-outline"
                         />
+                        <Input
+                            label={"emrgency contact number name "}
+                            placeholder={""}
+                            value={emergencyContactName}
+                            onChangeText={setemergencyContactName}
+                            
+                        />
+                        <Input
+                            label={"emrgency contact number number "}
+                            placeholder={"(eg:- +94 712 345 6789)"}
+                            value={emergencyContactNumber}
+                            onChangeText={setemergencyContactNumber}
+                            
+                        />
+                        
 
                         <Input
                             label={t('medHistory.otherLabel')}
