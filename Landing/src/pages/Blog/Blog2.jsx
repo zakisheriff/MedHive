@@ -233,16 +233,6 @@ const Blog2 = () => {
                         <p>
                             We strongly believe that adopting digital solutions like MedHive can help clinics move toward a more modern, reliable, and robust healthcare system in 2026 and beyond.
                         </p>
-                        <p>
-                            Reference:{' '}
-                            <a
-                                href="https://iris.who.int/server/api/core/bitstreams/a64d584f-015b-471f-9d86-9ea263cfb516/content"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                WHO Global strategy on digital health 2020-2027
-                            </a>
-                        </p>
                     </section>
 
                 </article>
