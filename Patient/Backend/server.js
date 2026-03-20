@@ -29,6 +29,9 @@ app.use('/auth', googleCompleteProfileRoute);
 const prescriptionRoute = require('./routes/prescription');
 app.use('/api', prescriptionRoute);
 
+const medicalHistoryRoute = require('./routes/medical_history');
+app.use('/api', medicalHistoryRoute);
+
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server started on port ${PORT}`);
