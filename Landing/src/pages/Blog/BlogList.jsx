@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import BlogCard from '../../components/BlogCard/BlogCard';
 import blogTitleImg from './images/blog-title.jpg';
+import blogTitle3Img from './images/blog-title3.jpeg';
 import './BlogList.css';
 
 const posts = [
@@ -12,6 +13,15 @@ const posts = [
         date: 'March 18, 2026',
         category: '',
         link: '/blog/digital-prescriptions-sri-lanka',
+    },
+    {
+        title: '5 Reasons Private Clinics Should Switch to Digital Records in 2026',
+        description:
+            'Discover how MedHive helps clinics and patients move from paper-based prescriptions to a faster, safer digital workflow.',
+        image: blogTitle3Img,
+        date: 'March 20, 2026',
+        category: '',
+        link: '/blog/private-clinics-digital-records-2026',
     },
 ];
 
