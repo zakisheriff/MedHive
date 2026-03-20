@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
     EXTRACT_PRESCRIPTION: `${BASE_URL}/api/extract`,
     SUMMARY: `${BASE_URL}/api/summary`,
     HISTORY: `${BASE_URL}/api/history`,
+    medical_history:`${BASE_URL}/api/medical_history`,
     SEND_TO_CLINIC: `${BASE_URL}/api/send-to-clinic`,
     GET_CLINICS: `${BASE_URL}/api/clinics`,
 };

@@ -8,6 +8,7 @@ import { HoneyContainer } from '../components/HoneyContainer';
 import { Input } from '../components/Input';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { StatusBar } from 'expo-status-bar';
+import { API_ENDPOINTS } from '../constants/config';
 
 import { useTranslation } from 'react-i18next';
 
@@ -21,10 +22,13 @@ export default function MedicalHistoryScreen() {
     const [allergies, setAllergies] = useState('');
     const [otherInfo, setOtherInfo] = useState('');
 
-    const handleVerifyAndCreate = () => {
-        // Here you would typically send all data to your backend
+    const handleVerifyAndCreate = async () => {
+        // Combine the params from previous page with current local state
         const completeProfile = {
-            basicInfo: { fname, lname, email, dob, gender, phoneNumber, district, province, medId, password },
+            basicInfo: { 
+                fname, lname, email, dob, gender, 
+                phoneNumber, district, province, medId, password 
+            },
             medicalHistory: {
                 records: medicalRecords,
                 diseases: diseases,
@@ -33,17 +37,29 @@ export default function MedicalHistoryScreen() {
             }
         };
 
-        console.log('Creating Account with Profile:', JSON.stringify(completeProfile, null, 2));
+        try {
+            // Use your computer's IP if testing on a real device
+            const response = await fetch(API_ENDPOINTS.medical_history, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(completeProfile),
+            });
 
-        // Navigate to upload screen
-        router.push({
-            pathname: '/(tabs)/upload',
-            params: {
-                // Pass user ID or token if you had real auth
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Registration Successful!');
+                router.push({
+                    pathname: '/(tabs)/upload',
+                    params: { patientId: result.patientId }
+                });
+            } else {
+                alert(result.error || 'Something went wrong');
             }
-        });
-    };
-
+        } catch (err) {
+            alert('Could not connect to server.');
+        }
+};
     return (
         <LinearGradient
             colors={[Colors.light.background, Colors.light.background]}
