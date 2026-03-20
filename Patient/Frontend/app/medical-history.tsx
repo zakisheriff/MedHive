@@ -10,6 +10,7 @@ import { PrimaryButton } from '../components/PrimaryButton';
 import { StatusBar } from 'expo-status-bar';
 import { API_ENDPOINTS } from '../constants/config';
 import { auth_endpoints } from '../constants/config';
+import { saveUser } from '../utils/userStore';
 
 
 import { useTranslation } from 'react-i18next';
@@ -26,47 +27,47 @@ export default function MedicalHistoryScreen() {
 
     const handleVerifyAndCreate = async () => {
         try {
-            // STEP 1: Register the basic info first
-            const regResponse = await fetch(auth_endpoints.REGISTER, {
+            // STEP 1: Register the full profile (Basic Info + Medical History) in one go
+            const response = await fetch(auth_endpoints.REGISTER, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    fname, lname, email, password, gender, district, province,
-                    date_of_birth: dob,
+                    fname,
+                    lname,
+                    email,
+                    password,
+                    gender,
+                    district,
+                    province,
                     phone_number: phoneNumber,
+                    date_of_birth: dob, // Already formatted as YYYY-MM-DD from register.tsx
+                    medical_records: medicalRecords,
+                    diseases: diseases,
+                    allergies: allergies,
+                    other_info: otherInfo
                 }),
             });
 
-            const regData = await regResponse.json();
+            const data = await response.json();
 
-            if (regResponse.ok) {
-                const medId = regData.med_id;
-
-                // STEP 2: Update the record with medical history
-                const historyResponse = await fetch(API_ENDPOINTS.medical_history, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        medical_records: medicalRecords,
-                        diseases: diseases,
-                        allergies: allergies,
-                        other_info: otherInfo
-                    }),
-                });
-
-                if (historyResponse.ok) {
-                    router.push({
-                        pathname: '/(tabs)/upload',
-                        params: { medId: medId }
-                    });
+            if (response.ok) {
+                // Store user data locally
+                if (data.user) {
+                    await saveUser(data.user);
                 }
+
+                router.push({
+                    pathname: '/(tabs)/upload',
+                    params: { medId: data.user.med_id }
+                });
             } else {
-                alert(regData.message || "Registration failed");
+                alert(data.message || "Registration failed");
             }
         } catch (error) {
+            console.error("Registration Error:", error);
             alert("Server error. Please try again.");
         }
-};
+    };
     return (
         <LinearGradient
             colors={[Colors.light.background, Colors.light.background]}

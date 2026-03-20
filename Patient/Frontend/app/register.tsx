@@ -108,57 +108,24 @@ export default function RegisterScreen() {
 
         setIsLoading(true);
         try {
-            // Construct the body based on what your backend expects
-            const registrationData = {
-
-                fname,
-                lname,
-                date_of_birth: `${dob.year}-${dob.month}-${dob.day}`, // Formatting for SQL
-                email,
-                password,
-                gender,
-                phone_number: phoneNumber,
-                district,
-                province
-            };
-
-            const response = await fetch(auth_endpoints.REGISTER, { // Use 10.0.2.2 for Android Emulator
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(registrationData),
-            });
-
-            const result = await response.json();
-            //***change the route***
-            if (response.ok) {
-                showAlert({
-                    title: t('auth.regSuccess'),
-                    message: t('auth.regSuccess'),
-                    forceCustom: true
-                });
-
-                // Store user data
-                if (result.user) {
-                    await saveUser(result.user);
+            // Instead of registering here, we pass the data to the next step
+            // This ensures we create the account and history in one flow
+            router.push({
+                pathname: '/medical-history',
+                params: {
+                    fname,
+                    lname,
+                    email,
+                    dob: `${dob.year}-${dob.month}-${dob.day}`,
+                    gender,
+                    phoneNumber,
+                    district,
+                    province,
+                    password
                 }
-
-                router.push('/medical-history');
-            } else {
-                showAlert({
-                    title: t('auth.regFailed'),
-                    message: result.message || t('auth.regFailed'),
-                    forceCustom: true
-                });
-            }
-        } catch (error) {
-            console.error("Connection Error:", error);
-            showAlert({
-                title: t('auth.connError'),
-                message: t('auth.connErrorMsg'),
-                forceCustom: true
             });
+        } catch (error) {
+            console.error("Navigation Error:", error);
         } finally {
             setIsLoading(false);
         }

@@ -178,8 +178,11 @@ export default function ProfileScreen() {
         );
     }
 
-    const fullName = `${userData.fname} ${userData.lname}`;
-    const initials = `${userData.fname[0]}${userData.lname[0]}`.toUpperCase();
+    const fullName = `${userData.fname || ''} ${userData.lname || ''}`.trim() || 'MedHive User';
+    const initials = (
+        (userData.fname?.[0] || '') + 
+        (userData.lname?.[0] || '')
+    ).toUpperCase() || 'MH';
 
     return (
         <View style={styles.container}>
