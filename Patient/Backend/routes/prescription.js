@@ -6,6 +6,8 @@ const fs = require('fs');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const FormData = require('form-data');
 const axios = require('axios');
+const { uploadToAzure } = require('../utils/azureBlob');
+const pool = require("../db");
 
 // Configure Multer for image uploads
 const storage = multer.diskStorage({
@@ -23,17 +25,18 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Initialize Gemini
-// Ensure GEMINI_API_KEY is set in your .env file
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // 1. Extract Prescription Data
-// Route: /api/extract (mounted as /extract in this router)
 router.post('/extract', upload.single('image'), async (req, res) => {
     console.log('--- New Extraction Request Received ---');
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No image uploaded' });
         }
+
+        
+        const { patientId, district, province } = req.body;
 
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
@@ -88,7 +91,6 @@ router.post('/extract', upload.single('image'), async (req, res) => {
         const response = await result.response;
         let text = response.text();
 
-        // Robust JSON cleanup: find the first '{' and last '}'
         const jsonStart = text.indexOf('{');
         const jsonEnd = text.lastIndexOf('}');
 
@@ -105,152 +107,57 @@ router.post('/extract', upload.single('image'), async (req, res) => {
             return res.status(500).json({ error: "Failed to parse AI response" });
         }
 
+        const imageUrl = await uploadToAzure(
+            req.file.path,
+            req.file.originalname,
+            patientId || "anonymous"
+        );
+
+        const insertQuery = `
+            INSERT INTO prescriptions (
+                med_id, 
+                clinic_id, 
+                raw_ai_output, 
+                status, 
+                prescription_image_url, 
+                patient_district, 
+                patient_province
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING prescription_id;
+        `;
+
+        const values = [
+            patientId || "anonymous",
+            null,
+            JSON.stringify(extractedData),
+            'EXTRACTED',
+            imageUrl,
+            district || null,
+            province || null
+        ];
+
+        const dbResult = await pool.query(insertQuery, values);
+
         // Clean up uploaded file
         fs.unlinkSync(req.file.path);
 
-        res.json(extractedData);
+        res.json({
+            ...extractedData,
+            imageUrl,
+            prescriptionId: dbResult.rows[0].prescription_id
+        });
+
     } catch (error) {
         console.log('Error extracting data:', error.message || error);
-        // Clean up file if it exists and error occurred
+
         if (req.file && fs.existsSync(req.file.path)) {
             fs.unlinkSync(req.file.path);
         }
+
         res.status(error.status || 500).json({
             error: error.message || 'Failed to process image',
             details: error.errorDetails || []
         });
     }
 });
-
-// 2. Get Medicine Summary
-// Route: /api/summary
-router.post('/summary', async (req, res) => {
-    try {
-        const { medicineName } = req.body;
-        if (!medicineName) {
-            return res.status(400).json({ error: 'Medicine name is required' });
-        }
-
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-        const prompt = `Provide a professional, concise summary for the medicine: ${medicineName}. Include what it is used for, common side effects, and important precautions.Format it with clear headings.`;
-
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const summary = response.text();
-
-        res.json({ summary });
-    } catch (error) {
-        console.error('Error getting summary:', error);
-        res.status(500).json({ error: 'Failed to get summary' });
-    }
-});
-
-// 3. Save to History
-// Route: /api/history
-router.post('/history', async (req, res) => {
-    try {
-        const data = req.body;
-        // In a real app, save to DB. For now, we'll just mock it.
-        // You can add DB logic here later using pool from ../db
-        console.log('Saving to history:', data);
-        res.json({ success: true, message: 'Saved to history' });
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to save to history' });
-    }
-});
-
-// 4. Send Prescription to Clinic
-// Route: /api/send-to-clinic
-router.post('/send-to-clinic', upload.single('image'), async (req, res) => {
-    try {
-        console.log('--- Send to Clinic Request Received ---');
-
-        if (!req.file) {
-            return res.status(400).json({ error: 'No prescription image provided' });
-        }
-
-        // Parse the extracted data and patient info from request body
-        const { extractedData, patientName, medHiveId } = req.body;
-
-        // Parse extractedData if it's a string
-        let parsedExtractedData = null;
-        let hasExtractedData = false;
-
-        if (extractedData) {
-            try {
-                parsedExtractedData = typeof extractedData === 'string'
-                    ? JSON.parse(extractedData)
-                    : extractedData;
-                hasExtractedData = parsedExtractedData && parsedExtractedData.medicines && parsedExtractedData.medicines.length > 0;
-            } catch (e) {
-                console.log('Failed to parse extracted data, sending image only');
-            }
-        }
-
-        // Prepare form data to send to Clinic Backend
-        const formData = new FormData();
-
-        // Read the file from disk and add it to FormData
-        const fileStream = fs.createReadStream(req.file.path);
-        formData.append('image', fileStream, {
-            filename: req.file.originalname || 'prescription.jpg',
-            contentType: req.file.mimetype
-        });
-
-        // Add patient info and extracted data
-        formData.append('patientName', patientName || 'Unknown Patient');
-        formData.append('medHiveId', medHiveId || 'N/A');
-        formData.append('hasExtractedData', hasExtractedData.toString());
-
-        if (hasExtractedData) {
-            formData.append('medicines', JSON.stringify(parsedExtractedData.medicines));
-        }
-
-        // Forward to Clinic Backend
-        const CLINIC_BACKEND_URL = process.env.CLINIC_BACKEND_URL || 'http://localhost:5002';
-
-        const response = await axios.post(
-            `${CLINIC_BACKEND_URL}/api/prescriptions/incoming`,
-            formData,
-            {
-                headers: formData.getHeaders()
-            }
-        );
-
-        res.json({
-            success: true,
-            message: 'Prescription sent to clinic successfully',
-            prescriptionId: response.data.prescriptionId
-        });
-
-    } catch (error) {
-        console.error('Error sending to clinic:', error);
-        res.status(500).json({ error: 'Failed to send prescription to clinic' });
-    }
-});
-
-// 3. Get Verified Clinics
-// Route: /api/clinics (mounted as /clinics in this router)
-router.get('/clinics', async (req, res) => {
-    try {
-        const pool = require('../db');
-
-        const result = await pool.query(
-            `SELECT clinic_id, clinic_name, district, province 
-             FROM clinics 
-             WHERE verification_status = 'APPROVED' 
-             ORDER BY clinic_name ASC`
-        );
-
-        res.json({
-            clinics: result.rows
-        });
-    } catch (error) {
-        console.error('Error fetching clinics:', error);
-        res.status(500).json({ error: 'Failed to fetch clinics' });
-    }
-});
-
 module.exports = router;
-
-
