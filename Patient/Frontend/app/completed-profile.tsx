@@ -11,7 +11,7 @@ import { DOBInput } from '../components/DOBInput';
 import { PickerInput } from '../components/PickerInput';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { StatusBar } from 'expo-status-bar';
-import { auth_endupoints } from '../constants/config';
+import { auth_endpoints } from '../constants/config';
 import { saveUser } from '../utils/userStore';
 import { useAlert } from '../context/AlertContext';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -100,7 +100,7 @@ export default function CompleteProfileScreen() {
                 province
             };
 
-            const response = await fetch(auth_endupoints.GOOGLE_COMPLETE_PROFILE, {
+            const response = await fetch(auth_endpoints.GOOGLE_COMPLETE_PROFILE, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
