@@ -22,7 +22,7 @@ const SearchPage = () => {
   // 🔥 Logout function
   const handleLogout = () => {
     localStorage.removeItem("doctor");
-    navigate("/"); // role selection page
+    navigate("/role-select"); // role selection page
   };
 
   const handleSearch = async (e) => {
@@ -183,7 +183,7 @@ const SearchPage = () => {
                       }}
                       className="otp-box"
                     />
-                    
+
                     <input
                       maxLength="1"
                       value={otp[1] || ''}
