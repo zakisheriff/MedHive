@@ -217,3 +217,30 @@
   font-size: 1.2rem;
   text-transform: uppercase;
 }
+
+.logout-bottom {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.logout-btn {
+  background-color: #f1a63b;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #ea941b;
+}
+
+.logout-btn:active {
+  transform: translateX(-50%) scale(0.96);
+}

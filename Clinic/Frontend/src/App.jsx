@@ -26,7 +26,7 @@ function App() {
         <Route path="/doctor-login" element={<DoctorLogin />} />
         <Route path="doctor-register" element={<DoctorRegister />} />
         <Route path="search" element={<SearchPage />} />
-
+        
         {/* Dashboard Routes: Sidebar is automatically included via Layout */}
         <Route path="/dashboard" element={<DashboardLayout />}>
 
