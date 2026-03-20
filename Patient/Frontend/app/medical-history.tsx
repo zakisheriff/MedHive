@@ -8,6 +8,9 @@ import { HoneyContainer } from '../components/HoneyContainer';
 import { Input } from '../components/Input';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { StatusBar } from 'expo-status-bar';
+import { API_ENDPOINTS } from '../constants/config';
+import { auth_endpoints } from '../constants/config';
+
 
 import { useTranslation } from 'react-i18next';
 
@@ -21,29 +24,49 @@ export default function MedicalHistoryScreen() {
     const [allergies, setAllergies] = useState('');
     const [otherInfo, setOtherInfo] = useState('');
 
-    const handleVerifyAndCreate = () => {
-        // Here you would typically send all data to your backend
-        const completeProfile = {
-            basicInfo: { fname, lname, email, dob, gender, phoneNumber, district, province, medId, password },
-            medicalHistory: {
-                records: medicalRecords,
-                diseases: diseases,
-                allergies: allergies,
-                other: otherInfo
+    const handleVerifyAndCreate = async () => {
+        try {
+            // STEP 1: Register the basic info first
+            const regResponse = await fetch(auth_endpoints.REGISTER, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fname, lname, email, password, gender, district, province,
+                    date_of_birth: dob,
+                    phone_number: phoneNumber,
+                }),
+            });
+
+            const regData = await regResponse.json();
+
+            if (regResponse.ok) {
+                const medId = regData.med_id;
+
+                // STEP 2: Update the record with medical history
+                const historyResponse = await fetch(API_ENDPOINTS.medical_history, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        medical_records: medicalRecords,
+                        diseases: diseases,
+                        allergies: allergies,
+                        other_info: otherInfo
+                    }),
+                });
+
+                if (historyResponse.ok) {
+                    router.push({
+                        pathname: '/(tabs)/upload',
+                        params: { medId: medId }
+                    });
+                }
+            } else {
+                alert(regData.message || "Registration failed");
             }
-        };
-
-        console.log('Creating Account with Profile:', JSON.stringify(completeProfile, null, 2));
-
-        // Navigate to upload screen
-        router.push({
-            pathname: '/(tabs)/upload',
-            params: {
-                // Pass user ID or token if you had real auth
-            }
-        });
-    };
-
+        } catch (error) {
+            alert("Server error. Please try again.");
+        }
+};
     return (
         <LinearGradient
             colors={[Colors.light.background, Colors.light.background]}

@@ -144,7 +144,7 @@ export default function RegisterScreen() {
                     await saveUser(result.user);
                 }
 
-                router.push('/(tabs)/upload');
+                router.push('/medical-history');
             } else {
                 showAlert({
                     title: t('auth.regFailed'),

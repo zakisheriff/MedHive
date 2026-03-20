@@ -32,6 +32,9 @@ const accessRoute = require('./routes/access');
 app.use('/api', prescriptionRoute);
 app.use('/api/access', accessRoute);
 
+const medicalHistoryRoute = require('./routes/medical_history');
+app.use('/api', medicalHistoryRoute);
+
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server started on port ${PORT}`);
