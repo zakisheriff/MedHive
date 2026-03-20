@@ -113,30 +113,42 @@ router.post('/extract', upload.single('image'), async (req, res) => {
             patientId || "anonymous"
         );
 
-        const insertQuery = `
-            INSERT INTO prescriptions (
-                med_id, 
-                clinic_id, 
-                raw_ai_output, 
-                status, 
-                prescription_image_url, 
-                patient_district, 
-                patient_province
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7)
-            RETURNING prescription_id;
-        `;
+        let prescriptionId = null;
 
-        const values = [
-            patientId || "anonymous",
-            null,
-            JSON.stringify(extractedData),
-            'EXTRACTED',
-            imageUrl,
-            district || null,
-            province || null
-        ];
+        // Only attempt DB insert if we have a valid patientId (not 'anonymous')
+        if (patientId && patientId !== "anonymous" && patientId !== "undefined") {
+            try {
+                const insertQuery = `
+                    INSERT INTO prescriptions (
+                        med_id, 
+                        clinic_id, 
+                        raw_ai_output, 
+                        status, 
+                        prescription_image_url, 
+                        patient_district, 
+                        patient_province
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+                    RETURNING prescription_id;
+                `;
 
-        const dbResult = await pool.query(insertQuery, values);
+                const values = [
+                    patientId,
+                    null,
+                    JSON.stringify(extractedData),
+                    'EXTRACTED',
+                    imageUrl,
+                    district || null,
+                    province || null
+                ];
+
+                const dbResult = await pool.query(insertQuery, values);
+                prescriptionId = dbResult.rows[0].prescription_id;
+            } catch (dbError) {
+                console.error("Database Insert Error:", dbError.message);
+                // We DON'T crash here, just proceed without a prescriptionId
+                // This allows extraction to work even if DB saving fails
+            }
+        }
 
         // Clean up uploaded file
         fs.unlinkSync(req.file.path);
@@ -144,7 +156,7 @@ router.post('/extract', upload.single('image'), async (req, res) => {
         res.json({
             ...extractedData,
             imageUrl,
-            prescriptionId: dbResult.rows[0].prescription_id
+            prescriptionId
         });
 
     } catch (error) {

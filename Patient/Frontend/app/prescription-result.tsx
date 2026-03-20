@@ -225,7 +225,6 @@ export default function PrescriptionResultScreen() {
                 );
                 return;
             }
-            const [cloudImage, setCloudImage] = useState(null);
             setData(result);
             setCloudImage(result.imageUrl);
             setHasError(false);
