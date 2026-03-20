@@ -9,6 +9,8 @@ import { Input } from '../components/Input';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { StatusBar } from 'expo-status-bar';
 import { API_ENDPOINTS } from '../constants/config';
+import { auth_endpoints } from '../constants/config';
+
 
 import { useTranslation } from 'react-i18next';
 
@@ -23,41 +25,46 @@ export default function MedicalHistoryScreen() {
     const [otherInfo, setOtherInfo] = useState('');
 
     const handleVerifyAndCreate = async () => {
-        // Combine the params from previous page with current local state
-        const completeProfile = {
-            basicInfo: { 
-                fname, lname, email, dob, gender, 
-                phoneNumber, district, province, medId, password 
-            },
-            medicalHistory: {
-                records: medicalRecords,
-                diseases: diseases,
-                allergies: allergies,
-                other: otherInfo
-            }
-        };
-
         try {
-            // Use your computer's IP if testing on a real device
-            const response = await fetch(API_ENDPOINTS.medical_history, {
+            // STEP 1: Register the basic info first
+            const regResponse = await fetch(auth_endpoints.REGISTER, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(completeProfile),
+                body: JSON.stringify({
+                    fname, lname, email, password, gender, district, province,
+                    date_of_birth: dob,
+                    phone_number: phoneNumber,
+                }),
             });
 
-            const result = await response.json();
+            const regData = await regResponse.json();
 
-            if (response.ok) {
-                alert('Registration Successful!');
-                router.push({
-                    pathname: '/(tabs)/upload',
-                    params: { patientId: result.patientId }
+            if (regResponse.ok) {
+                const medId = regData.med_id;
+
+                // STEP 2: Update the record with medical history
+                const historyResponse = await fetch(API_ENDPOINTS.medical_history, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        medical_records: medicalRecords,
+                        diseases: diseases,
+                        allergies: allergies,
+                        other_info: otherInfo
+                    }),
                 });
+
+                if (historyResponse.ok) {
+                    router.push({
+                        pathname: '/(tabs)/upload',
+                        params: { medId: medId }
+                    });
+                }
             } else {
-                alert(result.error || 'Something went wrong');
+                alert(regData.message || "Registration failed");
             }
-        } catch (err) {
-            alert('Could not connect to server.');
+        } catch (error) {
+            alert("Server error. Please try again.");
         }
 };
     return (
