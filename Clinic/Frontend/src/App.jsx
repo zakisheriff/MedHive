@@ -17,24 +17,24 @@ function App() {
   return (
     <Router>
       <Routes>
-    
+
         <Route path="/" element={<AuthPage />} />
         <Route path="/pending-verification" element={<PendingVerification />} />
         <Route path="/admin-portal" element={<AdminDashboard />} />
-       
+
         <Route path="/role-select" element={<RoleSelect />} />
         <Route path="/doctor-login" element={<DoctorLogin />} />
         <Route path="doctor-register" element={<DoctorRegister />} />
         <Route path="search" element={<SearchPage />} />
-        
+
         {/* Dashboard Routes: Sidebar is automatically included via Layout */}
         <Route path="/dashboard" element={<DashboardLayout />}>
-      
-        
+
+
           <Route path="patientProfile" element={<PatientProfile />} />
-          <Route path="prescription" element={<Prescriptions/>} />
-          <Route path="history" element={<History/>} />
-          
+          <Route path="prescription" element={<Prescriptions />} />
+          <Route path="history" element={<History />} />
+
         </Route>
       </Routes>
     </Router>

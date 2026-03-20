@@ -7,6 +7,8 @@ import { AlertProvider } from '../context/AlertContext';
 import { CustomAlert } from '../components/CustomAlert';
 import { Colors } from '../constants/theme';
 import '../constants/i18n';
+import { AccessProvider } from '../context/AccessContext';
+import { OTPOverlay } from '../components/OTPOverlay';
 
 export default function RootLayout() {
   return (
@@ -24,31 +26,34 @@ export default function RootLayout() {
           `}</style>
         )}
       </Head>
-      <AlertProvider>
-        <View style={styles.root}>
-          <View style={styles.container}>
-            <Stack screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: Colors.light.background }
-            }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="login" />
-              <Stack.Screen name="register" />
-              <Stack.Screen name="medical-history" />
+      <AccessProvider>
+        <AlertProvider>
+          <View style={styles.root}>
+            <View style={styles.container}>
+              <Stack screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: Colors.light.background }
+              }}>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="login" />
+                <Stack.Screen name="register" />
+                <Stack.Screen name="medical-history" />
 
-              <Stack.Screen
-                name="profile"
-                options={{
-                  presentation: 'modal',
-                  animation: 'slide_from_bottom'
-                }}
-              />
-            </Stack>
-            <StatusBar style="dark" />
-            <CustomAlert />
+                <Stack.Screen
+                  name="profile"
+                  options={{
+                    presentation: 'modal',
+                    animation: 'slide_from_bottom'
+                  }}
+                />
+              </Stack>
+              <StatusBar style="dark" />
+              <CustomAlert />
+              <OTPOverlay />
+            </View>
           </View>
-        </View>
-      </AlertProvider>
+        </AlertProvider>
+      </AccessProvider>
     </GestureHandlerRootView>
   );
 }

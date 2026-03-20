@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Share, Platform } from 'react-native';
 import { HoneyContainer } from '../../components/HoneyContainer';
 import { Colors } from '../../constants/theme';
@@ -12,15 +12,18 @@ import { AccessCard } from '../../components/AccessCard';
 import { generateMockAccess } from '../../utils/accessUtils';
 import { AccessRecord, AccessStatus, AccessDuration } from '../../types/access';
 import { useTranslation } from 'react-i18next';
+import { useAccess } from '../../context/AccessContext';
 
 export default function AccessScreen() {
     const { t } = useTranslation();
     const insets = useSafeAreaInsets();
     const { showAlert } = useAlert();
     const [accessRecords, setAccessRecords] = useState<AccessRecord[]>(generateMockAccess());
+    const { activeOtp, userData } = useAccess();
 
-    // User's Med-ID (Mock)
-    const MY_MED_ID = "2000 1548 2341";
+    const formattedMedId = useMemo(() => {
+        return userData?.med_id || "Loading...";
+    }, [userData]);
 
     const pendingRequests = useMemo(() =>
         accessRecords.filter(r => r.status === 'pending'),
@@ -96,7 +99,7 @@ export default function AccessScreen() {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         try {
             await Share.share({
-                message: t('access.shareMessage', { id: MY_MED_ID }),
+                message: t('access.shareMessage', { id: formattedMedId }),
             });
         } catch (error) {
             console.error(error);
@@ -105,7 +108,6 @@ export default function AccessScreen() {
 
     return (
         <View style={styles.container}>
-            {/* Header with Profile Avatar */}
             <View style={[styles.header, { paddingTop: insets.top + (Platform.OS === 'web' ? 20 : 8) }]}>
                 <View>
                     <Text style={styles.headerTitle}>{t('access.title')}</Text>
@@ -119,7 +121,6 @@ export default function AccessScreen() {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
-                {/* Med-ID Section */}
                 <View style={styles.idSection}>
                     <LinearGradient
                         colors={[Colors.light.primary, Colors.light.primaryDark]}
@@ -136,8 +137,16 @@ export default function AccessScreen() {
                         </View>
 
                         <View style={styles.idNumberContainer}>
-                            <Text style={styles.idNumber}>{MY_MED_ID}</Text>
+                            <Text style={styles.idNumber}>{formattedMedId}</Text>
                         </View>
+
+                        {activeOtp && (
+                            <View style={styles.otpContainer}>
+                                <Text style={styles.otpLabel}>LIVE ACCESS CODE</Text>
+                                <Text style={styles.otpValue}>{activeOtp}</Text>
+                                <Text style={styles.otpExpiry}>Expires in 5 mins</Text>
+                            </View>
+                        )}
 
                         <View style={styles.idFooter}>
                             <Text style={styles.idFooterText}>{t('access.shareFooter')}</Text>
@@ -145,7 +154,6 @@ export default function AccessScreen() {
                     </LinearGradient>
                 </View>
 
-                {/* Pending Requests */}
                 {pendingRequests.length > 0 && (
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
@@ -164,7 +172,6 @@ export default function AccessScreen() {
                     </View>
                 )}
 
-                {/* Active Permissions */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>{t('access.clinics')}</Text>
                     {activeAccess.length > 0 ? (
@@ -284,6 +291,37 @@ const styles = StyleSheet.create({
         fontSize: 13,
         fontWeight: '500',
         textAlign: 'center',
+    },
+    otpContainer: {
+        backgroundColor: '#fff',
+        borderRadius: 24,
+        padding: 20,
+        alignItems: 'center',
+        marginVertical: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 5,
+    },
+    otpLabel: {
+        fontSize: 12,
+        fontWeight: '800',
+        color: Colors.light.primary,
+        letterSpacing: 1,
+        marginBottom: 8,
+    },
+    otpValue: {
+        fontSize: 48,
+        fontWeight: '900',
+        color: Colors.light.text,
+        letterSpacing: 4,
+    },
+    otpExpiry: {
+        fontSize: 11,
+        color: '#8E8E93',
+        marginTop: 6,
+        fontWeight: '600',
     },
     section: {
         marginBottom: 32,

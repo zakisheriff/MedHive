@@ -2,110 +2,141 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import './css/PatientProfile.css';
 
-const PatientProfile = ({ patientId }) => {
+const PatientProfile = () => {
+  const patient = {
+    med_id: "MH001",
+    fname: "John",
+    lname: "Doe",
+    date_of_birth: "1995-05-15",
+    gender: "Male",
+    email: "john@gmail.com",
+    phone_number: "077 123 4567",
+    district: "Colombo",
+    province: "Western",
+    blood_group: "O+",
+    allergies: "Penicillin, Peanuts",
+    chronic_diseases: "Hypertension (Mild)",
+    vitals: {
+      bp: "128/84",
+      hr: "76 bpm",
+      spo2: "98%",
+      temp: "36.8°C"
+    }
+  };
+
+  const prescriptions = [
+    {
+      prescription_id: 101,
+      status: "Verified",
+      created_at: "2024-03-10T10:00:00Z",
+      high_risk: false,
+      medicines: [
+        { name: "Amoxicillin", dosage: "500mg", frequency: "3 times daily" },
+        { name: "Paracetamol", dosage: "1g", frequency: "When needed" }
+      ]
+    },
+    {
+      prescription_id: 102,
+      status: "Active",
+      created_at: "2024-03-18T14:30:00Z",
+      high_risk: true,
+      medicines: [
+        { name: "Cetirizine", dosage: "10mg", frequency: "Once at night" }
+      ]
+    }
+  ];
+
+  const calculateAge = (dob) => {
+    const birthDate = new Date(dob);
+    const difference = Date.now() - birthDate.getTime();
+    const ageDate = new Date(difference);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
+
   return (
     <motion.div className="medical-profile-card" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       
-      {/* 1. Patient Header (Enhanced) */}
+      {/* 1. Patient Header */}
       <section className="profile-header-strip">
         <div className="header-main">
-          <h2>Abdul Raheem <span className="p-id">ID: {patientId}</span></h2>
-          <p className="sub-meta">28 | Male • <strong>O+ Blood Group</strong></p>
+          <h2>{patient.fname} {patient.lname} <span className="p-id">ID: {patient.med_id}</span></h2>
+          <p className="sub-meta">{calculateAge(patient.date_of_birth)} | {patient.gender} • <strong>{patient.district}, {patient.province}</strong></p>
           <div className="secondary-meta">
-            <span>Primary Doctor: Dr. K. Perera</span>
-            <span className="insurance-tag active">Insurance: Active</span>
+            <span>Email: {patient.email}</span>
+            <span className="insurance-tag active">Status: Verified</span>
           </div>
         </div>
         <div className="emergency-box">
-          <label>Emergency Contact</label>
-          <p>+94 77 123 4567 (Father)</p>
+          <label>Contact Info</label>
+          <p>{patient.phone_number}</p>
         </div>
       </section>
 
-      {/* 2. Critical Medical Flags (High Visibility) */}
-      <section className="flags-container">
-        <div className="flag-chip high-risk">Cardiac: Grade 1</div>
-        <div className="flag-chip warning">Do-Not-Prescribe: NSAIDs</div>
-        <div className="flag-chip allergy">Allergy: Penicillin (Anaphylaxis)</div>
-        <div className="flag-chip condition">Chronic: Type 2 Diabetes</div>
-      </section>
+      {/* 2. Flags Section (Strict Hierarchy) */}
+      <div className="flags-container">
+        <span className="flag-chip high-risk">CRITICAL: TACHYCARDIA RISK</span>
+        <span className="flag-chip allergy">ALLERGY: {patient.allergies}</span>
+        <span className="flag-chip warning">CHRONIC: {patient.chronic_diseases}</span>
+      </div>
 
-      {/* 3. Vital & Diagnostic Snapshot (NEW) */}
-      <section className="vital-snapshot">
+      {/* 3. Vital Snapshot Grid */}
+      <div className="vital-snapshot">
         <div className="vital-tile">
           <label>Blood Pressure</label>
-          <p className="value">128/84 <span className="trend">Stable</span></p>
+          <p className="value">{patient.vitals.bp}</p>
         </div>
         <div className="vital-tile">
-          <label>HbA1c / Sugar</label>
-          <p className="value">6.8% <span className="unit">HbA1c</span></p>
+          <label>Heart Rate</label>
+          <p className="value">{patient.vitals.hr}</p>
         </div>
         <div className="vital-tile">
-          <label>Current Weight</label>
-          <p className="value">74.5 <span className="unit">kg</span></p>
+          <label>SpO2</label>
+          <p className="value">{patient.vitals.spo2}</p>
         </div>
-        <div className="vital-tile abnormal">
-          <label>Last Abnormal Lab</label>
-          <p className="value">Low Vit-D <span className="date">01/26</span></p>
+        <div className="vital-tile">
+          <label>Temperature</label>
+          <p className="value">{patient.vitals.temp}</p>
         </div>
-      </section>
+      </div>
 
       <div className="profile-grid">
         <div className="profile-main-col">
-          {/* 4. Current Medications */}
+          {/* 4. Medical History / Prescriptions */}
           <div className="medications-section">
-            <h3>Active Medications</h3>
-            <div className="med-grid">
-              <div className="med-card-detailed high-risk">
-                <div className="med-header">
-                  <strong>Metformin 500mg</strong>
-                  <span className="risk-tag">High Risk</span>
+            <h3 style={{ padding: '0 40px', marginBottom: '15px' }}>Recent Prescriptions ({prescriptions.length})</h3>
+            <div className="med-grid" style={{ padding: '0 40px' }}>
+              {prescriptions.map((presc) => (
+                <div key={presc.prescription_id} className={`med-card-detailed ${presc.high_risk ? 'high-risk' : ''}`}>
+                  <div className="med-header">
+                    <strong>Prescription #{presc.prescription_id}</strong>
+                    <span className="risk-tag">{presc.status}</span>
+                  </div>
+                  <p style={{ fontSize: '14px', color: '#64748B', marginBottom: '10px' }}>
+                    Date: {new Date(presc.created_at).toLocaleDateString()}
+                  </p>
+                  <div className="medicines-list">
+                    {presc.medicines.map((m, idx) => (
+                      <div key={idx} className="med-item" style={{ fontSize: '15px', padding: '4px 0' }}>
+                        • <strong>{m.name}</strong> ({m.dosage}) - {m.frequency}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <p>1-0-1 (Post-Meal) • Started: 12/2024</p>
-                <small>Prescribed by: Dr. J. Silva (Endocrinology)</small>
-              </div>
-            </div>
-          </div>
-
-          {/* 5. Medical Timeline */}
-          <div className="timeline-section">
-            <h3>Medical Timeline</h3>
-            <div className="timeline">
-              <div className="timeline-item">
-                <span className="date">Feb 01, 2026</span>
-                <div className="dot active"></div>
-                <div className="content">
-                  <h4>Routine Diabetic Review</h4>
-                  <p>General Medicine • MedHive Clinic • <strong>OPD</strong></p>
-                  <button className="view-presc-btn">View Prescription</button>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
 
         <div className="profile-side-col">
-          {/* 6. Quick Medical Insights */}
-          <div className="side-card insights">
-            <h4>Clinical Insights</h4>
-            <div className="insight-row"><span>Diabetes Duration</span> <strong>6 Years</strong></div>
-            <div className="insight-row"><span>Repeat Visits</span> <strong>No</strong></div>
-            <div className="insight-row"><span>Last Hospitalized</span> <strong>11/2023</strong></div>
-          </div>
-
-          {/* 7. Preventive & Risk */}
-          <div className="side-card lifestyle">
-            <h4>Preventive Status</h4>
-            <div className="lifestyle-row"><span>Smoking</span> <strong>No</strong></div>
-            <div className="lifestyle-row"><span>Alcohol</span> <strong>Social</strong></div>
-            <div className="lifestyle-row"><span>Vaccines</span> <strong className="status-up">Up to date</strong></div>
-          </div>
-
-          {/* 8. Documents */}
-          <div className="side-card documents">
-            <h4>Documents</h4>
-            <div className="doc-link">Lab Report <span className="tag critical">Critical</span></div>
-            <div className="doc-link">Discharge Summary <span className="tag hospital">Hospital</span></div>
+          {/* 5. Patient Details Card */}
+          <div className="side-card insights" style={{ margin: '0 40px 0 0' }}>
+            <h4>Patient Profile</h4>
+            <div className="insight-row"><span>Blood Group</span> <strong>{patient.blood_group}</strong></div>
+            <div className="insight-row"><span>Gender</span> <strong>{patient.gender}</strong></div>
+            <div className="insight-row"><span>District</span> <strong>{patient.district}</strong></div>
+            <div className="insight-row"><span>Province</span> <strong>{patient.province}</strong></div>
+            <div className="insight-row"><span>Allergies</span> <strong style={{ color: '#dc2626' }}>{patient.allergies}</strong></div>
+            <div className="insight-row"><span>Chronic</span> <strong>{patient.chronic_diseases}</strong></div>
           </div>
         </div>
       </div>

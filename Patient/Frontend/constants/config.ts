@@ -25,6 +25,7 @@ export const API_ENDPOINTS = {
     HISTORY: `${BASE_URL}/api/history`,
     SEND_TO_CLINIC: `${BASE_URL}/api/send-to-clinic`,
     GET_CLINICS: `${BASE_URL}/api/clinics`,
+    GET_OTP: (med_id: string) => `${BASE_URL}/api/access/active-otp/${med_id}`,
 };
 
 export const auth_endpoints = {

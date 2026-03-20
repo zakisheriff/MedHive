@@ -27,7 +27,10 @@ app.use('/auth', googleCompleteProfileRoute);
 
 // Prescription Routes
 const prescriptionRoute = require('./routes/prescription');
+const accessRoute = require('./routes/access');
+
 app.use('/api', prescriptionRoute);
+app.use('/api/access', accessRoute);
 
 
 app.listen(PORT, '0.0.0.0', () => {

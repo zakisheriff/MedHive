@@ -27,6 +27,7 @@ import { generateMockAccess } from '../utils/accessUtils';
 import { getUser, clearUser, saveUser, UserData } from '../utils/userStore';
 import { useTranslation } from 'react-i18next';
 import { LanguagePicker } from '../components/LanguagePicker';
+import * as Clipboard from 'expo-clipboard';
 
 
 interface MenuItemProps {
@@ -245,13 +246,16 @@ export default function ProfileScreen() {
 
                     <TouchableOpacity
                         style={styles.identityFooter}
-                        onPress={() => {
-                            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                            showAlert({
-                                title: 'Copied!',
-                                message: 'Med-ID copied to clipboard',
-                                buttons: [{ text: 'OK' }]
-                            });
+                        onPress={async () => {
+                            if (userData.med_id) {
+                                await Clipboard.setStringAsync(String(userData.med_id));
+                                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                                showAlert({
+                                    title: 'Copied!',
+                                    message: 'Med-ID copied to clipboard',
+                                    buttons: [{ text: 'OK' }]
+                                });
+                            }
                         }}
                     >
                         <View>

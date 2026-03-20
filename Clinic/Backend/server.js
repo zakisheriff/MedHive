@@ -9,6 +9,7 @@ const adminRoutes = require("./routes/admin");
 const prescriptionRoutes = require("./routes/prescriptions");
 const clinicRoutes = require("./routes/clinics");
 const meRoutes = require("./routes/me");
+const patientRoutes = require("./routes/patients");
 const pool = require("./db");
 
 const app = express();
@@ -33,7 +34,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/clinics", clinicRoutes);
 app.use("/api/admin", meRoutes);
-
+app.use("/api/patients", patientRoutes);
+app.use("/api", meRoutes);
 const port = Number(process.env.PORT || 5000);
 app.listen(port, () => {
   console.log(`API running on http://localhost:${port}`);

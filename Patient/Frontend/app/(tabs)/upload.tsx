@@ -115,7 +115,7 @@ export default function UploadScreen() {
                 <View style={styles.greetingSection}>
                     <View style={styles.greetingContent}>
                         <Text style={styles.greetingText}>
-                            {t('upload.welcome')}, <Text style={styles.userNameText}>{userData?.fname || 'User'}</Text>! 👋
+                            {t('upload.welcome')}, <Text style={styles.userNameText}>{userData?.fname || 'User'}</Text>!
                         </Text>
                         <Text style={styles.greetingSubtext}>{t('upload.greeting')}</Text>
                     </View>
