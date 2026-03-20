@@ -13,7 +13,7 @@ import { Input } from '../components/Input';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { SocialButton } from '../components/SocialButton';
 import { StatusBar } from 'expo-status-bar';
-import { auth_endupoints } from '../constants/config';
+import { auth_endpoints } from '../constants/config';
 import { saveUser } from '../utils/userStore';
 import { useAlert } from '../context/AlertContext';
 
@@ -41,7 +41,7 @@ export default function LoginScreen() {
 
         setIsLoading(true);
         try {
-            const response = await fetch(auth_endupoints.LOGIN, {
+            const response = await fetch(auth_endpoints.LOGIN, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

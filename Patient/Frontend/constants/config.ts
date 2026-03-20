@@ -17,7 +17,7 @@ export const BASE_URL = __DEV__
 export const API_ENDPOINTS = {
     REGISTER: `${BASE_URL}/api/auth/register`,
     LOGIN: `${BASE_URL}/api/auth/login`,
-    GOOGLE_SIGNUP: `${BASE_URL}/api/auth/google-signup`,
+    GOOGLE_SIGNUP: `${BASE_URL}/auth/google-signup`,
     GOOGLE_LOGIN: `${BASE_URL}/api/auth/google-login`,
     EXTRACT: `${BASE_URL}/api/extract`,
     EXTRACT_PRESCRIPTION: `${BASE_URL}/api/extract`,
@@ -27,8 +27,9 @@ export const API_ENDPOINTS = {
     GET_CLINICS: `${BASE_URL}/api/clinics`,
 };
 
-export const auth_endupoints = {
+export const auth_endpoints = {
     LOGIN: `${BASE_URL}/auth/login`,
     REGISTER: `${BASE_URL}/auth/register`,
-<<<<<<
+    GOOGLESIGNUP: `${BASE_URL}/auth/google-signup`,
+    GOOGLE_COMPLETE_PROFILE : `${BASE_URL}/auth/google-complete-profile`
 };

@@ -48,6 +48,8 @@ export default function PrescriptionResultScreen() {
     const [fullScreenVisible, setFullScreenVisible] = useState(false);
     const [clinicSelectorVisible, setClinicSelectorVisible] = useState(false);
     const [selectedClinic, setSelectedClinic] = useState<any>(null);
+    const [cloudImage, setCloudImage] = useState<string | null>(null); // Move this here
+    const [sendingToClinic, setSendingToClinic] = useState(false);
 
     // Resizable Modal State
     const [isExpanded, setIsExpanded] = useState(false);
@@ -166,6 +168,11 @@ export default function PrescriptionResultScreen() {
             setLoading(true);
             const formData = new FormData();
 
+            const { getUser } = await import('../utils/userStore');
+            const userData = await getUser();
+            const patientId = userData?.med_id || "anonymous";
+            formData.append("patientId", patientId);
+
             if (Platform.OS === 'web') {
                 // For Web: specific handling to create a Blob
                 const response = await fetch(imageUri);
@@ -218,8 +225,8 @@ export default function PrescriptionResultScreen() {
                 );
                 return;
             }
-
             setData(result);
+            setCloudImage(result.imageUrl);
             setHasError(false);
 
             // Success Animation
@@ -301,7 +308,7 @@ export default function PrescriptionResultScreen() {
         Alert.alert(t('result.copy'), t('result.copied'));
     };
 
-    const [sendingToClinic, setSendingToClinic] = useState(false);
+    
 
     const handleSendToClinic = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

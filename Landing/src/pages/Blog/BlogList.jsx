@@ -21,7 +21,7 @@ const posts = [
         image: blogTitle3Img,
         date: 'March 19, 2026',
         category: '',
-        link: '/blog/digital-prescriptions-sri-lanka',
+        link: '/blog/private-clinics-digital-records-2026',
     },
 ];
 

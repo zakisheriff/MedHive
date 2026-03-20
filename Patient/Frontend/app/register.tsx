@@ -13,10 +13,9 @@ import { PickerInput } from '../components/PickerInput';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { SocialButton } from '../components/SocialButton';
 import { StatusBar } from 'expo-status-bar';
-import { auth_endupoints } from '../constants/config';
+import { auth_endpoints } from '../constants/config';
 import { saveUser } from '../utils/userStore';
 import { useAlert } from '../context/AlertContext';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -123,7 +122,7 @@ export default function RegisterScreen() {
                 province
             };
 
-            const response = await fetch(auth_endupoints.REGISTER, { // Use 10.0.2.2 for Android Emulator
+            const response = await fetch(auth_endpoints.REGISTER, { // Use 10.0.2.2 for Android Emulator
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

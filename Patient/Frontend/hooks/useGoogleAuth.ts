@@ -2,11 +2,20 @@ import { useState, useEffect } from 'react';
 import { Platform } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import * as GoogleAuthSession from 'expo-auth-session/providers/google';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { auth_endupoints } from '../constants/config';
+import { auth_endpoints } from '../constants/config';
 import { saveUser } from '../utils/userStore';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+
+// Conditionally require native SDK to prevent crash on Web/Expo Go
+let GoogleSignin: any = null;
+if (Platform.OS !== 'web') {
+    try {
+        GoogleSignin = require('@react-native-google-signin/google-signin').GoogleSignin;
+    } catch (e) {
+        console.warn('GoogleSignin native module not found. Native Google Sign-In will be disabled.');
+    }
+}
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -15,7 +24,7 @@ export function useGoogleAuth(showAlert: any, t: any) {
 
     // Initialize Native SDK
     useEffect(() => {
-        if (Platform.OS !== 'web') {
+        if (Platform.OS !== 'web' && GoogleSignin) {
             GoogleSignin.configure({
                 webClientId: '335178320393-iv304i70q3qo459ea14alsgre42qpmol.apps.googleusercontent.com',
                 iosClientId: '335178320393-ro7qi41ur08qfoaeamnf70l268h8vahq.apps.googleusercontent.com',
@@ -26,6 +35,7 @@ export function useGoogleAuth(showAlert: any, t: any) {
     // Initialize Web Auth Session
     const [request, response, promptAsync] = GoogleAuthSession.useIdTokenAuthRequest({
         webClientId: '335178320393-iv304i70q3qo459ea14alsgre42qpmol.apps.googleusercontent.com',
+        iosClientId: '335178320393-ro7qi41ur08qfoaeamnf70l268h8vahq.apps.googleusercontent.com',
     });
 
     // Handle Web response automatically when popup closes
@@ -46,7 +56,7 @@ export function useGoogleAuth(showAlert: any, t: any) {
         try {
             setIsLoading(true);
             const backendResponse = await fetch(
-                auth_endupoints.GOOGLESIGNUP,
+                auth_endpoints.GOOGLESIGNUP,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -59,7 +69,7 @@ export function useGoogleAuth(showAlert: any, t: any) {
             if (backendResponse.ok) {
                 if (result.isNewUser) {
                     router.push({
-                        pathname: '/complete-profile' as any,
+                        pathname: '/completed-profile' as any,
                         params: {
                             email: result.googleProfile?.email,
                             fname: result.googleProfile?.fname,
@@ -96,6 +106,15 @@ export function useGoogleAuth(showAlert: any, t: any) {
         if (Platform.OS === 'web') {
             setIsLoading(true);
             promptAsync();
+            return;
+        }
+
+        if (!GoogleSignin) {
+            showAlert({
+                title: 'Not Supported',
+                message: 'Google Sign-In is not supported in this environment.',
+                forceCustom: true
+            });
             return;
         }
 
