@@ -14,7 +14,7 @@ const Blog2 = () => {
         <div className="blog-page">
             <div className="blog-header">
                 <div className="container">
-                    <p className="blog-date">March 19, 2026</p>
+                    <p className="blog-date">March 20, 2026</p>
                     <h1>5 Reasons Private Clinics Should Switch to Digital Records in 2026</h1>
                     <p className="blog-subtitle">
                         Private clinics are under pressure to deliver faster, safer, and more accurate care.

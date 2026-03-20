@@ -19,7 +19,7 @@ const posts = [
         description:
             'Discover how MedHive helps clinics and patients move from paper-based prescriptions to a faster, safer digital workflow.',
         image: blogTitle3Img,
-        date: 'March 19, 2026',
+        date: 'March 20, 2026',
         category: '',
         link: '/blog/private-clinics-digital-records-2026',
     },
