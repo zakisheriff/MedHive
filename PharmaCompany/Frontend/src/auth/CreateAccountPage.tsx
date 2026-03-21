@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { CompanyData } from '../contexts/AuthContext';
-import styles from './Register.module.css';
+import axios from 'axios';
+import styles from './Login.module.css'; 
+import medHiveLogo from '../assets/images/MedHive pharma logo.png-.png';
 
-interface CreateAccountPageProps {
-  onNext: (data: CompanyData) => void;
-}
-
-export const CreateAccountPage = ({ onNext }: CreateAccountPageProps) => {
+export const CreateAccountPage = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<CompanyData>({
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  // State for the image file
+  const [certificateFile, setCertificateFile] = useState<File | null>(null);
+
+  // State for text fields
+  const [formData, setFormData] = useState({
     companyName: '',
     registrationNumber: '',
     email: '',
@@ -18,239 +22,179 @@ export const CreateAccountPage = ({ onNext }: CreateAccountPageProps) => {
     addressPostalCode: '',
     nmraLicenseNumber: '',
     licenseExpiryDate: '',
+    password: '', 
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof CompanyData, string>>>({});
 
-  const handleChange = (field: keyof CompanyData, value: string) => {
+  const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setCertificateFile(e.target.files[0]);
     }
   };
 
-  const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
-  const validatePhone = (phone: string) => {
-    return /^\+?[\d\s-()]+$/.test(phone) && phone.replace(/\D/g, '').length >= 10;
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: Partial<Record<keyof CompanyData, string>> = {};
-
-    if (!formData.companyName.trim()) {
-      newErrors.companyName = 'Company name is required';
-    }
-
-    if (!formData.registrationNumber.trim()) {
-      newErrors.registrationNumber = 'Registration number is required';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!validateEmail(formData.email)) {
-      newErrors.email = 'Invalid email address';
-    }
-
-    if (!formData.contactNumber.trim()) {
-      newErrors.contactNumber = 'Contact number is required';
-    } else if (!validatePhone(formData.contactNumber)) {
-      newErrors.contactNumber = 'Invalid contact number';
-    }
-
-    if (!formData.address.trim()) {
-      newErrors.address = 'Address is required';
-    }
-
-    if (!formData.addressPostalCode.trim()) {
-      newErrors.addressPostalCode = 'Address postal code is required';
-    }
-
-    if (!formData.nmraLicenseNumber.trim()) {
-      newErrors.nmraLicenseNumber = 'NMRA license number is required';
-    }
-
-    if (!formData.licenseExpiryDate) {
-      newErrors.licenseExpiryDate = 'License expiry date is required';
-    } else {
-      const expiryDate = new Date(formData.licenseExpiryDate);
-      if (expiryDate < new Date()) {
-        newErrors.licenseExpiryDate = 'License expiry date must be in the future';
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      onNext(formData);
+    
+    if (!certificateFile) {
+      setError('Please upload your NMRA certificate image.');
+      return;
     }
-  };
 
-  const isFormValid = () => {
-    return Object.values(formData).every(value => value.trim() !== '');
+    setLoading(true);
+    setError('');
+
+    // 1. Create FormData object to handle file + text fields
+    const data = new FormData();
+    data.append('certificate', certificateFile); // Matches backend: upload.single('certificate')
+    
+    // 2. Append all text fields from state
+    Object.entries(formData).forEach(([key, value]) => {
+      data.append(key, value);
+    });
+
+    try {
+      // 3. Direct hit to your Node.js registration endpoint
+      const response = await axios.post('http://localhost:5000/api/auth/register', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data', // Required for file uploads
+        },
+      });
+
+      if (response.status === 201) {
+        console.log("Registration Success:", response.data);
+        // Navigate to the verification pending screen
+        navigate('/pending-verification');
+      }
+    } catch (err: any) {
+      // 4. Handle backend validation errors (e.g., email already exists)
+      const message = err.response?.data?.error || 'Registration failed. Check your server connection.';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
+      <div className={styles.card} style={{ maxWidth: '650px' }}> 
         <div className={styles.header}>
-          <div className={styles.logo}>MedHive Registration</div>
-          <p className={styles.subtitle}>Company Information</p>
-        </div>
-
-        <div className={styles.stepIndicator}>
-          <div className={styles.step}>
-            <div className={`${styles.stepCircle} ${styles.active}`}>1</div>
-            <span className={`${styles.stepLabel} ${styles.active}`}>Company</span>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepCircle}>2</div>
-            <span className={styles.stepLabel}>Admin</span>
-          </div>
+          <img src={medHiveLogo} className={styles.logo} alt="MedHive Logo" />
+          <h2 className={styles.title}>Company Registration</h2>
+          <p className={styles.subtitle}>Pharmaceutical Management Platform</p>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
+          {/* Company Name */}
           <div className={styles.formGroup}>
-            <label className={styles.label}>
-              Company Name <span className={styles.required}>*</span>
-            </label>
+            <label className={styles.label}>Company Name</label>
             <input
               type="text"
-              className={`${styles.input} ${errors.companyName ? styles.error : ''}`}
+              className={styles.input}
               value={formData.companyName}
               onChange={(e) => handleChange('companyName', e.target.value)}
-              placeholder="Enter company name"
+              placeholder="MedHive Pharma Pvt Ltd"
+              required
             />
-            {errors.companyName && <span className={styles.errorText}>{errors.companyName}</span>}
           </div>
 
-          <div className={styles.formRow}>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Company Registration Number <span className={styles.required}>*</span>
-              </label>
-              <input
-                type="text"
-                className={`${styles.input} ${errors.registrationNumber ? styles.error : ''}`}
-                value={formData.registrationNumber}
-                onChange={(e) => handleChange('registrationNumber', e.target.value)}
-                placeholder="REG123456"
-              />
-              {errors.registrationNumber && <span className={styles.errorText}>{errors.registrationNumber}</span>}
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Email <span className={styles.required}>*</span>
-              </label>
+          {/* Email & Registration Number */}
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <div className={styles.formGroup} style={{ flex: 1 }}>
+              <label className={styles.label}>Email Address</label>
               <input
                 type="email"
-                className={`${styles.input} ${errors.email ? styles.error : ''}`}
+                className={styles.input}
                 value={formData.email}
                 onChange={(e) => handleChange('email', e.target.value)}
-                placeholder="company@example.com"
+                placeholder="admin@company.com"
+                required
               />
-              {errors.email && <span className={styles.errorText}>{errors.email}</span>}
             </div>
-          </div>
-
-          <div className={styles.formRow}>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Contact Number <span className={styles.required}>*</span>
-              </label>
-              <input
-                type="tel"
-                className={`${styles.input} ${errors.contactNumber ? styles.error : ''}`}
-                value={formData.contactNumber}
-                onChange={(e) => handleChange('contactNumber', e.target.value)}
-                placeholder="+1 (555) 123-4567"
-              />
-              {errors.contactNumber && <span className={styles.errorText}>{errors.contactNumber}</span>}
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                Address Postal Code <span className={styles.required}>*</span>
-              </label>
+            <div className={styles.formGroup} style={{ flex: 1 }}>
+              <label className={styles.label}>Registration No</label>
               <input
                 type="text"
-                className={`${styles.input} ${errors.addressPostalCode ? styles.error : ''}`}
-                value={formData.addressPostalCode}
-                onChange={(e) => handleChange('addressPostalCode', e.target.value)}
-                placeholder="12345"
+                className={styles.input}
+                value={formData.registrationNumber}
+                onChange={(e) => handleChange('registrationNumber', e.target.value)}
+                placeholder="REG-12345"
+                required
               />
-              {errors.addressPostalCode && <span className={styles.errorText}>{errors.addressPostalCode}</span>}
             </div>
           </div>
 
+          {/* Password */}
           <div className={styles.formGroup}>
-            <label className={styles.label}>
-              Address <span className={styles.required}>*</span>
-            </label>
+            <label className={styles.label}>Account Password</label>
             <input
-              type="text"
-              className={`${styles.input} ${errors.address ? styles.error : ''}`}
-              value={formData.address}
-              onChange={(e) => handleChange('address', e.target.value)}
-              placeholder="123 Main Street, City, Country"
+              type="password"
+              className={styles.input}
+              value={formData.password}
+              onChange={(e) => handleChange('password', e.target.value)}
+              placeholder="••••••••"
+              required
             />
-            {errors.address && <span className={styles.errorText}>{errors.address}</span>}
           </div>
 
-          <div className={styles.formRow}>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                NMRA License Number <span className={styles.required}>*</span>
-              </label>
+          {/* License Info */}
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <div className={styles.formGroup} style={{ flex: 1 }}>
+              <label className={styles.label}>NMRA License Number</label>
               <input
                 type="text"
-                className={`${styles.input} ${errors.nmraLicenseNumber ? styles.error : ''}`}
+                className={styles.input}
                 value={formData.nmraLicenseNumber}
                 onChange={(e) => handleChange('nmraLicenseNumber', e.target.value)}
-                placeholder="NMRA-123456"
+                placeholder="ML-8822"
+                required
               />
-              {errors.nmraLicenseNumber && <span className={styles.errorText}>{errors.nmraLicenseNumber}</span>}
             </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>
-                License Expiry Date <span className={styles.required}>*</span>
-              </label>
+            <div className={styles.formGroup} style={{ flex: 1 }}>
+              <label className={styles.label}>License Expiry</label>
               <input
                 type="date"
-                className={`${styles.input} ${errors.licenseExpiryDate ? styles.error : ''}`}
+                className={styles.input}
                 value={formData.licenseExpiryDate}
                 onChange={(e) => handleChange('licenseExpiryDate', e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
+                required
               />
-              {errors.licenseExpiryDate && <span className={styles.errorText}>{errors.licenseExpiryDate}</span>}
             </div>
           </div>
 
-          <div className={styles.buttonGroup}>
-            <button
-              type="button"
-              className={`${styles.button} ${styles.secondaryButton}`}
-              onClick={() => navigate('/login')}
-            >
-              Back
-            </button>
-            <button
-              type="submit"
-              className={`${styles.button} ${styles.primaryButton}`}
-              disabled={!isFormValid()}
-            >
-              Next
-            </button>
+          {/* File Upload */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>NMRA Certificate Image</label>
+            <div className={styles.fileInputWrapper}>
+              <input
+                type="file"
+                id="cert-upload"
+                accept="image/*"
+                onChange={handleFileChange}
+                className={styles.fileInput}
+                required
+              />
+              <label htmlFor="cert-upload" className={styles.fileInputLabel}>
+                {certificateFile ? `✅ ${certificateFile.name}` : 'Click to upload certificate image'}
+              </label>
+            </div>
           </div>
+
+          {error && <div className={styles.error}>{error}</div>}
+
+          <button type="submit" className={styles.button} disabled={loading}>
+            {loading ? <span className={styles.loadingSpinner}></span> : 'Register Company'}
+          </button>
         </form>
+
+        <div className={styles.footer}>
+          Already have an account?{' '}
+          <span className={styles.link} onClick={() => navigate('/login')}>
+            Log In
+          </span>
+        </div>
       </div>
     </div>
   );
