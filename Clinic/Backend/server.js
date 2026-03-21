@@ -11,7 +11,7 @@ const prescriptionRoutes = require("./routes/prescriptions");
 const clinicRoutes = require("./routes/clinics");
 const meRoutes = require("./routes/me");
 const patientRoutes = require("./routes/patients");
-const doctorRoutes = require("./routes/doctors"); // Your new doctor routes
+const doctorRoutes = require("./routes/doctors"); 
 const pool = require("./db");
 
 const app = express();

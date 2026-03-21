@@ -29,20 +29,27 @@
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 2rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Force horizontal centering */
+  justify-content: center;
+  margin-bottom: 1.5rem;
 }
 
 .logo {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #dca349;
-  margin-bottom: 0.5rem;
+  /* Use max-width to ensure it never breaks the card on mobile */
+  max-width: 340px; 
+  height: auto; /* Maintains aspect ratio */
+  object-fit: contain;
+  align-items: center;
 }
 
+
 .subtitle {
-  color: #666666;
-  font-size: 0.95rem;
+  color: black;
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
 .form {
@@ -61,12 +68,14 @@
   font-weight: 500;
   color: #111111;
   font-size: 0.9rem;
+  padding-left: 0.3rem;
 }
+
 
 .input {
   padding: 0.75rem 1rem;
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: 30px;
   font-size: 1rem;
   transition: all 0.2s;
 }
@@ -93,7 +102,7 @@
   background: #dca349;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 30px;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
