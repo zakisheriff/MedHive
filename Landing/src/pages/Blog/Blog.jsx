@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import '../../styles/global.css';
-import blogTitleImg from './images/blog-title.jpg';
-import blogTitle2Img from './images/blog-title2.jpg';
+import blogTitleImg from './images/blog-title.webp';
+import blogTitle2Img from './images/blog-title2.webp';
 import ContactForm from '../../components/ContactForm/ContactForm';
 
 const Blog = () => {
