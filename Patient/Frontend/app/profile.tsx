@@ -182,32 +182,43 @@ export default function ProfileScreen() {
     };
 
     const handleDeleteRecord = (recordId: string | number) => {
-        Alert.alert(
-            "Delete Record",
-            "Are you sure you want to permanently delete this record?",
-            [
-                { text: "Cancel", style: "cancel" },
-                {
-                    text: "Delete",
-                    style: "destructive",
-                    onPress: async () => {
-                        try {
-                            const res = await fetch(API_ENDPOINTS.DELETE_RECORD(recordId), { method: 'DELETE' });
-                            if (res.ok) {
-                                setMedicalRecords(prev => prev.filter(r => r.id !== recordId));
-                                setRecordViewerVisible(false);
-                                if (userData) fetchStats(userData.med_id);
-                                Alert.alert("Deleted", "Medical record removed.");
-                            } else {
-                                Alert.alert("Error", "Failed to delete record.");
-                            }
-                        } catch (e) {
-                            Alert.alert("Error", "An error occurred.");
-                        }
-                    }
+        const proceedToDelete = async () => {
+            try {
+                const res = await fetch(API_ENDPOINTS.DELETE_RECORD(recordId), { method: 'DELETE' });
+                if (res.ok) {
+                    setMedicalRecords(prev => prev.filter(r => r.id !== recordId));
+                    setRecordViewerVisible(false);
+                    if (userData) fetchStats(userData.med_id);
+                    if (Platform.OS !== 'web') Alert.alert("Deleted", "Medical record removed.");
+                } else {
+                    if (Platform.OS !== 'web') Alert.alert("Error", "Failed to delete record.");
+                    else window.alert("Failed to delete record.");
                 }
-            ]
-        );
+            } catch (e) {
+                if (Platform.OS !== 'web') Alert.alert("Error", "An error occurred.");
+                else window.alert("An error occurred.");
+            }
+        };
+
+        if (Platform.OS === 'web') {
+            const confirmed = window.confirm("Are you sure you want to permanently delete this record?");
+            if (confirmed) {
+                proceedToDelete();
+            }
+        } else {
+            Alert.alert(
+                "Delete Record",
+                "Are you sure you want to permanently delete this record?",
+                [
+                    { text: "Cancel", style: "cancel" },
+                    {
+                        text: "Delete",
+                        style: "destructive",
+                        onPress: proceedToDelete
+                    }
+                ]
+            );
+        }
     };
     const [medicalRecords, setMedicalRecords] = useState<{ id: number, title: string, image_url: string, created_at: string }[]>([]);
     
@@ -392,7 +403,13 @@ export default function ProfileScreen() {
                         <BlurView intensity={60} tint="light" style={styles.blurWrapper}>
                             <TouchableOpacity
                                 style={styles.doneBtn}
-                                onPress={() => router.back()}
+                                onPress={() => {
+                                    if (router.canGoBack()) {
+                                        router.back();
+                                    } else {
+                                        router.replace('/(tabs)/history');
+                                    }
+                                }}
                             >
                                 <Text style={styles.doneText}>{t('profile.close')}</Text>
                             </TouchableOpacity>
@@ -912,7 +929,6 @@ export default function ProfileScreen() {
             <Modal
                 visible={recordViewerVisible}
                 transparent={true}
-                animationType="fade"
                 onRequestClose={() => setRecordViewerVisible(false)}
             >
                 <BlurView intensity={90} tint="dark" style={styles.modalOverlay}>
