@@ -15,6 +15,7 @@ const SearchPage = () => {
   const [fullPatientData, setFullPatientData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const navigate = useNavigate();
   const API_URL = 'http://localhost:5002/api/patients';
@@ -39,7 +40,7 @@ const SearchPage = () => {
 
     try {
       const res = await axios.get(`${API_URL}/search`, {
-        params: { query: searchQuery },
+        params: { query: searchQuery }
       });
 
       if (res.data && res.data.length > 0) {
@@ -56,17 +57,14 @@ const SearchPage = () => {
   };
 
   const handleRequestAccess = async () => {
-    if (!patientPreview) return;
-
     setLoading(true);
     try {
       await axios.post(`${API_URL}/request-access`, {
-        med_id: patientPreview.med_id,
+        med_id: patientPreview.med_id
       });
       setOtpSent(true);
     } catch (err) {
       alert('Failed to request access.');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -78,13 +76,11 @@ const SearchPage = () => {
       return;
     }
 
-    if (!patientPreview) return;
-
     setLoading(true);
     try {
       const res = await axios.post(`${API_URL}/verify-otp`, {
         med_id: patientPreview.med_id,
-        otp,
+        otp
       });
 
       setFullPatientData(res.data);
@@ -94,7 +90,6 @@ const SearchPage = () => {
       setOtp('');
     } catch (err) {
       alert('Invalid code');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -102,6 +97,8 @@ const SearchPage = () => {
 
   return (
     <div className="search-container">
+
+      {/* 🔹 HEADER */}
       <header className="search-header">
         <h1>Patient Search</h1>
 
@@ -111,6 +108,8 @@ const SearchPage = () => {
             placeholder="Search by Patient ID"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
           />
           <button type="submit" className="search-btn" disabled={loading}>
             {loading ? 'Searching...' : 'Search'}
@@ -120,6 +119,7 @@ const SearchPage = () => {
         {error && <p className="search-error">{error}</p>}
       </header>
 
+      {/* 🔹 RESULTS */}
       <div className="search-results-area">
         {patientPreview && !accessGranted && (
           <motion.div
@@ -129,14 +129,11 @@ const SearchPage = () => {
             onClick={() => setShowRequestModal(true)}
           >
             <div className="avatar-placeholder">
-              {patientPreview.fname[0]}
-              {patientPreview.lname[0]}
+              {patientPreview.fname[0]}{patientPreview.lname[0]}
             </div>
 
             <div className="preview-info">
-              <h3>
-                {patientPreview.fname} {patientPreview.lname}
-              </h3>
+              <h3>{patientPreview.fname} {patientPreview.lname}</h3>
               <p>ID: {patientPreview.med_id}</p>
             </div>
 
@@ -147,6 +144,7 @@ const SearchPage = () => {
         {accessGranted && <PatientProfile data={fullPatientData} />}
       </div>
 
+      {/* 🔹 MODAL */}
       <AnimatePresence>
         {showRequestModal && (
           <motion.div
@@ -171,9 +169,8 @@ const SearchPage = () => {
                     <button
                       className="confirm-btn"
                       onClick={handleRequestAccess}
-                      disabled={loading}
                     >
-                      {loading ? 'Generating...' : 'Generate Code'}
+                      Generate Code
                     </button>
                   </div>
                 </>
@@ -187,7 +184,7 @@ const SearchPage = () => {
                       value={otp[0] || ''}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, '');
-                        setOtp((val + (otp[1] || '')).slice(0, 2));
+                        setOtp(val + (otp[1] || ''));
                       }}
                       className="otp-box"
                     />
@@ -197,7 +194,7 @@ const SearchPage = () => {
                       value={otp[1] || ''}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, '');
-                        setOtp(((otp[0] || '') + val).slice(0, 2));
+                        setOtp((otp[0] || '') + val);
                       }}
                       className="otp-box"
                     />
@@ -206,11 +203,7 @@ const SearchPage = () => {
                   <div className="modal-actions">
                     <button
                       className="cancel-btn"
-                      onClick={() => {
-                        setShowRequestModal(false);
-                        setOtpSent(false);
-                        setOtp('');
-                      }}
+                      onClick={() => setShowRequestModal(false)}
                     >
                       Cancel
                     </button>
@@ -218,9 +211,8 @@ const SearchPage = () => {
                     <button
                       className="confirm-btn"
                       onClick={handleVerifyOTP}
-                      disabled={loading}
                     >
-                      {loading ? 'Verifying...' : 'Verify'}
+                      Verify
                     </button>
                   </div>
                 </>
@@ -230,15 +222,26 @@ const SearchPage = () => {
         )}
       </AnimatePresence>
 
-      <div className="bottom-buttons">
-        <button className="history-btn" onClick={handleGoToHistory}>
-          History
-        </button>
+      {/* 🔥 ANIMATED BOTTOM BUTTONS */}
+      <AnimatePresence>
+        {!isSearchFocused && (
+          <motion.div
+            className="bottom-buttons"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+          >
+            <button className="history-btn" onClick={handleGoToHistory}>
+              History
+            </button>
 
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
-      </div>
+            <button className="logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 };

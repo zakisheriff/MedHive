@@ -47,7 +47,7 @@ const PatientHistory = () => {
     <div className="history-page">
       <header className="history-header">
         <h1>Patient Visit History</h1>
-
+ 
         <div className="history-search-wrapper">
           <input
             type="text"
