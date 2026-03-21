@@ -11,8 +11,10 @@
 }
 
 .history-header h1 {
-  margin-bottom: 20px;
-  color: #1b3c59;
+   font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f1f1f;
+  margin-bottom: 30px;
 }
 
 .history-search-wrapper {
@@ -31,7 +33,7 @@
 }
 
 .history-search-input:focus {
-  border-color: #2b7de9;
+  border-color: #a7afb9;
 }
 
 .history-list {
@@ -42,7 +44,7 @@
 }
 
 .history-card {
-  background: white;
+  background: hsl(249, 26%, 80%);
   border-radius: 14px;
   padding: 20px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
@@ -72,7 +74,7 @@
 }
 
 .back-btn {
-  background-color: #2b7de9;
+  background-color: #f1a63b;
   color: white;
   border: none;
   padding: 12px 26px;
@@ -83,5 +85,5 @@
 }
 
 .back-btn:hover {
-  background-color: #1f67c1;
+  background-color: #ef961b;
 }

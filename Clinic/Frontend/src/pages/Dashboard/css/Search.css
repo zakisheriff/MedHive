@@ -264,7 +264,14 @@
   transition: 0.3s;
 }
 
+.logout-btn {
+  background-color: #f1a63b;
+  color: white;
+}
 
+.logout-btn:hover {
+  background-color: #e9951f;
+}
 
 .history-btn {
   background-color: #2b7de9;
