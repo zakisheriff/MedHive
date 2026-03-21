@@ -1,11 +1,11 @@
-const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const pool = require("../db");
-const upload = require("../utils/upload");
-const transporter = require("../utils/mailer");
-const { containerClient } = require("../utils/blob");
-const { registerSchema, loginSchema } = require("../utils/validation");
+import express from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import pool from "../db.js"; // Ensure you add .js extensions for local files
+import upload from "../utils/upload.js";
+import transporter from "../utils/mailer.js";
+import { containerClient } from "../utils/blob.js";
+import { registerSchema, loginSchema } from "../utils/validation.js";
 
 const router = express.Router();
 
@@ -16,44 +16,46 @@ function signToken(payload) {
 // POST /api/auth/register
 router.post("/register", upload.single("certificate"), async (req, res) => {
   try {
-    const { companyName, registrationNumber, email, password } = req.body;
+    const { nmraLicenseNumber, companyName, email } = req.body;
 
-    // 1. Check if exists
-    const existing = await pool.query("SELECT pharma_id FROM pharma_companies WHERE contact_email = $1", [email.toLowerCase()]);
-    if (existing.rowCount > 0) return res.status(409).json({ error: "Email already registered" });
-
-    // 2. Hash Password
-    const passwordHash = await bcrypt.hash(password, 12);
-
-    // 3. Upload to Azure
-    let certificateUrl = null;
-    if (req.file) {
-      const blobName = `pharma/${Date.now()}-${req.file.originalname}`;
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      await blockBlobClient.uploadData(req.file.buffer, {
-        blobHTTPHeaders: { blobContentType: req.file.mimetype }
-      });
-      certificateUrl = blockBlobClient.url;
+    if (!req.file) {
+      return res.status(400).json({ error: "Certificate image is required" });
     }
 
-    // 4. Insert with PENDING status
-    const result = await pool.query(
-      `INSERT INTO pharma_companies (company_name, company_reg_no, contact_email, password_hash, license_certificate_url, verification_status)
-       VALUES ($1, $2, $3, $4, $5, 'PENDING') RETURNING *`,
-      [companyName, registrationNumber, email.toLowerCase(), passwordHash, certificateUrl]
-    );
+    const safeFileName = `${Date.now()}-${req.file.originalname.replace(/\s+/g, "_")}`;
+    const blobPath = `certificates/pharma/${nmraLicenseNumber}/${safeFileName}`;
 
-    // 5. Send Confirmation Email
-    await transporter.sendMail({
-      from: `"MedHive" <${process.env.MEDHIVE_EMAIL}>`,
-      to: email,
-      subject: "Registration Received - MedHive Pharma",
-      html: `<h2>Welcome ${companyName}!</h2><p>Our team is verifying your license. You will be notified once approved.</p>`
+    const blockBlobClient = containerClient.getBlockBlobClient(blobPath);
+
+    await blockBlobClient.uploadData(req.file.buffer, {
+      blobHTTPHeaders: { 
+        blobContentType: req.file.mimetype 
+      },
     });
 
-    res.status(201).json({ message: "Success", user: result.rows[0] });
+    const certificateUrl = blockBlobClient.url;
+
+    const query = `
+      INSERT INTO pharma_companies (
+        company_name, 
+        nmra_license_no, 
+        license_certificate_url, 
+        verification_status
+      )
+      VALUES ($1, $2, $3, 'PENDING')
+      RETURNING pharma_id
+    `;
+    
+    const result = await pool.query(query, [companyName, nmraLicenseNumber, certificateUrl]);
+
+    res.status(201).json({ 
+      message: "Registration successful", 
+      pharmaId: result.rows[0].pharma_id 
+    });
+
   } catch (err) {
-    res.status(500).json({ error: "Server error during registration" });
+    console.error("Upload Error:", err);
+    res.status(500).json({ error: "Server error during file upload" });
   }
 });
 
@@ -66,7 +68,6 @@ router.post("/login", async (req, res) => {
   
   const user = result.rows[0];
 
-  // Logic: Block login if not approved
   if (user.verification_status !== "APPROVED") {
     return res.status(403).json({ error: "Verification pending. Please wait for admin approval." });
   }
@@ -78,4 +79,5 @@ router.post("/login", async (req, res) => {
   res.json({ token, user });
 });
 
-module.exports = router;
+// THIS IS THE KEY CHANGE:
+export default router;
