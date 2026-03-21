@@ -5,96 +5,71 @@
   justify-content: center;
   background: #f9f9f9;
   padding: 2rem;
+  font-family: "Helvetica", Arial, sans-serif;
 }
 
 .card {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
   padding: 3rem;
   width: 100%;
-  max-width: 600px;
+  max-width: 650px; /* Slightly wider for the two-column rows */
   animation: slideIn 0.5s ease-out;
 }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
+/* Reusing the logo dimensions from the login page */
 .logo {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #dca349;
+  max-width: 320px;
+  height: auto;
+  object-fit: contain;
   margin-bottom: 0.5rem;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 1.5em rgba(220, 163, 73, 0.4));
 }
 
 .subtitle {
-  color: var(--color-text-dimmed);
-  font-size: 0.95rem;
-}
-
-.stepIndicator {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.step {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.stepCircle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  background: #e2e8f0;
-  color: #999999;
-}
-
-.stepCircle.active {
-  background: #dca349;
-  color: white;
-}
-
-.stepLabel {
-  font-size: 0.9rem;
-  color: #999999;
-}
-
-.stepLabel.active {
-  color: #dca349;
-  font-weight: 600;
+  color: #111111;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
+/* Grid for the 2-column rows (Email/RegNo and License/Expiry) */
 .formRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 1.5rem;
+}
+
+/* On mobile, stack the 2-column rows */
+@media (max-width: 600px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
 }
 
 .formGroup {
@@ -103,26 +78,27 @@
   gap: 0.5rem;
 }
 
-.formGroup.full {
-  grid-column: 1 / -1;
-}
-
 .label {
-  font-weight: 500;
+  font-weight: 600;
   color: #111111;
   font-size: 0.9rem;
+  padding-left: 1.25rem; /* Indented to match the curve of the input */
 }
 
 .required {
   color: #ef4444;
+  margin-left: 2px;
 }
 
 .input {
-  padding: 0.75rem 1rem;
+  padding: 0.8rem 1.5rem;
   border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: 30px; /* Pill shape matching login */
   font-size: 1rem;
+  font-family: "Helvetica", sans-serif;
   transition: all 0.2s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .input:focus {
@@ -131,120 +107,86 @@
   box-shadow: 0 0 0 3px rgba(220, 163, 73, 0.1);
 }
 
-.input.error {
-  border-color: #ef4444;
+.error {
+  border-color: #ef4444 !important;
 }
 
 .errorText {
   color: #ef4444;
   font-size: 0.85rem;
+  padding-left: 1.25rem;
+  margin-top: 0.25rem;
 }
 
-.buttonGroup {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+/* File Upload Specific Styling */
+.fileInputWrapper {
+  width: 100%;
+}
+
+.fileInput {
+  display: none; /* Hide the ugly native input */
+}
+
+.fileInputLabel {
+  display: block;
+  padding: 1rem 1.5rem;
+  background: #ffffff;
+  border: 2px dashed #e0e0e0;
+  border-radius: 30px;
+  text-align: center;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.fileInputLabel:hover {
+  border-color: #dca349;
+  background: rgba(220, 163, 73, 0.03);
+  color: #dca349;
 }
 
 .button {
-  flex: 1;
-  padding: 0.875rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.primaryButton {
+  padding: 1rem 1.5rem;
   background: #dca349;
   color: white;
+  border: none;
+  border-radius: 30px; /* Pill shape */
+  font-weight: 700;
+  font-size: 1rem;
+  font-family: "Helvetica", sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 1rem;
 }
 
-.primaryButton:hover:not(:disabled) {
+.button:hover:not(:disabled) {
   background: #b8873d;
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(220, 163, 73, 0.3);
 }
 
-.primaryButton:disabled {
+.button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.secondaryButton {
-  background: transparent;
-  color: #dca349;
-  border: 2px solid #dca349;
-}
-
-.secondaryButton:hover {
-  background: #dca349;
-  color: white;
-}
-
-.passwordStrength {
-  margin-top: 0.5rem;
-}
-
-.strengthBar {
-  height: 4px;
-  background: #e2e8f0;
-  border-radius: 2px;
-  overflow: hidden;
-  margin-bottom: 0.5rem;
-}
-
-.strengthFill {
-  height: 100%;
-  transition: all 0.3s;
-}
-
-.strengthFill.weak {
-  width: 33%;
-  background: #ef4444;
-}
-
-.strengthFill.medium {
-  width: 66%;
-  background: #f59e0b;
-}
-
-.strengthFill.strong {
-  width: 100%;
-  background: #10b981;
-}
-
-.strengthText {
-  font-size: 0.85rem;
-}
-
-.strengthText.weak {
-  color: #ef4444;
-}
-
-.strengthText.medium {
-  color: #f59e0b;
-}
-
-.strengthText.strong {
-  color: #10b981;
-}
-
-.requirementsList {
-  font-size: 0.85rem;
+.footer {
+  text-align: center;
+  margin-top: 2rem;
   color: #64748b;
-  margin-top: 0.5rem;
-  padding-left: 1.25rem;
+  font-size: 0.95rem;
 }
 
-.requirementsList li {
-  margin-bottom: 0.25rem;
+.link {
+  color: #dca349;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
 }
 
-.requirementsList li.met {
-  color: #10b981;
+.link:hover {
+  text-decoration: underline;
 }
 
 .loading {
