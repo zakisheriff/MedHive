@@ -7,6 +7,7 @@ import Alerts from './app/routes/Alerts'
 import Reports from './app/routes/Reports'
 import { LoginPage } from './auth/LoginPage'
 import { RegistrationFlow } from './auth/RegistrationFlow'
+import {PendingVerification} from './auth/PendingVerification'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         {/* Auth Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegistrationFlow />} />
+        <Route path="/pending-verification" element={<PendingVerification />} />
 
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardLayout />}>
