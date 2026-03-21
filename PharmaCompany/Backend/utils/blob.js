@@ -7,4 +7,6 @@ const blobServiceClient = BlobServiceClient.fromConnectionString(
   process.env.AZURE_STORAGE_CONNECTION_STRING
 );
 
-export const containerClient = blobServiceClient.getContainerClient("pharma-certificates");
+const containerName = process.env.AZURE_CONTAINER_NAME
+
+export const containerClient = blobServiceClient.getContainerClient(containerName);

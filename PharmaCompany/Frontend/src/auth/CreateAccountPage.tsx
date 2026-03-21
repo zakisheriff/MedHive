@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styles from './Login.module.css'; 
@@ -46,27 +46,32 @@ export const CreateAccountPage = () => {
     setLoading(true);
     setError('');
 
-    // Create FormData object to handle file + text
+    // 1. Create FormData object to handle file + text fields
     const data = new FormData();
-    data.append('certificate', certificateFile); // Matches backend upload.single('certificate')
+    data.append('certificate', certificateFile); // Matches backend: upload.single('certificate')
     
-    // Append all text fields
+    // 2. Append all text fields from state
     Object.entries(formData).forEach(([key, value]) => {
       data.append(key, value);
     });
 
     try {
+      // 3. Direct hit to your Node.js registration endpoint
       const response = await axios.post('http://localhost:5000/api/auth/register', data, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data', // Required for file uploads
         },
       });
 
       if (response.status === 201) {
+        console.log("Registration Success:", response.data);
+        // Navigate to the verification pending screen
         navigate('/pending-verification');
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Registration failed. Please try again.');
+      // 4. Handle backend validation errors (e.g., email already exists)
+      const message = err.response?.data?.error || 'Registration failed. Check your server connection.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -77,10 +82,12 @@ export const CreateAccountPage = () => {
       <div className={styles.card} style={{ maxWidth: '650px' }}> 
         <div className={styles.header}>
           <img src={medHiveLogo} className={styles.logo} alt="MedHive Logo" />
+          <h2 className={styles.title}>Company Registration</h2>
           <p className={styles.subtitle}>Pharmaceutical Management Platform</p>
         </div>
 
         <form className={styles.form} onSubmit={handleSubmit}>
+          {/* Company Name */}
           <div className={styles.formGroup}>
             <label className={styles.label}>Company Name</label>
             <input
@@ -93,6 +100,7 @@ export const CreateAccountPage = () => {
             />
           </div>
 
+          {/* Email & Registration Number */}
           <div style={{ display: 'flex', gap: '1rem' }}>
             <div className={styles.formGroup} style={{ flex: 1 }}>
               <label className={styles.label}>Email Address</label>
@@ -118,6 +126,7 @@ export const CreateAccountPage = () => {
             </div>
           </div>
 
+          {/* Password */}
           <div className={styles.formGroup}>
             <label className={styles.label}>Account Password</label>
             <input
@@ -130,6 +139,7 @@ export const CreateAccountPage = () => {
             />
           </div>
 
+          {/* License Info */}
           <div style={{ display: 'flex', gap: '1rem' }}>
             <div className={styles.formGroup} style={{ flex: 1 }}>
               <label className={styles.label}>NMRA License Number</label>
@@ -154,7 +164,7 @@ export const CreateAccountPage = () => {
             </div>
           </div>
 
-          {/* New Certificate Upload Field */}
+          {/* File Upload */}
           <div className={styles.formGroup}>
             <label className={styles.label}>NMRA Certificate Image</label>
             <div className={styles.fileInputWrapper}>
@@ -175,7 +185,7 @@ export const CreateAccountPage = () => {
           {error && <div className={styles.error}>{error}</div>}
 
           <button type="submit" className={styles.button} disabled={loading}>
-            {loading ? <span className={styles.loading}></span> : 'Register Company'}
+            {loading ? <span className={styles.loadingSpinner}></span> : 'Register Company'}
           </button>
         </form>
 
