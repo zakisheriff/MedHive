@@ -41,7 +41,7 @@
 }
 
 .subtitle {
-  color: #666666;
+  color: var(--color-text-dimmed);
   font-size: 0.95rem;
 }
 
