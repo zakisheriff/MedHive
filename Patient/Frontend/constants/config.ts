@@ -28,6 +28,10 @@ export const API_ENDPOINTS = {
     GET_CLINICS: `${BASE_URL}/api/clinics`,
     GET_OTP: (med_id: string) => `${BASE_URL}/api/access/active-otp/${med_id}`,
     UPDATE_HISTORY: (med_id: string) => `${BASE_URL}/api/medical_history/update-history/${med_id}`,
+    MEDICAL_RECORDS: (med_id: string) => `${BASE_URL}/api/medical-records/${med_id}`,
+    MEDICAL_STATS: (med_id: string) => `${BASE_URL}/api/medical-records/stats/${med_id}`,
+    DELETE_RECORD: (record_id: string | number) => `${BASE_URL}/api/medical-records/record/${record_id}`,
+    UPDATE_RECORD: (record_id: string | number) => `${BASE_URL}/api/medical-records/record/${record_id}`,
 };
 
 export const auth_endpoints = {
