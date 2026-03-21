@@ -40,6 +40,7 @@ const Blog2 = () => {
                             </a>
                         </p>
                     </div>
+                    
 
                     <section className="blog-section">
                         <h2>Why Digital Records Are Becoming Essential</h2>
