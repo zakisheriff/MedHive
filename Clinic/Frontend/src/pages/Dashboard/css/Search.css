@@ -244,3 +244,33 @@
 .logout-btn:active {
   transform: translateX(-50%) scale(0.96);
 }
+.bottom-buttons {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+}
+
+.logout-btn,
+.history-btn {
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: 0.3s;
+}
+
+
+
+.history-btn {
+  background-color: #2b7de9;
+  color: white;
+}
+
+.history-btn:hover {
+  background-color: #1f67c1;
+}

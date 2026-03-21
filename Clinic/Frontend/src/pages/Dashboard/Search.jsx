@@ -19,10 +19,13 @@ const SearchPage = () => {
   const navigate = useNavigate();
   const API_URL = 'http://localhost:5002/api/patients';
 
-  // 🔥 Logout function
   const handleLogout = () => {
-    localStorage.removeItem("doctor");
-    navigate("/role-select"); // role selection page
+    localStorage.removeItem('doctor');
+    navigate('/role-select');
+  };
+
+  const handleGoToHistory = () => {
+    navigate('/patient-history');
   };
 
   const handleSearch = async (e) => {
@@ -36,7 +39,7 @@ const SearchPage = () => {
 
     try {
       const res = await axios.get(`${API_URL}/search`, {
-        params: { query: searchQuery }
+        params: { query: searchQuery },
       });
 
       if (res.data && res.data.length > 0) {
@@ -53,14 +56,17 @@ const SearchPage = () => {
   };
 
   const handleRequestAccess = async () => {
+    if (!patientPreview) return;
+
     setLoading(true);
     try {
       await axios.post(`${API_URL}/request-access`, {
-        med_id: patientPreview.med_id
+        med_id: patientPreview.med_id,
       });
       setOtpSent(true);
     } catch (err) {
-      alert("Failed to request access.");
+      alert('Failed to request access.');
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -68,15 +74,17 @@ const SearchPage = () => {
 
   const handleVerifyOTP = async () => {
     if (otp.length !== 2) {
-      alert("Enter 2-digit code");
+      alert('Enter 2-digit code');
       return;
     }
+
+    if (!patientPreview) return;
 
     setLoading(true);
     try {
       const res = await axios.post(`${API_URL}/verify-otp`, {
         med_id: patientPreview.med_id,
-        otp
+        otp,
       });
 
       setFullPatientData(res.data);
@@ -85,7 +93,8 @@ const SearchPage = () => {
       setOtpSent(false);
       setOtp('');
     } catch (err) {
-      alert("Invalid code");
+      alert('Invalid code');
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -93,8 +102,6 @@ const SearchPage = () => {
 
   return (
     <div className="search-container">
-
-      {/* 🔹 HEADER */}
       <header className="search-header">
         <h1>Patient Search</h1>
 
@@ -113,10 +120,7 @@ const SearchPage = () => {
         {error && <p className="search-error">{error}</p>}
       </header>
 
-      {/* 🔹 RESULTS */}
       <div className="search-results-area">
-
-        {/* Preview */}
         {patientPreview && !accessGranted && (
           <motion.div
             className="patient-preview-bar"
@@ -125,30 +129,33 @@ const SearchPage = () => {
             onClick={() => setShowRequestModal(true)}
           >
             <div className="avatar-placeholder">
-              {patientPreview.fname[0]}{patientPreview.lname[0]}
+              {patientPreview.fname[0]}
+              {patientPreview.lname[0]}
             </div>
 
             <div className="preview-info">
-              <h3>{patientPreview.fname} {patientPreview.lname}</h3>
+              <h3>
+                {patientPreview.fname} {patientPreview.lname}
+              </h3>
               <p>ID: {patientPreview.med_id}</p>
             </div>
 
-            <span className="view-tag">
-              Click to Request Access
-            </span>
+            <span className="view-tag">Click to Request Access</span>
           </motion.div>
         )}
 
-        {/* Full profile */}
         {accessGranted && <PatientProfile data={fullPatientData} />}
       </div>
 
-      {/* 🔹 MODAL */}
       <AnimatePresence>
         {showRequestModal && (
-          <motion.div className="modal-overlay">
+          <motion.div
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
             <div className="request-modal">
-
               {!otpSent ? (
                 <>
                   <h2>Request Access?</h2>
@@ -164,8 +171,9 @@ const SearchPage = () => {
                     <button
                       className="confirm-btn"
                       onClick={handleRequestAccess}
+                      disabled={loading}
                     >
-                      Generate Code
+                      {loading ? 'Generating...' : 'Generate Code'}
                     </button>
                   </div>
                 </>
@@ -179,7 +187,7 @@ const SearchPage = () => {
                       value={otp[0] || ''}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, '');
-                        setOtp(val + (otp[1] || ''));
+                        setOtp((val + (otp[1] || '')).slice(0, 2));
                       }}
                       className="otp-box"
                     />
@@ -189,7 +197,7 @@ const SearchPage = () => {
                       value={otp[1] || ''}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, '');
-                        setOtp((otp[0] || '') + val);
+                        setOtp(((otp[0] || '') + val).slice(0, 2));
                       }}
                       className="otp-box"
                     />
@@ -198,7 +206,11 @@ const SearchPage = () => {
                   <div className="modal-actions">
                     <button
                       className="cancel-btn"
-                      onClick={() => setShowRequestModal(false)}
+                      onClick={() => {
+                        setShowRequestModal(false);
+                        setOtpSent(false);
+                        setOtp('');
+                      }}
                     >
                       Cancel
                     </button>
@@ -206,25 +218,27 @@ const SearchPage = () => {
                     <button
                       className="confirm-btn"
                       onClick={handleVerifyOTP}
+                      disabled={loading}
                     >
-                      Verify
+                      {loading ? 'Verifying...' : 'Verify'}
                     </button>
                   </div>
                 </>
               )}
-
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 🔥 LOGOUT BUTTON (BOTTOM CENTER) */}
-      <div className="logout-bottom">
+      <div className="bottom-buttons">
+        <button className="history-btn" onClick={handleGoToHistory}>
+          History
+        </button>
+
         <button className="logout-btn" onClick={handleLogout}>
           Logout
         </button>
       </div>
-
     </div>
   );
 };
