@@ -16,7 +16,7 @@ const FloatingSidebar = () => {
     { to: '/dashboard/alerts', icon: Bell, label: 'Alerts' },
     { to: '/dashboard/reports', icon: FileText, label: 'Reports' },
   ]
-
+      
   return (
     <>
       <aside 

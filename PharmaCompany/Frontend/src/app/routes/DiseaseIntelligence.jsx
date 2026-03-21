@@ -1,165 +1,221 @@
-import { useOutletContext } from 'react-router-dom'
-import { useState } from 'react'
-import { Clock, TrendingUp } from 'lucide-react'
-import InsightCard from '../../components/cards/InsightCard'
-import RiskTable from '../../components/tables/RiskTable'
-import LineTrendChart from '../../components/charts/LineTrendChart'
-import DateFilter from '../../components/filters/DateFilter'
-import DiseaseSelector from '../../components/filters/DiseaseSelector'
-import RegionSelector from '../../components/filters/RegionSelector'
-import { useDiseaseForecast } from '../../hooks/useDiseaseForecast'
-import { timeAgo } from '../../utils/formatters'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { TrendingUp } from 'lucide-react';
 
 const DiseaseIntelligence = () => {
-  const { globalFilters, onFilterChange } = useOutletContext()
-  const { forecast, districts, selectedDistrict, loading, selectDistrict } = useDiseaseForecast(
-    globalFilters.disease,
-    globalFilters.region,
-    globalFilters
-  )
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [hoveredRow, setHoveredRow] = useState(null);
 
-  const handleRowClick = (row) => {
-    selectDistrict(row.id)
-  }
+  useEffect(() => {
+    const fetchReport = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/epidemiology/weekly-report');
+        setData(res.data);
+      } catch (err) {
+        console.error("Report Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReport();
+  }, []);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div style={{ color: 'var(--color-text-dimmed)' }}>Loading...</div>
-      </div>
-    )
-  }
+  // Extract disease names from the first district's breakdown object
+  const diseaseNames = data?.districts?.[0]?.breakdown ? Object.keys(data.districts[0].breakdown) : [];
+
+  const s = {
+    container: {
+      padding: '2rem',
+      backgroundColor: '#fcfcfc',
+      minHeight: '100vh',
+      fontFamily: "'Inter', sans-serif",
+      color: '#2d3436',
+    },
+    bulletinHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderLeft: '5px solid #dca349',
+      padding: '1.5rem',
+      backgroundColor: '#ffffff',
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.02)',
+      borderRadius: '0 8px 8px 0',
+      marginBottom: '2rem',
+    },
+    badge: {
+      fontSize: '0.7rem',
+      fontWeight: '800',
+      textTransform: 'uppercase',
+      color: '#dca349',
+      letterSpacing: '1px',
+      display: 'block',
+      marginBottom: '0.5rem',
+    },
+    title: {
+      fontSize: '1.8rem',
+      fontWeight: '700',
+      margin: 0,
+      color: '#1e272e',
+    },
+    subtitle: {
+      color: '#7f8c8d',
+      fontSize: '0.95rem',
+      marginTop: '0.2rem',
+    },
+    statusBox: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.8rem',
+      backgroundColor: '#f1f2f6',
+      padding: '0.6rem 1.2rem',
+      borderRadius: '20px',
+      fontSize: '0.8rem',
+      fontWeight: '600',
+      color: '#4b6584',
+    },
+    pulseDot: {
+      width: '8px',
+      height: '8px',
+      backgroundColor: '#2ecc71',
+      borderRadius: '50%',
+      boxShadow: '0 0 8px rgba(46, 204, 113, 0.6)',
+    },
+    metricsGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '1rem',
+      marginBottom: '2rem',
+    },
+    metricCard: {
+      backgroundColor: '#ffffff',
+      padding: '1.5rem',
+      borderRadius: '12px',
+      borderTop: '3px solid #3498db',
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.04)',
+    },
+    mainContent: {
+      width: '100%', // Changed to full width
+    },
+    panel: {
+      backgroundColor: 'white',
+      borderRadius: '12px',
+      padding: '1.5rem',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+    },
+    panelTitle: {
+      fontSize: '1.1rem',
+      fontWeight: '700',
+      marginBottom: '1.5rem',
+      paddingBottom: '0.8rem',
+      borderBottom: '1px solid #f1f2f6',
+    },
+    table: {
+      width: '100%',
+      borderCollapse: 'collapse',
+    },
+    th: {
+      textAlign: 'left',
+      fontSize: '0.75rem',
+      color: '#bdc3c7',
+      padding: '1rem 0.5rem',
+      borderBottom: '2px solid #f1f2f6',
+      textTransform: 'uppercase',
+      letterSpacing: '0.5px'
+    },
+    td: (isHovered) => ({
+      padding: '1.2rem 0.5rem',
+      borderBottom: '1px solid #f9f9f9',
+      fontSize: '0.9rem',
+      backgroundColor: isHovered ? '#fffdfa' : 'transparent',
+      transition: 'all 0.2s ease',
+    }),
+    riskBadge: (level) => ({
+      fontWeight: '700',
+      padding: '4px 8px',
+      borderRadius: '4px',
+      fontSize: '0.75rem',
+      backgroundColor: level === 'High' ? '#fff0f0' : level === 'Moderate' ? '#fff9eb' : '#f0fff4',
+      color: level === 'High' ? '#e74c3c' : level === 'Moderate' ? '#f39c12' : '#27ae60',
+    }),
+  };
+
+  if (loading) return <div style={{...s.container, textAlign: 'center', paddingTop: '10%'}}>Analyzing Epidemiological Lags...</div>;
+  if (!data) return <div style={{...s.container, color: 'red'}}>Could not load report.</div>;
 
   return (
-    <div className="space-y-6">
-      {/* Global Filters */}
-      <div className="flex items-center gap-6 justify-center mb-2">
-        <DateFilter 
-          value={globalFilters.dateRange} 
-          onChange={(value) => onFilterChange({ dateRange: value })} 
-        />
-        <DiseaseSelector 
-          value={globalFilters.disease} 
-          onChange={(value) => onFilterChange({ disease: value })} 
-        />
-        <RegionSelector 
-          value={globalFilters.region} 
-          onChange={(value) => onFilterChange({ region: value })} 
-        />
-      </div>
-
-      {/* Forecast Header */}
-      <div className="card p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold mb-2" style={{ color: 'var(--color-text-primary)' }}>
-              {forecast?.disease} Forecast
-            </h1>
-            <div className="flex items-center gap-6 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-              <div>
-                <span className="font-medium">Horizon:</span> {forecast?.horizon}
-              </div>
-              <div>
-                <span className="font-medium">Confidence:</span>{' '}
-                <span className="font-semibold" style={{ color: 'var(--color-primary)' }}>{forecast?.confidence}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                <span>{timeAgo(forecast?.lastUpdate)}</span>
-              </div>
-            </div>
-          </div>
-          <div className="text-right">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-md" style={{ backgroundColor: 'rgba(220, 163, 73, 0.1)', color: 'var(--color-primary)', borderRadius: 'var(--border-radius-sm)' }}>
-              <TrendingUp className="w-5 h-5" />
-              <span className="font-medium">Active Forecast</span>
-            </div>
-          </div>
+    <div style={s.container}>
+      {/* Header */}
+      <div style={s.bulletinHeader}>
+        <div>
+          <span style={s.badge}>Official Intelligence Bulletin</span>
+          <h1 style={s.title}>Weekly Disease Forecast: Week {data.metadata.week}, {data.metadata.year}</h1>
+          <p style={s.subtitle}>Comprehensive Prediction Matrix Across All Districts</p>
+        </div>
+        <div style={s.statusBox}>
+          <div style={s.pulseDot}></div>
+          <span>LIVE DATA FEED</span>
         </div>
       </div>
 
-      {/* Main Content - Split Screen */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left: District Risk Table */}
-        <div>
-          <InsightCard title="District Forecast">
-            <RiskTable data={districts} onRowClick={handleRowClick} />
-          </InsightCard>
-        </div>
+      {/* National Overview Cards */}
+      <div style={s.metricsGrid}>
+        {diseaseNames.map(disease => {
+          const total = data.districts.reduce((acc, curr) => acc + (curr.breakdown[disease] || 0), 0);
+          return (
+            <div key={disease} style={s.metricCard}>
+              <p style={{fontSize: '0.75rem', fontWeight: '600', color: '#95a5a6', textTransform: 'uppercase'}}>{disease}</p>
+              <h4 style={{fontSize: '1.8rem', fontWeight: '800', margin: '0.5rem 0'}}>{total}</h4>
+              <p style={{fontSize: '0.7rem', color: '#3498db', fontWeight: '600'}}>National Prediction</p>
+            </div>
+          );
+        })}
+      </div>
 
-        {/* Right: District Detail Panel */}
-        <div>
-          {selectedDistrict ? (
-            <div className="space-y-6">
-              {/* Trend Chart */}
-              <InsightCard title={`${selectedDistrict.name} - Trend & Forecast`}>
-                <LineTrendChart data={selectedDistrict.trendData} showForecast={true} />
-              </InsightCard>
-
-              {/* Weather Impact Summary */}
-              <InsightCard title="Weather Impact Summary">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs mb-1" style={{ color: 'var(--color-text-dimmed)' }}>Rainfall</p>
-                    <p className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                      {selectedDistrict.weatherImpact.rainfall.value}
-                    </p>
-                    <p className="text-xs" style={{ color: 'var(--color-text-dimmed)' }}>{selectedDistrict.weatherImpact.rainfall.period}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs mb-1" style={{ color: 'var(--color-text-dimmed)' }}>Humidity</p>
-                    <p className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                      {selectedDistrict.weatherImpact.humidity.value}
-                    </p>
-                    <p className="text-xs" style={{ color: 'var(--color-text-dimmed)' }}>{selectedDistrict.weatherImpact.humidity.period}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs mb-1" style={{ color: 'var(--color-text-dimmed)' }}>Temperature</p>
-                    <p className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                      {selectedDistrict.weatherImpact.temperature.value}
-                    </p>
-                    <p className="text-xs" style={{ color: 'var(--color-text-dimmed)' }}>{selectedDistrict.weatherImpact.temperature.period}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs mb-1" style={{ color: 'var(--color-text-dimmed)' }}>Wind</p>
-                    <p className="text-lg font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                      {selectedDistrict.weatherImpact.wind.value}
-                    </p>
-                    <p className="text-xs" style={{ color: 'var(--color-text-dimmed)' }}>{selectedDistrict.weatherImpact.wind.period}</p>
-                  </div>
-                </div>
-                
-                <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--color-border)' }}>
-                  <p className="text-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>Lag Effect</p>
-                  <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>{selectedDistrict.weatherImpact.lagEffect}</p>
-                </div>
-              </InsightCard>
-
-              {/* Key Notes */}
-              <InsightCard title="Key Notes">
-                <ul className="space-y-2">
-                  {selectedDistrict.keyNotes.map((note, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <span className="mt-1" style={{ color: 'var(--color-primary)' }}>•</span>
-                      <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>{note}</span>
-                    </li>
+      <div style={s.mainContent}>
+        <div style={s.panel}>
+          <h3 style={s.panelTitle}>District Disease Projections</h3>
+          <div style={{overflowX: 'auto'}}>
+            <table style={s.table}>
+              <thead>
+                <tr>
+                  <th style={s.th}>District</th>
+                  {diseaseNames.map(name => (
+                    <th key={name} style={s.th}>{name}</th>
                   ))}
-                </ul>
-              </InsightCard>
-            </div>
-          ) : (
-            <div className="card p-12">
-              <div className="text-center" style={{ color: 'var(--color-text-dimmed)' }}>
-                <TrendingUp className="w-16 h-16 mx-auto mb-4 opacity-20" />
-                <p className="text-lg font-medium">Select a district</p>
-                <p className="text-sm mt-2">Click on any district in the table to view detailed forecast and drivers</p>
-              </div>
-            </div>
-          )}
+                  <th style={s.th}>Total Cases</th>
+                  <th style={s.th}>Overall Risk</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.districts.map(d => (
+                  <tr 
+                    key={d.district} 
+                    onMouseEnter={() => setHoveredRow(d.district)}
+                    onMouseLeave={() => setHoveredRow(null)}
+                  >
+                    <td style={{...s.td(hoveredRow === d.district), fontWeight: '600'}}>{d.district}</td>
+                    
+                    {/* Disease Columns */}
+                    {diseaseNames.map(name => (
+                      <td key={name} style={s.td(hoveredRow === d.district)}>
+                        {d.breakdown[name] || 0}
+                      </td>
+                    ))}
+
+                    <td style={{...s.td(hoveredRow === d.district), fontWeight: '700'}}>{d.total}</td>
+                    <td style={s.td(hoveredRow === d.district)}>
+                      <span style={s.riskBadge(d.risk)}>{d.risk}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DiseaseIntelligence
+export default DiseaseIntelligence;
