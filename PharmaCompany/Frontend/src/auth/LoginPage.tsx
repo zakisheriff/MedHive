@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { SplashScreen } from './SplashScreen';
 import styles from './Login.module.css';
+import medHiveLogo from '../assets/images/MedHive pharma logo.png-.png';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -71,8 +72,7 @@ export const LoginPage = () => {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.header}>
-          <div className={styles.logo}>MedHive</div>
-          <p className={styles.subtitle}>Pharmaceutical Management Platform</p>
+          <div className={styles.logo}><img src={medHiveLogo} alt="Pharma logo" /></div>
         </div>
 
         <form className={styles.form} onSubmit={handleLogin}>
