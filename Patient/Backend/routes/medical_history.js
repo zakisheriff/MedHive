@@ -9,7 +9,12 @@ router.put("/update-history/:medId", async (req, res) => {
     medical_records, 
     diseases, 
     allergies, 
-    other_info 
+    other_info,
+    blood_group,
+    weight_kg,
+    blood_pressure,
+    emergency_contact_name,
+    emergency_contact_phone
   } = req.body;
 
   try {
@@ -18,10 +23,15 @@ router.put("/update-history/:medId", async (req, res) => {
        SET medical_records = $1, 
            diseases = $2, 
            allergies = $3, 
-           other_info = $4 
-       WHERE med_id = $5 
+           other_info = $4,
+           blood_group = $5,
+           weight_kg = $6,
+           blood_pressure = $7,
+           emergency_contact_name = $8,
+           emergency_contact_phone = $9
+       WHERE med_id = $10 
        RETURNING med_id, fname`,
-      [medical_records, diseases, allergies, other_info, medId]
+      [medical_records, diseases, allergies, other_info, blood_group, weight_kg, blood_pressure, emergency_contact_name, emergency_contact_phone, medId]
     );
 
     if (updatePatient.rows.length === 0) {

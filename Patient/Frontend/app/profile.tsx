@@ -28,6 +28,10 @@ import { getUser, clearUser, saveUser, UserData } from '../utils/userStore';
 import { useTranslation } from 'react-i18next';
 import { LanguagePicker } from '../components/LanguagePicker';
 import * as Clipboard from 'expo-clipboard';
+import { API_ENDPOINTS } from '../constants/config';
+import { PickerInput } from '../components/PickerInput';
+
+const BLOOD_GROUP_OPTIONS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Unknown'];
 
 
 interface MenuItemProps {
@@ -98,8 +102,19 @@ export default function ProfileScreen() {
 
     // Modal States
     const [editModalVisible, setEditModalVisible] = useState(false);
+    const [editModalTab, setEditModalTab] = useState<'profile' | 'medical'>('profile');
     const [tempName, setTempName] = useState('');
     const [tempEmail, setTempEmail] = useState('');
+    const [tempBloodGroup, setTempBloodGroup] = useState('');
+    const [tempWeightKg, setTempWeightKg] = useState('');
+    const [tempBloodPressure, setTempBloodPressure] = useState('');
+    const [tempEmergencyContactName, setTempEmergencyContactName] = useState('');
+    const [tempEmergencyContactPhone, setTempEmergencyContactPhone] = useState('');
+    const [tempMedicalRecords, setTempMedicalRecords] = useState('');
+    const [tempDiseases, setTempDiseases] = useState('');
+    const [tempAllergies, setTempAllergies] = useState('');
+    const [tempOtherInfo, setTempOtherInfo] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
 
     // Dynamic Statistics
     const historyItems = useMemo(() => generateMockHistory(), []);
@@ -130,7 +145,7 @@ export default function ProfileScreen() {
         });
     };
 
-    const handleSaveProfile = () => {
+    const handleSaveProfile = async () => {
         if (!tempName.trim() || !tempEmail.trim()) {
             Alert.alert('Error', t('profile.fieldRequired'));
             return;
@@ -141,18 +156,55 @@ export default function ProfileScreen() {
         const newLname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
 
         if (userData) {
-            const updatedUser = {
-                ...userData,
-                fname: newFname,
-                lname: newLname,
-                email: tempEmail
-            };
-            setUserData(updatedUser);
-            saveUser(updatedUser); // Persist changes
-        }
+            setIsSaving(true);
+            try {
+                const response = await fetch(API_ENDPOINTS.UPDATE_HISTORY(userData.med_id), {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        medical_records: tempMedicalRecords,
+                        diseases: tempDiseases,
+                        allergies: tempAllergies,
+                        other_info: tempOtherInfo,
+                        blood_group: tempBloodGroup,
+                        weight_kg: tempWeightKg,
+                        blood_pressure: tempBloodPressure,
+                        emergency_contact_name: tempEmergencyContactName,
+                        emergency_contact_phone: tempEmergencyContactPhone
+                    })
+                });
 
-        setEditModalVisible(false);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                if (!response.ok) {
+                    throw new Error('Failed to update profile');
+                }
+
+                const updatedUser = {
+                    ...userData,
+                    fname: newFname,
+                    lname: newLname,
+                    email: tempEmail,
+                    blood_group: tempBloodGroup,
+                    weight_kg: tempWeightKg,
+                    blood_pressure: tempBloodPressure,
+                    emergency_contact_name: tempEmergencyContactName,
+                    emergency_contact_phone: tempEmergencyContactPhone,
+                    medical_records: tempMedicalRecords,
+                    diseases: tempDiseases,
+                    allergies: tempAllergies,
+                    other_info: tempOtherInfo
+                };
+
+                setUserData(updatedUser);
+                await saveUser(updatedUser); 
+                setEditModalVisible(false);
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            } catch (error) {
+                console.error(error);
+                Alert.alert('Error', 'Could not update profile data.');
+            } finally {
+                setIsSaving(false);
+            }
+        }
     };
 
     const handleContactUs = () => {
@@ -297,6 +349,35 @@ export default function ProfileScreen() {
                         onPress={() => {
                             setTempName(fullName);
                             setTempEmail(userData.email);
+                            setTempBloodGroup(userData.blood_group || '');
+                            setTempWeightKg(userData.weight_kg ? String(userData.weight_kg) : '');
+                            setTempBloodPressure(userData.blood_pressure || '');
+                            setTempEmergencyContactName(userData.emergency_contact_name || '');
+                            setTempEmergencyContactPhone(userData.emergency_contact_phone || '');
+                            setTempMedicalRecords(userData.medical_records || '');
+                            setTempDiseases(userData.diseases || '');
+                            setTempAllergies(userData.allergies || '');
+                            setTempOtherInfo(userData.other_info || '');
+                            setEditModalTab('profile');
+                            setEditModalVisible(true);
+                        }}
+                    />
+                    <MenuItem
+                        icon="medical-outline"
+                        label="Medical History"
+                        onPress={() => {
+                            setTempName(fullName);
+                            setTempEmail(userData.email);
+                            setTempBloodGroup(userData.blood_group || '');
+                            setTempWeightKg(userData.weight_kg ? String(userData.weight_kg) : '');
+                            setTempBloodPressure(userData.blood_pressure || '');
+                            setTempEmergencyContactName(userData.emergency_contact_name || '');
+                            setTempEmergencyContactPhone(userData.emergency_contact_phone || '');
+                            setTempMedicalRecords(userData.medical_records || '');
+                            setTempDiseases(userData.diseases || '');
+                            setTempAllergies(userData.allergies || '');
+                            setTempOtherInfo(userData.other_info || '');
+                            setEditModalTab('medical');
                             setEditModalVisible(true);
                         }}
                     />
@@ -409,51 +490,184 @@ export default function ProfileScreen() {
             >
                 <BlurView intensity={30} tint="dark" style={styles.modalOverlay}>
                     <Pressable style={StyleSheet.absoluteFill} onPress={() => setEditModalVisible(false)} />
-                    <View style={styles.editCard}>
-                        <Text style={styles.editTitle}>{t('profile.editProfile')}</Text>
+                    <View style={[styles.editCard, { maxHeight: '80%' }]}>
+                        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
+                        <Text style={styles.editTitle}>{editModalTab === 'profile' ? t('profile.editProfile') : 'Medical History'}</Text>
 
-                        <View style={styles.inputContainer}>
-                            <Text style={styles.inputLabel}>{t('profile.fullName')}</Text>
-                            <TextInput
-                                style={styles.textInput}
-                                value={tempName}
-                                onChangeText={setTempName}
-                                placeholder={t('auth.fnamePlaceholder')}
-                                placeholderTextColor="#8E8E93"
-                            />
-                        </View>
+                        {editModalTab === 'profile' && (
+                            <>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>{t('profile.fullName')}</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempName}
+                                        onChangeText={setTempName}
+                                        placeholder={t('auth.fnamePlaceholder')}
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
 
-                        <View style={styles.inputContainer}>
-                            <Text style={styles.inputLabel}>{t('profile.emailAddress')}</Text>
-                            <TextInput
-                                style={styles.textInput}
-                                value={tempEmail}
-                                onChangeText={setTempEmail}
-                                placeholder={t('auth.emailPlaceholder')}
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                                placeholderTextColor="#8E8E93"
-                            />
-                        </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>{t('profile.emailAddress')}</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempEmail}
+                                        onChangeText={setTempEmail}
+                                        placeholder={t('auth.emailPlaceholder')}
+                                        keyboardType="email-address"
+                                        autoCapitalize="none"
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+                            </>
+                        )}
+
+                        {editModalTab === 'medical' && (
+                            <>
+                                <PickerInput
+                                    label="Blood Group"
+                                    value={tempBloodGroup}
+                                    onValueChange={setTempBloodGroup}
+                                    options={BLOOD_GROUP_OPTIONS}
+                                    placeholder="Select Blood Group"
+                                    iconName="water-outline"
+                                />
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Weight (kg)</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempWeightKg}
+                                        onChangeText={(text) => {
+                                            let cleaned = text.replace(/[^0-9.]/g, '');
+                                            const parts = cleaned.split('.');
+                                            if (parts.length > 2) {
+                                                cleaned = parts[0] + '.' + parts.slice(1).join('');
+                                            }
+                                            setTempWeightKg(cleaned);
+                                        }}
+                                        keyboardType="decimal-pad"
+                                        placeholder="Enter weight in kg"
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Blood Pressure</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempBloodPressure}
+                                        onChangeText={(text) => {
+                                            let cleaned = text.replace(/[^0-9/]/g, '');
+                                            const parts = cleaned.split('/');
+                                            if (parts.length > 2) {
+                                                cleaned = parts[0] + '/' + parts.slice(1).join('');
+                                            }
+                                            setTempBloodPressure(cleaned);
+                                        }}
+                                        placeholder="e.g., 120/80"
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Emergency Contact Name</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempEmergencyContactName}
+                                        onChangeText={setTempEmergencyContactName}
+                                        placeholder="Enter emergency contact name"
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Emergency Contact Phone</Text>
+                                    <View style={[styles.textInput, { flexDirection: 'row', alignItems: 'center', paddingLeft: 16, paddingRight: 0, paddingVertical: 0 }]}>
+                                        <Text style={{ fontSize: 16, color: '#1C1C1E', paddingRight: 4, fontWeight: '500' }}>+94</Text>
+                                        <TextInput
+                                            style={{ flex: 1, fontSize: 16, color: '#1C1C1E', paddingVertical: 14, paddingRight: 16, ...Platform.select({ web: { outlineStyle: 'none' } as any }) }}
+                                            value={tempEmergencyContactPhone}
+                                            onChangeText={(text) => {
+                                                setTempEmergencyContactPhone(text.replace(/[^0-9]/g, ''));
+                                            }}
+                                            keyboardType="phone-pad"
+                                            placeholder="XX XXX XXXX"
+                                            placeholderTextColor="#8E8E93"
+                                            maxLength={9}
+                                        />
+                                    </View>
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Medical Records</Text>
+                                    <TextInput
+                                        style={[styles.textInput, { minHeight: 80, textAlignVertical: 'top' }]}
+                                        value={tempMedicalRecords}
+                                        onChangeText={setTempMedicalRecords}
+                                        multiline
+                                        placeholder="Any major surgeries, treatments..."
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Chronic Diseases</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempDiseases}
+                                        onChangeText={setTempDiseases}
+                                        placeholder="e.g., Diabetes, Hypertension"
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Allergies</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempAllergies}
+                                        onChangeText={setTempAllergies}
+                                        placeholder="e.g., Peanuts, Penicillin"
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Other Information</Text>
+                                    <TextInput
+                                        style={[styles.textInput, { minHeight: 60, textAlignVertical: 'top' }]}
+                                        value={tempOtherInfo}
+                                        onChangeText={setTempOtherInfo}
+                                        multiline
+                                        placeholder="Any other health details..."
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+                            </>
+                        )}
 
                         <TouchableOpacity
                             style={styles.saveBtn}
                             onPress={handleSaveProfile}
+                            disabled={isSaving}
                         >
                             <LinearGradient
                                 colors={[Colors.light.primary, Colors.light.primaryDark]}
                                 style={styles.saveGradient}
                             >
-                                <Text style={styles.saveBtnText}>{t('profile.saveChanges')}</Text>
+                                <Text style={styles.saveBtnText}>{isSaving ? 'Saving...' : t('profile.saveChanges')}</Text>
                             </LinearGradient>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             style={styles.cancelBtn}
                             onPress={() => setEditModalVisible(false)}
+                            disabled={isSaving}
                         >
                             <Text style={styles.cancelBtnText}>{t('profile.cancel')}</Text>
                         </TouchableOpacity>
+                        </ScrollView>
                     </View>
                 </BlurView>
             </Modal>
