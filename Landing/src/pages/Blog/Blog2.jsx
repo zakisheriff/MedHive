@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import '../../styles/global.css';
-import blogTitle3Img from './images/blog-title3.jpeg';
-import blogTitle4Img from './images/blog-title4.jpg';
-import blogTitle5Img from './images/blog-title5.jpg';
+import blogTitle3Img from './images/blog-title3.webp';
+import blogTitle4Img from './images/blog-title4.webp';
+import blogTitle5Img from './images/blog-title5.webp';
 import ContactForm from '../../components/ContactForm/ContactForm';
 
 const Blog2 = () => {
@@ -40,6 +40,7 @@ const Blog2 = () => {
                             </a>
                         </p>
                     </div>
+                    
 
                     <section className="blog-section">
                         <h2>Why Digital Records Are Becoming Essential</h2>
