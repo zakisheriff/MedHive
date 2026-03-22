@@ -38,10 +38,12 @@ router.get("/me", authRequired, async (req, res) => {
  * @route GET /api/prescriptions/incoming
  * @desc Fetch all pending prescriptions for the clinic dashboard
  */
-router.get("/incoming", async (req, res) => {
+router.get("/incoming", authRequired, async (req, res) => {
   try {
+    const { clinicId } = req.user;
     const result = await pool.query(
-      "SELECT * FROM incoming_prescriptions WHERE status = 'pending' ORDER BY received_at DESC"
+      "SELECT * FROM incoming_prescriptions WHERE status = 'pending' AND clinic_id = $1 ORDER BY received_at DESC",
+      [clinicId]
     );
     res.json({ prescriptions: result.rows });
   } catch (err) {
@@ -54,7 +56,7 @@ router.get("/incoming", async (req, res) => {
  * @route PATCH /api/prescriptions/:id/dispense
  * @desc Mark a prescription as dispensed
  */
-router.patch("/:id/dispense", async (req, res) => {
+router.patch("/:id/dispense", authRequired, async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query(

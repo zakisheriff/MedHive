@@ -1,13 +1,65 @@
 /* Enhanced PatientProfile.css */
 
 /* HEADER REFINEMENTS */
-.sub-meta { color: #536471; font-size: 1.1rem; margin-top: 5px; }
-.secondary-meta { display: flex; gap: 20px; margin-top: 10px; font-size: 0.85rem; color: #70757a; font-weight: 600; }
-.insurance-tag.active { color: #1a8d1a; background: #e8f5e9; padding: 2px 8px; border-radius: 4px; }
+.profile-header-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0 40px 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px dashed #e1e8ed;
+}
+
+.header-main h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0f1419;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.p-id {
+  font-size: 1rem;
+  font-weight: 800;
+  background: #f0f4f9;
+  color: #536471;
+  padding: 6px 14px;
+  border-radius: 25px;
+}
+
+.sub-meta { color: #536471; font-size: 1.15rem; margin: 0; font-weight: 500; }
+.secondary-meta { display: flex; align-items: center; gap: 20px; margin-top: 15px; font-size: 0.95rem; color: #70757a; font-weight: 600; }
+.insurance-tag.active { color: #1a8d1a; background: #e8f5e9; padding: 4px 12px; border-radius: 8px; }
+
+.emergency-box {
+  background: #fffcf8;
+  border: 2px solid #fdf0df;
+  padding: 18px 25px;
+  border-radius: 25px;
+  text-align: right;
+}
+
+.emergency-box label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #e0952a;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.emergency-box p {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #0f1419;
+  margin: 0;
+}
 
 /* FLAGS (STRICT HIERARCHY) */
-.flags-container { padding: 10px 40px; display: flex; gap: 12px; flex-wrap: wrap; }
-.flag-chip { padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 0.85rem; border: 1px solid transparent; }
+.flags-container { padding: 0 40px; display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.flag-chip { padding: 8px 18px; border-radius: 25px; font-weight: 800; font-size: 0.85rem; border: 1px solid transparent; }
 .flag-chip.high-risk { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
 .flag-chip.warning { background: #fff7ed; color: #c2410c; border-color: #fdba74; }
 .flag-chip.allergy { background: #000; color: #fff; } /* Strict Black for allergies */
@@ -17,10 +69,11 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  padding: 20px 40px;
-  background: #f8f9fa;
-  margin: 20px 40px;
-  border-radius: 16px;
+  padding: 25px 40px;
+  background: #ffffff;
+  margin: 20px 40px 30px 40px;
+  border-radius: 35px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
 }
 
 .vital-tile label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: #70757a; }
@@ -29,12 +82,19 @@
 
 /* MEDICATION CARDS */
 .med-card-detailed {
-  padding: 20px;
-  border: 1px solid #e1e8ed;
-  border-radius: 12px;
-  margin-bottom: 15px;
+  padding: 30px;
+  border: none;
+  background: #ffffff;
+  border-radius: 35px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.med-card-detailed.high-risk { border-left: 6px solid #b91c1c; background: #fffafa; }
+.med-card-detailed:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+}
+.med-card-detailed.high-risk { border-left: 8px solid #b91c1c; background: #fffafa; }
 .med-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .risk-tag { font-size: 0.65rem; background: #b91c1c; color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 900; }
 
@@ -46,3 +106,93 @@
 .tag { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 800; margin-left: 10px; }
 .tag.critical { background: #fee2e2; color: #b91c1c; }
 .tag.hospital { background: #f0f4f9; color: #1f1f1f; }
+
+/* 🔹 PROFILE GRID & SIDEBAR (NEW) */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  padding: 0 40px 40px 40px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.section-title {
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+  color: #0f1419;
+}
+
+.med-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.presc-date {
+  font-size: 14px;
+  color: #64748B;
+  margin-bottom: 10px;
+}
+
+.med-item {
+  font-size: 15px;
+  padding: 4px 0;
+  color: #1f1f1f;
+}
+
+/* SIDE CARD (PATIENT PROFILE) */
+.side-card {
+  background: #ffffff;
+  border: none;
+  border-radius: 35px;
+  padding: 35px 30px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+}
+
+.side-card h4 {
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f1419;
+  border-bottom: 2px solid #f0f4f9;
+  padding-bottom: 15px;
+}
+
+.insight-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px dashed #e1e8ed;
+  font-size: 1rem;
+}
+
+.insight-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.insight-row span {
+  color: #70757a;
+  font-weight: 500;
+}
+
+.insight-row strong {
+  color: #0f1419;
+  font-weight: 700;
+  text-align: right;
+  max-width: 65%;
+  word-wrap: break-word;
+}
+
+.text-critical {
+  color: #dc2626 !important;
+}

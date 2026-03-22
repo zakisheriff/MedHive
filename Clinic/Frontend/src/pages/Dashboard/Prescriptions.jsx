@@ -13,7 +13,12 @@ const Prescriptions = () => {
   // Fetch prescriptions from backend
   const fetchPrescriptions = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/prescriptions/incoming`);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/api/prescriptions/incoming`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await response.json();
 
       if (response.ok) {
@@ -127,8 +132,12 @@ const Prescriptions = () => {
 
   const handleDispense = async (orderId) => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_BASE}/api/prescriptions/${orderId}/dispense`, {
-        method: 'PATCH'
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       if (response.ok) {
