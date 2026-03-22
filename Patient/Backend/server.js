@@ -43,6 +43,12 @@ app.use('/api/medical-records', medicalRecordsRoute);
 const patientRecordRoutes = require("./routes/patient_record");
 app.use("/api/patient_record", patientRecordRoutes);
 
+const clinicsRoute = require('./routes/clinics');
+app.use('/api/clinics', clinicsRoute);
+
+const sendToClinicRoute = require('./routes/send_to_clinic');
+app.use('/api/send-to-clinic', sendToClinicRoute);
+
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server started on port ${PORT}`);
 });

@@ -50,6 +50,7 @@ export default function PrescriptionResultScreen() {
     const [selectedClinic, setSelectedClinic] = useState<any>(null);
     const [cloudImage, setCloudImage] = useState<string | null>(null); // Move this here
     const [sendingToClinic, setSendingToClinic] = useState(false);
+    const [sentSuccessfully, setSentSuccessfully] = useState(false);
 
     // Resizable Modal State
     const [isExpanded, setIsExpanded] = useState(false);
@@ -362,6 +363,7 @@ export default function PrescriptionResultScreen() {
             const result = await response.json();
 
             if (response.ok) {
+                setSentSuccessfully(true);
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                 const msg = hasError
                     ? `Prescription sent to ${clinic.clinic_name} (image only - AI extraction unavailable)`
@@ -537,10 +539,10 @@ export default function PrescriptionResultScreen() {
                             <TouchableOpacity
                                 style={styles.primaryButton}
                                 onPress={handleSendToClinic}
-                                disabled={sendingToClinic}
+                                disabled={sendingToClinic || sentSuccessfully}
                             >
                                 <LinearGradient
-                                    colors={sendingToClinic
+                                    colors={(sendingToClinic || sentSuccessfully)
                                         ? ['#9CA3AF', '#6B7280']
                                         : [Colors.light.primary, Colors.light.primaryDark]}
                                     start={{ x: 0, y: 0 }}
@@ -549,11 +551,13 @@ export default function PrescriptionResultScreen() {
                                 >
                                     {sendingToClinic ? (
                                         <ActivityIndicator size="small" color="#fff" />
+                                    ) : sentSuccessfully ? (
+                                        <Ionicons name="checkmark-circle" size={20} color="#fff" />
                                     ) : (
                                         <Ionicons name="paper-plane" size={20} color="#fff" />
                                     )}
                                     <Text style={styles.primaryButtonText}>
-                                        {sendingToClinic ? t('result.sending') : t('result.sendPharmacy')}
+                                        {sendingToClinic ? t('result.sending') : sentSuccessfully ? 'Sent' : t('result.sendPharmacy')}
                                     </Text>
                                 </LinearGradient>
                             </TouchableOpacity>
