@@ -1,182 +1,243 @@
-import React, { useState } from "react";
-import "./css/DoctorReg.css";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import './css/Search.css';
+import PatientProfile from './PatientProfile';
 
-const DoctorRegister = () => {
-  const [formData, setFormData] = useState({
-    doctorName: "",
-    nic: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
+const SearchPage = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  // UPDATED: Now holds an array of results instead of just one
+  const [searchResults, setSearchResults] = useState([]);
+  const [selectedPatient, setSelectedPatient] = useState(null); // The patient clicked for OTP
+ 
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [accessGranted, setAccessGranted] = useState(false);
+  const [fullPatientData, setFullPatientData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const navigate = useNavigate();
+  // UPDATED: Fixed port to 5000 to match your backend
+  const API_URL = 'http://localhost:5000/api/patients';
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    setErrors((prev) => ({
-      ...prev,
-      [name]: "",
-    }));
+  const handleLogout = () => {
+    localStorage.removeItem('doctor');
+    localStorage.removeItem('token'); // Clear token on logout
+    navigate('/role-select');
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.doctorName.trim()) {
-      newErrors.doctorName = "Doctor name is required";
-    }
-
-    if (!formData.nic.trim()) {
-      newErrors.nic = "NIC number is required";
-    } else if (!/^([0-9]{9}[vVxX]|[0-9]{12})$/.test(formData.nic)) {
-      newErrors.nic = "Enter a valid NIC number";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    return newErrors;
+  const handleGoToHistory = () => {
+    navigate('/patient-history');
   };
 
-  const handleSubmit = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
+    if (!searchQuery.trim()) return;
 
-    const formErrors = validateForm();
+    setLoading(true);
+    setError('');
+    setSearchResults([]);
+    setSelectedPatient(null);
+    setAccessGranted(false);
 
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      setSuccessMessage("");
+    try {
+      const res = await axios.get(`${API_URL}/search`, {
+        params: { query: searchQuery }
+      });
+
+      if (res.data && res.data.length > 0) {
+        setSearchResults(res.data); // Store all matches
+      } else {
+        setError('No patient found with that ID or name.');
+      }
+    } catch (err) {
+      setError('Search failed. Please try again.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openModalForPatient = (patient) => {
+    setSelectedPatient(patient);
+    setShowRequestModal(true);
+  };
+
+  const handleRequestAccess = async () => {
+    setLoading(true);
+    try {
+      await axios.post(`${API_URL}/request-access`, {
+        med_id: selectedPatient.med_id
+      });
+      setOtpSent(true);
+    } catch (err) {
+      alert('Failed to request access.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    if (otp.length !== 2) {
+      alert('Enter 2-digit code');
       return;
     }
 
-    console.log("Doctor Registration Data:", formData);
+    setLoading(true);
+    try {
+      // UPDATED: Grab the doctor's token to send to the backend for history tracking
+      const token = localStorage.getItem("token");
 
-    localStorage.setItem(
-      "doctor",
-      JSON.stringify({
-        doctorName: formData.doctorName,
-        nic: formData.nic,
-        password: formData.password,
-      })
-    );
+      const res = await axios.post(`${API_URL}/verify-otp`,
+        {
+          med_id: selectedPatient.med_id,
+          otp
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` } // Passes the auth requirement
+        }
+      );
 
-    setSuccessMessage("Doctor registered successfully!");
-
-    setFormData({
-      doctorName: "",
-      nic: "",
-      password: "",
-      confirmPassword: "",
-    });
-
-    setErrors({});
-
-    setTimeout(() => {
-      navigate("/doctor-login");
-    }, 1000);
+      setFullPatientData(res.data);
+      setAccessGranted(true);
+      setShowRequestModal(false);
+      setOtpSent(false);
+      setOtp('');
+      setSearchResults([]); // Clear search list once a profile is open
+    } catch (err) {
+      alert('Invalid code or session expired.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-        <h2>Doctor Registration</h2>
-        <p className="subtitle">
-          Register to access your patients' health records securely.
-        </p>
+    <div className="search-container">
 
-        <div className="info-box">
-          <strong>Important:</strong> A doctor should only be able to access
-          health records of patients who have consulted that doctor.
-        </div>
+      {/* HEADER */}
+      <header className="search-header">
+        <h1>Patient Search</h1>
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Doctor Name</label>
-            <input
-              type="text"
-              name="doctorName"
-              placeholder="Enter doctor name"
-              value={formData.doctorName}
-              onChange={handleChange}
-            />
-            {errors.doctorName && (
-              <span className="error">{errors.doctorName}</span>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label>NIC Number</label>
-            <input
-              type="text"
-              name="nic"
-              placeholder="Enter NIC number"
-              value={formData.nic}
-              onChange={handleChange}
-            />
-            {errors.nic && <span className="error">{errors.nic}</span>}
-          </div>
-
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Set password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            {errors.password && <span className="error">{errors.password}</span>}
-          </div>
-
-          <div className="form-group">
-            <label>Confirm Password</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-            />
-            {errors.confirmPassword && (
-              <span className="error">{errors.confirmPassword}</span>
-            )}
-          </div>
-
-          <button type="submit" className="register-btn">
-            Register
+        <form onSubmit={handleSearch} className="search-bar-wrapper">
+          <input
+            type="text"
+            placeholder="Search by Patient ID or Name"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
+          />
+          <button type="submit" className="search-btn" disabled={loading}>
+            {loading ? 'Searching...' : 'Search'}
           </button>
         </form>
 
-        <p className="register-link">
-          Already registered?{" "}
-          <span onClick={() => navigate("/doctor-login")}>
-            Login here
-          </span>
-        </p>
+        {error && <p className="search-error">{error}</p>}
+      </header>
 
-        {successMessage && <p className="success">{successMessage}</p>}
+      {/* RESULTS */}
+      <div className="search-results-area">
+        {searchResults.length > 0 && !accessGranted && (
+          <div className="results-list">
+            {searchResults.map((patient) => (
+              <motion.div
+                key={patient.med_id}
+                className="patient-preview-bar"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                onClick={() => openModalForPatient(patient)}
+                style={{ marginBottom: '10px', cursor: 'pointer' }}
+              >
+                <div className="avatar-placeholder">
+                  {patient.fname?.[0] || ''}{patient.lname?.[0] || ''}
+                </div>
+
+                <div className="preview-info">
+                  <h3>{patient.fname} {patient.lname}</h3>
+                  <p>ID: {patient.med_id} | Gender: {patient.gender}</p>
+                </div>
+
+                <span className="view-tag">Click to Request Access</span>
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        {accessGranted && fullPatientData && <PatientProfile data={fullPatientData} />}
       </div>
+
+      {/* MODAL */}
+      <AnimatePresence>
+        {showRequestModal && selectedPatient && (
+          <motion.div
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="request-modal">
+              {!otpSent ? (
+                <>
+                  <h2>Request Access?</h2>
+              <p>Requesting to view records for {selectedPatient.fname}.</p>
+                  <button onClick={handleRequestAccess} disabled={loading}>
+                    {loading ? 'Sending OTP...' : 'Send OTP'}
+                  </button>
+                  <button onClick={() => setShowRequestModal(false)}>
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <h2>Enter OTP</h2>
+                  <p>Enter the 2-digit code sent to the patient.</p>
+                  <input
+                    type="text"
+                    maxLength="2"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    placeholder="00"
+                  />
+                  <button onClick={handleVerifyOTP} disabled={loading}>
+                    {loading ? 'Verifying...' : 'Verify'}
+                  </button>
+                  <button onClick={() => {
+                    setShowRequestModal(false);
+                    setOtpSent(false);
+                    setOtp('');
+                  }}>
+                    Cancel
+                  </button>
+                </>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {!isSearchFocused && !accessGranted && (
+        <motion.div
+          className="bottom-buttons"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+        >
+          <button className="history-btn" onClick={handleGoToHistory}>
+            History
+          </button>
+
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </motion.div>
+      )}
     </div>
   );
 };
 
-export default DoctorRegister;
+export default SearchPage;
