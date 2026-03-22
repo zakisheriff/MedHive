@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import BlogCard from '../../components/BlogCard/BlogCard';
-import blogTitleImg from './images/blog-title.jpg';
-import blogTitle3Img from './images/blog-title3.jpeg';
+import blogTitleImg from './images/blog-title.webp';
+import blogTitle3Img from './images/blog-title3.webp';
 import './BlogList.css';
 
 const posts = [

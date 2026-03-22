@@ -18,6 +18,11 @@ router.post("/register", async (req, res) => {
     diseases,
     allergies,
     other_info,
+    blood_group,
+    weight_kg,
+    blood_pressure,
+    emergency_contact_name,
+    emergency_contact_phone,
   } = req.body;
 
   try {
@@ -33,7 +38,7 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const newUser = await pool.query(
-      "INSERT INTO patients (med_id, fname, lname, date_of_birth, gender, phone_number, district, province, email, password, medical_records, diseases, allergies, other_info) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING med_id, email",
+      "INSERT INTO patients (med_id, fname, lname, date_of_birth, gender, phone_number, district, province, email, password, medical_records, diseases, allergies, other_info, blood_group, weight_kg, blood_pressure, emergency_contact_name, emergency_contact_phone) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING *",
       [
         generatedMedId,
         fname,
@@ -48,7 +53,12 @@ router.post("/register", async (req, res) => {
         medical_records,
         diseases,
         allergies,
-        other_info
+        other_info,
+        blood_group,
+        weight_kg,
+        blood_pressure,
+        emergency_contact_name,
+        emergency_contact_phone
       ],
     );
 

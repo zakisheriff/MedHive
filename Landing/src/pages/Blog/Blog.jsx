@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import '../../styles/global.css';
-import blogTitleImg from './images/blog-title.jpg';
-import blogTitle2Img from './images/blog-title2.jpg';
+import blogTitleImg from './images/blog-title.webp';
+import blogTitle2Img from './images/blog-title2.webp';
 import ContactForm from '../../components/ContactForm/ContactForm';
 
 const Blog = () => {
@@ -300,7 +300,7 @@ const Blog = () => {
 
                 .blog-image-block img {
                     width: 100%;
-                    height: 300px;
+                    height: 380px;
                     object-fit: cover;
                     border-radius: 18px;
                     border: 1px solid rgba(17, 17, 17, 0.06);
@@ -443,7 +443,7 @@ const Blog = () => {
                     }
 
                     .blog-image-block img {
-                        height: 220px;
+                        height: 280px;
                     }
                 }
             `}</style>
