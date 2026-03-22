@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import styles from './Login.module.css'; 
+import styles from './Register.module.css'; 
 import medHiveLogo from '../assets/images/MedHive pharma logo.png-.png';
 
 export const CreateAccountPage = () => {
@@ -101,8 +101,8 @@ export const CreateAccountPage = () => {
           </div>
 
           {/* Email & Registration Number */}
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <div className={styles.formGroup} style={{ flex: 1 }}>
+          <div className={styles.formRow}> {/* Changed from inline style flex */}
+            <div className={styles.formGroup}>
               <label className={styles.label}>Email Address</label>
               <input
                 type="email"
@@ -113,7 +113,7 @@ export const CreateAccountPage = () => {
                 required
               />
             </div>
-            <div className={styles.formGroup} style={{ flex: 1 }}>
+            <div className={styles.formGroup}>
               <label className={styles.label}>Registration No</label>
               <input
                 type="text"
@@ -125,6 +125,31 @@ export const CreateAccountPage = () => {
               />
             </div>
           </div>
+
+{/* License Info */}
+<div className={styles.formRow}> {/* Changed from inline style flex */}
+  <div className={styles.formGroup}>
+    <label className={styles.label}>NMRA License Number</label>
+    <input
+      type="text"
+      className={styles.input}
+      value={formData.nmraLicenseNumber}
+      onChange={(e) => handleChange('nmraLicenseNumber', e.target.value)}
+      placeholder="ML-8822"
+      required
+    />
+  </div>
+  <div className={styles.formGroup}>
+    <label className={styles.label}>License Expiry</label>
+    <input
+      type="date"
+      className={styles.input}
+      value={formData.licenseExpiryDate}
+      onChange={(e) => handleChange('licenseExpiryDate', e.target.value)}
+      required
+    />
+  </div>
+</div>
 
           {/* Password */}
           <div className={styles.formGroup}>
