@@ -195,7 +195,7 @@ const SearchPage = () => {
                 <>
                   <h2>Enter Code</h2>
 
-                  <div className="otp-input-group">
+                  <form className="otp-input-group" onSubmit={(e) => { e.preventDefault(); handleVerifyOTP(); }}>
                     <input
                       ref={otpRefs[0]}
                       maxLength="1"
@@ -227,7 +227,8 @@ const SearchPage = () => {
                       }}
                       className="otp-box"
                     />
-                  </div>
+                    <button type="submit" style={{ display: 'none' }}>Hidden Submit</button>
+                  </form>
 
                   <div className="modal-actions">
                     <button

@@ -99,20 +99,20 @@ const PatientProfile = ({ data }) => {
       <div className="profile-grid">
         <div className="profile-main-col">
           <div className="medications-section">
-            <h3 style={{ padding: '0 40px', marginBottom: '15px' }}>
+            <h3 className="section-title">
               Recent Prescriptions ({prescriptions.length})
             </h3>
 
-            <div className="med-grid" style={{ padding: '0 40px' }}>
+            <div className="med-grid">
               {prescriptions.length > 0 ? (
                 prescriptions.map((presc) => (
-                  <div key={presc.prescription_id} className="med-card-detailed">
+                  <div key={presc.prescription_id} className={`med-card-detailed ${presc.high_risk ? 'high-risk' : ''}`}>
                     <div className="med-header">
                       <strong>Prescription #{presc.prescription_id}</strong>
                       <span className="risk-tag">{presc.status || 'N/A'}</span>
                     </div>
 
-                    <p style={{ fontSize: '14px', color: '#64748B', marginBottom: '10px' }}>
+                    <p className="presc-date">
                       Date:{' '}
                       {presc.created_at
                         ? new Date(presc.created_at).toLocaleDateString()
@@ -133,40 +133,28 @@ const PatientProfile = ({ data }) => {
                     )}
 
                     <div className="medicines-list">
-                      <div
-                        className="med-item"
-                        style={{ fontSize: '15px', padding: '4px 0', whiteSpace: 'pre-wrap' }}
-                      >
+                      <div className="med-item" style={{ whiteSpace: 'pre-wrap' }}>
                         <strong>AI Output:</strong>{' '}
                         {presc.raw_ai_output || 'No extracted prescription text available.'}
-            <h3 className="section-title">Recent Prescriptions ({prescriptions.length})</h3>
-            <div className="med-grid">
-              {prescriptions.map((presc) => (
-                <div key={presc.prescription_id} className={`med-card-detailed ${presc.high_risk ? 'high-risk' : ''}`}>
-                  <div className="med-header">
-                    <strong>Prescription #{presc.prescription_id}</strong>
-                    <span className="risk-tag">{presc.status}</span>
-                  </div>
-                  <p className="presc-date">
-                    Date: {new Date(presc.created_at).toLocaleDateString()}
-                  </p>
-                  <div className="medicines-list">
-                    {presc.medicines.map((m, idx) => (
-                      <div key={idx} className="med-item">
-                        • <strong>{m.name}</strong> ({m.dosage}) - {m.frequency}
                       </div>
+
+                      {presc.medicines && presc.medicines.map((m, idx) => (
+                        <div key={idx} className="med-item">
+                          • <strong>{m.name}</strong> ({m.dosage}) - {m.frequency}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))
               ) : (
-                <p style={{ padding: '0 40px' }}>No prescriptions found.</p>
+                <p>No prescriptions found.</p>
               )}
             </div>
           </div>
         </div>
 
         <div className="profile-side-col">
-          <div className="side-card insights" style={{ margin: '0 40px 0 0' }}>
+          <div className="side-card insights">
             <h4>Patient Profile</h4>
 
             <div className="insight-row">
@@ -191,7 +179,7 @@ const PatientProfile = ({ data }) => {
 
             <div className="insight-row">
               <span>Allergies</span>
-              <strong style={{ color: '#dc2626' }}>{patient.allergies || 'N/A'}</strong>
+              <strong className="text-critical">{patient.allergies || 'N/A'}</strong>
             </div>
 
             <div className="insight-row">
@@ -208,15 +196,6 @@ const PatientProfile = ({ data }) => {
               <span>Other Info</span>
               <strong>{patient.other_info || 'N/A'}</strong>
             </div>
-          {/* 5. Patient Details Card */}
-          <div className="side-card insights">
-            <h4>Patient Profile</h4>
-            <div className="insight-row"><span>Blood Group</span> <strong>{patient.blood_group}</strong></div>
-            <div className="insight-row"><span>Gender</span> <strong>{patient.gender}</strong></div>
-            <div className="insight-row"><span>District</span> <strong>{patient.district}</strong></div>
-            <div className="insight-row"><span>Province</span> <strong>{patient.province}</strong></div>
-            <div className="insight-row"><span>Allergies</span> <strong className="text-critical">{patient.allergies}</strong></div>
-            <div className="insight-row"><span>Chronic</span> <strong>{patient.chronic_diseases}</strong></div>
           </div>
         </div>
       </div>

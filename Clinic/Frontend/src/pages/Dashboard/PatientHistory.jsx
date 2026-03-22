@@ -80,21 +80,30 @@ const PatientHistory = () => {
         {!loading && !error && filteredPatients.length > 0 ? (
           filteredPatients.map((patient) => (
             <div className="history-card" key={patient.visit_id || patient.id}>
-              <h3>
-                {patient.fname} {patient.lname}
-              </h3>
+              <div className="history-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                <h3 style={{ margin: 0 }}>
+                  {patient.fname} {patient.lname}
+                </h3>
+                <span className="p-id" style={{ 
+                  background: '#f3f4f6', 
+                  padding: '4px 12px', 
+                  borderRadius: '20px', 
+                  fontSize: '0.85rem', 
+                  fontWeight: '800', 
+                  color: '#525252' 
+                }}>
+                  ID: {patient.med_id}
+                </span>
+              </div>
 
-              <p>
-                <strong>MedHive ID:</strong> {patient.med_id}
-              </p>
-
-              <p>
-                <strong>Date:</strong> {formatDate(patient.visited_at)}
-              </p>
-
-              <p>
-                <strong>Time:</strong> {formatTime(patient.visited_at)}
-              </p>
+              <div className="visit-metadata" style={{ display: 'flex', gap: '20px' }}>
+                <p>
+                  <strong>Date:</strong> {formatDate(patient.visited_at)}
+                </p>
+                <p>
+                  <strong>Time:</strong> {formatTime(patient.visited_at)}
+                </p>
+              </div>
             </div>
           ))
         ) : (

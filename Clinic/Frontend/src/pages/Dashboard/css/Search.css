@@ -55,7 +55,7 @@
   display: flex;
   align-items: center;
 
-  background-color: #f0f4f9;
+  background-color: #f3f4f6;
   border-radius: 32px;
   padding: 8px 16px;
 
@@ -153,7 +153,7 @@
 .patient-preview-bar {
   width: 100%;
   background: #ffffff;
-  border: 1px solid #e1e8ed;
+  border: 1px solid #e5e7eb;
   border-radius: 35px;
   padding: 20px 24px;
   display: flex;
@@ -239,8 +239,8 @@
   border-radius: 20px;
   font-weight: 800;
   color: #f1a63b;
-  border: 4px solid #f0f4f9;
-  background: #f8fafc;
+  border: 4px solid #f3f4f6;
+  background: #ffffff;
   outline: none;
   transition: all 0.2s ease;
 }
@@ -270,12 +270,12 @@
 }
 
 .cancel-btn {
-  background: #f0f4f9;
-  color: #64748b;
+  background: #f3f4f6;
+  color: #737373;
 }
 
 .cancel-btn:hover {
-  background: #e2e8f0;
+  background: #e5e7eb;
   color: #1f1f1f;
 }
 
@@ -292,7 +292,7 @@
 }
 
 .confirm-btn:disabled {
-  background: #cbd5e1;
+  background: #d4d4d8;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;

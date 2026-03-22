@@ -1,8 +1,8 @@
 .history-page {
   min-height: 100vh;
-  background: #f7f9fc;
+  background: #ffffff;
   padding: 40px 20px 100px;
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 .history-header {
@@ -11,10 +11,11 @@
 }
 
 .history-header h1 {
-   font-size: 2.5rem;
-  font-weight: 700;
-  color: #1f1f1f;
-  margin-bottom: 30px;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #0f1419;
+  margin-bottom: 40px;
+  letter-spacing: -1px;
 }
 
 .history-search-wrapper {
@@ -24,16 +25,20 @@
 
 .history-search-input {
   width: 100%;
-  max-width: 420px;
-  padding: 12px 16px;
-  border: 1px solid #cfd8e3;
-  border-radius: 10px;
-  font-size: 15px;
+  max-width: 500px;
+  padding: 16px 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 35px;
+  font-size: 16px;
   outline: none;
+  background: #f3f4f6;
+  transition: all 0.2s ease;
 }
 
 .history-search-input:focus {
-  border-color: #a7afb9;
+  border-color: #f1a63b;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(241, 166, 59, 0.1);
 }
 
 .history-list {
@@ -44,20 +49,36 @@
 }
 
 .history-card {
-  background: hsl(249, 26%, 80%);
-  border-radius: 14px;
-  padding: 20px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border-radius: 35px;
+  padding: 30px 40px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+  border: 1px solid #f3f4f6;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.history-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.1);
 }
 
 .history-card h3 {
-  margin-bottom: 10px;
-  color: #1b3c59;
+  margin-bottom: 12px;
+  color: #0f1419;
+  font-size: 1.4rem;
+  font-weight: 800;
 }
 
 .history-card p {
-  margin: 6px 0;
-  color: #444;
+  margin: 8px 0;
+  color: #525252;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.history-card p strong {
+  color: #0f1419;
+  font-weight: 700;
 }
 
 .no-results {
@@ -77,13 +98,17 @@
   background-color: #f1a63b;
   color: white;
   border: none;
-  padding: 12px 26px;
-  border-radius: 10px;
-  font-weight: 600;
+  padding: 16px 40px;
+  border-radius: 35px;
+  font-weight: 800;
+  font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 25px rgba(241, 166, 59, 0.3);
+  transition: all 0.2s ease;
 }
 
 .back-btn:hover {
   background-color: #ef961b;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(241, 166, 59, 0.4);
 }
