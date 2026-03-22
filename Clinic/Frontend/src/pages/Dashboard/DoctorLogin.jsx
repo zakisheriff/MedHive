@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/DoctorLogin.css";
+import axios from "axios";
 
 const DoctorLogin = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +10,11 @@ const DoctorLogin = () => {
   });
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
+
+  const API_URL = "http://localhost:5002/api/doctors/login";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,30 +27,39 @@ const DoctorLogin = () => {
     setError("");
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    const storedDoctor = JSON.parse(localStorage.getItem("doctor"));
-
-  
-    if (!storedDoctor) {
-      alert("You are not registered. Please register first.");
-      navigate("/doctor-register");
+    if (!formData.nic || !formData.password) {
+      setError("NIC and password are required");
       return;
     }
 
-   
-    if (
-      storedDoctor.nic !== formData.nic ||
-      storedDoctor.password !== formData.password
-    ) {
-      setError("Invalid NIC or password");
-      return;
-    }
+    setLoading(true);
+    setError("");
 
- 
-    alert(`Welcome Dr. ${storedDoctor.doctorName}`);
-    navigate("/search"); // go to search page
+    try {
+      const res = await axios.post(API_URL, {
+        nic: formData.nic,
+        password: formData.password,
+      });
+
+      // store token + doctor data
+      localStorage.setItem("doctorToken", res.data.token);
+      localStorage.setItem("doctorData", JSON.stringify(res.data.doctor));
+
+      navigate("/search");
+    } catch (error) {
+      console.error(error);
+
+      if (error.response?.data?.error) {
+        setError(error.response.data.error);
+      } else {
+        setError("Login failed. Try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -79,8 +93,8 @@ const DoctorLogin = () => {
 
           {error && <p className="error">{error}</p>}
 
-          <button type="submit" className="login-btn">
-            Login
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
