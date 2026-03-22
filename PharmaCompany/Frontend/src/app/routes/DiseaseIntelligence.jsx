@@ -158,19 +158,7 @@ const DiseaseIntelligence = () => {
         </div>
       </div>
 
-      {/* National Overview Cards */}
-      <div style={s.metricsGrid}>
-        {diseaseNames.map(disease => {
-          const total = data.districts.reduce((acc, curr) => acc + (curr.breakdown[disease] || 0), 0);
-          return (
-            <div key={disease} style={s.metricCard}>
-              <p style={{fontSize: '0.75rem', fontWeight: '600', color: '#95a5a6', textTransform: 'uppercase'}}>{disease}</p>
-              <h4 style={{fontSize: '1.8rem', fontWeight: '800', margin: '0.5rem 0'}}>{total}</h4>
-              <p style={{fontSize: '0.7rem', color: '#3498db', fontWeight: '600'}}>National Prediction</p>
-            </div>
-          );
-        })}
-      </div>
+      
 
       <div style={s.mainContent}>
         <div style={s.panel}>

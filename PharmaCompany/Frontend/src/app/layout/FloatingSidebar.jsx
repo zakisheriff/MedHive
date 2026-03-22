@@ -13,8 +13,6 @@ const FloatingSidebar = () => {
     { to: '/dashboard/overview', icon: LayoutDashboard, label: 'Overview' },
     { to: '/dashboard/disease-intelligence', icon: Activity, label: 'Disease Intelligence' },
     { to: '/dashboard/medicine-demand', icon: Pill, label: 'Medicine Demand' },
-    { to: '/dashboard/alerts', icon: Bell, label: 'Alerts' },
-    { to: '/dashboard/reports', icon: FileText, label: 'Reports' },
   ]
       
   return (
