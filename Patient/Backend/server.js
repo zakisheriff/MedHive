@@ -40,6 +40,9 @@ const medicalRecordsRoute = require('./routes/medical_records');
 app.use('/api/medical-records', medicalRecordsRoute);
 
 
+const patientRecordRoutes = require("./routes/patient_record");
+app.use("/api/patient_record", patientRecordRoutes);
+
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server started on port ${PORT}`);
 });
