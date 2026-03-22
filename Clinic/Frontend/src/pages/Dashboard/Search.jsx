@@ -80,10 +80,20 @@ const SearchPage = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/verify-otp`, {
-        med_id: patientPreview.med_id,
-        otp: otpCode
-      });
+      const token = localStorage.getItem('doctorToken');
+
+      const res = await axios.post(
+        `${API_URL}/verify-otp`,
+        {
+          med_id: patientPreview.med_id,
+          otp: otpCode
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
 
       setFullPatientData(res.data);
       setAccessGranted(true);

@@ -7,7 +7,6 @@ const authRequired = require("../middleware/authRequired");
 const router = express.Router();
 
 // POST /api/doctors/register
-// Doctor registers by himself
 router.post("/register", async (req, res) => {
   try {
     const { doctorName, nic, password, clinic_id } = req.body;
@@ -18,7 +17,6 @@ router.post("/register", async (req, res) => {
         .json({ error: "Doctor name, NIC, and password are required" });
     }
 
-    // Check if doctor NIC already exists
     const existing = await pool.query(
       "SELECT id FROM public.doctors WHERE nic = $1",
       [nic]
@@ -30,10 +28,8 @@ router.post("/register", async (req, res) => {
         .json({ error: "A doctor with this NIC already exists" });
     }
 
-    // Hash password before saving
     const passwordHash = await bcrypt.hash(password, 12);
 
-    // Save doctor in database
     const result = await pool.query(
       `INSERT INTO public.doctors (name, nic, password_hash, clinic_id)
        VALUES ($1, $2, $3, $4)
@@ -52,7 +48,6 @@ router.post("/register", async (req, res) => {
 });
 
 // POST /api/doctors/login
-// Doctor login to get a doctor-specific token
 router.post("/login", async (req, res) => {
   try {
     const { nic, password } = req.body;
@@ -103,7 +98,6 @@ router.post("/login", async (req, res) => {
 });
 
 // GET /api/doctors/history
-// Fetch patient visit history for the logged-in doctor
 router.get("/history", authRequired, async (req, res) => {
   try {
     const { doctorId } = req.user;
@@ -117,7 +111,7 @@ router.get("/history", authRequired, async (req, res) => {
     const result = await pool.query(
       `SELECT vp.id AS visit_id, vp.visited_at, p.med_id, p.fname, p.lname, p.gender
        FROM visited_patients vp
-       JOIN patients p ON vp.patient_id = p.med_id::text
+       JOIN patients p ON vp.med_id = p.med_id::text
        WHERE vp.doctor_id = $1
        ORDER BY vp.visited_at DESC`,
       [doctorId]
