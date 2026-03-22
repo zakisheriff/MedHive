@@ -15,7 +15,7 @@ const SearchPage = () => {
   const [fullPatientData, setFullPatientData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
+
 
   const navigate = useNavigate();
   const API_URL = 'http://localhost:5002/api/patients';
@@ -108,8 +108,6 @@ const SearchPage = () => {
             placeholder="Search by Patient ID"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
           />
           <button type="submit" className="search-btn" disabled={loading}>
             {loading ? 'Searching...' : 'Search'}
@@ -224,22 +222,20 @@ const SearchPage = () => {
 
       {/* 🔥 ANIMATED BOTTOM BUTTONS */}
       <AnimatePresence>
-        {!isSearchFocused && (
-          <motion.div
-            className="bottom-buttons"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-          >
-            <button className="history-btn" onClick={handleGoToHistory}>
-              History
-            </button>
+        <motion.div
+          className="bottom-buttons"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+        >
+          <button className="history-btn" onClick={handleGoToHistory}>
+            History
+          </button>
 
-            <button className="logout-btn" onClick={handleLogout}>
-              Logout
-            </button>
-          </motion.div>
-        )}
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </motion.div>
       </AnimatePresence>
 
     </div>
