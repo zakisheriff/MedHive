@@ -43,7 +43,7 @@ const PatientHistory = () => {
 
   // Filter by Med ID
   const filteredPatients = historyData.filter((patient) =>
-    (patient.med_id || '').toLowerCase().includes(searchTerm.toLowerCase())
+    String(patient.med_id || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Format date nicely

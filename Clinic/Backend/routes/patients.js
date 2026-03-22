@@ -79,7 +79,7 @@ router.post("/verify-otp", authRequired, async (req, res) => {
 
     // OTP verified, fetch full profile
     const patientResult = await pool.query(
-      `SELECT med_id, fname, lname, gender, date_of_birth, phone_number, district, province, email 
+      `SELECT med_id, fname, lname, gender, date_of_birth, phone_number, district, province, email, blood_group, blood_pressure, allergies, diseases, medical_records, other_info, weight_kg 
        FROM patients WHERE med_id = $1`,
       [med_id]
     );

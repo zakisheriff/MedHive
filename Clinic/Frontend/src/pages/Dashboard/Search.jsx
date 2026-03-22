@@ -17,12 +17,12 @@ const SearchPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-
   const navigate = useNavigate();
   const API_URL = 'http://localhost:5002/api/patients';
 
   const handleLogout = () => {
     localStorage.removeItem('doctor');
+    localStorage.removeItem('doctorToken');
     navigate('/role-select');
   };
 
@@ -38,6 +38,7 @@ const SearchPage = () => {
     setError('');
     setPatientPreview(null);
     setAccessGranted(false);
+    setFullPatientData(null);
 
     try {
       const res = await axios.get(`${API_URL}/search`, {
@@ -73,15 +74,21 @@ const SearchPage = () => {
 
   const handleVerifyOTP = async () => {
     const otpCode = otp.join('');
+
     if (otpCode.length !== 2) {
       alert('Enter 2-digit code');
       return;
     }
 
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('doctorToken');
+    const token = localStorage.getItem('doctorToken');
+    if (!token) {
+      alert('Doctor is not logged in.');
+      return;
+    }
 
+    setLoading(true);
+
+    try {
       const res = await axios.post(
         `${API_URL}/verify-otp`,
         {
@@ -100,6 +107,7 @@ const SearchPage = () => {
       setShowRequestModal(false);
       setOtpSent(false);
       setOtp(['', '']);
+      setError('');
     } catch (err) {
       const msg = err.response?.data?.error || 'Invalid code or verification failed';
       alert(msg);
@@ -110,8 +118,6 @@ const SearchPage = () => {
 
   return (
     <div className="search-container">
-
-      {/* 🔹 HEADER */}
       <header className="search-header">
         <h1>Patient Search</h1>
 
@@ -130,7 +136,6 @@ const SearchPage = () => {
         {error && <p className="search-error">{error}</p>}
       </header>
 
-      {/* 🔹 RESULTS */}
       <div className="search-results-area">
         {patientPreview && !accessGranted && (
           <motion.div
@@ -152,10 +157,11 @@ const SearchPage = () => {
           </motion.div>
         )}
 
-        {accessGranted && <PatientProfile data={fullPatientData} />}
+        {accessGranted && fullPatientData && (
+          <PatientProfile data={fullPatientData} />
+        )}
       </div>
 
-      {/* 🔹 MODAL */}
       <AnimatePresence>
         {showRequestModal && (
           <motion.div
@@ -234,8 +240,9 @@ const SearchPage = () => {
                     <button
                       className="confirm-btn"
                       onClick={handleVerifyOTP}
+                      disabled={loading}
                     >
-                      Verify
+                      {loading ? 'Verifying...' : 'Verify'}
                     </button>
                   </div>
                 </>
@@ -245,7 +252,6 @@ const SearchPage = () => {
         )}
       </AnimatePresence>
 
-      {/* 🔥 ANIMATED BOTTOM BUTTONS */}
       <AnimatePresence>
         <motion.div
           className="bottom-buttons"
@@ -262,7 +268,6 @@ const SearchPage = () => {
           </button>
         </motion.div>
       </AnimatePresence>
-
     </div>
   );
 };
