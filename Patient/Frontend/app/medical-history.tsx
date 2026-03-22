@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../constants/theme';
 import { HoneyContainer } from '../components/HoneyContainer';
 import { Input } from '../components/Input';
+import { PickerInput } from '../components/PickerInput';
 import { PrimaryButton } from '../components/PrimaryButton';
 import { StatusBar } from 'expo-status-bar';
 import { API_ENDPOINTS } from '../constants/config';
@@ -15,21 +16,22 @@ import { saveUser } from '../utils/userStore';
 
 import { useTranslation } from 'react-i18next';
 
+const BLOOD_GROUP_OPTIONS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Unknown'];
+
 export default function MedicalHistoryScreen() {
     const { t } = useTranslation();
     const params = useLocalSearchParams();
     const { fname, lname, email, dob, gender, phoneNumber, district, province, medId, password } = params;
 
     const [medicalRecords, setMedicalRecords] = useState('');
-    const [bloodGroup, setbloodGroup] = useState('');
     const [diseases, setDiseases] = useState('');
     const [allergies, setAllergies] = useState('');
     const [otherInfo, setOtherInfo] = useState('');
-    const [emergencyContactName, setemergencyContactName] = useState('');
-    
-    const [emergencyContactNumber, setemergencyContactNumber] = useState('');
-    
-    
+    const [bloodGroup, setBloodGroup] = useState('');
+    const [weightKg, setWeightKg] = useState('');
+    const [bloodPressure, setBloodPressure] = useState('');
+    const [emergencyContactName, setEmergencyContactName] = useState('');
+    const [emergencyContactPhone, setEmergencyContactPhone] = useState('');
 
     const handleVerifyAndCreate = async () => {
         try {
@@ -50,10 +52,12 @@ export default function MedicalHistoryScreen() {
                     medical_records: medicalRecords,
                     diseases: diseases,
                     allergies: allergies,
-                    blood_group:bloodGroup,
-                    emergency_contact_name:emergencyContactName,
-                    emergency_contact_number:emergencyContactNumber,
-                    other_info: otherInfo
+                    other_info: otherInfo,
+                    blood_group: bloodGroup,
+                    weight_kg: weightKg,
+                    blood_pressure: bloodPressure,
+                    emergency_contact_name: emergencyContactName,
+                    emergency_contact_phone: emergencyContactPhone
                 }),
             });
 
@@ -107,16 +111,6 @@ export default function MedicalHistoryScreen() {
                             numberOfLines={4}
                         />
 
-                         <Input
-                            label={"blood Group"}
-                            placeholder={"Blood group (eg:- O+ , O-,....)"}
-                            value={bloodGroup}
-                            onChangeText={setbloodGroup}
-                            iconName="document-text-outline"
-                            multiline
-                            numberOfLines={1}
-                        />
-
                         <Input
                             label={t('medHistory.chronicLabel')}
                             placeholder={t('medHistory.chronicPlaceholder')}
@@ -132,21 +126,6 @@ export default function MedicalHistoryScreen() {
                             onChangeText={setAllergies}
                             iconName="warning-outline"
                         />
-                        <Input
-                            label={"emrgency contact number name "}
-                            placeholder={""}
-                            value={emergencyContactName}
-                            onChangeText={setemergencyContactName}
-                            
-                        />
-                        <Input
-                            label={"emrgency contact number number "}
-                            placeholder={"(eg:- +94 712 345 6789)"}
-                            value={emergencyContactNumber}
-                            onChangeText={setemergencyContactNumber}
-                            
-                        />
-                        
 
                         <Input
                             label={t('medHistory.otherLabel')}
@@ -156,6 +135,67 @@ export default function MedicalHistoryScreen() {
                             iconName="information-circle-outline"
                             multiline
                             numberOfLines={3}
+                        />
+
+                        <PickerInput
+                            label={t('medHistory.bloodGroupLabel')}
+                            value={bloodGroup}
+                            onValueChange={setBloodGroup}
+                            options={BLOOD_GROUP_OPTIONS}
+                            placeholder={t('medHistory.bloodGroupPlaceholder')}
+                            iconName="water-outline"
+                        />
+
+                        <Input
+                            label={t('medHistory.weightLabel')}
+                            placeholder={t('medHistory.weightPlaceholder')}
+                            value={weightKg}
+                            onChangeText={(text) => {
+                                let cleaned = text.replace(/[^0-9.]/g, '');
+                                const parts = cleaned.split('.');
+                                if (parts.length > 2) {
+                                    cleaned = parts[0] + '.' + parts.slice(1).join('');
+                                }
+                                setWeightKg(cleaned);
+                            }}
+                            keyboardType="decimal-pad"
+                            iconName="body-outline"
+                        />
+
+                        <Input
+                            label={t('medHistory.bloodPressureLabel')}
+                            placeholder={t('medHistory.bloodPressurePlaceholder')}
+                            value={bloodPressure}
+                            onChangeText={(text) => {
+                                let cleaned = text.replace(/[^0-9/]/g, '');
+                                const parts = cleaned.split('/');
+                                if (parts.length > 2) {
+                                    cleaned = parts[0] + '/' + parts.slice(1).join('');
+                                }
+                                setBloodPressure(cleaned);
+                            }}
+                            iconName="pulse-outline"
+                        />
+
+                        <Input
+                            label={t('medHistory.emergencyNameLabel')}
+                            placeholder={t('medHistory.emergencyNamePlaceholder')}
+                            value={emergencyContactName}
+                            onChangeText={setEmergencyContactName}
+                            iconName="person-outline"
+                        />
+
+                        <Input
+                            label={t('medHistory.emergencyPhoneLabel')}
+                            placeholder={t('medHistory.emergencyPhonePlaceholder')}
+                            value={emergencyContactPhone}
+                            onChangeText={(text) => {
+                                setEmergencyContactPhone(text.replace(/[^0-9]/g, ''));
+                            }}
+                            keyboardType="phone-pad"
+                            iconName="call-outline"
+                            prefix="+94 "
+                            maxLength={9}
                         />
 
                         <PrimaryButton

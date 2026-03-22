@@ -217,6 +217,16 @@
         "allergiesPlaceholder": "e.g., Peanuts, Penicillin",
         "otherLabel": "Other Information",
         "otherPlaceholder": "Any other health details...",
+        "bloodGroupLabel": "Blood Group",
+        "bloodGroupPlaceholder": "e.g., O+, A-",
+        "weightLabel": "Weight (kg)",
+        "weightPlaceholder": "Enter weight",
+        "bloodPressureLabel": "Blood Pressure",
+        "bloodPressurePlaceholder": "e.g., 120/80",
+        "emergencyNameLabel": "Emergency Contact Name",
+        "emergencyNamePlaceholder": "Enter name",
+        "emergencyPhoneLabel": "Emergency Contact Phone",
+        "emergencyPhonePlaceholder": "Enter phone number",
         "verifyBtn": "Verify & Create Account"
     }
 }

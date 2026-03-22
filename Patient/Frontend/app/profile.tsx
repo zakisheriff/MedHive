@@ -22,12 +22,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { router } from 'expo-router';
 import { Colors } from '../constants/theme';
-import { generateMockHistory } from '../utils/historyUtils';
-import { generateMockAccess } from '../utils/accessUtils';
+import * as ImagePicker from 'expo-image-picker';
 import { getUser, clearUser, saveUser, UserData } from '../utils/userStore';
 import { useTranslation } from 'react-i18next';
 import { LanguagePicker } from '../components/LanguagePicker';
 import * as Clipboard from 'expo-clipboard';
+import { API_ENDPOINTS } from '../constants/config';
+import { PickerInput } from '../components/PickerInput';
+
+const BLOOD_GROUP_OPTIONS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Unknown'];
 
 
 interface MenuItemProps {
@@ -89,27 +92,191 @@ export default function ProfileScreen() {
             setUserData(user);
             setTempName(`${user.fname} ${user.lname}`);
             setTempEmail(user.email);
+            fetchStats(user.med_id);
+            fetchRecords(user.med_id);
         }
+    };
+
+    const fetchStats = async (medId: string) => {
+        try {
+            const res = await fetch(API_ENDPOINTS.MEDICAL_STATS(medId));
+            if (res.ok) {
+                const data = await res.json();
+                setStats(data);
+            }
+        } catch (e) {}
+    };
+
+    const fetchRecords = async (medId: string) => {
+        try {
+            const res = await fetch(API_ENDPOINTS.MEDICAL_RECORDS(medId));
+            if (res.ok) {
+                const data = await res.json();
+                setMedicalRecords(data.records || []);
+            }
+        } catch (e) {}
     };
 
     // Preferences
     const [notifications, setNotifications] = useState(true);
-    const [biometrics, setBiometrics] = useState(true);
 
     // Modal States
     const [editModalVisible, setEditModalVisible] = useState(false);
+    const [editModalTab, setEditModalTab] = useState<'profile' | 'medical'>('profile');
     const [tempName, setTempName] = useState('');
     const [tempEmail, setTempEmail] = useState('');
+    const [tempBloodGroup, setTempBloodGroup] = useState('');
+    const [tempWeightKg, setTempWeightKg] = useState('');
+    const [tempBloodPressure, setTempBloodPressure] = useState('');
+    const [tempEmergencyContactName, setTempEmergencyContactName] = useState('');
+    const [tempEmergencyContactPhone, setTempEmergencyContactPhone] = useState('');
+    const [tempMedicalRecords, setTempMedicalRecords] = useState('');
+    const [tempDiseases, setTempDiseases] = useState('');
+    const [tempAllergies, setTempAllergies] = useState('');
+    const [tempOtherInfo, setTempOtherInfo] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
 
-    // Dynamic Statistics
-    const historyItems = useMemo(() => generateMockHistory(), []);
-    const accessRecords = useMemo(() => generateMockAccess(), []);
+    // Data States
+    const [stats, setStats] = useState({ records: 0, clinics: 0, scans: 0 });
 
-    const stats = useMemo(() => ({
-        uploads: historyItems.length,
-        shared: accessRecords.filter(r => r.status === 'active').length,
-        months: 8 // Mock 
-    }), [historyItems, accessRecords]);
+    // New Viewer States
+    const [allRecordsVisible, setAllRecordsVisible] = useState(false);
+    const [recordViewerVisible, setRecordViewerVisible] = useState(false);
+    const [selectedRecord, setSelectedRecord] = useState<any>(null);
+    const [isEditingRecordTitle, setIsEditingRecordTitle] = useState(false);
+    const [editRecordTitleValue, setEditRecordTitleValue] = useState("");
+
+    const handleOpenRecord = (record: any) => {
+        setSelectedRecord(record);
+        setEditRecordTitleValue(record.title);
+        setIsEditingRecordTitle(false);
+        setRecordViewerVisible(true);
+    };
+
+    const handleSaveRecordTitle = async () => {
+        if (!editRecordTitleValue.trim()) {
+            Alert.alert("Error", "Title cannot be empty.");
+            return;
+        }
+        setIsSaving(true);
+        try {
+            const res = await fetch(API_ENDPOINTS.UPDATE_RECORD(selectedRecord.id), {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: editRecordTitleValue })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setMedicalRecords(prev => prev.map(r => r.id === selectedRecord.id ? data.record : r));
+                setSelectedRecord(data.record);
+                setIsEditingRecordTitle(false);
+            } else {
+                Alert.alert("Error", "Failed to update record title.");
+            }
+        } catch (e) {
+            Alert.alert("Error", "An error occurred while updating.");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteRecord = (recordId: string | number) => {
+        const proceedToDelete = async () => {
+            try {
+                const res = await fetch(API_ENDPOINTS.DELETE_RECORD(recordId), { method: 'DELETE' });
+                if (res.ok) {
+                    setMedicalRecords(prev => prev.filter(r => r.id !== recordId));
+                    setRecordViewerVisible(false);
+                    if (userData) fetchStats(userData.med_id);
+                    if (Platform.OS !== 'web') Alert.alert("Deleted", "Medical record removed.");
+                } else {
+                    if (Platform.OS !== 'web') Alert.alert("Error", "Failed to delete record.");
+                    else window.alert("Failed to delete record.");
+                }
+            } catch (e) {
+                if (Platform.OS !== 'web') Alert.alert("Error", "An error occurred.");
+                else window.alert("An error occurred.");
+            }
+        };
+
+        if (Platform.OS === 'web') {
+            const confirmed = window.confirm("Are you sure you want to permanently delete this record?");
+            if (confirmed) {
+                proceedToDelete();
+            }
+        } else {
+            Alert.alert(
+                "Delete Record",
+                "Are you sure you want to permanently delete this record?",
+                [
+                    { text: "Cancel", style: "cancel" },
+                    {
+                        text: "Delete",
+                        style: "destructive",
+                        onPress: proceedToDelete
+                    }
+                ]
+            );
+        }
+    };
+    const [medicalRecords, setMedicalRecords] = useState<{ id: number, title: string, image_url: string, created_at: string }[]>([]);
+    
+    // Upload Modal States
+    const [addRecordModalVisible, setAddRecordModalVisible] = useState(false);
+    const [newRecordTitle, setNewRecordTitle] = useState('');
+    const [newRecordImage, setNewRecordImage] = useState('');
+    const [isUploading, setIsUploading] = useState(false);
+
+    const pickImage = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            quality: 0.5,
+            base64: true,
+        });
+
+        if (!result.canceled && result.assets[0].base64) {
+            setNewRecordImage(`data:image/jpeg;base64,${result.assets[0].base64}`);
+        }
+    };
+
+    const handleAddRecord = async () => {
+        if (!newRecordTitle.trim() || !newRecordImage) {
+            Alert.alert('Error', 'Please provide a title and select an image.');
+            return;
+        }
+
+        if (userData) {
+            setIsUploading(true);
+            try {
+                const res = await fetch(API_ENDPOINTS.MEDICAL_RECORDS(userData.med_id), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: newRecordTitle,
+                        image_url: newRecordImage
+                    })
+                });
+                
+                if (res.ok) {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                    setAddRecordModalVisible(false);
+                    setNewRecordTitle('');
+                    setNewRecordImage('');
+                    fetchRecords(userData.med_id);
+                    fetchStats(userData.med_id);
+                } else {
+                    Alert.alert('Error', 'Failed to upload record');
+                }
+            } catch (error) {
+                console.error(error);
+                Alert.alert('Error', 'Failed to upload record');
+            } finally {
+                setIsUploading(false);
+            }
+        }
+    };
 
     const handleLogout = () => {
         showAlert({
@@ -130,7 +297,7 @@ export default function ProfileScreen() {
         });
     };
 
-    const handleSaveProfile = () => {
+    const handleSaveProfile = async () => {
         if (!tempName.trim() || !tempEmail.trim()) {
             Alert.alert('Error', t('profile.fieldRequired'));
             return;
@@ -141,18 +308,55 @@ export default function ProfileScreen() {
         const newLname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
 
         if (userData) {
-            const updatedUser = {
-                ...userData,
-                fname: newFname,
-                lname: newLname,
-                email: tempEmail
-            };
-            setUserData(updatedUser);
-            saveUser(updatedUser); // Persist changes
-        }
+            setIsSaving(true);
+            try {
+                const response = await fetch(API_ENDPOINTS.UPDATE_HISTORY(userData.med_id), {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        medical_records: tempMedicalRecords,
+                        diseases: tempDiseases,
+                        allergies: tempAllergies,
+                        other_info: tempOtherInfo,
+                        blood_group: tempBloodGroup,
+                        weight_kg: tempWeightKg,
+                        blood_pressure: tempBloodPressure,
+                        emergency_contact_name: tempEmergencyContactName,
+                        emergency_contact_phone: tempEmergencyContactPhone
+                    })
+                });
 
-        setEditModalVisible(false);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                if (!response.ok) {
+                    throw new Error('Failed to update profile');
+                }
+
+                const updatedUser = {
+                    ...userData,
+                    fname: newFname,
+                    lname: newLname,
+                    email: tempEmail,
+                    blood_group: tempBloodGroup,
+                    weight_kg: tempWeightKg,
+                    blood_pressure: tempBloodPressure,
+                    emergency_contact_name: tempEmergencyContactName,
+                    emergency_contact_phone: tempEmergencyContactPhone,
+                    medical_records: tempMedicalRecords,
+                    diseases: tempDiseases,
+                    allergies: tempAllergies,
+                    other_info: tempOtherInfo
+                };
+
+                setUserData(updatedUser);
+                await saveUser(updatedUser); 
+                setEditModalVisible(false);
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            } catch (error) {
+                console.error(error);
+                Alert.alert('Error', 'Could not update profile data.');
+            } finally {
+                setIsSaving(false);
+            }
+        }
     };
 
     const handleContactUs = () => {
@@ -199,7 +403,13 @@ export default function ProfileScreen() {
                         <BlurView intensity={60} tint="light" style={styles.blurWrapper}>
                             <TouchableOpacity
                                 style={styles.doneBtn}
-                                onPress={() => router.back()}
+                                onPress={() => {
+                                    if (router.canGoBack()) {
+                                        router.back();
+                                    } else {
+                                        router.replace('/(tabs)/history');
+                                    }
+                                }}
                             >
                                 <Text style={styles.doneText}>{t('profile.close')}</Text>
                             </TouchableOpacity>
@@ -270,26 +480,26 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* Statistics Section */}
-                <Text style={styles.sectionTitle}>{t('profile.performance')}</Text>
+                <Text style={styles.sectionTitle}>Performance</Text>
                 <View style={styles.statsContainer}>
                     <View style={styles.statItem}>
-                        <Text style={styles.statValue}>{stats.uploads}</Text>
-                        <Text style={styles.statLabel}>{t('history.title')}</Text>
+                        <Text style={styles.statValue}>{stats.records}</Text>
+                        <Text style={styles.statLabel}>Records</Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
-                        <Text style={styles.statValue}>{stats.shared}</Text>
-                        <Text style={styles.statLabel}>{t('access.clinics')}</Text>
+                        <Text style={styles.statValue}>{stats.clinics}</Text>
+                        <Text style={styles.statLabel}>Clinics Visited</Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
-                        <Text style={styles.statValue}>{stats.months}</Text>
-                        <Text style={styles.statLabel}>{t('profile.healthAge')}</Text>
+                        <Text style={styles.statValue}>{stats.scans}</Text>
+                        <Text style={styles.statLabel}>Scans Done</Text>
                     </View>
                 </View>
 
-                {/* Account Section */}
-                <Text style={styles.sectionTitle}>{t('profile.account')}</Text>
+                {/* Personal Information Section */}
+                <Text style={styles.sectionTitle}>Personal Information</Text>
                 <View style={styles.menuCard}>
                     <MenuItem
                         icon="person-outline"
@@ -297,9 +507,72 @@ export default function ProfileScreen() {
                         onPress={() => {
                             setTempName(fullName);
                             setTempEmail(userData.email);
+                            setTempBloodGroup(userData.blood_group || '');
+                            setTempWeightKg(userData.weight_kg ? String(userData.weight_kg) : '');
+                            setTempBloodPressure(userData.blood_pressure || '');
+                            setTempEmergencyContactName(userData.emergency_contact_name || '');
+                            setTempEmergencyContactPhone(userData.emergency_contact_phone || '');
+                            setTempMedicalRecords(userData.medical_records || '');
+                            setTempDiseases(userData.diseases || '');
+                            setTempAllergies(userData.allergies || '');
+                            setTempOtherInfo(userData.other_info || '');
+                            setEditModalTab('profile');
                             setEditModalVisible(true);
                         }}
                     />
+                    <MenuItem
+                        icon="medical-outline"
+                        label="Medical History"
+                        onPress={() => {
+                            setTempName(fullName);
+                            setTempEmail(userData.email);
+                            setTempBloodGroup(userData.blood_group || '');
+                            setTempWeightKg(userData.weight_kg ? String(userData.weight_kg) : '');
+                            setTempBloodPressure(userData.blood_pressure || '');
+                            setTempEmergencyContactName(userData.emergency_contact_name || '');
+                            setTempEmergencyContactPhone(userData.emergency_contact_phone || '');
+                            setTempMedicalRecords(userData.medical_records || '');
+                            setTempDiseases(userData.diseases || '');
+                            setTempAllergies(userData.allergies || '');
+                            setTempOtherInfo(userData.other_info || '');
+                            setEditModalTab('medical');
+                            setEditModalVisible(true);
+                        }}
+                    />
+                    <MenuItem
+                        icon="add-circle-outline"
+                        label="Add Medical Record"
+                        onPress={() => setAddRecordModalVisible(true)}
+                        hideBorder
+                        iconColor={Colors.light.primary}
+                    />
+                </View>
+
+                {/* Uploaded Records Display */}
+                {medicalRecords.length > 0 && (
+                    <>
+                        <Text style={[styles.sectionTitle, { marginTop: 16 }]}>Uploaded Records</Text>
+                        <View style={styles.menuCard}>
+                            {medicalRecords.map((rec, index) => (
+                                <TouchableOpacity 
+                                    key={rec.id} 
+                                    style={[styles.recordItem, { margin: 16, marginBottom: index === medicalRecords.length - 1 ? 16 : 8, borderWidth: 0, borderBottomWidth: index === medicalRecords.length - 1 ? 0 : 1, borderRadius: 35 }]}
+                                    onPress={() => handleOpenRecord(rec)}
+                                >
+                                    <Image source={{ uri: rec.image_url }} style={styles.recordImage} />
+                                    <View style={{ flex: 1, marginLeft: 14 }}>
+                                        <Text style={styles.recordTitle}>{rec.title}</Text>
+                                        <Text style={styles.recordDate}>{new Date(rec.created_at).toLocaleDateString()}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </>
+                )}
+
+                {/* Account Section */}
+                <Text style={styles.sectionTitle}>{t('profile.account')}</Text>
+                <View style={styles.menuCard}>
                     <MenuItem
                         icon="shield-checkmark-outline"
                         label={t('profile.security')}
@@ -329,23 +602,6 @@ export default function ProfileScreen() {
                             onValueChange={(val) => {
                                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                 setNotifications(val);
-                            }}
-                            trackColor={{ false: '#E5E5EA', true: Colors.light.primary }}
-                            thumbColor="#fff"
-                        />
-                    </View>
-                    <View style={styles.menuItem}>
-                        <View style={[styles.menuIcon, { backgroundColor: 'rgba(220,163,73,0.1)' }]}>
-                            <Ionicons name="finger-print-outline" size={20} color={Colors.light.primary} />
-                        </View>
-                        <View style={styles.menuContent}>
-                            <Text style={styles.menuLabel}>{t('profile.biometrics')}</Text>
-                        </View>
-                        <Switch
-                            value={biometrics}
-                            onValueChange={(val) => {
-                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                setBiometrics(val);
                             }}
                             trackColor={{ false: '#E5E5EA', true: Colors.light.primary }}
                             thumbColor="#fff"
@@ -409,52 +665,314 @@ export default function ProfileScreen() {
             >
                 <BlurView intensity={30} tint="dark" style={styles.modalOverlay}>
                     <Pressable style={StyleSheet.absoluteFill} onPress={() => setEditModalVisible(false)} />
-                    <View style={styles.editCard}>
-                        <Text style={styles.editTitle}>{t('profile.editProfile')}</Text>
+                    <View style={[styles.editCard, { maxHeight: '80%' }]}>
+                        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
+                        <Text style={styles.editTitle}>{editModalTab === 'profile' ? t('profile.editProfile') : 'Medical History'}</Text>
 
-                        <View style={styles.inputContainer}>
-                            <Text style={styles.inputLabel}>{t('profile.fullName')}</Text>
-                            <TextInput
-                                style={styles.textInput}
-                                value={tempName}
-                                onChangeText={setTempName}
-                                placeholder={t('auth.fnamePlaceholder')}
-                                placeholderTextColor="#8E8E93"
-                            />
-                        </View>
+                        {editModalTab === 'profile' && (
+                            <>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>{t('profile.fullName')}</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempName}
+                                        onChangeText={setTempName}
+                                        placeholder={t('auth.fnamePlaceholder')}
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
 
-                        <View style={styles.inputContainer}>
-                            <Text style={styles.inputLabel}>{t('profile.emailAddress')}</Text>
-                            <TextInput
-                                style={styles.textInput}
-                                value={tempEmail}
-                                onChangeText={setTempEmail}
-                                placeholder={t('auth.emailPlaceholder')}
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                                placeholderTextColor="#8E8E93"
-                            />
-                        </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>{t('profile.emailAddress')}</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempEmail}
+                                        onChangeText={setTempEmail}
+                                        placeholder={t('auth.emailPlaceholder')}
+                                        keyboardType="email-address"
+                                        autoCapitalize="none"
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+                            </>
+                        )}
+
+                        {editModalTab === 'medical' && (
+                            <>
+                                <PickerInput
+                                    label="Blood Group"
+                                    value={tempBloodGroup}
+                                    onValueChange={setTempBloodGroup}
+                                    options={BLOOD_GROUP_OPTIONS}
+                                    placeholder="Select Blood Group"
+                                    iconName="water-outline"
+                                />
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Weight (kg)</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempWeightKg}
+                                        onChangeText={(text) => {
+                                            let cleaned = text.replace(/[^0-9.]/g, '');
+                                            const parts = cleaned.split('.');
+                                            if (parts.length > 2) {
+                                                cleaned = parts[0] + '.' + parts.slice(1).join('');
+                                            }
+                                            setTempWeightKg(cleaned);
+                                        }}
+                                        keyboardType="decimal-pad"
+                                        placeholder="Enter weight in kg"
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Blood Pressure</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempBloodPressure}
+                                        onChangeText={(text) => {
+                                            let cleaned = text.replace(/[^0-9/]/g, '');
+                                            const parts = cleaned.split('/');
+                                            if (parts.length > 2) {
+                                                cleaned = parts[0] + '/' + parts.slice(1).join('');
+                                            }
+                                            setTempBloodPressure(cleaned);
+                                        }}
+                                        placeholder="e.g., 120/80"
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Emergency Contact Name</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempEmergencyContactName}
+                                        onChangeText={setTempEmergencyContactName}
+                                        placeholder="Enter emergency contact name"
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Emergency Contact Phone</Text>
+                                    <View style={[styles.textInput, { flexDirection: 'row', alignItems: 'center', paddingLeft: 16, paddingRight: 0, paddingVertical: 0 }]}>
+                                        <Text style={{ fontSize: 16, color: '#1C1C1E', paddingRight: 4, fontWeight: '500' }}>+94</Text>
+                                        <TextInput
+                                            style={{ flex: 1, fontSize: 16, color: '#1C1C1E', paddingVertical: 14, paddingRight: 16, ...Platform.select({ web: { outlineStyle: 'none' } as any }) }}
+                                            value={tempEmergencyContactPhone}
+                                            onChangeText={(text) => {
+                                                setTempEmergencyContactPhone(text.replace(/[^0-9]/g, ''));
+                                            }}
+                                            keyboardType="phone-pad"
+                                            placeholder="XX XXX XXXX"
+                                            placeholderTextColor="#8E8E93"
+                                            maxLength={9}
+                                        />
+                                    </View>
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Medical Records</Text>
+                                    <TextInput
+                                        style={[styles.textInput, { minHeight: 80, textAlignVertical: 'top' }]}
+                                        value={tempMedicalRecords}
+                                        onChangeText={setTempMedicalRecords}
+                                        multiline
+                                        placeholder="Any major surgeries, treatments..."
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Chronic Diseases</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempDiseases}
+                                        onChangeText={setTempDiseases}
+                                        placeholder="e.g., Diabetes, Hypertension"
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Allergies</Text>
+                                    <TextInput
+                                        style={styles.textInput}
+                                        value={tempAllergies}
+                                        onChangeText={setTempAllergies}
+                                        placeholder="e.g., Peanuts, Penicillin"
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.inputLabel}>Other Information</Text>
+                                    <TextInput
+                                        style={[styles.textInput, { minHeight: 60, textAlignVertical: 'top' }]}
+                                        value={tempOtherInfo}
+                                        onChangeText={setTempOtherInfo}
+                                        multiline
+                                        placeholder="Any other health details..."
+                                        placeholderTextColor="#8E8E93"
+                                    />
+                                </View>
+                            </>
+                        )}
 
                         <TouchableOpacity
                             style={styles.saveBtn}
                             onPress={handleSaveProfile}
+                            disabled={isSaving}
                         >
                             <LinearGradient
                                 colors={[Colors.light.primary, Colors.light.primaryDark]}
                                 style={styles.saveGradient}
                             >
-                                <Text style={styles.saveBtnText}>{t('profile.saveChanges')}</Text>
+                                <Text style={styles.saveBtnText}>{isSaving ? 'Saving...' : t('profile.saveChanges')}</Text>
                             </LinearGradient>
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             style={styles.cancelBtn}
                             onPress={() => setEditModalVisible(false)}
+                            disabled={isSaving}
                         >
                             <Text style={styles.cancelBtnText}>{t('profile.cancel')}</Text>
                         </TouchableOpacity>
+                        </ScrollView>
                     </View>
+                </BlurView>
+            </Modal>
+
+            {/* Add Record Modal */}
+            <Modal
+                visible={addRecordModalVisible}
+                transparent={true}
+                onRequestClose={() => setAddRecordModalVisible(false)}
+            >
+                <BlurView intensity={30} tint="dark" style={styles.modalOverlay}>
+                    <Pressable style={StyleSheet.absoluteFill} onPress={() => setAddRecordModalVisible(false)} />
+                    <View style={styles.editCard}>
+                        <Text style={styles.editTitle}>Add New Record</Text>
+                        
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.inputLabel}>Record Title</Text>
+                            <TextInput
+                                style={styles.textInput}
+                                value={newRecordTitle}
+                                onChangeText={setNewRecordTitle}
+                                placeholder="e.g., Blood Test Report"
+                                placeholderTextColor="#8E8E93"
+                            />
+                        </View>
+
+                        <TouchableOpacity style={styles.imagePickerBtn} onPress={pickImage}>
+                            {newRecordImage ? (
+                                <Image source={{ uri: newRecordImage }} style={styles.pickedImage} />
+                            ) : (
+                                <>
+                                    <Ionicons name="image-outline" size={32} color={Colors.light.primary} />
+                                    <Text style={styles.imagePickerText}>Tap to select an image</Text>
+                                </>
+                            )}
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.saveBtn} onPress={handleAddRecord} disabled={isUploading}>
+                            <LinearGradient colors={[Colors.light.primary, Colors.light.primaryDark]} style={styles.saveGradient}>
+                                <Text style={styles.saveBtnText}>{isUploading ? 'Uploading...' : 'Upload Record'}</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.cancelBtn} onPress={() => setAddRecordModalVisible(false)} disabled={isUploading}>
+                            <Text style={styles.cancelBtnText}>{t('profile.cancel')}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </BlurView>
+            </Modal>
+
+            {/* All Records Modal */}
+            <Modal
+                visible={allRecordsVisible}
+                animationType="slide"
+                presentationStyle="pageSheet"
+                onRequestClose={() => setAllRecordsVisible(false)}
+            >
+                <View style={[styles.container, { paddingTop: Platform.OS === 'ios' ? 20 : 20 }]}>
+                    <View style={styles.closeHeaderInner}>
+                        <Text style={styles.editTitle}>All Medical Records</Text>
+                        <TouchableOpacity onPress={() => setAllRecordsVisible(false)} style={{ marginBottom: 24 }}>
+                            <Ionicons name="close-circle" size={30} color={Colors.light.icon} />
+                        </TouchableOpacity>
+                    </View>
+                    <ScrollView contentContainerStyle={{ paddingHorizontal: 20 }}>
+                        {medicalRecords.map((rec) => (
+                            <TouchableOpacity 
+                                key={rec.id} 
+                                style={styles.recordItem}
+                                onPress={() => handleOpenRecord(rec)}
+                            >
+                                <Image source={{ uri: rec.image_url }} style={styles.recordImage} />
+                                <View style={{ flex: 1, marginLeft: 14 }}>
+                                    <Text style={styles.recordTitle}>{rec.title}</Text>
+                                    <Text style={styles.recordDate}>{new Date(rec.created_at).toLocaleDateString()}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                </View>
+            </Modal>
+
+            {/* Record Viewer Modal */}
+            <Modal
+                visible={recordViewerVisible}
+                transparent={true}
+                onRequestClose={() => setRecordViewerVisible(false)}
+            >
+                <BlurView intensity={90} tint="dark" style={styles.modalOverlay}>
+                    {selectedRecord && (
+                        <View style={{ flex: 1, width: '100%' }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 20, paddingTop: Platform.OS === 'ios' ? 60 : 30 }}>
+                                <TouchableOpacity onPress={() => setRecordViewerVisible(false)}>
+                                    <Ionicons name="close" size={32} color="#fff" />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => handleDeleteRecord(selectedRecord.id)}>
+                                    <Ionicons name="trash" size={28} color="#FF3B30" />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                <View style={{ marginBottom: 24, alignItems: 'center' }}>
+                                    {isEditingRecordTitle ? (
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <TextInput
+                                                value={editRecordTitleValue}
+                                                onChangeText={setEditRecordTitleValue}
+                                                style={[styles.textInput, { color: '#000', width: 200, backgroundColor: '#fff', paddingVertical: 10 }]}
+                                                autoFocus
+                                            />
+                                            <TouchableOpacity onPress={handleSaveRecordTitle} disabled={isSaving} style={{ marginLeft: 12, backgroundColor: Colors.light.primary, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 35 }}>
+                                                <Text style={{ color: '#fff', fontWeight: 'bold' }}>{isSaving ? 'Sav...' : 'Save'}</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={() => setIsEditingRecordTitle(false)} style={{ marginLeft: 12 }}>
+                                                <Ionicons name="close-circle" size={36} color="#C7C7CC" />
+                                            </TouchableOpacity>
+                                        </View>
+                                    ) : (
+                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                            <Text style={{ color: '#fff', fontSize: 24, fontWeight: '700' }}>{selectedRecord.title}</Text>
+                                            <TouchableOpacity onPress={() => setIsEditingRecordTitle(true)} style={{ marginLeft: 12, padding: 4 }}>
+                                                <Ionicons name="pencil" size={22} color="#C7C7CC" />
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                    <Text style={{ color: '#C7C7CC', fontSize: 16, marginTop: 12 }}>{new Date(selectedRecord.created_at).toLocaleDateString()}</Text>
+                                </View>
+                                <Image source={{ uri: selectedRecord.image_url }} style={{ width: '90%', height: '70%', resizeMode: 'contain' }} />
+                            </View>
+                        </View>
+                    )}
                 </BlurView>
             </Modal>
         </View>
@@ -784,5 +1302,70 @@ const styles = StyleSheet.create({
         color: '#8E8E93',
         fontSize: 16,
         fontWeight: '600',
+    },
+    // Records
+    recordItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 12,
+        backgroundColor: '#F8FAFC',
+        borderRadius: 16,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#F2F2F7',
+    },
+    recordImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 35,
+        backgroundColor: '#E5E5EA',
+    },
+    recordTitle: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: '#1C1C1E',
+        marginBottom: 4,
+    },
+    recordDate: {
+        fontSize: 13,
+        color: '#8E8E93',
+    },
+    addRecordBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 14,
+        backgroundColor: 'rgba(220,163,73,0.1)',
+        borderRadius: 16,
+        marginTop: 10,
+        marginBottom: 20,
+    },
+    addRecordText: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: Colors.light.primary,
+        marginLeft: 8,
+    },
+    imagePickerBtn: {
+        height: 120,
+        backgroundColor: '#F2F2F7',
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 20,
+        borderWidth: 1,
+        borderStyle: 'dashed',
+        borderColor: '#C7C7CC',
+        overflow: 'hidden',
+    },
+    imagePickerText: {
+        fontSize: 14,
+        color: '#8E8E93',
+        marginTop: 8,
+    },
+    pickedImage: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
     },
 });

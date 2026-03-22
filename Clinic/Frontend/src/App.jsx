@@ -11,7 +11,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import RoleSelect from './pages/Dashboard/RoleSelection';
 import DoctorRegister from './pages/Dashboard/DoctorReg';
 import DoctorLogin from './pages/Dashboard/DoctorLogin';
-
+import PatientHistory from './pages/Dashboard/PatientHistory';
 
 function App() {
   return (
@@ -26,7 +26,8 @@ function App() {
         <Route path="/doctor-login" element={<DoctorLogin />} />
         <Route path="doctor-register" element={<DoctorRegister />} />
         <Route path="search" element={<SearchPage />} />
-
+         <Route path="Patient-History" element={<PatientHistory />} />
+        
         {/* Dashboard Routes: Sidebar is automatically included via Layout */}
         <Route path="/dashboard" element={<DashboardLayout />}>
 
