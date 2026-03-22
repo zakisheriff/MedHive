@@ -60,10 +60,11 @@ router.post("/request-access", async (req, res) => {
  * @route POST /api/patients/verify-otp
  * @desc Verify OTP, reveal patient details, and log the visit
  */
-// NOTE: Added authRequired middleware here so we know which doctor is making the request
-router.post("/verify-otp", async (req, res) => {
+router.post("/verify-otp", authRequired, async (req, res) => {
   const { med_id, otp } = req.body;
-  if (!med_id || !otp) return res.status(400).json({ error: "Med ID and OTP are required" });
+  if (!med_id || !otp) {
+    return res.status(400).json({ error: "Med ID and OTP are required" });
+  }
 
   try {
     const result = await pool.query(
@@ -83,6 +84,10 @@ router.post("/verify-otp", async (req, res) => {
       [med_id]
     );
 
+    if (patientResult.rowCount === 0) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
     // Also fetch their prescriptions
     const prescriptionsResult = await pool.query(
       `SELECT prescription_id, status, prescription_image_url, created_at, raw_ai_output
@@ -95,10 +100,10 @@ router.post("/verify-otp", async (req, res) => {
     // Clear the OTP after successful verification to prevent reuse
     await pool.query("DELETE FROM patient_access_codes WHERE med_id = $1", [med_id]);
 
-    // NEW LOGIC: Track the patient visit if a doctor is logged in
+    // Track the patient visit for the logged-in doctor
     if (req.user && req.user.doctorId) {
       await pool.query(
-        `INSERT INTO visited_patients (doctor_id, patient_id) VALUES ($1, $2)`,
+        `INSERT INTO visited_patients (doctor_id, med_id) VALUES ($1, $2)`,
         [req.user.doctorId, med_id]
       );
     }
