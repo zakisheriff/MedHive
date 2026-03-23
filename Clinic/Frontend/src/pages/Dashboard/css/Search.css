@@ -240,6 +240,63 @@
   border-radius: 20px;
   font-weight: 800;
   color: #f1a63b;
+  border: 4px solid #f0f4f9;
+  background: #f8fafc;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.otp-box:focus {
+  border-color: #f1a63b;
+  background: #fff;
+  box-shadow: 0 0 15px rgba(241, 166, 59, 0.2);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.cancel-btn, .confirm-btn {
+  padding: 12px 30px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  min-width: 140px;
+}
+
+.cancel-btn {
+  background: #f0f4f9;
+  color: #64748b;
+}
+
+.cancel-btn:hover {
+  background: #e2e8f0;
+  color: #1f1f1f;
+}
+
+.confirm-btn {
+  background: #f1a63b;
+  color: white;
+  box-shadow: 0 4px 12px rgba(241, 166, 59, 0.3);
+}
+
+.confirm-btn:hover {
+  background: #e0952a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(241, 166, 59, 0.4);
+}
+
+.confirm-btn:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* 🔹 ERROR */

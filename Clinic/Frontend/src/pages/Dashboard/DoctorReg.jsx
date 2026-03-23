@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./css/DoctorReg.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const DoctorRegister = () => {
   const [formData, setFormData] = useState({
@@ -12,8 +13,11 @@ const DoctorRegister = () => {
 
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  const API_URL = "http://localhost:5002/api/doctors/register";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,7 +53,7 @@ const DoctorRegister = () => {
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
+      newErrors.confirmPassword = "confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
@@ -57,7 +61,8 @@ const DoctorRegister = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  // 🔥 FINAL SUBMIT FUNCTION
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formErrors = validateForm();
@@ -68,44 +73,57 @@ const DoctorRegister = () => {
       return;
     }
 
-    console.log("Doctor Registration Data:", formData);
+    setLoading(true);
 
-    localStorage.setItem(
-      "doctor",
-      JSON.stringify({
+    try {
+      // ✅ IMPORTANT CHANGE (matches backend exactly)
+      const res = await axios.post(API_URL, {
         doctorName: formData.doctorName,
         nic: formData.nic,
         password: formData.password,
-      })
-    );
+      });
 
-    setSuccessMessage("Doctor registered successfully!");
+      console.log("Saved to DB:", res.data);
 
-    setFormData({
-      doctorName: "",
-      nic: "",
-      password: "",
-      confirmPassword: "",
-    });
+      setSuccessMessage("Doctor registered successfully!");
 
-    setErrors({});
+      setFormData({
+        doctorName: "",
+        nic: "",
+        password: "",
+        confirmPassword: "",
+      });
 
-    setTimeout(() => {
-      navigate("/doctor-login");
-    }, 1000);
+      setErrors({});
+
+      setTimeout(() => {
+        navigate("/doctor-login");
+      }, 1000);
+
+    } catch (error) {
+      console.error(error);
+
+      if (error.response?.data?.error) {
+        setErrors({ nic: error.response.data.error });
+      } else {
+        setErrors({ general: "Registration failed. Try again." });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="register-container">
       <div className="register-card">
         <h2>Doctor Registration</h2>
+
         <p className="subtitle">
           Register to access your patients' health records securely.
         </p>
 
         <div className="info-box">
-          <strong>Important:</strong> A doctor should only be able to access
-          health records of patients who have consulted that doctor.
+          <strong>Important:</strong> A doctor should only access patients who consulted them.
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -118,9 +136,7 @@ const DoctorRegister = () => {
               value={formData.doctorName}
               onChange={handleChange}
             />
-            {errors.doctorName && (
-              <span className="error">{errors.doctorName}</span>
-            )}
+            {errors.doctorName && <span className="error">{errors.doctorName}</span>}
           </div>
 
           <div className="form-group">
@@ -161,10 +177,12 @@ const DoctorRegister = () => {
             )}
           </div>
 
-          <button type="submit" className="register-btn">
-            Register
+          <button type="submit" className="register-btn" disabled={loading}>
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
+
+        {errors.general && <p className="error">{errors.general}</p>}
 
         <p className="register-link">
           Already registered?{" "}

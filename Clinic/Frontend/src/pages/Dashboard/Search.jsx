@@ -10,12 +10,13 @@ const SearchPage = () => {
   const [patientPreview, setPatientPreview] = useState(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(['', '']);
+  const otpRefs = [React.useRef(), React.useRef()];
   const [accessGranted, setAccessGranted] = useState(false);
   const [fullPatientData, setFullPatientData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
+
 
   const navigate = useNavigate();
   const API_URL = 'http://localhost:5002/api/patients';
@@ -71,7 +72,8 @@ const SearchPage = () => {
   };
 
   const handleVerifyOTP = async () => {
-    if (otp.length !== 2) {
+    const otpCode = otp.join('');
+    if (otpCode.length !== 2) {
       alert('Enter 2-digit code');
       return;
     }
@@ -80,16 +82,17 @@ const SearchPage = () => {
     try {
       const res = await axios.post(`${API_URL}/verify-otp`, {
         med_id: patientPreview.med_id,
-        otp
+        otp: otpCode
       });
 
       setFullPatientData(res.data);
       setAccessGranted(true);
       setShowRequestModal(false);
       setOtpSent(false);
-      setOtp('');
+      setOtp(['', '']);
     } catch (err) {
-      alert('Invalid code');
+      const msg = err.response?.data?.error || 'Invalid code or verification failed';
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -108,8 +111,6 @@ const SearchPage = () => {
             placeholder="Search by Patient ID"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
           />
           <button type="submit" className="search-btn" disabled={loading}>
             {loading ? 'Searching...' : 'Search'}
@@ -180,21 +181,33 @@ const SearchPage = () => {
 
                   <div className="otp-input-group">
                     <input
+                      ref={otpRefs[0]}
                       maxLength="1"
-                      value={otp[0] || ''}
+                      value={otp[0]}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, '');
-                        setOtp(val + (otp[1] || ''));
+                        const newOtp = [...otp];
+                        newOtp[0] = val;
+                        setOtp(newOtp);
+                        if (val && otpRefs[1].current) otpRefs[1].current.focus();
                       }}
                       className="otp-box"
                     />
 
                     <input
+                      ref={otpRefs[1]}
                       maxLength="1"
-                      value={otp[1] || ''}
+                      value={otp[1]}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, '');
-                        setOtp((otp[0] || '') + val);
+                        const newOtp = [...otp];
+                        newOtp[1] = val;
+                        setOtp(newOtp);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Backspace' && !otp[1] && otpRefs[0].current) {
+                          otpRefs[0].current.focus();
+                        }
                       }}
                       className="otp-box"
                     />
@@ -224,22 +237,20 @@ const SearchPage = () => {
 
       {/* 🔥 ANIMATED BOTTOM BUTTONS */}
       <AnimatePresence>
-        {!isSearchFocused && (
-          <motion.div
-            className="bottom-buttons"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-          >
-            <button className="history-btn" onClick={handleGoToHistory}>
-              History
-            </button>
+        <motion.div
+          className="bottom-buttons"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+        >
+          <button className="history-btn" onClick={handleGoToHistory}>
+            History
+          </button>
 
-            <button className="logout-btn" onClick={handleLogout}>
-              Logout
-            </button>
-          </motion.div>
-        )}
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </motion.div>
       </AnimatePresence>
 
     </div>

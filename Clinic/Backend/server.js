@@ -42,7 +42,7 @@ app.use("/api/patients", patientRoutes);
 app.use("/api/doctors", doctorRoutes); // Mounted doctor routes
 app.use("/api", meRoutes);
 
-const port = Number(process.env.PORT || 5000);
+const port = Number(process.env.PORT || 5002);
 
 app.listen(port, () => {
   console.log(`API running on http://localhost:${port}`);
