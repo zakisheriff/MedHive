@@ -12,6 +12,8 @@ import { HistoryItem } from '../../types/history';
 import { groupHistoryByDate, filterHistory, generateMockHistory } from '../../utils/historyUtils';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
+import { API_ENDPOINTS } from '../../constants/config';
 
 export default function HistoryScreen() {
     const { t } = useTranslation();
@@ -19,7 +21,8 @@ export default function HistoryScreen() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilter, setSelectedFilter] = useState<FilterType>('all');
 
-    // TODO: Replace with actual data from backend/context
+    
+  // TODO: Replace with actual data from backend/context     
     const historyItems = useMemo(() => generateMockHistory(), []);
 
     // Filter and group history items

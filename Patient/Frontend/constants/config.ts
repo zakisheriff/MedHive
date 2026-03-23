@@ -32,6 +32,7 @@ export const API_ENDPOINTS = {
     MEDICAL_STATS: (med_id: string) => `${BASE_URL}/api/medical-records/stats/${med_id}`,
     DELETE_RECORD: (record_id: string | number) => `${BASE_URL}/api/medical-records/record/${record_id}`,
     UPDATE_RECORD: (record_id: string | number) => `${BASE_URL}/api/medical-records/record/${record_id}`,
+    patient_record: (med_id: string) => `${BASE_URL}/api/access/patient_record/${med_id}`
 };
 
 export const auth_endpoints = {
