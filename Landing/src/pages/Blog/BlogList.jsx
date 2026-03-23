@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import BlogCard from '../../components/BlogCard/BlogCard';
 import blogTitleImg from './images/blog-title.webp';
 import blogTitle3Img from './images/blog-title3.webp';
+import blogTitle6Img from './images/blog-title6.webp';
 import './BlogList.css';
 
 const posts = [
@@ -22,6 +23,15 @@ const posts = [
         date: 'March 20, 2026',
         category: '',
         link: '/blog/private-clinics-digital-records-2026',
+    },
+    {
+        title: 'Medication Errors Kill More Than Car Accidents. Why Isn\'t Anyone Talking About It?',
+        description:
+            'Medication errors are a silent healthcare crisis. Learn how digital prescription systems can prevent these life-threatening mistakes.',
+        image: blogTitle6Img,
+        date: 'March 23, 2026',
+        category: '',
+        link: '/blog/medication-errors-digital-prevention',
     },
 ];
 
