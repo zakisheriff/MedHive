@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db");
 
-// helper: convert raw AI text → medicines array
 const extractMedicines = (text) => {
   if (!text) return [];
 
@@ -31,28 +30,19 @@ router.get("/:med_id", async (req, res) => {
 
     const formatted = result.rows.map(item => ({
       id: item.prescription_id.toString(),
-
       type: "prescription",
-
       title: "Digital Prescription",
-
-      date: item.created_at, // frontend will convert to Date
-
+      date: item.created_at,
       clinicName: item.clinic_id || "Clinic",
-
       medicines: extractMedicines(item.raw_ai_output),
-
       status: "completed",
-
       notes: item.diagnosis || "",
-
       imageUri: item.prescription_image_url
     }));
 
     res.json(formatted);
 
   } catch (err) {
-    console.error("History error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
