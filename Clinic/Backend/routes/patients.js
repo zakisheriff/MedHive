@@ -1,5 +1,6 @@
 const express = require("express");
 const pool = require("../db");
+const authRequired = require("../middleware/authRequired");
 const router = express.Router();
 
 /**
@@ -37,14 +38,13 @@ router.post("/request-access", async (req, res) => {
   try {
     // Generate 2-digit OTP (10-99)
     const otp = Math.floor(10 + Math.random() * 90).toString();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes expiry
 
     await pool.query(
       `INSERT INTO patient_access_codes (med_id, otp, expires_at)
-       VALUES ($1, $2, $3)
+       VALUES ($1, $2, NOW() + INTERVAL '5 minutes')
        ON CONFLICT (med_id) 
        DO UPDATE SET otp = EXCLUDED.otp, expires_at = EXCLUDED.expires_at`,
-      [med_id, otp, expiresAt]
+      [med_id, otp]
     );
 
     // In a real scenario, this would trigger a notification to the patient's app.
@@ -58,8 +58,9 @@ router.post("/request-access", async (req, res) => {
 
 /**
  * @route POST /api/patients/verify-otp
- * @desc Verify OTP and reveal patient details
+ * @desc Verify OTP, reveal patient details, and log the visit
  */
+// NOTE: Added authRequired middleware here so we know which doctor is making the request
 router.post("/verify-otp", async (req, res) => {
   const { med_id, otp } = req.body;
   if (!med_id || !otp) return res.status(400).json({ error: "Med ID and OTP are required" });
@@ -72,7 +73,7 @@ router.post("/verify-otp", async (req, res) => {
     );
 
     if (result.rowCount === 0) {
-      return res.status(401).json({ error: "Invalid or expired OTP" });
+      return res.status(400).json({ error: "Invalid or expired OTP" });
     }
 
     // OTP verified, fetch full profile
@@ -93,6 +94,14 @@ router.post("/verify-otp", async (req, res) => {
 
     // Clear the OTP after successful verification to prevent reuse
     await pool.query("DELETE FROM patient_access_codes WHERE med_id = $1", [med_id]);
+
+    // NEW LOGIC: Track the patient visit if a doctor is logged in
+    if (req.user && req.user.doctorId) {
+      await pool.query(
+        `INSERT INTO visited_patients (doctor_id, patient_id) VALUES ($1, $2)`,
+        [req.user.doctorId, med_id]
+      );
+    }
 
     res.json({
       patient: patientResult.rows[0],

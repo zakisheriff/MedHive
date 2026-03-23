@@ -30,6 +30,8 @@ const BlogList = () => {
         window.scrollTo(0, 0);
     }, []);
 
+    const sortedPosts = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
+
     return (
         <section className="mh-blog-list-page">
             <div className="container">
@@ -43,7 +45,7 @@ const BlogList = () => {
                 </div>
 
                 <div className="mh-blog-list-grid" role="list" aria-label="Blog post cards">
-                    {posts.map((post) => (
+                    {sortedPosts.map((post) => (
                         <div key={`${post.title}-${post.date}`} role="listitem">
                             <BlogCard {...post} />
                         </div>

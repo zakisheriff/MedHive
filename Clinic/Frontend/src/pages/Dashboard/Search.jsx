@@ -10,19 +10,24 @@ const SearchPage = () => {
   const [patientPreview, setPatientPreview] = useState(null);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(['', '']);
+  const otpRefs = [React.useRef(), React.useRef()];
   const [accessGranted, setAccessGranted] = useState(false);
   const [fullPatientData, setFullPatientData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+
   const navigate = useNavigate();
   const API_URL = 'http://localhost:5002/api/patients';
 
-  // 🔥 Logout function
   const handleLogout = () => {
-    localStorage.removeItem("doctor");
-    navigate("/role-select"); // role selection page
+    localStorage.removeItem('doctor');
+    navigate('/role-select');
+  };
+
+  const handleGoToHistory = () => {
+    navigate('/patient-history');
   };
 
   const handleSearch = async (e) => {
@@ -60,15 +65,16 @@ const SearchPage = () => {
       });
       setOtpSent(true);
     } catch (err) {
-      alert("Failed to request access.");
+      alert('Failed to request access.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleVerifyOTP = async () => {
-    if (otp.length !== 2) {
-      alert("Enter 2-digit code");
+    const otpCode = otp.join('');
+    if (otpCode.length !== 2) {
+      alert('Enter 2-digit code');
       return;
     }
 
@@ -76,16 +82,17 @@ const SearchPage = () => {
     try {
       const res = await axios.post(`${API_URL}/verify-otp`, {
         med_id: patientPreview.med_id,
-        otp
+        otp: otpCode
       });
 
       setFullPatientData(res.data);
       setAccessGranted(true);
       setShowRequestModal(false);
       setOtpSent(false);
-      setOtp('');
+      setOtp(['', '']);
     } catch (err) {
-      alert("Invalid code");
+      const msg = err.response?.data?.error || 'Invalid code or verification failed';
+      alert(msg);
     } finally {
       setLoading(false);
     }
@@ -115,8 +122,6 @@ const SearchPage = () => {
 
       {/* 🔹 RESULTS */}
       <div className="search-results-area">
-
-        {/* Preview */}
         {patientPreview && !accessGranted && (
           <motion.div
             className="patient-preview-bar"
@@ -133,22 +138,23 @@ const SearchPage = () => {
               <p>ID: {patientPreview.med_id}</p>
             </div>
 
-            <span className="view-tag">
-              Click to Request Access
-            </span>
+            <span className="view-tag">Click to Request Access</span>
           </motion.div>
         )}
 
-        {/* Full profile */}
         {accessGranted && <PatientProfile data={fullPatientData} />}
       </div>
 
       {/* 🔹 MODAL */}
       <AnimatePresence>
         {showRequestModal && (
-          <motion.div className="modal-overlay">
+          <motion.div
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
             <div className="request-modal">
-
               {!otpSent ? (
                 <>
                   <h2>Request Access?</h2>
@@ -175,21 +181,33 @@ const SearchPage = () => {
 
                   <div className="otp-input-group">
                     <input
+                      ref={otpRefs[0]}
                       maxLength="1"
-                      value={otp[0] || ''}
+                      value={otp[0]}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, '');
-                        setOtp(val + (otp[1] || ''));
+                        const newOtp = [...otp];
+                        newOtp[0] = val;
+                        setOtp(newOtp);
+                        if (val && otpRefs[1].current) otpRefs[1].current.focus();
                       }}
                       className="otp-box"
                     />
 
                     <input
+                      ref={otpRefs[1]}
                       maxLength="1"
-                      value={otp[1] || ''}
+                      value={otp[1]}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, '');
-                        setOtp((otp[0] || '') + val);
+                        const newOtp = [...otp];
+                        newOtp[1] = val;
+                        setOtp(newOtp);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Backspace' && !otp[1] && otpRefs[0].current) {
+                          otpRefs[0].current.focus();
+                        }
                       }}
                       className="otp-box"
                     />
@@ -212,18 +230,28 @@ const SearchPage = () => {
                   </div>
                 </>
               )}
-
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 🔥 LOGOUT BUTTON (BOTTOM CENTER) */}
-      <div className="logout-bottom">
-        <button className="logout-btn" onClick={handleLogout}>
-          Logout
-        </button>
-      </div>
+      {/* 🔥 ANIMATED BOTTOM BUTTONS */}
+      <AnimatePresence>
+        <motion.div
+          className="bottom-buttons"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+        >
+          <button className="history-btn" onClick={handleGoToHistory}>
+            History
+          </button>
+
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+        </motion.div>
+      </AnimatePresence>
 
     </div>
   );

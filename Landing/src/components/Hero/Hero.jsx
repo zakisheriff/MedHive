@@ -160,7 +160,7 @@ const Hero = ({ focusTrigger }) => {
                             setUploadPreview(null);
                         }
                     });
-                }, 5000);
+                }, 5002);
             };
             reader.readAsDataURL(file);
         }

@@ -3,7 +3,6 @@ import DashboardLayout from './app/layout/DashboardLayout'
 import Overview from './app/routes/Overview'
 import DiseaseIntelligence from './app/routes/DiseaseIntelligence'
 import MedicineDemand from './app/routes/MedicineDemand'
-import Alerts from './app/routes/Alerts'
 import Reports from './app/routes/Reports'
 import { LoginPage } from './auth/LoginPage'
 import { RegistrationFlow } from './auth/RegistrationFlow'
@@ -24,7 +23,6 @@ function App() {
           <Route path="overview" element={<Overview />} />
           <Route path="disease-intelligence" element={<DiseaseIntelligence />} />
           <Route path="medicine-demand" element={<MedicineDemand />} />
-          <Route path="alerts" element={<Alerts />} />
           <Route path="reports" element={<Reports />} />
         </Route>
 

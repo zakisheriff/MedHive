@@ -12,6 +12,7 @@
   "type": "module",
   "dependencies": {
     "@azure/storage-blob": "^12.31.0",
+    "axios": "^1.13.6",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
@@ -21,6 +22,7 @@
     "multer": "^2.1.1",
     "nodemailer": "^8.0.3",
     "pg": "^8.20.0",
+    "python-shell": "^5.0.0",
     "zod": "^4.3.6"
   }
 }
