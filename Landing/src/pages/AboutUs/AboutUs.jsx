@@ -114,6 +114,8 @@ const AboutUs = () => {
                     line-height: 1.8;
                     color: #444;
                     margin-bottom: 20px;
+                    text-align: justify;
+                    text-align-last: left;
                 }
                 .highlight-card {
                     padding: 40px;
@@ -180,6 +182,8 @@ const AboutUs = () => {
                     line-height: 1.8;
                     color: #444;
                     max-width: 800px;
+                    text-align: justify;
+                    text-align-last: left;
                 }
 
                 @media (max-width: 900px) {

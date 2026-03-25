@@ -99,6 +99,8 @@ const PrivacyPolicy = () => {
                     line-height: 1.8;
                     margin-bottom: 15px;
                     font-size: 16px;
+                    text-align: justify;
+                    text-align-last: left;
                 }
                 .legal-content ul {
                     list-style-type: none;
@@ -109,6 +111,8 @@ const PrivacyPolicy = () => {
                     margin-bottom: 15px;
                     color: #444;
                     line-height: 1.6;
+                    text-align: justify;
+                    text-align-last: left;
                 }
                 .legal-content li strong {
                     color: #111;
