@@ -16,6 +16,7 @@ import TermsOfService from './pages/Legal/TermsOfService';
 import AboutUs from './pages/AboutUs/AboutUs';
 import Blog from './pages/Blog/Blog';
 import Blog2 from './pages/Blog/Blog2';
+import Blog3 from './pages/Blog/Blog3';
 import BlogList from './pages/Blog/BlogList';
 
 const MOBILE_BREAKPOINT = 900;
@@ -121,6 +122,7 @@ function AppContent() {
         <Route path="/blog" element={<BlogList />} />
         <Route path="/blog/digital-prescriptions-sri-lanka" element={<Blog />} />
         <Route path="/blog/private-clinics-digital-records-2026" element={<Blog2 />} />
+        <Route path="/blog/medication-errors-digital-prevention" element={<Blog3 />} />
       </Routes>
 
       <Footer onScrollToTop={scrollToTop} />
