@@ -1,10 +1,7 @@
 .mh-blog-list-page {
     min-height: 100vh;
     padding: 108px 0 90px;
-    background:
-        radial-gradient(circle at 10% 15%, rgba(229, 159, 48, 0.14), transparent 45%),
-        radial-gradient(circle at 90% 10%, rgba(16, 185, 129, 0.12), transparent 40%),
-        linear-gradient(180deg, #f8fafb 0%, #ffffff 58%);
+    background: #fff;
 }
 
 .mh-blog-list-header {
