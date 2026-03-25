@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import BlogCard from '../../components/BlogCard/BlogCard';
 import blogTitleImg from './images/blog-title.webp';
 import blogTitle3Img from './images/blog-title3.webp';
+import blogTitle6Img from './images/blog-title6.webp';
 import './BlogList.css';
 
 const posts = [
@@ -23,12 +24,23 @@ const posts = [
         category: '',
         link: '/blog/private-clinics-digital-records-2026',
     },
+    {
+        title: 'Medication Errors Kill More Than Car Accidents. Why Isn\'t Anyone Talking About It?',
+        description:
+            'Medication errors are a silent healthcare crisis. Learn how digital prescription systems can prevent these life-threatening mistakes.',
+        image: blogTitle6Img,
+        date: 'March 23, 2026',
+        category: '',
+        link: '/blog/medication-errors-digital-prevention',
+    },
 ];
 
 const BlogList = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
+
+    const sortedPosts = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
 
     return (
         <section className="mh-blog-list-page">
@@ -43,7 +55,7 @@ const BlogList = () => {
                 </div>
 
                 <div className="mh-blog-list-grid" role="list" aria-label="Blog post cards">
-                    {posts.map((post) => (
+                    {sortedPosts.map((post) => (
                         <div key={`${post.title}-${post.date}`} role="listitem">
                             <BlogCard {...post} />
                         </div>
