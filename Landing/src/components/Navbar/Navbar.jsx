@@ -100,6 +100,7 @@ const Navbar = ({ scrolled, onLogoClick }) => {
                         <a href="#problems" onClick={(e) => handleNavClick(e, 'problems')} style={{ cursor: 'pointer' }}>Problems</a>
                         <a href="#ai" onClick={(e) => handleNavClick(e, 'ai')} style={{ cursor: 'pointer' }}>Solutions</a>
                         <a href="#features" onClick={(e) => handleNavClick(e, 'features')} style={{ cursor: 'pointer' }}>Features</a>
+                        <a href="/blog" onClick={(e) => { e.preventDefault(); navigate('/blog'); setMobileMenuOpen(false); }} style={{ cursor: 'pointer' }}>Blog</a>
                         <button className="nav-btn-secondary nav-btn mobile-only" onClick={(e) => handleNavClick(e, 'join')}>
                             Partner with Us
                         </button>

@@ -60,6 +60,16 @@ const MobileMenu = ({ isOpen, onClose, onScrollToTop }) => {
                     >
                         Contact
                     </a>
+                    <a
+                        onClick={(e) => {
+                            e.preventDefault();
+                            window.location.href = '/blog';
+                            onClose();
+                        }}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        Blog
+                    </a>
                 </div>
                 <div className="mobile-menu-action">
                     <button

@@ -110,6 +110,27 @@ const Footer = ({ onScrollToTop }) => {
                     </div>
                 </div>
 
+                {/* SEO Keywords Column - Visually subtle but crawler readable */}
+                <div className="footer-seo-tags">
+                    <h4>Top Services</h4>
+                    <div className="seo-tags-cloud">
+                        <span>Prescription Reader</span>
+                        <span>Digital Prescriptions Sri Lanka</span>
+                        <span>Medical Records Archive</span>
+                        <span>AI Healthcare Platform</span>
+                        <span>Health Insights</span>
+                        <span>Lab Report Analysis</span>
+                        <span>Med ID Portal</span>
+                        <span>Clinic Management AI</span>
+                        <span>OCR Medical Records</span>
+                        <span>Health Data Security</span>
+                        <span>Private Clinic Software</span>
+                        <span>Smart Healthcare LK</span>
+                        <span>Medication Error Prevention</span>
+                        <span>Electronic Health History</span>
+                    </div>
+                </div>
+
                 {/* Bottom Section - Copyright */}
                 <div className="footer-bottom">
                     <p className="footer-copy">© 2026 MedHive. All rights reserved.</p>

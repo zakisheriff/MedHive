@@ -161,3 +161,47 @@
         padding-bottom: 30px;
     }
 }
+
+/* SEO Tags Styling */
+.footer-seo-tags {
+    margin-top: 40px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(220, 163, 73, 0.1);
+    text-align: center;
+}
+
+.footer-seo-tags h4 {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--color-primary);
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.seo-tags-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.seo-tags-cloud span {
+    font-size: 13px;
+    color: var(--color-text-dimmed);
+    background: rgba(220, 163, 73, 0.05);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(220, 163, 73, 0.1);
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.seo-tags-cloud span:hover {
+    color: var(--color-primary);
+    background: rgba(220, 163, 73, 0.1);
+    border-color: var(--color-primary);
+}
