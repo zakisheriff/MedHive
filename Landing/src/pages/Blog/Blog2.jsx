@@ -306,7 +306,7 @@ const Blog2 = () => {
                     padding: 56px 44px;
                     text-align: center;
                     border-radius: 28px;
-                    background: linear-gradient(135deg, rgba(220, 163, 73, 0.12) 0%, rgba(220, 163, 73, 0.04) 100%);
+                    background: #fff;
                     border: 1px solid rgba(220, 163, 73, 0.2);
                 }
 
@@ -338,7 +338,7 @@ const Blog2 = () => {
                     border-radius: 28px;
                     padding: 36px;
                     border: 1px solid rgba(220, 163, 73, 0.12);
-                    background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(252, 251, 248, 0.92));
+                    background: #fff;
                 }
 
                 .blog-image-block {

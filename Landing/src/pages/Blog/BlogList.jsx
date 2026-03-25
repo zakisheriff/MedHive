@@ -46,7 +46,7 @@ const BlogList = () => {
         <section className="mh-blog-list-page">
             <div className="container">
                 <div className="mh-blog-list-header">
-                    <span className="mh-blog-list-kicker">MedHive Journal</span>
+                    <span className="mh-blog-list-kicker">MedHive JOURNAL</span>
                     <h1>Healthcare AI Insights</h1>
                     <p>
                         Product updates, clinical technology thinking, and practical ideas to modernize
