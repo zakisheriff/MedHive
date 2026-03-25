@@ -391,7 +391,7 @@ const Blog3 = () => {
 
                 .blog-image-block img {
                     width: 100%;
-                    height: 380px;
+                    height: 460px;
                     object-fit: cover;
                     border-radius: 18px;
                     border: 1px solid rgba(17, 17, 17, 0.06);
@@ -507,7 +507,7 @@ const Blog3 = () => {
                     }
 
                     .blog-image-block img {
-                        height: 300px;
+                        height: 360px;
                     }
 
                     .blog-section h2 {
@@ -574,7 +574,7 @@ const Blog3 = () => {
                     }
 
                     .blog-image-block img {
-                        height: 260px;
+                        height: 310px;
                     }
                 }
             `}</style>
