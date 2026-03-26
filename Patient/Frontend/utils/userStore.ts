@@ -7,21 +7,21 @@ export interface UserData {
     fname: string;
     lname: string;
     email: string;
-    date_of_birth?: string;
-    gender?: string;
-    phone_number?: string;
-    district?: string;
-    province?: string;
-    member_since?: string;
-    blood_group?: string;
-    weight_kg?: string | number;
-    blood_pressure?: string;
-    emergency_contact_name?: string;
-    emergency_contact_phone?: string;
-    medical_records?: string;
-    diseases?: string;
-    allergies?: string;
-    other_info?: string;
+    date_of_birth?: string | null;
+    gender?: string | null;
+    phone_number?: string | null;
+    district?: string | null;
+    province?: string | null;
+    member_since?: string | null;
+    blood_group?: string | null;
+    weight_kg?: string | number | null;
+    blood_pressure?: string | null;
+    emergency_contact_name?: string | null;
+    emergency_contact_phone?: string | null;
+    medical_records?: string | null;
+    diseases?: string | null;
+    allergies?: string | null;
+    other_info?: string | null;
 }
 
 export const saveUser = async (user: UserData) => {

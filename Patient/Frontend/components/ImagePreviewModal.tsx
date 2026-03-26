@@ -38,10 +38,8 @@ export function ImagePreviewModal({ isVisible, imageUri, onClose }: ImagePreview
             animationType="fade"
             onRequestClose={handleClose}
         >
-            <StatusBar barStyle="light-content" />
-            <View style={styles.container}>
-                <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
-
+            <StatusBar barStyle="dark-content" />
+            <View style={[styles.container, { backgroundColor: '#fff' }]}>
                 <SafeAreaView style={styles.safeArea}>
                     <View style={styles.header}>
                         <TouchableOpacity
@@ -49,7 +47,7 @@ export function ImagePreviewModal({ isVisible, imageUri, onClose }: ImagePreview
                             style={styles.closeButton}
                             activeOpacity={0.7}
                         >
-                            <Ionicons name="close" size={28} color="#fff" />
+                            <Ionicons name="close" size={28} color="#1C1C1E" />
                         </TouchableOpacity>
                     </View>
 
@@ -77,7 +75,7 @@ export function ImagePreviewModal({ isVisible, imageUri, onClose }: ImagePreview
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.9)',
+        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
     },

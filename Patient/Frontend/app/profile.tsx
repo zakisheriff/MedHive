@@ -310,24 +310,28 @@ export default function ProfileScreen() {
         if (userData) {
             setIsSaving(true);
             try {
+                const body = {
+                    medical_records: tempMedicalRecords || null,
+                    diseases: tempDiseases || null,
+                    allergies: tempAllergies || null,
+                    other_info: tempOtherInfo || null,
+                    blood_group: tempBloodGroup || null,
+                    weight_kg: tempWeightKg === '' ? null : parseFloat(tempWeightKg),
+                    blood_pressure: tempBloodPressure || null,
+                    emergency_contact_name: tempEmergencyContactName || null,
+                    emergency_contact_phone: tempEmergencyContactPhone || null
+                };
+
                 const response = await fetch(API_ENDPOINTS.UPDATE_HISTORY(userData.med_id), {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        medical_records: tempMedicalRecords,
-                        diseases: tempDiseases,
-                        allergies: tempAllergies,
-                        other_info: tempOtherInfo,
-                        blood_group: tempBloodGroup,
-                        weight_kg: tempWeightKg,
-                        blood_pressure: tempBloodPressure,
-                        emergency_contact_name: tempEmergencyContactName,
-                        emergency_contact_phone: tempEmergencyContactPhone
-                    })
+                    body: JSON.stringify(body)
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to update profile');
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('Update failed:', response.status, errorData);
+                    throw new Error(errorData.message || 'Failed to update profile');
                 }
 
                 const updatedUser = {
@@ -336,7 +340,7 @@ export default function ProfileScreen() {
                     lname: newLname,
                     email: tempEmail,
                     blood_group: tempBloodGroup,
-                    weight_kg: tempWeightKg,
+                    weight_kg: tempWeightKg === '' ? null : parseFloat(tempWeightKg),
                     blood_pressure: tempBloodPressure,
                     emergency_contact_name: tempEmergencyContactName,
                     emergency_contact_phone: tempEmergencyContactPhone,
@@ -350,9 +354,9 @@ export default function ProfileScreen() {
                 await saveUser(updatedUser); 
                 setEditModalVisible(false);
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            } catch (error) {
-                console.error(error);
-                Alert.alert('Error', 'Could not update profile data.');
+            } catch (error: any) {
+                console.error('Profile Update Error:', error.message);
+                Alert.alert('Error', error.message || 'Could not update profile data.');
             } finally {
                 setIsSaving(false);
             }
@@ -931,49 +935,49 @@ export default function ProfileScreen() {
                 transparent={true}
                 onRequestClose={() => setRecordViewerVisible(false)}
             >
-                <BlurView intensity={90} tint="dark" style={styles.modalOverlay}>
+                <View style={[styles.modalOverlay, { backgroundColor: '#fff' }]}>
                     {selectedRecord && (
                         <View style={{ flex: 1, width: '100%' }}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 20, paddingTop: Platform.OS === 'ios' ? 60 : 30 }}>
                                 <TouchableOpacity onPress={() => setRecordViewerVisible(false)}>
-                                    <Ionicons name="close" size={32} color="#fff" />
+                                    <Ionicons name="close" size={32} color={Colors.light.text} />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => handleDeleteRecord(selectedRecord.id)}>
                                     <Ionicons name="trash" size={28} color="#FF3B30" />
                                 </TouchableOpacity>
                             </View>
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                <View style={{ marginBottom: 24, alignItems: 'center' }}>
+                                <View style={{ marginBottom: 40, alignItems: 'center', width: '100%', paddingHorizontal: 20 }}>
                                     {isEditingRecordTitle ? (
-                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%', justifyContent: 'center' }}>
                                             <TextInput
                                                 value={editRecordTitleValue}
                                                 onChangeText={setEditRecordTitleValue}
-                                                style={[styles.textInput, { color: '#000', width: 200, backgroundColor: '#fff', paddingVertical: 10 }]}
+                                                style={[styles.textInput, { color: '#000', flex: 1, maxWidth: 300, backgroundColor: '#F2F2F7', paddingVertical: 12 }]}
                                                 autoFocus
                                             />
-                                            <TouchableOpacity onPress={handleSaveRecordTitle} disabled={isSaving} style={{ marginLeft: 12, backgroundColor: Colors.light.primary, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 35 }}>
+                                            <TouchableOpacity onPress={handleSaveRecordTitle} disabled={isSaving} style={{ marginLeft: 12, backgroundColor: Colors.light.primary, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 35 }}>
                                                 <Text style={{ color: '#fff', fontWeight: 'bold' }}>{isSaving ? 'Sav...' : 'Save'}</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => setIsEditingRecordTitle(false)} style={{ marginLeft: 12 }}>
-                                                <Ionicons name="close-circle" size={36} color="#C7C7CC" />
                                             </TouchableOpacity>
                                         </View>
                                     ) : (
-                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                            <Text style={{ color: '#fff', fontSize: 24, fontWeight: '700' }}>{selectedRecord.title}</Text>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                            <Text style={{ color: Colors.light.text, fontSize: 28, fontWeight: '800', textAlign: 'center' }}>{selectedRecord.title}</Text>
                                             <TouchableOpacity onPress={() => setIsEditingRecordTitle(true)} style={{ marginLeft: 12, padding: 4 }}>
-                                                <Ionicons name="pencil" size={22} color="#C7C7CC" />
+                                                <Ionicons name="pencil" size={24} color={Colors.light.primary} />
                                             </TouchableOpacity>
                                         </View>
                                     )}
-                                    <Text style={{ color: '#C7C7CC', fontSize: 16, marginTop: 12 }}>{new Date(selectedRecord.created_at).toLocaleDateString()}</Text>
+                                    <Text style={{ color: '#8E8E93', fontSize: 16, marginTop: 8, fontWeight: '500' }}>{new Date(selectedRecord.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</Text>
                                 </View>
-                                <Image source={{ uri: selectedRecord.image_url }} style={{ width: '90%', height: '70%', resizeMode: 'contain' }} />
+                                
+                                <View style={{ width: '90%', height: '60%', backgroundColor: '#F8FAFC', borderRadius: 35, padding: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 15, elevation: 2 }}>
+                                    <Image source={{ uri: selectedRecord.image_url }} style={{ width: '100%', height: '100%', borderRadius: 25 }} resizeMode="contain" />
+                                </View>
                             </View>
                         </View>
                     )}
-                </BlurView>
+                </View>
             </Modal>
         </View>
     );

@@ -2,14 +2,14 @@
   "expo": {
     "name": "MedHive",
     "slug": "MedHive",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/images/MedHive-Logo.png",
     "scheme": "frontend",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "bundleIdentifier": "com.zakisheriff.medhive.patient"
+      "bundleIdentifier": "com.zakisheriff.medhiveapp"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,8 +18,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.zakisheriff.medhive.patient",
-      "versionCode": 3
+      "package": "com.zakisheriff.medhiveapp",
+      "versionCode": 4
     },
     "web": {
       "output": "static",

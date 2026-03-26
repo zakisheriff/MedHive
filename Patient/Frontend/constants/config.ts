@@ -11,7 +11,7 @@ const debuggerHost = Constants.expoConfig?.hostUri;
 const localhost = debuggerHost?.split(':')[0] || (Platform.OS === 'web' && typeof window !== 'undefined' ? window.location.hostname : 'localhost');
 
 export const BASE_URL = __DEV__
-    ? `http://${localhost || 'localhost'}:5001`
+    ? `http://${localhost}:5001`
     : 'https://medhive-patient-backend-fjaad9afdkc4hvfx.southeastasia-01.azurewebsites.net';
 
 export const API_ENDPOINTS = {
@@ -27,7 +27,7 @@ export const API_ENDPOINTS = {
     SEND_TO_CLINIC: `${BASE_URL}/api/send-to-clinic`,
     GET_CLINICS: `${BASE_URL}/api/clinics`,
     GET_OTP: (med_id: string) => `${BASE_URL}/api/access/active-otp/${med_id}`,
-    UPDATE_HISTORY: (med_id: string) => `${BASE_URL}/api/medical_history/update-history/${med_id}`,
+    UPDATE_HISTORY: (med_id: string) => `${BASE_URL}/api/update-history/${med_id}`,
     MEDICAL_RECORDS: (med_id: string) => `${BASE_URL}/api/medical-records/${med_id}`,
     MEDICAL_STATS: (med_id: string) => `${BASE_URL}/api/medical-records/stats/${med_id}`,
     DELETE_RECORD: (record_id: string | number) => `${BASE_URL}/api/medical-records/record/${record_id}`,
