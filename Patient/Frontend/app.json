@@ -1,29 +1,29 @@
 {
   "expo": {
-    "name": "Frontend",
-    "slug": "Frontend",
-    "version": "1.0.0",
+    "name": "MedHive",
+    "slug": "MedHive",
+    "version": "1.1.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.jpeg",
+    "icon": "./assets/images/MedHive-Logo.png",
     "scheme": "frontend",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.Frontend"
+      "bundleIdentifier": "com.zakisheriff.medhive.patient"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/logo.jpeg"
+        "foregroundImage": "./assets/images/MedHive-Logo.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.Frontend"
+      "package": "com.zakisheriff.medhive.patient",
+      "versionCode": 3
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/logo.jpeg",
+      "favicon": "./assets/images/MedHive-Logo.png",
       "name": "MedHive Patient App",
       "shortName": "MedHive",
       "description": "MedHive Patient Portal - Manage Your Prescriptions and Medical History.",
@@ -42,7 +42,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/logo.jpeg",
+          "image": "./assets/images/MedHive-Logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -62,6 +62,14 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {
+        "origin": "https://medhive.com"
+      },
+      "eas": {
+        "projectId": "4716c17a-3bf2-49db-864d-b7bc46330ded"
+      }
     }
   }
 }

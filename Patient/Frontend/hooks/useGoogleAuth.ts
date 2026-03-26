@@ -35,6 +35,7 @@ export function useGoogleAuth(showAlert: any, t: any) {
     // Initialize Web Auth Session
     const [request, response, promptAsync] = GoogleAuthSession.useIdTokenAuthRequest({
         webClientId: '335178320393-iv304i70q3qo459ea14alsgre42qpmol.apps.googleusercontent.com',
+        androidClientId: '335178320393-ot1019gsodcjbh6ce2mtcjuk61ss2apb.apps.googleusercontent.com',
         iosClientId: '335178320393-ro7qi41ur08qfoaeamnf70l268h8vahq.apps.googleusercontent.com',
     });
 
