@@ -78,6 +78,12 @@ const Navbar = ({ scrolled, onLogoClick }) => {
                 <div
                     className={`nav-content ${mobileMenuOpen ? 'expanded' : ''}`}
                     ref={navContentRef}
+                    onClick={(e) => {
+                        if (window.innerWidth <= 900) {
+                            toggleMobileMenu();
+                        }
+                    }}
+                    style={{ cursor: window.innerWidth <= 900 ? 'pointer' : 'default' }}
                 >
                     <img
                         src="/logode.png"
@@ -88,24 +94,32 @@ const Navbar = ({ scrolled, onLogoClick }) => {
                             e.currentTarget.src = '/logo.jpeg';
                         }}
                         onClick={(e) => {
-                            if (window.innerWidth <= 900) {
-                                toggleMobileMenu();
-                            } else {
+                            if (window.innerWidth > 900) {
+                                e.stopPropagation();
                                 onLogoClick();
                             }
                         }}
                     />
-                    <div className={`nav-links ${mobileMenuOpen ? 'show' : ''}`}>
+                    <div
+                        className={`nav-links ${mobileMenuOpen ? 'show' : ''}`}
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <a href="#home" onClick={(e) => handleNavClick(e, 'home')} style={{ cursor: 'pointer' }}>Home</a>
                         <a href="#problems" onClick={(e) => handleNavClick(e, 'problems')} style={{ cursor: 'pointer' }}>Problems</a>
                         <a href="#ai" onClick={(e) => handleNavClick(e, 'ai')} style={{ cursor: 'pointer' }}>Solutions</a>
                         <a href="#features" onClick={(e) => handleNavClick(e, 'features')} style={{ cursor: 'pointer' }}>Features</a>
                         <a href="/blog" onClick={(e) => { e.preventDefault(); navigate('/blog'); setMobileMenuOpen(false); }} style={{ cursor: 'pointer' }}>Blog</a>
-                        <button className="nav-btn-secondary nav-btn mobile-only" onClick={(e) => handleNavClick(e, 'join')}>
+                        <button
+                            className="nav-btn-secondary nav-btn mobile-only"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleNavClick(e, 'join');
+                            }}
+                        >
                             Partner with Us
                         </button>
                     </div>
-                    <div className="nav-actions mobile-hidden">
+                    <div className="nav-actions mobile-hidden" onClick={(e) => e.stopPropagation()}>
                         <button className="nav-btn-secondary nav-btn" onClick={(e) => handleNavClick(e, 'join')}>
                             Partner with Us
                         </button>
