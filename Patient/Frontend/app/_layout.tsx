@@ -9,6 +9,7 @@ import { Colors } from '../constants/theme';
 import '../constants/i18n';
 import { AccessProvider } from '../context/AccessContext';
 import { OTPOverlay } from '../components/OTPOverlay';
+import { VercelAnalytics } from '../components/VercelAnalytics';
 
 export default function RootLayout() {
   return (
@@ -50,6 +51,7 @@ export default function RootLayout() {
               <StatusBar style="dark" />
               <CustomAlert />
               <OTPOverlay />
+              <VercelAnalytics />
             </View>
           </View>
         </AlertProvider>
