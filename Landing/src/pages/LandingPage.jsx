@@ -1,4 +1,5 @@
 import React, { useState, Suspense, lazy } from 'react';
+import { useLenis } from 'lenis/react';
 // import CountdownClock from '../components/CountdownClock/CountdownClock';
 import Hero from '../components/Hero/Hero';
 
@@ -11,19 +12,28 @@ const CTASection = lazy(() => import('../components/CTASection/CTASection'));
 
 const LandingPage = () => {
     const [mockupFocusTrigger, setMockupFocusTrigger] = useState(0);
+    const lenis = useLenis();
 
     const handleCTAClick = () => {
         if (window.innerWidth <= 900) {
             // Scroll to Hero mockup target on mobile
-            const element = document.getElementById('hero-mockup-target');
-            if (element) {
-                const yOffset = -180;
-                const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                window.scrollTo({ top: y, behavior: 'smooth' });
+            if (lenis) {
+                lenis.scrollTo('#hero-mockup-target', { offset: -180, duration: 1.2 });
+            } else {
+                const element = document.getElementById('hero-mockup-target');
+                if (element) {
+                    const yOffset = -180;
+                    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                }
             }
         } else {
             // Scroll to top on desktop
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (lenis) {
+                lenis.scrollTo(0, { duration: 1.2 });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
         // Trigger focus effect in Hero component
         setMockupFocusTrigger(prev => prev + 1);

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { ReactLenis, useLenis } from 'lenis/react';
+import 'lenis/dist/lenis.css';
 import './styles/global.css';
 
 // Components
@@ -23,10 +25,15 @@ const MOBILE_BREAKPOINT = 900;
 
 function ScrollToTop() {
   const { pathname } = useLocation();
+  const lenis = useLenis();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, lenis]);
 
   return null;
 }
@@ -40,12 +47,18 @@ function AppContent() {
   const location = useLocation();
 
 
+  const lenis = useLenis();
+
   // Scroll to top function
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    if (lenis) {
+      lenis.scrollTo(0, { duration: 1.2 });
+    } else {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
     setMobileMenuOpen(false);
   };
 
@@ -68,14 +81,11 @@ function AppContent() {
     setMobileMenuOpen(false);
   };
 
-  // Scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  // Scroll effect using Lenis
+  useLenis((lenisInstance) => {
+    const isScrolled = lenisInstance.scroll > 50;
+    setScrolled(prev => prev !== isScrolled ? isScrolled : prev);
+  });
 
   // Resize effect
   useEffect(() => {
@@ -132,9 +142,11 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <ReactLenis root>
+      <Router>
+        <AppContent />
+      </Router>
+    </ReactLenis>
   );
 }
 
