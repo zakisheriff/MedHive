@@ -71,6 +71,13 @@ The gateway to MedHive, explaining our mission and onboarding users.
 
 ---
 
+## 🎥 Project Videos
+
+- **Demo Video:** [Watch on YouTube](https://youtu.be/FxHHhFKct2c)
+- **Marketing Video:** [Watch on YouTube](https://www.youtube.com/watch?v=FJoeB27EKQA)
+
+---
+
 <p align="center">
 <em>"Your Health, Unified."</em>
 </p>
